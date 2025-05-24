@@ -18,7 +18,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field3 = 0;
 	public static int Field4 = 0;
 	public static int Field5 = 0;
-	public static final short[][] Field6 = new short[][]{{53, -6, -5}, {48}, {-7}, {52, -3}, {54, -4}, {50, -1}, {56, -2}, {49}, {51}, {55}, {57}};
+	public static final short[][] Field6 = new short[][] {{53, -6, -5}, {48}, {-7}, {52, -3}, {54, -4}, {50, -1}, {56, -2}, {49}, {51}, {55}, {57}};
 	private static byte[] Field7;
 	private static int Field8;
 	private static int Field9;
@@ -93,7 +93,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] Field78;
 	public static int[] Field79;
 	public static int[] Field80;
-	public static int[] Field81 = new int[]{16777215, 16711680, 65280, 255, 16776960, 14276889, 15132922, 9205843};
+	public static int[] Field81 = new int[] {16777215, 16711680, 65280, 255, 16776960, 14276889, 15132922, 9205843};
 	public static int[] Field82;
 	public static int[] Field83;
 	public static int[] Field84;
@@ -157,7 +157,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field142;
 	public static boolean Field143;
 	public static boolean Field144;
-	public static int[] Field145 = new int[]{-1, -1, -1, -1, -1, -1, -1, -1};
+	public static int[] Field145 = new int[] {-1, -1, -1, -1, -1, -1, -1, -1};
 	public static int Field146 = 0;
 	public static Image Field147;
 	public static Image Field148;
@@ -195,14 +195,14 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image[] Field180 = null;
 	public static Image[] Field181 = null;
 	public static Image[] Field182 = null;
-	public static Image[][] Field183 = (Image[][])null;
-	public static Image[][] Field184 = (Image[][])null;
-	public static Image[][] Field185 = (Image[][])null;
+	public static Image[][] Field183 = null;
+	public static Image[][] Field184 = null;
+	public static Image[][] Field185 = null;
 	public static Image Field186 = null;
-	public static int[][] Field187 = new int[][]{{0, 0}, {0, 0}, {0, 0}, {6, 8}, {0, -2}, {0, 0}, {0, 0}, {0, 0}};
-	public static int[][] Field188 = new int[][]{{0, -3}, {3, 0}, {3, 0}, {10, 4}, {0, -5}, {4, 4}, {4, 1}, {6, 4}};
-	public static int[][] Field189 = new int[][]{{0, 0}, {2, 6}, {0, 0}, {-4, -8}, {4, 2}, {4, 4}, {0, 0}, {2, 6}};
-	public static int[][] Field190 = new int[][]{{0, 0}, {5, 2}, {3, 6}, {5, 9}, {4, 9}, {2, 4}, {3, 7}, {3, 6}};
+	public static int[][] Field187 = new int[][] {{0, 0}, {0, 0}, {0, 0}, {6, 8}, {0, -2}, {0, 0}, {0, 0}, {0, 0}};
+	public static int[][] Field188 = new int[][] {{0, -3}, {3, 0}, {3, 0}, {10, 4}, {0, -5}, {4, 4}, {4, 1}, {6, 4}};
+	public static int[][] Field189 = new int[][] {{0, 0}, {2, 6}, {0, 0}, {-4, -8}, {4, 2}, {4, 4}, {0, 0}, {2, 6}};
+	public static int[][] Field190 = new int[][] {{0, 0}, {5, 2}, {3, 6}, {5, 9}, {4, 9}, {2, 4}, {3, 7}, {3, 6}};
 	public static int Field191;
 	public static int Field192;
 	public static int Field193;
@@ -377,11 +377,11 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field362;
 	public static int Field363;
 	public static boolean Field364 = true;
-	public static boolean[] Field365 = new boolean[]{true, true, true, true, false};
-	public static int[] Field366 = new int[]{2, 1, 1, 2, 0};
-	public static int[] Field367 = new int[]{0, 1, 2, 3, 4};
-	public static int[][][] Field368 = new int[][][]{{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {{0, 0}, {0, 0}, {1, 1}}, {{0, 0}, {0, 0}, {0, 0}}, {{0, 0}, {0, 0}, {0, 0}}, {{3, 0, 1, 2}, {0, 1, 2, 0}, {1, 2, 0, 3}, {2, 0, 0, 0}}};
-	public static int[][][] Field369 = new int[][][]{{{1, 2, 1, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}}, {{2, 2, 2}, {3, 3, 3}, {3, 3, 3}}, {{1, 2, 1}, {3, 3, 3}, {3, 3, 3}}, {{1, 1, 1}, {2, 2, 2}, {2, 2, 2}}, {{0}}};
+	public static boolean[] Field365 = new boolean[] {true, true, true, true, false};
+	public static int[] Field366 = new int[] {2, 1, 1, 2, 0};
+	public static int[] Field367 = new int[] {0, 1, 2, 3, 4};
+	public static int[][][] Field368 = new int[][][] {{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {{0, 0}, {0, 0}, {1, 1}}, {{0, 0}, {0, 0}, {0, 0}}, {{0, 0}, {0, 0}, {0, 0}}, {{3, 0, 1, 2}, {0, 1, 2, 0}, {1, 2, 0, 3}, {2, 0, 0, 0}}};
+	public static int[][][] Field369 = new int[][][] {{{1, 2, 1, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}}, {{2, 2, 2}, {3, 3, 3}, {3, 3, 3}}, {{1, 2, 1}, {3, 3, 3}, {3, 3, 3}}, {{1, 1, 1}, {2, 2, 2}, {2, 2, 2}}, {{0}}};
 	public static int Field370;
 	public static int Field371;
 	public static int Field372;
@@ -411,8 +411,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field396 = -1;
 	public static int Field397 = 0;
 	public static int Field398 = 72;
-	public static int[] Field399 = new int[]{8, 16, 8, 16, 2};
-	public static int[] Field400 = new int[]{64, 16, 64, 8, 64, 2};
+	public static int[] Field399 = new int[] {8, 16, 8, 16, 2};
+	public static int[] Field400 = new int[] {64, 16, 64, 8, 64, 2};
 	public static int Field401 = 0;
 	public static int Field402 = 0;
 	public static boolean Field403 = false;
@@ -474,7 +474,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field459 = 100;
 	public static int Field460 = 0;
 	public static int Field461 = 0;
-	public static String[] Field462 = new String[]{"Kachoo", "NikSak", "Rara", "Corakllquar", "Brad", "NotPing"};
+	public static String[] Field462 = new String[] {"Kachoo", "NikSak", "Rara", "Corakllquar", "Brad", "NotPing"};
 	public static Image[] Field463;
 	public static Image[] Field464;
 	public static int Field465;
@@ -2771,9 +2771,9 @@ public final class Game extends GameCanvas implements Runnable {
 				++Field115;
 				break;
 			case 4:
-				int[] var2 = new int[]{0, 16777215, 0, 16777215, 3845831};
-				int[] var3 = new int[]{54, 54, 37, 37, 18};
-				int[] var4 = new int[]{0, -10, -5, 2, 0};
+				int[] var2 = new int[] {0, 16777215, 0, 16777215, 3845831};
+				int[] var3 = new int[] {54, 54, 37, 37, 18};
+				int[] var4 = new int[] {0, -10, -5, 2, 0};
 	
 				for(int var5 = 0; var5 < 5; ++var5) {
 					Method75(var2[var5]);
@@ -3435,7 +3435,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if (Field146 == 0) {
 				Field397 = var0;
 				Method20();
-				Method54((new short[]{133, -24943, -9097, 3400, 20266})[Field397]);
+				Method54((new short[] {133, -24943, -9097, 3400, 20266})[Field397]);
 				Method97(0, 1);
 				return;
 			}
@@ -3451,11 +3451,11 @@ public final class Game extends GameCanvas implements Runnable {
 		Field409 = 100;
 		Field146 = var0;
 		if (Field146 == 0) {
-			Method302(new String[]{"flag_uk", "flag_france", "flag_germany", "flag_spain", "flag_italy"}, Field397);
+			Method302(new String[] {"flag_uk", "flag_france", "flag_germany", "flag_spain", "flag_italy"}, Field397);
 		}
 	
 		if (Field146 == 1) {
-			Method302(new String[]{"audio_off", "audio_on", "audio_off", "audio_on"}, 0);
+			Method302(new String[] {"audio_off", "audio_on", "audio_off", "audio_on"}, 0);
 		}
 	
 	}
@@ -4284,9 +4284,9 @@ public final class Game extends GameCanvas implements Runnable {
 		Field234 = 3;
 		int[] var1 = new int[3];
 		Field233 = new int[3][];
-		Field233[0] = new int[]{-1, -1, -1, -1, -1, -1};
-		Field233[1] = new int[]{-1, -1, -1, -1, -1, -1};
-		Field233[2] = new int[]{-1, -1, -1, -1, -1, -1};
+		Field233[0] = new int[] {-1, -1, -1, -1, -1, -1};
+		Field233[1] = new int[] {-1, -1, -1, -1, -1, -1};
+		Field233[2] = new int[] {-1, -1, -1, -1, -1, -1};
 	
 		for(int var2 = 0; var2 < Field297; ++var2) {
 			if (Field305[var2] == 13) {
