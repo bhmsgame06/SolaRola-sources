@@ -85,7 +85,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field70 = -1;
 	public static int Field71;
 	public static int Field72;
-	private static Display Field73;
+	private static Display dpy;
 	public static boolean Field74 = true;
 	public static int[] Field75;
 	public static int[] Field76;
@@ -2266,14 +2266,14 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method99(Display var0) {
-		Field73 = var0;
+	public static final void setDisplay(Display dpy) {
+		Game.dpy = dpy;
 	}
 	
 	public static final void Method100(int var0) {
 		if (Field74) {
 			try {
-				Field73.vibrate(var0);
+				dpy.vibrate(var0);
 			} catch (Exception var1) {
 			}
 		}
