@@ -3,37 +3,37 @@ import javax.microedition.lcdui.Display;
 import javax.microedition.midlet.MIDlet;
 
 public class PMMIDlet extends MIDlet {
-   private Game instance;
+	private Game instance;
 
-   public final void startApp() {
-      if (instance == null) {
-         try {
-            instance = new Game();
-            Display dpy;
-            (dpy = Display.getDisplay(this)).setCurrent(instance);
-            Game.Method99(dpy);
-            instance.Method0(this);
-         } catch (IOException e) {
-         }
-      } else {
-         Game.Method29();
-         Game.Method31();
-      }
-   }
+	public final void startApp() {
+		if (instance == null) {
+			try {
+				instance = new Game();
+				Display dpy;
+				(dpy = Display.getDisplay(this)).setCurrent(instance);
+				Game.Method99(dpy);
+				instance.Method0(this);
+			} catch (IOException e) {
+			}
+		} else {
+			Game.Method29();
+			Game.Method31();
+		}
+	}
 
-   public final void pauseApp() {
-      Game.Field4 = 0;
-      Game.Field12 = true;
-      Game.Method29();
-      Game.Method31();
-      notifyPaused();
-      Game.Method261();
-   }
+	public final void pauseApp() {
+		Game.Field4 = 0;
+		Game.Field12 = true;
+		Game.Method29();
+		Game.Method31();
+		notifyPaused();
+		Game.Method261();
+	}
 
-   public final void destroyApp(boolean unconditional) {
-   }
+	public final void destroyApp(boolean unconditional) {
+	}
 
-   public final void Method304() {
-      notifyDestroyed();
-   }
+	public final void Method304() {
+		notifyDestroyed();
+	}
 }
