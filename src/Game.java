@@ -12,8 +12,8 @@ import javax.microedition.media.control.VolumeControl;
 import javax.microedition.rms.RecordStore;
 
 public final class Game extends GameCanvas implements Runnable {
-	public static Game Field0;
-	public static PMMIDlet Field1 = null;
+	public static Game instance; // Field0
+	public static PMMIDlet midlet = null; // Field1
 	public static int Field2 = 0;
 	public static int Field3 = 0;
 	public static int Field4 = 0;
@@ -490,7 +490,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public Game() throws IOException {
 		super(false);
 		setFullScreenMode(true);
-		Field0 = this;
+		instance = this;
 	}
 	
 	public final void hideNotify() {
@@ -504,18 +504,18 @@ public final class Game extends GameCanvas implements Runnable {
 	public final void showNotify() {
 	}
 	
-	public final void Method0(PMMIDlet var1) {
-		Field1 = var1;
-		Thread var2;
-		(var2 = new Thread(this)).setPriority(5);
-		var2.start();
+	public final void init(PMMIDlet midlet) {
+		Game.midlet = midlet;
+		Thread th = new Thread(this);
+		th.setPriority(5);
+		th.start();
 	}
 	
 	public final void run() {
 		Field66 = this.getGraphics();
 		Method85(0, 0, 128, 128);
 		Method96();
-		Field1.Method304();
+		midlet.exit();
 	}
 	
 	public static final void Method1() {
@@ -1340,7 +1340,7 @@ public final class Game extends GameCanvas implements Runnable {
 						Method53();
 					}
 	
-					Field32 = new DataInputStream(Field0.getClass().getResourceAsStream("/" + Field44[var1] + ".bfc"));
+					Field32 = new DataInputStream(instance.getClass().getResourceAsStream("/" + Field44[var1] + ".bfc"));
 					Field32.skip((long)Field43[var1]);
 					Field36 = Field44[var1];
 					Field35 = Field43[var1];
@@ -1925,7 +1925,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method90() {
-		Field0.flushGraphics();
+		instance.flushGraphics();
 	}
 	
 	public static final int Method91(int var0, int var1, int var2, int var3, String var4, int var5, int var6, int var7, boolean var8) {

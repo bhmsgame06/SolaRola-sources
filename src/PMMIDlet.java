@@ -12,7 +12,7 @@ public class PMMIDlet extends MIDlet {
 				Display dpy;
 				(dpy = Display.getDisplay(this)).setCurrent(instance);
 				Game.Method99(dpy);
-				instance.Method0(this);
+				instance.init(this);
 			} catch (IOException e) {
 			}
 		} else {
@@ -33,7 +33,7 @@ public class PMMIDlet extends MIDlet {
 	public final void destroyApp(boolean unconditional) {
 	}
 
-	public final void Method304() {
+	public final void exit() {
 		notifyDestroyed();
 	}
 }
