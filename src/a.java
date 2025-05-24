@@ -1207,7 +1207,7 @@ public final class a extends GameCanvas implements Runnable {
          int var2 = var0 << 8;
 
          for(int var3 = 0; var3 < 8; ++var3) {
-            if (((var1 ^ var2) & '耀') != 0) {
+            if (((var1 ^ var2) & 0x8000) != 0) {
                var1 = var1 << 1 ^ Field47;
             } else {
                var1 <<= 1;
