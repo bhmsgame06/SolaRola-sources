@@ -1,19 +1,15 @@
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import javax.microedition.lcdui.Display;
-import javax.microedition.lcdui.Graphics;
-import javax.microedition.lcdui.Image;
+import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.GameCanvas;
-import javax.microedition.media.Manager;
-import javax.microedition.media.MediaException;
-import javax.microedition.media.Player;
+import javax.microedition.media.*;
 import javax.microedition.media.control.VolumeControl;
-import javax.microedition.rms.RecordStore;
+import javax.microedition.rms.*;
 
 public final class Game extends GameCanvas implements Runnable {
-	public static Game instance; // Field0
-	public static PMMIDlet midlet = null; // Field1
+	public static Game instance;
+	public static PMMIDlet midlet = null;
 	public static int Field2 = 0;
 	public static int Field3 = 0;
 	public static int Field4 = 0;
