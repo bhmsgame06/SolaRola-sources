@@ -11,8 +11,8 @@ import javax.microedition.media.Player;
 import javax.microedition.media.control.VolumeControl;
 import javax.microedition.rms.RecordStore;
 
-public final class a extends GameCanvas implements Runnable {
-   public static a Field0;
+public final class Game extends GameCanvas implements Runnable {
+   public static Game Field0;
    public static PMMIDlet Field1 = null;
    public static int Field2 = 0;
    public static int Field3 = 0;
@@ -487,9 +487,9 @@ public final class a extends GameCanvas implements Runnable {
    public static int Field472;
    public static int Field473;
 
-   public a() throws IOException {
+   public Game() throws IOException {
       super(false);
-      this.setFullScreenMode(true);
+      setFullScreenMode(true);
       Field0 = this;
    }
 
