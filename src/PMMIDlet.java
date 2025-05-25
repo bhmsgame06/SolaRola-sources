@@ -9,8 +9,8 @@ public class PMMIDlet extends MIDlet {
 		if (instance == null) {
 			try {
 				instance = new Game();
-				Display dpy;
-				(dpy = Display.getDisplay(this)).setCurrent(instance);
+				Display dpy = Display.getDisplay(this);
+				dpy.setCurrent(instance);
 				Game.setDisplay(dpy);
 				instance.init(this);
 			} catch (IOException e) {
