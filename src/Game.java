@@ -6888,7 +6888,7 @@ public final class Game extends GameCanvas implements Runnable {
 		drawImage(Field418[0], var2, -16, 0);
 		var2 += 28;
 	
-		for(int var3 = 0; var3 < 18; var3++) {
+		for(int var3 = 0; var3 < 17; var3++) {
 			if (var2 + 46 > 0 && var2 <= 128) {
 				drawImage(Field418[1], var2, -16, 0);
 			}
