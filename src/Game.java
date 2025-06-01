@@ -647,7 +647,6 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final Image decodeImageByHash(short pim, short ppl) {
-		Object o = null;
 		byte[] pimData = getFile8ByHash(pim);
 		if (pimData == null) {
 			return null;
@@ -702,8 +701,6 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void writeRecordBytes(byte[] data) {
-		Object o = null;
-	
 		try {
 			RecordStore rs = RecordStore.openRecordStore(recordStoreName, true);
 			if (rs != null) {
@@ -722,7 +719,6 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final byte[] readRecordBytes() {
 		byte[] data = null;
-		Object o = null;
 	
 		try {
 			RecordStore rs = RecordStore.openRecordStore(recordStoreName, true);
@@ -755,11 +751,10 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final boolean loadRecordData() {
 		byte[] data = readRecordBytes();
+
 		if (data == null) {
 			return false;
 		} else {
-			boolean b = false;
-	
 			try {
 				language = (data[0] & 0x000000ff) + (data[1] << 8 & 0x0000ff00) + (data[2] << 16 & 0x00ff0000) + (data[3] << 24 & 0xff000000);
 				level = (data[4] & 0x000000ff) + (data[5] << 8 & 0x0000ff00) + (data[6] << 16 & 0x00ff0000) + (data[7] << 24 & 0xff000000);
@@ -773,7 +768,6 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method22(int var0) {
-		boolean var1 = false;
 		Field19 = var0;
 		Field23 = new boolean[var0];
 		Field24 = new boolean[var0];
@@ -818,7 +812,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field28[var0] = var1;
 			}
 	
-			Object var4 = null;
 			return -4;
 		}
 	}
@@ -844,7 +837,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Player var5 = null;
 	
 			try {
-				Object var6 = null;
 				if (var2 == 6) {
 					InputStream var9 = var4.getClass().getResourceAsStream("/" + var1 + ".wav");
 					Field30[var0] = Manager.createPlayer(var9, "audio/x-wav");
@@ -1015,7 +1007,6 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	private static void Method30(int var0, boolean var1) {
-		Object var2 = null;
 		Player var5;
 		if (Field31[var0] != null) {
 			var5 = Field31[var0];
@@ -1091,7 +1082,6 @@ public final class Game extends GameCanvas implements Runnable {
 					Field34 = var7;
 				}
 	
-				Object var8 = null;
 				Player var9;
 				if (Field31[var0] != null) {
 					var9 = Field31[var0];
@@ -1293,7 +1283,6 @@ public final class Game extends GameCanvas implements Runnable {
 			return true;
 		} else {
 			try {
-				Object var3 = null;
 				InputStream var5 = var0.getClass().getResourceAsStream("/" + var0);
 				if (var5 == null) {
 					return false;
@@ -3462,8 +3451,6 @@ public final class Game extends GameCanvas implements Runnable {
 		setColor(0);
 		fillRect(0, 0, 128, 128);
 		Method109(0, 0, 0, true);
-		boolean var0 = false;
-		boolean var1 = false;
 		if (Field147 != null) {
 			drawImage(Field147, 17, 0, 0);
 		}
@@ -6572,7 +6559,6 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		Field406[Field407] = 200;
-		boolean var0 = false;
 	
 		for(int var1 = 0; var1 < 12; var1++) {
 			setColor(Field406[var1], 0, 0);
@@ -6849,7 +6835,6 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method278() {
-		boolean var0 = false;
 		if (Field298[0] > 0x6e0000) {
 			drawImage(Field413, 4, 88, 0);
 		}
@@ -6880,7 +6865,6 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method280() {
-		boolean var0 = false;
 		int var1;
 		int var2;
 		if ((var2 = var1 = 64 - Field398 * Field370 / 100) > 0) {
