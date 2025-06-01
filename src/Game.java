@@ -15,11 +15,11 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field4 = 0;
 	public static int Field5 = 0;
 	public static final short[][] Field6 = new short[][] {{53, -6, -5}, {48}, {-7}, {52, -3}, {54, -4}, {50, -1}, {56, -2}, {49}, {51}, {55}, {57}};
-	private static byte[] Field7;
+	private static byte[] pngTemplate;
 	private static int Field8;
 	private static int Field9;
 	private static int Field10;
-	private static byte[] Field11;
+	private static byte[] pplData;
 	public static boolean Field12;
 	public static long Field13;
 	public static long Field14;
@@ -49,14 +49,14 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean Field38;
 	public static byte[][] bfcReservedData; // reserve data to RAM for future use (prevent reloading from bfc)
 	public static int Field40 = 0;
-	public static short[] bfcHeadFilenames;
-	public static byte[] bfcHeadMemStates;
-	public static int[] bfcHeadOffsets;
-	public static byte[] bfcHeadLocations;
-	public static int[] bfcHeadSizes;
+	public static short[] bfcHeadHashes; // hashed string
+	public static byte[] bfcHeadMemStates; // preserve or not
+	public static int[] bfcHeadOffsets; // offset from start of N.bfc
+	public static byte[] bfcHeadLocations; // N.bfc
+	public static int[] bfcHeadSizes; // size of file contents
 	public static int bfcHeadNumEntries;
-	private static int bfcXorValue = 0x1021; // used for filename encoding table generating
-	private static int[] bfcEncTable = new int[256]; // filename encoding table (we'll encode strings into 16-bit value)
+	private static int bfcXorValue = 0x1021; // used for filename hashing table generating
+	private static int[] bfcHashTable = new int[256]; // filename hashing table (we'll hash strings into 16-bit value)
 	public static String[] Field49;
 	public static byte[] Field50;
 	public static int Field51 = -1;
@@ -514,8 +514,8 @@ public final class Game extends GameCanvas implements Runnable {
 		midlet.exit();
 	}
 	
-	public static final void Method1() {
-		Method263();
+	public static final void throbber() {
+		throbberNextFrame();
 	}
 	
 	public static final void Method2() {
@@ -579,86 +579,86 @@ public final class Game extends GameCanvas implements Runnable {
 		Field5 = 0;
 	}
 	
-	public static final byte[] Method8(byte[] var0, short var1) {
-		if (Field7 == null) {
-			Field7 = Method38((short)-8473);
+	public static final byte[] decodeImageData(byte[] pimData, short ppl) {
+		if (pngTemplate == null) {
+			pngTemplate = loadFile8ByHash((short)0xdee7);
 		}
 	
-		Method10(var1);
-		if ((var0[0] & 3) != 3) {
+		loadPalette(ppl);
+		if ((pimData[0] & 3) != 3) {
 			return null;
 		} else {
-			int var2 = var0.length - 18;
-			byte[] var4 = new byte[33 + 12 + Field9 * 3 + 13 * (Field8 & 1) + 12 + var2 + 4 + 12];
+			int idatLen = pimData.length - 18;
+			byte[] pngData = new byte[33 + 12 + Field9 * 3 + 13 * (Field8 & 1) + 12 + idatLen + 4 + 12];
 			int var5 = 0;
-			System.arraycopy(Field7, 0, var4, 0, 29);
-			System.arraycopy(var0, 2, var4, 18, 2);
-			System.arraycopy(var0, 4, var4, 22, 2);
-			System.arraycopy(var0, 6, var4, 29, 4);
-			System.arraycopy(Method9(Field9 * 3), 0, var4, 33, 4);
-			System.arraycopy(Field7, 42, var4, 37, 4);
-			System.arraycopy(Field11, 0, var4, 41, Field11.length);
-			var5 = 41 + Field11.length;
-			System.arraycopy(Method9(Field10), 0, var4, var5, 4);
+			System.arraycopy(pngTemplate, 0, pngData, 0, 29);
+			System.arraycopy(pimData, 2, pngData, 18, 2);
+			System.arraycopy(pimData, 4, pngData, 22, 2);
+			System.arraycopy(pimData, 6, pngData, 29, 4);
+			System.arraycopy(intToByteArray(Field9 * 3), 0, pngData, 33, 4);
+			System.arraycopy(pngTemplate, 42, pngData, 37, 4);
+			System.arraycopy(pplData, 0, pngData, 41, pplData.length);
+			var5 = 41 + pplData.length;
+			System.arraycopy(intToByteArray(Field10), 0, pngData, var5, 4);
 			var5 += 4;
 			if ((Field8 & 1) == 1) {
-				System.arraycopy(Field7, 29, var4, var5, 13);
+				System.arraycopy(pngTemplate, 29, pngData, var5, 13);
 				var5 += 13;
 			}
 	
-			System.arraycopy(Method9(var2 + 4), 0, var4, var5, 4);
-			System.arraycopy(Field7, 46, var4, var5 + 4, 4);
-			System.arraycopy(var0, 18, var4, var5 + 8, var2);
-			var5 += var2 + 8;
-			System.arraycopy(var0, 14, var4, var5, 4);
-			System.arraycopy(var0, 10, var4, var5 + 4, 4);
-			System.arraycopy(Field7, 52, var4, var5 + 8, 12);
-			Field11 = null;
+			System.arraycopy(intToByteArray(idatLen + 4), 0, pngData, var5, 4);
+			System.arraycopy(pngTemplate, 46, pngData, var5 + 4, 4);
+			System.arraycopy(pimData, 18, pngData, var5 + 8, idatLen);
+			var5 += idatLen + 8;
+			System.arraycopy(pimData, 14, pngData, var5, 4);
+			System.arraycopy(pimData, 10, pngData, var5 + 4, 4);
+			System.arraycopy(pngTemplate, 52, pngData, var5 + 8, 12);
+			pplData = null;
 			System.gc();
-			return var4;
+			return pngData;
 		}
 	}
 	
-	public static final byte[] Method9(int var0) {
-		byte[] var1 = new byte[4];
-		var1[0] = (byte)(var0 >> 24 & 0xff);
-		var1[1] = (byte)(var0 >> 16 & 0xff);
-		var1[2] = (byte)(var0 >> 8 & 0xff);
-		var1[3] = (byte)(var0 & 0xff);
-		return var1;
+	public static final byte[] intToByteArray(int i) {
+		byte[] b = new byte[4];
+		b[0] = (byte)(i >> 24 & 0xff);
+		b[1] = (byte)(i >> 16 & 0xff);
+		b[2] = (byte)(i >> 8 & 0xff);
+		b[3] = (byte)(i & 0xff);
+		return b;
 	}
 	
-	public static final void Method10(short var0) {
-		Method45(var0);
+	public static final void loadPalette(short ppl) {
+		Method45(ppl);
 		Field8 = Method51();
 		Field9 = 1 + Method50();
 		Field10 = Method52();
-		Field11 = new byte[Field9 * 3];
-		Method47(Field11, 0, Field11.length);
+		pplData = new byte[Field9 * 3];
+		Method47(pplData, 0, pplData.length);
 	}
 	
-	public static final Image Method11(String var0, String var1) {
-		return Method12(bfcEncodeFilename(var0), bfcEncodeFilename(var1));
+	public static final Image loadImage(String pim, String ppl) {
+		return loadImageByHash(bfcHashFilename(pim), bfcHashFilename(ppl));
 	}
 	
-	public static final Image Method12(short var0, short var1) {
-		return Method13(var0, var1);
+	public static final Image loadImageByHash(short pim, short ppl) {
+		return decodeImageByHash(pim, ppl);
 	}
 	
-	public static final Image Method13(short var0, short var1) {
-		Object var2 = null;
-		byte[] var3 = Method39(var0);
-		if (var3 == null) {
+	public static final Image decodeImageByHash(short pim, short ppl) {
+		Object o = null;
+		byte[] pimData = getFile8ByHash(pim);
+		if (pimData == null) {
 			return null;
 		} else {
-			if (var3[0] != 0x89 && var3[1] != 'P') {
-				var3 = Method8(var3, var1);
+			if (pimData[0] != 0x89 && pimData[1] != 'P') {
+				pimData = decodeImageData(pimData, ppl);
 			}
 	
-			Image var4 = Image.createImage(var3, 0, var3.length);
+			Image img = Image.createImage(pimData, 0, pimData.length);
 			System.gc();
 			sleep(10L);
-			return var4;
+			return img;
 		}
 	}
 	
@@ -671,20 +671,20 @@ public final class Game extends GameCanvas implements Runnable {
 		Method17();
 	}
 	
-	public static final void sleep(long var0) {
+	public static final void sleep(long ms) {
 		try {
-			Thread.sleep(var0);
-		} catch (Exception var2) {
+			Thread.sleep(ms);
+		} catch (Exception e) {
 		}
 	}
 	
 	public static final void Method16() {
-		long var0 = Runtime.getRuntime().freeMemory();
+		long initFreeMem = Runtime.getRuntime().freeMemory();
 		System.gc();
 	
-		for(int var2 = 0; var2 < 10; var2++) {
+		for(int i = 0; i < 10; i++) {
 			Thread.yield();
-			if (Runtime.getRuntime().freeMemory() < var0) {
+			if (Runtime.getRuntime().freeMemory() < initFreeMem) {
 				return;
 			}
 		}
@@ -809,7 +809,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return -1;
 		} else {
 			if (Field34) {
-				Method1();
+				throbber();
 			}
 	
 			Field27[var0] = var2;
@@ -831,7 +831,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return -1;
 		} else {
 			if (Field34) {
-				Method1();
+				throbber();
 			}
 	
 			Field27[var0] = var2;
@@ -1128,9 +1128,9 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final int Method32(short var0) {
+	public static final int getFilenameIndex(short var0) {
 		for(int var1 = 0; var1 < bfcHeadNumEntries; var1++) {
-			if (bfcHeadFilenames[var1] == var0) {
+			if (bfcHeadHashes[var1] == var0) {
 				return var1;
 			}
 		}
@@ -1171,7 +1171,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void bfcLoadHead() {
 		Field36 = -1;
 		Field35 = 0;
-		bfcGenEncTable();
+		bfcGenHashTable();
 	
 		try {
 			String file = "/head.bfc";
@@ -1179,14 +1179,14 @@ public final class Game extends GameCanvas implements Runnable {
 
 			int numEntries = Field32.readUnsignedShort();
 			bfcHeadNumEntries = numEntries;
-			bfcHeadFilenames = new short[numEntries];
+			bfcHeadHashes = new short[numEntries];
 			bfcHeadMemStates = new byte[numEntries];
 			bfcHeadOffsets = new int[numEntries];
 			bfcHeadLocations = new byte[numEntries];
 			bfcHeadSizes = new int[numEntries];
 	
 			for(int i = 0; i < numEntries; i++) {
-				bfcHeadFilenames[i] = (short)Field32.readUnsignedShort();
+				bfcHeadHashes[i] = (short)Field32.readUnsignedShort();
 				bfcHeadMemStates[i] = Field32.readByte();
 				bfcHeadOffsets[i] = Field32.readUnsignedByte() << 16 | Field32.readUnsignedByte() << 8 | Field32.readUnsignedByte();
 				bfcHeadLocations[i] = (byte)Field32.readUnsignedByte();
@@ -1198,7 +1198,7 @@ public final class Game extends GameCanvas implements Runnable {
 		bfcInitReservedData(bfcHeadNumEntries);
 	}
 	
-	public static final void bfcGenEncTable() {
+	public static final void bfcGenHashTable() {
 		for(int i = 0; i < 256; ++i) {
 			int val = 0;
 			int x = i << 8;
@@ -1214,26 +1214,26 @@ public final class Game extends GameCanvas implements Runnable {
 				val &= 0xffff;
 			}
 	
-			bfcEncTable[i] = val;
+			bfcHashTable[i] = val;
 		}
 	}
 	
-	public static final short bfcEncodeFilename(String file) {
+	public static final short bfcHashFilename(String file) {
 		int val = 0xffff;
 	
 		for(int i = 0; i < file.length(); i++) {
 			char c = file.charAt(i);
 			byte b = (byte)(c >> 8);
-			val = (bfcEncTable[(b ^ val >> 8) & 0xff] ^ val << 8) & 0xffff;
+			val = (bfcHashTable[(b ^ val >> 8) & 0xff] ^ val << 8) & 0xffff;
 			b = (byte)(c & 0xff);
-			val = (bfcEncTable[(b ^ val >> 8) & 0xff] ^ val << 8) & 0xffff;
+			val = (bfcHashTable[(b ^ val >> 8) & 0xff] ^ val << 8) & 0xffff;
 		}
 	
 		return (short)(val & 0xffff);
 	}
 	
-	public static final byte[] Method38(short var0) {
-		if (!Method45(var0)) {
+	public static final byte[] loadFile8ByHash(short fn_hash) {
+		if (!Method45(fn_hash)) {
 			return null;
 		} else {
 			byte[] var1 = new byte[Field33];
@@ -1242,17 +1242,17 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final byte[] Method39(short var0) {
-		int var1 = Method32(var0);
-		if (var1 < 0) {
+	public static final byte[] getFile8ByHash(short fn_hash) {
+		int i = getFilenameIndex(fn_hash);
+		if (i < 0) {
 			return null;
 		} else {
-			return bfcReservedData[var1] != null ? bfcReservedData[var1] : Method38(var0);
+			return bfcReservedData[i] != null ? bfcReservedData[i] : loadFile8ByHash(fn_hash);
 		}
 	}
 	
 	public static final short[] loadFile16(String file) {
-		return Method41(bfcEncodeFilename(file));
+		return Method41(bfcHashFilename(file));
 	}
 	
 	public static final short[] Method41(short var0) {
@@ -1270,7 +1270,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final int[] Method42(String var0) {
-		return Method43(bfcEncodeFilename(var0));
+		return Method43(bfcHashFilename(var0));
 	}
 	
 	public static final int[] Method43(short var0) {
@@ -1288,7 +1288,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final boolean Method44(String var0) {
-		if (Method45(bfcEncodeFilename(var0))) {
+		if (Method45(bfcHashFilename(var0))) {
 			return true;
 		} else {
 			try {
@@ -1306,13 +1306,13 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final boolean Method45(short var0) {
+	public static final boolean Method45(short fn_hash) {
 		if (Field34) {
-			Method1();
+			throbber();
 		}
 	
-		int var1;
-		Field37 = var1 = Method32(var0);
+		int var1 = getFilenameIndex(fn_hash);
+		Field37 = var1;
 		Field40 = 0;
 		Field38 = false;
 		if (var1 >= 0 && bfcReservedData[var1] != null) {
@@ -1669,7 +1669,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field54 = -1;
 	}
 	
-	public static final void loadSoftKeyImage(int var0, Image var1) {
+	public static final void setSoftKeyImage(int var0, Image var1) {
 		if (Field57 != null) {
 			if (var0 >= 0 && var0 < Field57.length) {
 				Field57[var0] = var1;
@@ -1696,13 +1696,13 @@ public final class Game extends GameCanvas implements Runnable {
 		Field64 = new byte[var0][];
 	}
 	
-	public static final void loadFont(int var0, short var1, short var2, short var3, byte var4, short var5, int var6, int var7) {
+	public static final void loadFontByHash(int var0, short var1, short var2, short var3, byte var4, short var5, int var6, int var7) {
 		Field65[var0] = new short[230];
 		Field64[var0] = new byte[230];
-		byte[] var8 = Method38(var3);
+		byte[] var8 = loadFile8ByHash(var3);
 		short[] var9 = Method41(var5);
 		int var10 = var9.length;
-		Field58[var0] = Method12(var1, var2);
+		Field58[var0] = loadImageByHash(var1, var2);
 		Field63[var0] = new short[var10];
 		boolean var11 = false;
 	
@@ -2570,7 +2570,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field97 = new Image[3];
 	
 			for(int var1 = 0; var1 < 3; var1++) {
-				Field97[var1] = Method11("scrollBar" + var1 + ".pim", "scrollBar" + var1 + ".ppl");
+				Field97[var1] = loadImage("scrollBar" + var1 + ".pim", "scrollBar" + var1 + ".ppl");
 			}
 		}
 	
@@ -2629,9 +2629,9 @@ public final class Game extends GameCanvas implements Runnable {
 		Field102 = Method56(86, -1)[level];
 		String var2 = "planet";
 		var2 = var2 + level % 2 + "_" + Field318 % 5;
-		Field99 = Method11(var2 + ".pim", var2 + ".ppl");
-		Field100 = Method11("outside.pim", "outside.ppl");
-		Field101 = Method11("shipSmall.pim", "shipSmall.ppl");
+		Field99 = loadImage(var2 + ".pim", var2 + ".ppl");
+		Field100 = loadImage("outside.pim", "outside.ppl");
+		Field101 = loadImage("shipSmall.pim", "shipSmall.ppl");
 		Field104 = 128;
 		Field105 = 128 - Field99.getHeight() * 4 / 5;
 		if (Field105 < 32) {
@@ -2642,8 +2642,8 @@ public final class Game extends GameCanvas implements Runnable {
 		Field107 = 70;
 		if (Field422 == null) {
 			Field422 = new Image[2];
-			Field422[0] = Method11("flame0.pim", "flame0.ppl");
-			Field422[1] = Method11("flame1.pim", "flame1.ppl");
+			Field422[0] = loadImage("flame0.pim", "flame0.ppl");
+			Field422[1] = loadImage("flame1.pim", "flame1.ppl");
 		}
 	
 		if (Field103 == null) {
@@ -2802,21 +2802,21 @@ public final class Game extends GameCanvas implements Runnable {
 		Field117 = var0;
 		switch (var0) {
 			case 0:
-				Field110 = Method11("eidos.pim", "eidos.ppl");
+				Field110 = loadImage("eidos.pim", "eidos.ppl");
 				Field116 = millis() + 2500L;
 				return;
 			case 1:
-				Field111 = Method11("eidos_legal_line.pim", "eidos_legal_line.ppl");
+				Field111 = loadImage("eidos_legal_line.pim", "eidos_legal_line.ppl");
 				Field116 = millis() + 2500L;
 				return;
 			case 2:
 			case 3:
 				if (Field110 == null) {
-					Field110 = Method11("pmback.pim", "pmback.ppl");
+					Field110 = loadImage("pmback.pim", "pmback.ppl");
 				}
 	
 				if (Field112 == null) {
-					Field112 = Method11("pmrocket.pim", "pmrocket.ppl");
+					Field112 = loadImage("pmrocket.pim", "pmrocket.ppl");
 				}
 	
 				Field113 = 42;
@@ -2831,7 +2831,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field116 = millis() + 10000L;
 				return;
 			case 5:
-				Field110 = Method11("mon.pim", "mon.ppl");
+				Field110 = loadImage("mon.pim", "mon.ppl");
 				Field116 = millis() + 2000L;
 				return;
 			default:
@@ -3492,8 +3492,8 @@ public final class Game extends GameCanvas implements Runnable {
 				Field103 = Method57(0x1000f);
 			}
 	
-			Field147 = Method11("gamelogo.pim", "gamelogo.ppl");
-			Field148 = Method11("gamelogo2.pim", "gamelogo2.ppl");
+			Field147 = loadImage("gamelogo.pim", "gamelogo.ppl");
+			Field148 = loadImage("gamelogo2.pim", "gamelogo2.ppl");
 			Method107(1, 50, 128, 128);
 			Method227(8);
 			Field393 = false;
@@ -3602,30 +3602,30 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method148() {
 		if (Field179 == null) {
 			Field179 = new Image[2];
-			Field179[0] = Method11("eyeLWiz.pim", "eyeLWiz.ppl");
-			Field179[1] = Method11("eyeLWaz.pim", "eyeLWaz.ppl");
+			Field179[0] = loadImage("eyeLWiz.pim", "eyeLWiz.ppl");
+			Field179[1] = loadImage("eyeLWaz.pim", "eyeLWaz.ppl");
 		}
 	
 		if (Field181 == null) {
 			Field181 = new Image[2];
-			Field181[0] = Method11("eyeRWiz.pim", "eyeRWiz.ppl");
-			Field181[1] = Method11("eyeRWaz.pim", "eyeRWaz.ppl");
+			Field181[0] = loadImage("eyeRWiz.pim", "eyeRWiz.ppl");
+			Field181[1] = loadImage("eyeRWaz.pim", "eyeRWaz.ppl");
 		}
 	
 		if (Field180 == null) {
 			Field180 = new Image[2];
-			Field180[0] = Method11("eyeMWiz.pim", "eyeMWiz.ppl");
-			Field180[1] = Method11("eyeMWaz.pim", "eyeMWaz.ppl");
+			Field180[0] = loadImage("eyeMWiz.pim", "eyeMWiz.ppl");
+			Field180[1] = loadImage("eyeMWaz.pim", "eyeMWaz.ppl");
 		}
 	
 		if (Field182 == null) {
 			Field182 = new Image[2];
-			Field182[0] = Method11("eyeCWiz.pim", "eyeCWiz.ppl");
-			Field182[1] = Method11("eyeCWaz.pim", "eyeCWaz.ppl");
+			Field182[0] = loadImage("eyeCWiz.pim", "eyeCWiz.ppl");
+			Field182[1] = loadImage("eyeCWaz.pim", "eyeCWaz.ppl");
 		}
 	
 		if (Field186 == null) {
-			Field186 = Method11("mouth.pim", "mouth.ppl");
+			Field186 = loadImage("mouth.pim", "mouth.ppl");
 		}
 	
 		if (Field183 == null) {
@@ -3633,8 +3633,8 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			for(int var0 = 0; var0 < Field183.length; var0++) {
 				Field183[var0] = new Image[2];
-				Field183[var0][0] = Method11("mouthWiz_" + var0 + ".pim", "mouthWiz_" + var0 + ".ppl");
-				Field183[var0][1] = Method11("mouthWaz_" + var0 + ".pim", "mouthWaz_" + var0 + ".ppl");
+				Field183[var0][0] = loadImage("mouthWiz_" + var0 + ".pim", "mouthWiz_" + var0 + ".ppl");
+				Field183[var0][1] = loadImage("mouthWaz_" + var0 + ".pim", "mouthWaz_" + var0 + ".ppl");
 			}
 		}
 	
@@ -3646,16 +3646,16 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			for(int var0 = 1; var0 < Field184.length; var0++) {
 				Field184[var0] = new Image[2];
-				Field184[var0][0] = Method11("eyesWiz_" + var0 + ".pim", "eyesWiz_" + var0 + ".ppl");
-				Field184[var0][1] = Method11("eyesWaz_" + var0 + ".pim", "eyesWaz_" + var0 + ".ppl");
+				Field184[var0][0] = loadImage("eyesWiz_" + var0 + ".pim", "eyesWiz_" + var0 + ".ppl");
+				Field184[var0][1] = loadImage("eyesWaz_" + var0 + ".pim", "eyesWaz_" + var0 + ".ppl");
 			}
 	
 			Field185 = new Image[8][];
 	
 			for(int var1 = 1; var1 < Field185.length; var1++) {
 				Field185[var1] = new Image[2];
-				Field185[var1][0] = Method11("eyesWiz_C" + var1 + ".pim", "eyesWiz_C" + var1 + ".ppl");
-				Field185[var1][1] = Method11("eyesWaz_C" + var1 + ".pim", "eyesWaz_C" + var1 + ".ppl");
+				Field185[var1][0] = loadImage("eyesWiz_C" + var1 + ".pim", "eyesWiz_C" + var1 + ".ppl");
+				Field185[var1][1] = loadImage("eyesWaz_C" + var1 + ".pim", "eyesWaz_C" + var1 + ".ppl");
 			}
 		}
 	
@@ -3963,13 +3963,13 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method158() {
 		if (Field196 == null) {
-			Field196 = Method11("fuse.pim", "fuse.ppl");
+			Field196 = loadImage("fuse.pim", "fuse.ppl");
 		}
 	
 		if (Field197 == null) {
 			Field197 = new Image[2];
-			Field197[0] = Method11("bombbase.pim", "bombbase.ppl");
-			Field197[1] = Method11("bombbutton.pim", "bombbutton.ppl");
+			Field197[0] = loadImage("bombbase.pim", "bombbase.ppl");
+			Field197[1] = loadImage("bombbutton.pim", "bombbutton.ppl");
 		}
 	
 	}
@@ -4247,7 +4247,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method174() {
 		if (Field230 == null && Field229 != null && Field229.length > 0) {
-			Field230 = Method11("grabber.pim", "grabber.ppl");
+			Field230 = loadImage("grabber.pim", "grabber.ppl");
 		}
 	
 	}
@@ -4532,8 +4532,8 @@ public final class Game extends GameCanvas implements Runnable {
 		if (Field245 != null && Field245.length != 0) {
 			if (Field241 == null) {
 				Field241 = new Image[2];
-				Field241[0] = Method11("spiderC.pim", "spiderC.ppl");
-				Field241[1] = Method11("spiderD.pim", "spiderD.ppl");
+				Field241[0] = loadImage("spiderC.pim", "spiderC.ppl");
+				Field241[1] = loadImage("spiderD.pim", "spiderD.ppl");
 			}
 	
 			if (Field239 == null) {
@@ -4541,8 +4541,8 @@ public final class Game extends GameCanvas implements Runnable {
 				Field240 = new Image[6];
 	
 				for(int var0 = 0; var0 <= 5; var0++) {
-					Field239[var0] = Method11("bird_left" + var0 + ".pim", "bird_left" + var0 + ".ppl");
-					Field240[var0] = Method11("bird_right" + var0 + ".pim", "bird_right" + var0 + ".ppl");
+					Field239[var0] = loadImage("bird_left" + var0 + ".pim", "bird_left" + var0 + ".ppl");
+					Field240[var0] = loadImage("bird_right" + var0 + ".pim", "bird_right" + var0 + ".ppl");
 				}
 			}
 	
@@ -4550,7 +4550,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field236 = new Image[3];
 	
 				for(int var1 = 0; var1 < 3; var1++) {
-					Field236[var1] = Method11("pointy_roll_" + var1 + ".pim", "pointy_roll_" + var1 + ".ppl");
+					Field236[var1] = loadImage("pointy_roll_" + var1 + ".pim", "pointy_roll_" + var1 + ".ppl");
 				}
 			}
 	
@@ -4558,7 +4558,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field237 = new Image[2];
 	
 				for(int var2 = 0; var2 < 2; var2++) {
-					Field237[var2] = Method11("pointy_eyes_" + var2 + ".pim", "pointy_eyes_" + var2 + ".ppl");
+					Field237[var2] = loadImage("pointy_eyes_" + var2 + ".pim", "pointy_eyes_" + var2 + ".ppl");
 				}
 			}
 	
@@ -4566,7 +4566,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field238 = new Image[2];
 	
 				for(int var3 = 0; var3 < 2; var3++) {
-					Field238[var3] = Method11("pointy_mouth_" + var3 + ".pim", "pointy_mouth_" + var3 + ".ppl");
+					Field238[var3] = loadImage("pointy_mouth_" + var3 + ".pim", "pointy_mouth_" + var3 + ".ppl");
 				}
 			}
 	
@@ -4830,13 +4830,13 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method203() {
 		if (Field278 == null) {
-			Field278 = Method11("rocket.pim", "rocket.ppl");
+			Field278 = loadImage("rocket.pim", "rocket.ppl");
 		}
 	
 		if (Field279 == null) {
 			Field279 = new Image[2];
-			Field279[0] = Method11("vertFlame0.pim", "vertFlame0.ppl");
-			Field279[1] = Method11("vertFlame1.pim", "vertFlame1.ppl");
+			Field279[0] = loadImage("vertFlame0.pim", "vertFlame0.ppl");
+			Field279[1] = loadImage("vertFlame1.pim", "vertFlame1.ppl");
 		}
 	
 	}
@@ -4855,7 +4855,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field283 = new Image[7];
 	
 			for(int var0 = 0; var0 < Field283.length; var0++) {
-				Field283[var0] = Method11("sign" + var0 + ".pim", "sign" + var0 + ".ppl");
+				Field283[var0] = loadImage("sign" + var0 + ".pim", "sign" + var0 + ".ppl");
 			}
 		}
 	
@@ -5538,7 +5538,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field356 = new Image[5];
 	
 		for(int var1 = 0; var1 < 5; var1++) {
-			Field356[var1] = Method11("bg_" + var0 + "_" + var1 + ".pim", "bg_" + var0 + "_" + var1 + ".ppl");
+			Field356[var1] = loadImage("bg_" + var0 + "_" + var1 + ".pim", "bg_" + var0 + "_" + var1 + ".ppl");
 		}
 	
 		Field364 = Field365[var0];
@@ -5808,25 +5808,25 @@ public final class Game extends GameCanvas implements Runnable {
 			Field388[0] = new Image[2];
 	
 			for(int var0 = 0; var0 < 2; var0++) {
-				Field388[0][var0] = Method11("wiz" + var0 + ".pim", "wiz" + var0 + ".ppl");
+				Field388[0][var0] = loadImage("wiz" + var0 + ".pim", "wiz" + var0 + ".ppl");
 			}
 	
 			Field388[1] = new Image[2];
 	
 			for(int var1 = 0; var1 < 2; var1++) {
-				Field388[1][var1] = Method11("waz" + var1 + ".pim", "waz" + var1 + ".ppl");
+				Field388[1][var1] = loadImage("waz" + var1 + ".pim", "waz" + var1 + ".ppl");
 			}
 	
 			Field388[2] = new Image[2];
 	
 			for(int var2 = 0; var2 < 2; var2++) {
-				Field388[2][var2] = Method11("purple" + var2 + ".pim", "purple" + var2 + ".ppl");
+				Field388[2][var2] = loadImage("purple" + var2 + ".pim", "purple" + var2 + ".ppl");
 			}
 	
 			Field388[3] = new Image[2];
 	
 			for(int var3 = 0; var3 < 2; var3++) {
-				Field388[3][var3] = Method11("hal" + var3 + ".pim", "hal" + var3 + ".ppl");
+				Field388[3][var3] = loadImage("hal" + var3 + ".pim", "hal" + var3 + ".ppl");
 			}
 	
 			Method245();
@@ -6528,16 +6528,16 @@ public final class Game extends GameCanvas implements Runnable {
 		bfcLoadHead();
 		loadRecordData();
 		setFontNum(4);
-		loadFont(3, (short)0xb6ce, (short)0x7b1d, (short)0xc674, (byte)4, (short)0x88a8, 1, -2);
-		loadFont(1, (short)0xe878, (short)0x25ab, (short)0x98c2, (byte)3, (short)0xd61e, 1, -1);
-		loadFont(2, (short)0xa1c0, (short)0x6c13, (short)0xd17a, (byte)3, (short)0x9fa6, 1, -1);
-		loadFont(0, (short)0x86ec, (short)0x4b3f, (short)0xf656, (byte)3, (short)0xb88a, -1, -1);
+		loadFontByHash(3, (short)0xb6ce, (short)0x7b1d, (short)0xc674, (byte)4, (short)0x88a8, 1, -2);
+		loadFontByHash(1, (short)0xe878, (short)0x25ab, (short)0x98c2, (byte)3, (short)0xd61e, 1, -1);
+		loadFontByHash(2, (short)0xa1c0, (short)0x6c13, (short)0xd17a, (byte)3, (short)0x9fa6, 1, -1);
+		loadFontByHash(0, (short)0x86ec, (short)0x4b3f, (short)0xf656, (byte)3, (short)0xb88a, -1, -1);
 		initSoftKeyImages();
-		loadSoftKeyImage(2, Method12((short)0xe4f2, (short)0x2921));
-		loadSoftKeyImage(1, Method12((short)0x31d7, (short)0xfc04));
-		loadSoftKeyImage(0, Method12((short)0x9207, (short)0x5fd4));
-		loadSoftKeyImage(3, Method12((short)0x0545, (short)0xc896));
-		loadSoftKeyImage(4, Method12((short)0x5c21, (short)0x91f2));
+		setSoftKeyImage(2, loadImageByHash((short)0xe4f2, (short)0x2921));
+		setSoftKeyImage(1, loadImageByHash((short)0x31d7, (short)0xfc04));
+		setSoftKeyImage(0, loadImageByHash((short)0x9207, (short)0x5fd4));
+		setSoftKeyImage(3, loadImageByHash((short)0x0545, (short)0xc896));
+		setSoftKeyImage(4, loadImageByHash((short)0x5c21, (short)0x91f2));
 	}
 	
 	public static final void Method261() {
@@ -6561,7 +6561,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	}
 	
-	public static final void Method263() {
+	public static final void throbberNextFrame() {
 		setColor(0, 0, 0);
 		fillRect(0, 0, 128, 128);
 		Field407--;
@@ -6700,40 +6700,40 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method274() {
 		if (Field420 == null) {
-			Field420 = Method11("window.pim", "window.ppl");
+			Field420 = loadImage("window.pim", "window.ppl");
 		}
 	
 		if (Field413 == null) {
-			Field413 = Method11("arrow_left.pim", "arrow_left.ppl");
+			Field413 = loadImage("arrow_left.pim", "arrow_left.ppl");
 		}
 	
 		if (Field414 == null) {
-			Field414 = Method11("arrow_right.pim", "arrow_right.ppl");
+			Field414 = loadImage("arrow_right.pim", "arrow_right.ppl");
 		}
 	
 		if (Field418 == null) {
 			Field418 = new Image[3];
 	
 			for(int var0 = 0; var0 < 3; var0++) {
-				Field418[var0] = Method11("inside" + var0 + ".pim", "inside" + var0 + ".ppl");
+				Field418[var0] = loadImage("inside" + var0 + ".pim", "inside" + var0 + ".ppl");
 			}
 		}
 	
 		if (Field419 == null) {
-			Field419 = Method11("inside_lamp.pim", "inside_lamp.ppl");
+			Field419 = loadImage("inside_lamp.pim", "inside_lamp.ppl");
 		}
 	
 		if (Field417 == null) {
 			Field417 = new Image[2];
-			Field417[0] = Method11("piston_top.pim", "piston_top.ppl");
-			Field417[1] = Method11("piston_bottom.pim", "piston_bottom.ppl");
+			Field417[0] = loadImage("piston_top.pim", "piston_top.ppl");
+			Field417[1] = loadImage("piston_bottom.pim", "piston_bottom.ppl");
 		}
 	
 		if (decors == null) {
 			decors = new Image[10];
 	
 			for(int var1 = 0; var1 < decors.length; var1++) {
-				decors[var1] = Method11("shipDecor" + var1 + ".pim", "shipDecor" + var1 + ".ppl");
+				decors[var1] = loadImage("shipDecor" + var1 + ".pim", "shipDecor" + var1 + ".ppl");
 			}
 	
 			decorBackground = loadFile16("decor_background.bin");
@@ -6744,7 +6744,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field415 = new Image[9];
 	
 			for(int var2 = 0; var2 < 9; var2++) {
-				Field415[var2] = Method11("shipicon" + var2 + ".pim", "shipicon" + var2 + ".ppl");
+				Field415[var2] = loadImage("shipicon" + var2 + ".pim", "shipicon" + var2 + ".ppl");
 			}
 		}
 	
@@ -6752,7 +6752,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field416 = new Image[9];
 	
 			for(int var3 = 0; var3 < 9; var3++) {
-				Field416[var3] = Method11("shipicon" + var3 + "b.pim", "shipicon" + var3 + "b.ppl");
+				Field416[var3] = loadImage("shipicon" + var3 + "b.pim", "shipicon" + var3 + "b.ppl");
 			}
 		}
 	
@@ -6978,13 +6978,13 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method282() {
 		if (Field421 == null) {
-			Field421 = Method11("outside.pim", "outside.ppl");
+			Field421 = loadImage("outside.pim", "outside.ppl");
 		}
 	
 		if (Field422 == null) {
 			Field422 = new Image[2];
-			Field422[0] = Method11("flame0.pim", "flame0.ppl");
-			Field422[1] = Method11("flame1.pim", "flame1.ppl");
+			Field422[0] = loadImage("flame0.pim", "flame0.ppl");
+			Field422[1] = loadImage("flame1.pim", "flame1.ppl");
 		}
 	
 		setColor(0);
@@ -7007,7 +7007,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field437 = 1;
 		if (var2 >= 0) {
 			if (Field442 == null) {
-				Field442 = Method11("planet.pim", "planet.ppl");
+				Field442 = loadImage("planet.pim", "planet.ppl");
 			}
 	
 			Field439 = true;
@@ -7016,11 +7016,11 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		if (Field441 == null) {
-			Field441 = Method11("ship.pim", "ship.ppl");
+			Field441 = loadImage("ship.pim", "ship.ppl");
 		}
 	
 		if (Field440 == null) {
-			Field440 = Method11("pointer.pim", "pointer.ppl");
+			Field440 = loadImage("pointer.pim", "pointer.ppl");
 		}
 	
 	}
@@ -7240,7 +7240,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field451 = new Image[4];
 	
 			for(int var0 = 0; var0 < 4; var0++) {
-				Field451[var0] = Method11("static" + var0 + ".pim", "static" + var0 + ".ppl");
+				Field451[var0] = loadImage("static" + var0 + ".pim", "static" + var0 + ".ppl");
 			}
 		}
 	
@@ -7354,12 +7354,12 @@ public final class Game extends GameCanvas implements Runnable {
 		Field463 = new Image[Field470];
 	
 		for(int var2 = 0; var2 < Field470; var2++) {
-			Field463[var2] = Method11(var0[(var2 + var1) % Field470] + ".pim", var0[(var2 + var1) % Field470] + ".ppl");
+			Field463[var2] = loadImage(var0[(var2 + var1) % Field470] + ".pim", var0[(var2 + var1) % Field470] + ".ppl");
 		}
 	
 		Field464 = new Image[2];
-		Field464[0] = Method11("arrow_left.pim", "arrow_left.ppl");
-		Field464[1] = Method11("arrow_right.pim", "arrow_right.ppl");
+		Field464[0] = loadImage("arrow_left.pim", "arrow_left.ppl");
+		Field464[1] = loadImage("arrow_right.pim", "arrow_right.ppl");
 		Method213(10 + Field470 * 2 + 1);
 		Method160(Field470);
 		Field348 = -10;
