@@ -514,6 +514,7 @@ public final class Game extends GameCanvas implements Runnable {
 		midlet.exit();
 	}
 	
+	// funny circle
 	public static final void throbber() {
 		throbberNextFrame();
 	}
@@ -6560,7 +6561,8 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 	}
-	
+
+	// funny circle again	
 	public static final void throbberNextFrame() {
 		setColor(0, 0, 0);
 		fillRect(0, 0, 128, 128);
