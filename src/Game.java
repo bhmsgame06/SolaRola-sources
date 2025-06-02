@@ -582,12 +582,12 @@ public final class Game extends GameCanvas implements Runnable {
 		Field5 = 0;
 	}
 	
-	public static final byte[] decodeImageData(byte[] pimData, short ppl) {
+	public static final byte[] decodeImageData(byte[] pimData, short pplHash) {
 		if(pngTemplate == null) {
 			pngTemplate = loadFile8ByHash((short)0xdee7);
 		}
 	
-		loadPalette(ppl);
+		loadPalette(pplHash);
 
 		if((pimData[0] & 3) != 3) {
 			return null;
@@ -646,8 +646,8 @@ public final class Game extends GameCanvas implements Runnable {
 		return b;
 	}
 	
-	public static final void loadPalette(short ppl) {
-		openFileByHash(ppl);
+	public static final void loadPalette(short pplHash) {
+		openFileByHash(pplHash);
 		pplOptions = readByte();
 		pplColorCount = 1 + readUnsignedByte();
 		pplCRC = readInt();
@@ -655,21 +655,21 @@ public final class Game extends GameCanvas implements Runnable {
 		readBytes(pplData, 0, pplData.length);
 	}
 	
-	public static final Image loadImage(String pim, String ppl) {
-		return loadImageByHash(bfcHashFilename(pim), bfcHashFilename(ppl));
+	public static final Image loadImage(String pimHash, String pplHash) {
+		return loadImageByHash(bfcHashFilename(pimHash), bfcHashFilename(pplHash));
 	}
 	
-	public static final Image loadImageByHash(short pim, short ppl) {
-		return decodeImageByHash(pim, ppl);
+	public static final Image loadImageByHash(short pimHash, short pplHash) {
+		return decodeImageByHash(pimHash, pplHash);
 	}
 	
-	public static final Image decodeImageByHash(short pim, short ppl) {
-		byte[] pimData = getFile8ByHash(pim);
+	public static final Image decodeImageByHash(short pimHash, short pplHash) {
+		byte[] pimData = getFile8ByHash(pimHash);
 		if(pimData == null) {
 			return null;
 		} else {
 			if(pimData[0] != 0x89 && pimData[1] != 'P') {
-				pimData = decodeImageData(pimData, ppl);
+				pimData = decodeImageData(pimData, pplHash);
 			}
 	
 			Image img = Image.createImage(pimData, 0, pimData.length);
@@ -1134,9 +1134,9 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final int getFileIndex(short fn_hash) {
+	public static final int getFileIndex(short fnHash) {
 		for(int i = 0; i < bfcHeadNumEntries; i++) {
-			if(bfcHeadHashes[i] == fn_hash) {
+			if(bfcHeadHashes[i] == fnHash) {
 				return i;
 			}
 		}
@@ -1238,8 +1238,8 @@ public final class Game extends GameCanvas implements Runnable {
 		return (short)(val & 0xffff);
 	}
 	
-	public static final byte[] loadFile8ByHash(short fn_hash) {
-		if(!openFileByHash(fn_hash)) {
+	public static final byte[] loadFile8ByHash(short fnHash) {
+		if(!openFileByHash(fnHash)) {
 			return null;
 		} else {
 			byte[] var1 = new byte[currentSize];
@@ -1248,12 +1248,12 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final byte[] getFile8ByHash(short fn_hash) {
-		int index = getFileIndex(fn_hash);
+	public static final byte[] getFile8ByHash(short fnHash) {
+		int index = getFileIndex(fnHash);
 		if(index < 0) {
 			return null;
 		} else {
-			return bfcReservedData[index] != null ? bfcReservedData[index] : loadFile8ByHash(fn_hash);
+			return bfcReservedData[index] != null ? bfcReservedData[index] : loadFile8ByHash(fnHash);
 		}
 	}
 	
@@ -1261,8 +1261,8 @@ public final class Game extends GameCanvas implements Runnable {
 		return loadFile16ByHash(bfcHashFilename(file));
 	}
 	
-	public static final short[] loadFile16ByHash(short fn_hash) {
-		if(!openFileByHash(fn_hash)) {
+	public static final short[] loadFile16ByHash(short fnHash) {
+		if(!openFileByHash(fnHash)) {
 			return null;
 		} else {
 			short[] arr = new short[currentSize / 2];
@@ -1279,8 +1279,8 @@ public final class Game extends GameCanvas implements Runnable {
 		return loadFile32ByHash(bfcHashFilename(file));
 	}
 	
-	public static final int[] loadFile32ByHash(short fn_hash) {
-		if(!openFileByHash(fn_hash)) {
+	public static final int[] loadFile32ByHash(short fnHash) {
+		if(!openFileByHash(fnHash)) {
 			return null;
 		} else {
 			int[] arr = new int[currentSize / 4];
@@ -1311,12 +1311,12 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final boolean openFileByHash(short fn_hash) {
+	public static final boolean openFileByHash(short fnHash) {
 		if(throbberToggle) {
 			throbber();
 		}
 	
-		int index = getFileIndex(fn_hash);
+		int index = getFileIndex(fnHash);
 		currentIndex = index;
 		currentOffsetReserved = 0;
 		currentReserved = false;
