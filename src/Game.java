@@ -541,16 +541,16 @@ public final class Game extends GameCanvas implements Runnable {
 		return 0x100000;
 	}
 	
-	public final void keyPressed(int var1) {
-		Field4 |= Method3(var1);
-		super.keyPressed(var1);
-		if(var1 == -6) {
+	public final void keyPressed(int keyCode) {
+		Field4 |= Method3(keyCode);
+		super.keyPressed(keyCode);
+		if(keyCode == -6) {
 			Field5 |= 1;
 			Field5 |= 0x0800;
 			Field4 |= 0x0800;
 		}
 	
-		if(var1 == -7) {
+		if(keyCode == -7) {
 			Field5 |= 4;
 			Field5 |= 0x1000;
 			Field4 |= 0x1000;
@@ -558,9 +558,9 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	}
 	
-	public final void keyReleased(int var1) {
-		Field4 &= ~Method3(var1);
-		super.keyReleased(var1);
+	public final void keyReleased(int keyCode) {
+		Field4 &= ~Method3(keyCode);
+		super.keyReleased(keyCode);
 	}
 	
 	public static final boolean Method4(int var0) {
@@ -588,34 +588,49 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		loadPalette(ppl);
+
 		if((pimData[0] & 3) != 3) {
 			return null;
 		} else {
 			int idatLen = pimData.length - 18;
-			byte[] pngData = new byte[33 + 12 + pplColorCount * 3 + 13 * (pplOptions & 1) + 12 + idatLen + 4 + 12];
-			int var5 = 0;
-			System.arraycopy(pngTemplate, 0, pngData, 0, 29);
-			System.arraycopy(pimData, 2, pngData, 18, 2);
-			System.arraycopy(pimData, 4, pngData, 22, 2);
-			System.arraycopy(pimData, 6, pngData, 29, 4);
-			System.arraycopy(i2ba(pplColorCount * 3), 0, pngData, 33, 4);
-			System.arraycopy(pngTemplate, 42, pngData, 37, 4);
-			System.arraycopy(pplData, 0, pngData, 41, pplData.length);
-			var5 = 41 + pplData.length;
-			System.arraycopy(i2ba(pplCRC), 0, pngData, var5, 4);
-			var5 += 4;
+			byte[] pngData = new byte[0x21 + 0x0c + (pplColorCount * 3) + (0x0d * (pplOptions & 1)) + 0x0c + idatLen + 0x04 + 0x0c];
+			int off = 0;
+
+			// PNG sig with IHDR
+			System.arraycopy(pngTemplate, 0x00, pngData, 0x00, 0x1d);
+
+			// width height
+			System.arraycopy(pimData, 0x02, pngData, 0x12, 0x02);
+			System.arraycopy(pimData, 0x04, pngData, 0x16, 0x02);
+
+			// IHDR CRC
+			System.arraycopy(pimData, 0x06, pngData, 0x1d, 0x04);
+
+			// PLTE
+			System.arraycopy(i2ba(pplColorCount * 3), 0x00, pngData, 0x21, 0x04);
+			System.arraycopy(pngTemplate, 0x2a, pngData, 0x25, 0x04);
+			System.arraycopy(pplData, 0x00, pngData, 0x29, pplData.length);
+			off = 41 + pplData.length;
+			System.arraycopy(i2ba(pplCRC), 0x00, pngData, off, 0x04);
+			off += 4;
+
+			// tRNS
 			if((pplOptions & 1) == 1) {
-				System.arraycopy(pngTemplate, 29, pngData, var5, 13);
-				var5 += 13;
+				System.arraycopy(pngTemplate, 0x1d, pngData, off, 0x0d);
+				off += 13;
 			}
 	
-			System.arraycopy(i2ba(idatLen + 4), 0, pngData, var5, 4);
-			System.arraycopy(pngTemplate, 46, pngData, var5 + 4, 4);
-			System.arraycopy(pimData, 18, pngData, var5 + 8, idatLen);
-			var5 += idatLen + 8;
-			System.arraycopy(pimData, 14, pngData, var5, 4);
-			System.arraycopy(pimData, 10, pngData, var5 + 4, 4);
-			System.arraycopy(pngTemplate, 52, pngData, var5 + 8, 12);
+			// IDAT
+			System.arraycopy(i2ba(idatLen + 4), 0x00, pngData, off, 0x04);
+			System.arraycopy(pngTemplate, 0x2e, pngData, off + 4, 0x04);
+			System.arraycopy(pimData, 0x12, pngData, off + 8, idatLen);
+			off += idatLen + 8;
+
+			// IEND
+			System.arraycopy(pimData, 0x0e, pngData, off, 0x04);
+			System.arraycopy(pimData, 0x0a, pngData, off + 4, 0x04);
+			System.arraycopy(pngTemplate, 0x34, pngData, off + 8, 0x0c);
+
 			pplData = null;
 			System.gc();
 			return pngData;
