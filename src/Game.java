@@ -15,10 +15,10 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field4 = 0;
 	public static int Field5 = 0;
 	public static final short[][] Field6 = new short[][] {{53, -6, -5}, {48}, {-7}, {52, -3}, {54, -4}, {50, -1}, {56, -2}, {49}, {51}, {55}, {57}};
-	private static byte[] pngTemplate;
-	private static int Field8;
-	private static int Field9;
-	private static int Field10;
+	private static byte[] pngTemplate; // for getting png from pim/ppl
+	private static int pplOptions;
+	private static int pplColorCount;
+	private static int pplCRC;
 	private static byte[] pplData;
 	public static boolean Field12;
 	public static long Field13;
@@ -40,15 +40,15 @@ public final class Game extends GameCanvas implements Runnable {
 	private static int Field29;
 	private static Player[] Field30;
 	private static Player[] Field31;
-	public static DataInputStream Field32;
-	public static int Field33;
-	public static boolean Field34 = false;
-	public static int Field35 = -1;
-	public static int Field36 = -1;
-	public static int Field37 = -1;
-	public static boolean Field38;
+	public static DataInputStream currentData;
+	public static int currentSize;
+	public static boolean throbberToggle = false;
+	public static int currentOffset = -1;
+	public static int currentLocation = -1;
+	public static int currentIndex = -1;
+	public static boolean currentReserved;
 	public static byte[][] bfcReservedData; // reserve data to RAM for future use (prevent reloading from bfc)
-	public static int Field40 = 0;
+	public static int currentOffsetReserved = 0;
 	public static short[] bfcHeadHashes; // hashed string
 	public static byte[] bfcHeadMemStates; // preserve or not
 	public static int[] bfcHeadOffsets; // offset from start of N.bfc
@@ -418,6 +418,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field407 = 9;
 	public static boolean Field408 = false;
 	public static int Field409 = 100;
+	// decors inside ship: socks, flowers, cubes, etc
 	public static short[] decorForeground;
 	public static short[] decorBackground;
 	public static Image[] decors;
@@ -457,6 +458,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field446;
 	public static String Field447;
 	public static String Field448;
+	// trigonometric
 	public static short[] sine;
 	public static short[] cosine;
 	public static Image[] Field451;
@@ -590,24 +592,24 @@ public final class Game extends GameCanvas implements Runnable {
 			return null;
 		} else {
 			int idatLen = pimData.length - 18;
-			byte[] pngData = new byte[33 + 12 + Field9 * 3 + 13 * (Field8 & 1) + 12 + idatLen + 4 + 12];
+			byte[] pngData = new byte[33 + 12 + pplColorCount * 3 + 13 * (pplOptions & 1) + 12 + idatLen + 4 + 12];
 			int var5 = 0;
 			System.arraycopy(pngTemplate, 0, pngData, 0, 29);
 			System.arraycopy(pimData, 2, pngData, 18, 2);
 			System.arraycopy(pimData, 4, pngData, 22, 2);
 			System.arraycopy(pimData, 6, pngData, 29, 4);
-			System.arraycopy(intToByteArray(Field9 * 3), 0, pngData, 33, 4);
+			System.arraycopy(i2ba(pplColorCount * 3), 0, pngData, 33, 4);
 			System.arraycopy(pngTemplate, 42, pngData, 37, 4);
 			System.arraycopy(pplData, 0, pngData, 41, pplData.length);
 			var5 = 41 + pplData.length;
-			System.arraycopy(intToByteArray(Field10), 0, pngData, var5, 4);
+			System.arraycopy(i2ba(pplCRC), 0, pngData, var5, 4);
 			var5 += 4;
-			if((Field8 & 1) == 1) {
+			if((pplOptions & 1) == 1) {
 				System.arraycopy(pngTemplate, 29, pngData, var5, 13);
 				var5 += 13;
 			}
 	
-			System.arraycopy(intToByteArray(idatLen + 4), 0, pngData, var5, 4);
+			System.arraycopy(i2ba(idatLen + 4), 0, pngData, var5, 4);
 			System.arraycopy(pngTemplate, 46, pngData, var5 + 4, 4);
 			System.arraycopy(pimData, 18, pngData, var5 + 8, idatLen);
 			var5 += idatLen + 8;
@@ -620,7 +622,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final byte[] intToByteArray(int i) {
+	public static final byte[] i2ba(int i) {
 		byte[] b = new byte[4];
 		b[0] = (byte)(i >> 24 & 0xff);
 		b[1] = (byte)(i >> 16 & 0xff);
@@ -630,12 +632,12 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void loadPalette(short ppl) {
-		Method45(ppl);
-		Field8 = Method51();
-		Field9 = 1 + Method50();
-		Field10 = Method52();
-		pplData = new byte[Field9 * 3];
-		Method47(pplData, 0, pplData.length);
+		openFileByHash(ppl);
+		pplOptions = readByte();
+		pplColorCount = 1 + readUnsignedByte();
+		pplCRC = readInt();
+		pplData = new byte[pplColorCount * 3];
+		readBytes(pplData, 0, pplData.length);
 	}
 	
 	public static final Image loadImage(String pim, String ppl) {
@@ -733,9 +735,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void saveRecordData() {
-		boolean b = false;
 		byte[] data = new byte[10];
-		boolean b2 = false;
 		data[0] = (byte)(language & 0xff);
 		data[1] = (byte)(language >> 8 & 0xff);
 		data[2] = (byte)(language >> 16 & 0xff);
@@ -803,7 +803,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} else if(var1 == null) {
 			return -1;
 		} else {
-			if(Field34) {
+			if(throbberToggle) {
 				throbber();
 			}
 	
@@ -824,7 +824,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} else if(var1 == null) {
 			return -1;
 		} else {
-			if(Field34) {
+			if(throbberToggle) {
 				throbber();
 			}
 	
@@ -1076,10 +1076,10 @@ public final class Game extends GameCanvas implements Runnable {
 						continue;
 					}
 	
-					boolean var7 = Field34;
-					Field34 = false;
+					boolean var7 = throbberToggle;
+					throbberToggle = false;
 					Method24(var0, Field28[var0], Field27[var0], 0);
-					Field34 = var7;
+					throbberToggle = var7;
 				}
 	
 				Player var9;
@@ -1119,10 +1119,10 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final int getFilenameIndex(short var0) {
-		for(int var1 = 0; var1 < bfcHeadNumEntries; var1++) {
-			if(bfcHeadHashes[var1] == var0) {
-				return var1;
+	public static final int getFileIndex(short fn_hash) {
+		for(int i = 0; i < bfcHeadNumEntries; i++) {
+			if(bfcHeadHashes[i] == fn_hash) {
+				return i;
 			}
 		}
 	
@@ -1131,44 +1131,44 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void bfcInitReservedData(int count) {
 		bfcReservedData = new byte[count][];
-		Field38 = false;
+		currentReserved = false;
 	}
 	
-	public static final void Method34(int var0) {
+	public static final void reserve(int index) {
 		try {
-			Field37 = var0;
-			Field38 = true;
-			Field40 = 0;
-			bfcReservedData[var0] = new byte[Field33];
-			int var1 = 0;
-			int var2 = 0;
-	
-			for(int var3 = Field33; var3 > 0; var2 += var1) {
-				var1 = Field32.read(bfcReservedData[var0], var2, var3);
-				var3 -= var1;
+			currentIndex = index;
+			currentReserved = true;
+			currentOffsetReserved = 0;
+			bfcReservedData[index] = new byte[currentSize];
+
+			int read = 0;
+			int total = 0;	
+			for(int rem = currentSize; rem > 0; total += read) {
+				read = currentData.read(bfcReservedData[index], total, rem);
+				rem -= read;
 			}
 	
-			for(int var4 = 0; var4 < bfcHeadNumEntries; var4++) {
-				if(var4 != var0 && bfcHeadOffsets[var4] == bfcHeadOffsets[var0] && bfcHeadLocations[var4] == bfcHeadLocations[var0]) {
-					bfcReservedData[var4] = bfcReservedData[var0];
+			for(int i = 0; i < bfcHeadNumEntries; i++) {
+				if(i != index && bfcHeadOffsets[i] == bfcHeadOffsets[index] && bfcHeadLocations[i] == bfcHeadLocations[index]) {
+					bfcReservedData[i] = bfcReservedData[index];
 				}
 			}
 	
-			Field35 += Field33;
-		} catch(Exception var5) {
+			currentOffset += currentSize;
+		} catch(Exception e) {
 		}
 	}
 	
 	public static final void bfcLoadHead() {
-		Field36 = -1;
-		Field35 = 0;
+		currentLocation = -1;
+		currentOffset = 0;
 		bfcGenHashTable();
 	
 		try {
 			String file = "/head.bfc";
-			Field32 = new DataInputStream(file.getClass().getResourceAsStream(file));
+			currentData = new DataInputStream(file.getClass().getResourceAsStream(file));
 
-			int numEntries = Field32.readUnsignedShort();
+			int numEntries = currentData.readUnsignedShort();
 			bfcHeadNumEntries = numEntries;
 			bfcHeadHashes = new short[numEntries];
 			bfcHeadMemStates = new byte[numEntries];
@@ -1177,11 +1177,11 @@ public final class Game extends GameCanvas implements Runnable {
 			bfcHeadSizes = new int[numEntries];
 	
 			for(int i = 0; i < numEntries; i++) {
-				bfcHeadHashes[i] = (short)Field32.readUnsignedShort();
-				bfcHeadMemStates[i] = Field32.readByte();
-				bfcHeadOffsets[i] = Field32.readUnsignedByte() << 16 | Field32.readUnsignedByte() << 8 | Field32.readUnsignedByte();
-				bfcHeadLocations[i] = (byte)Field32.readUnsignedByte();
-				bfcHeadSizes[i] = Field33 = Field32.readUnsignedByte() << 16 | Field32.readUnsignedByte() << 8 | Field32.readUnsignedByte();
+				bfcHeadHashes[i] = (short)currentData.readUnsignedShort();
+				bfcHeadMemStates[i] = currentData.readByte();
+				bfcHeadOffsets[i] = currentData.readUnsignedByte() << 16 | currentData.readUnsignedByte() << 8 | currentData.readUnsignedByte();
+				bfcHeadLocations[i] = (byte)currentData.readUnsignedByte();
+				bfcHeadSizes[i] = currentSize = currentData.readUnsignedByte() << 16 | currentData.readUnsignedByte() << 8 | currentData.readUnsignedByte();
 			}
 		} catch(Exception e) {
 		}
@@ -1224,70 +1224,70 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final byte[] loadFile8ByHash(short fn_hash) {
-		if(!Method45(fn_hash)) {
+		if(!openFileByHash(fn_hash)) {
 			return null;
 		} else {
-			byte[] var1 = new byte[Field33];
-			Method47(var1, 0, Field33);
+			byte[] var1 = new byte[currentSize];
+			readBytes(var1, 0, currentSize);
 			return var1;
 		}
 	}
 	
 	public static final byte[] getFile8ByHash(short fn_hash) {
-		int i = getFilenameIndex(fn_hash);
-		if(i < 0) {
+		int index = getFileIndex(fn_hash);
+		if(index < 0) {
 			return null;
 		} else {
-			return bfcReservedData[i] != null ? bfcReservedData[i] : loadFile8ByHash(fn_hash);
+			return bfcReservedData[index] != null ? bfcReservedData[index] : loadFile8ByHash(fn_hash);
 		}
 	}
 	
 	public static final short[] loadFile16(String file) {
-		return Method41(bfcHashFilename(file));
+		return loadFile16ByHash(bfcHashFilename(file));
 	}
 	
-	public static final short[] Method41(short var0) {
-		if(!Method45(var0)) {
+	public static final short[] loadFile16ByHash(short fn_hash) {
+		if(!openFileByHash(fn_hash)) {
 			return null;
 		} else {
-			short[] var1 = new short[Field33 / 2];
+			short[] arr = new short[currentSize / 2];
 	
-			for(int var2 = 0; var2 < var1.length; var2++) {
-				var1[var2] = Method49();
+			for(int i = 0; i < arr.length; i++) {
+				arr[i] = readShort();
 			}
 	
-			return var1;
+			return arr;
 		}
 	}
 	
-	public static final int[] Method42(String var0) {
-		return Method43(bfcHashFilename(var0));
+	public static final int[] loadFile32(String file) {
+		return loadFile32ByHash(bfcHashFilename(file));
 	}
 	
-	public static final int[] Method43(short var0) {
-		if(!Method45(var0)) {
+	public static final int[] loadFile32ByHash(short fn_hash) {
+		if(!openFileByHash(fn_hash)) {
 			return null;
 		} else {
-			int[] var1 = new int[Field33 / 4];
+			int[] arr = new int[currentSize / 4];
 	
-			for(int var2 = 0; var2 < var1.length; var2++) {
-				var1[var2] = Method52();
+			for(int i = 0; i < arr.length; i++) {
+				arr[i] = readInt();
 			}
 	
-			return var1;
+			return arr;
 		}
 	}
 	
-	public static final boolean Method44(String var0) {
-		if(Method45(bfcHashFilename(var0))) {
+	public static final boolean openFile(String file) {
+		if(openFileByHash(bfcHashFilename(file))) {
 			return true;
 		} else {
 			try {
-				InputStream var5 = var0.getClass().getResourceAsStream("/" + var0);
+				InputStream var5 = file.getClass().getResourceAsStream("/" + file);
 				if(var5 == null) {
 					return false;
 				} else {
-					Field32 = new DataInputStream(var5);
+					currentData = new DataInputStream(var5);
 					return true;
 				}
 			} catch(Exception var4) {
@@ -1296,46 +1296,46 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final boolean Method45(short fn_hash) {
-		if(Field34) {
+	public static final boolean openFileByHash(short fn_hash) {
+		if(throbberToggle) {
 			throbber();
 		}
 	
-		int var1 = getFilenameIndex(fn_hash);
-		Field37 = var1;
-		Field40 = 0;
-		Field38 = false;
-		if(var1 >= 0 && bfcReservedData[var1] != null) {
-			Field33 = bfcHeadSizes[var1];
-			Field38 = true;
+		int index = getFileIndex(fn_hash);
+		currentIndex = index;
+		currentOffsetReserved = 0;
+		currentReserved = false;
+		if(index >= 0 && bfcReservedData[index] != null) {
+			currentSize = bfcHeadSizes[index];
+			currentReserved = true;
 			return true;
 		} else {
-			if(var1 != -1) {
-				Field33 = bfcHeadSizes[var1];
-				if(Field36 == bfcHeadLocations[var1] && Field35 <= bfcHeadOffsets[var1]) {
-					Method46(bfcHeadOffsets[var1] - Field35);
-					if(bfcHeadMemStates[var1] >= 0 && bfcReservedData[var1] == null) {
-						Method34(var1);
+			if(index != -1) {
+				currentSize = bfcHeadSizes[index];
+				if(currentLocation == bfcHeadLocations[index] && currentOffset <= bfcHeadOffsets[index]) {
+					skipBytes(bfcHeadOffsets[index] - currentOffset);
+					if(bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null) {
+						reserve(index);
 					}
 	
 					return true;
 				}
 	
 				try {
-					if(Field32 != null) {
-						Method53();
+					if(currentData != null) {
+						closeData();
 					}
 	
-					Field32 = new DataInputStream(instance.getClass().getResourceAsStream("/" + bfcHeadLocations[var1] + ".bfc"));
-					Field32.skip((long)bfcHeadOffsets[var1]);
-					Field36 = bfcHeadLocations[var1];
-					Field35 = bfcHeadOffsets[var1];
-					if(bfcHeadMemStates[var1] >= 0 && bfcReservedData[var1] == null) {
-						Method34(var1);
+					currentData = new DataInputStream(instance.getClass().getResourceAsStream("/" + bfcHeadLocations[index] + ".bfc"));
+					currentData.skip((long)bfcHeadOffsets[index]);
+					currentLocation = bfcHeadLocations[index];
+					currentOffset = bfcHeadOffsets[index];
+					if(bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null) {
+						reserve(index);
 					}
 	
 					return true;
-				} catch(Exception var2) {
+				} catch(Exception e) {
 				}
 			}
 	
@@ -1343,132 +1343,131 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method46(int var0) {
-		if(Field38) {
-			Field40 += var0;
+	public static final void skipBytes(int n) {
+		if(currentReserved) {
+			currentOffsetReserved += n;
 		} else {
-			Field35 += var0;
+			currentOffset += n;
 	
 			try {
-				while(var0 > 0) {
-					var0 = (int)((long)var0 - Field32.skip((long)var0));
+				while(n > 0) {
+					n = (int)((long)n - currentData.skip((long)n));
 				}
-	
-			} catch(Exception var1) {
+			} catch(Exception e) {
 			}
 		}
 	}
 	
-	public static final byte[] Method47(byte[] var0, int var1, int var2) {
-		if(Field38) {
-			System.arraycopy(bfcReservedData[Field37], Field40, var0, var1, var2);
-			Field40 += var2;
-			return var0;
+	public static final byte[] readBytes(byte[] b, int off, int len) {
+		if(currentReserved) {
+			System.arraycopy(bfcReservedData[currentIndex], currentOffsetReserved, b, off, len);
+			currentOffsetReserved += len;
+			return b;
 		} else {
-			Field35 += var2;
+			currentOffset += len;
 	
 			try {
-				for(int var5 = 0; var2 > 0; var1 += var5) {
-					var5 = Field32.read(var0, var1, var2);
-					var2 -= var5;
+				for(int i = 0; len > 0; off += i) {
+					i = currentData.read(b, off, len);
+					len -= i;
 				}
 	
-				return var0;
-			} catch(Exception var4) {
+				return b;
+			} catch(Exception e) {
 				return null;
 			}
 		}
 	}
 	
-	public static final int Method48() {
-		if(Field38) {
-			int var0 = (bfcReservedData[Field37][Field40] & 0xff) << 8 | bfcReservedData[Field37][Field40 + 1] & 0xff;
-			Field40 += 2;
+	public static final int readUnsignedShort() {
+		if(currentReserved) {
+			int var0 = (bfcReservedData[currentIndex][currentOffsetReserved] & 0xff) << 8 | bfcReservedData[currentIndex][currentOffsetReserved + 1] & 0xff;
+			currentOffsetReserved += 2;
 			return var0;
 		} else {
-			Field35 += 2;
+			currentOffset += 2;
 	
 			try {
-				return Field32.readUnsignedShort();
-			} catch(Exception var1) {
+				return currentData.readUnsignedShort();
+			} catch(Exception e) {
 				return -1;
 			}
 		}
 	}
 	
-	public static final short Method49() {
-		if(Field38) {
-			short var0 = (short)(bfcReservedData[Field37][Field40] << 8 | bfcReservedData[Field37][Field40 + 1] & 0xff);
-			Field40 += 2;
+	public static final short readShort() {
+		if(currentReserved) {
+			short var0 = (short)(bfcReservedData[currentIndex][currentOffsetReserved] << 8 | bfcReservedData[currentIndex][currentOffsetReserved + 1] & 0xff);
+			currentOffsetReserved += 2;
 			return var0;
 		} else {
-			Field35 += 2;
+			currentOffset += 2;
 	
 			try {
-				return Field32.readShort();
-			} catch(Exception var1) {
+				return currentData.readShort();
+			} catch(Exception e) {
 				return -1;
 			}
 		}
 	}
 	
-	public static final int Method50() {
-		if(Field38) {
-			int var0 = bfcReservedData[Field37][Field40] & 0xff;
-			Field40++;
+	public static final int readUnsignedByte() {
+		if(currentReserved) {
+			int var0 = bfcReservedData[currentIndex][currentOffsetReserved] & 0xff;
+			currentOffsetReserved++;
 			return var0;
 		} else {
-			Field35++;
+			currentOffset++;
 	
 			try {
-				return Field32.readUnsignedByte();
-			} catch(Exception var1) {
+				return currentData.readUnsignedByte();
+			} catch(Exception e) {
 				return -1;
 			}
 		}
 	}
 	
-	public static final byte Method51() {
-		if(Field38) {
-			byte var0 = bfcReservedData[Field37][Field40];
-			Field40++;
+	public static final byte readByte() {
+		if(currentReserved) {
+			byte var0 = bfcReservedData[currentIndex][currentOffsetReserved];
+			currentOffsetReserved++;
 			return var0;
 		} else {
-			Field35++;
+			currentOffset++;
 	
 			try {
-				return Field32.readByte();
-			} catch(Exception var1) {
+				return currentData.readByte();
+			} catch(Exception e) {
 				return -1;
 			}
 		}
 	}
 	
-	public static final int Method52() {
-		if(Field38) {
-			int var0 = (bfcReservedData[Field37][Field40] & 0xff) << 24 | (bfcReservedData[Field37][Field40 + 1] & 0xff) << 16 | (bfcReservedData[Field37][Field40 + 2] & 0xff) << 8 | bfcReservedData[Field37][Field40 + 3] & 0xff;
-			Field40 += 4;
+	public static final int readInt() {
+		if(currentReserved) {
+			int var0 = (bfcReservedData[currentIndex][currentOffsetReserved] & 0xff) << 24 | (bfcReservedData[currentIndex][currentOffsetReserved + 1] & 0xff) << 16 | (bfcReservedData[currentIndex][currentOffsetReserved + 2] & 0xff) << 8 | bfcReservedData[currentIndex][currentOffsetReserved + 3] & 0xff;
+			currentOffsetReserved += 4;
 			return var0;
 		} else {
-			Field35 += 4;
+			currentOffset += 4;
 	
 			try {
-				return Field32.readInt();
-			} catch(Exception var1) {
+				return currentData.readInt();
+			} catch(Exception e) {
 				return -1;
 			}
 		}
 	}
 	
-	public static final void Method53() {
+	public static final void closeData() {
 		try {
-			Field32.close();
-			Field37 = -1;
-			Field36 = -1;
-		} catch(Exception var0) {
+			currentData.close();
+			currentIndex = -1;
+			currentLocation = -1;
+		} catch(Exception e) {
 		}
 	
-		Field32 = null;
+		currentData = null;
 	}
 	
 	public static final void Method54(short var0) {
@@ -1485,22 +1484,22 @@ public final class Game extends GameCanvas implements Runnable {
 		if(var1 < 0 && var0 == Field51) {
 			return Field49;
 		} else {
-			boolean var2 = Field34;
-			Field34 = false;
-			if(!Method45(Field52)) {
+			boolean var2 = throbberToggle;
+			throbberToggle = false;
+			if(!openFileByHash(Field52)) {
 				Field49 = null;
 				Field50 = null;
 			}
 	
-			Field34 = var2;
-			int var3 = Method50();
-			int var4 = Method50();
+			throbberToggle = var2;
+			int var3 = readUnsignedByte();
+			int var4 = readUnsignedByte();
 			if(var0 >= var4) {
 				return Field49;
 			} else {
-				Method46(var0 * 2);
-				Method46(Method48() + (var4 - var0 - 1) * 2);
-				int var6 = Method48();
+				skipBytes(var0 * 2);
+				skipBytes(readUnsignedShort() + (var4 - var0 - 1) * 2);
+				int var6 = readUnsignedShort();
 				int[] var7 = new int[var6];
 				if(var1 < 0) {
 					Field49 = new String[var6];
@@ -1508,17 +1507,17 @@ public final class Game extends GameCanvas implements Runnable {
 					Field51 = var0;
 	
 					for(int var8 = 0; var8 < var6; var8++) {
-						var7[var8] = Method48();
-						Method48();
+						var7[var8] = readUnsignedShort();
+						readUnsignedShort();
 					}
 				} else {
 					if(var1 >= var6) {
 						return Field49;
 					}
 	
-					Method46(var1 * 4);
-					var7[0] = Method48();
-					Method46(Method48() + (var6 - var1 - 1) * 4);
+					skipBytes(var1 * 4);
+					var7[0] = readUnsignedShort();
+					skipBytes(readUnsignedShort() + (var6 - var1 - 1) * 4);
 				}
 	
 				for(int var12 = 0; var12 < var6; var12++) {
@@ -1526,16 +1525,16 @@ public final class Game extends GameCanvas implements Runnable {
 					int var9 = 0;
 					char[] var10 = new char[var7[var12]];
 					if(var3 == 1) {
-						var9 = Method50();
+						var9 = readUnsignedByte();
 	
 						for(int var11 = 0; var11 < var7[var12]; var11++) {
-							var10[var11] = (char)Method50();
+							var10[var11] = (char)readUnsignedByte();
 						}
 					} else {
-						var9 = Method48();
+						var9 = readUnsignedShort();
 	
 						for(int var14 = 0; var14 < var7[var12]; var14++) {
-							var10[var14] = (char)Method48();
+							var10[var14] = (char)readUnsignedShort();
 						}
 					}
 	
@@ -1690,7 +1689,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field65[var0] = new short[230];
 		Field64[var0] = new byte[230];
 		byte[] var8 = loadFile8ByHash(var3);
-		short[] var9 = Method41(var5);
+		short[] var9 = loadFile16ByHash(var5);
 		int var10 = var9.length;
 		Field58[var0] = loadImageByHash(var1, var2);
 		Field63[var0] = new short[var10];
@@ -2684,7 +2683,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method119(int var0) {
 		Field427 = false;
 		if(Field69 != 5 && var0 != 1) {
-			Field34 = true;
+			throbberToggle = true;
 			Field109 = 0;
 			Method148();
 			Method158();
@@ -2826,7 +2825,7 @@ public final class Game extends GameCanvas implements Runnable {
 				return;
 			default:
 				Method97(7, 0);
-				Field34 = true;
+				throbberToggle = true;
 		}
 	}
 	
@@ -3156,9 +3155,9 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method132(String var0, int var1, int var2, boolean var3) {
-		Field34 = false;
-		int[] var4 = Method42(var0);
-		Field34 = true;
+		throbberToggle = false;
+		int[] var4 = loadFile32(var0);
+		throbberToggle = true;
 		if(var4 != null) {
 			Method134(var4, var1, var2, var3);
 		}
@@ -4790,10 +4789,10 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method201() {
-		Method193(Method48());
+		Method193(readUnsignedShort());
 	
 		for(int var0 = 0; var0 < Field259; var0++) {
-			Method194(var0, Method222(Method48() << 16), Method48() << 16, Method48() << 16, Method48() << 16);
+			Method194(var0, Method222(readUnsignedShort() << 16), readUnsignedShort() << 16, readUnsignedShort() << 16, readUnsignedShort() << 16);
 		}
 	
 	}
@@ -5174,7 +5173,7 @@ public final class Game extends GameCanvas implements Runnable {
 		return var5;
 	}
 	
-	public static final void Method220(int var0) {
+	public static final void loadLevel(int var0) {
 		boolean var1 = true;
 		Field324 = false;
 		if(var0 >= 25) {
@@ -5183,18 +5182,18 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		if(var0 == -2) {
 			Method225(0);
-			Method44("ship.bin");
+			openFile("ship.bin");
 			var1 = false;
 		} else if(var0 == -1) {
 			Method225(-1);
-			Method44("playground" + level * 4 / 25 + ".bin");
+			openFile("playground" + level * 4 / 25 + ".bin");
 			var1 = false;
 		} else if(var0 < 10) {
 			Method225(1);
-			Method44("level.00" + var0 + ".bin");
+			openFile("level.00" + var0 + ".bin");
 		} else {
 			Method225(1);
-			Method44("level.0" + var0 + ".bin");
+			openFile("level.0" + var0 + ".bin");
 		}
 	
 		Field326 = false;
@@ -5203,21 +5202,21 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		Field327 = var0;
-		Field319 = Method48() << 16;
-		Field320 = Method48() << 16;
-		Method232(Method51(), Method51());
-		Method51();
-		Method52();
-		Field329 = Method52();
-		Field330 = Method52();
-		Method52();
-		Field331 = Method52();
-		Field332 = Method52();
-		int var2 = Method222(Method48() << 16);
-		int var3 = Method48() << 16;
-		Field156 = Method222(Method48() << 16);
-		Field157 = Method48() << 16;
-		int var4 = Method48();
+		Field319 = readUnsignedShort() << 16;
+		Field320 = readUnsignedShort() << 16;
+		Method232(readByte(), readByte());
+		readByte();
+		readInt();
+		Field329 = readInt();
+		Field330 = readInt();
+		readInt();
+		Field331 = readInt();
+		Field332 = readInt();
+		int var2 = Method222(readUnsignedShort() << 16);
+		int var3 = readUnsignedShort() << 16;
+		Field156 = Method222(readUnsignedShort() << 16);
+		Field157 = readUnsignedShort() << 16;
+		int var4 = readUnsignedShort();
 		Field340 = 0;
 		int var5 = 0;
 		int var6 = 6;
@@ -5240,7 +5239,7 @@ public final class Game extends GameCanvas implements Runnable {
 		var6 = var5;
 	
 		for(int var7 = 0; var7 < var4; var7++) {
-			Method214(var5++, Method222(Method48() << 16), Method48() << 16, Method48() << 16, Method48(), Method48(), Method51(), Method51() == 1);
+			Method214(var5++, Method222(readUnsignedShort() << 16), readUnsignedShort() << 16, readUnsignedShort() << 16, readUnsignedShort(), readUnsignedShort(), readByte(), readByte() == 1);
 		}
 	
 		if(var0 == -2) {
@@ -5266,7 +5265,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		Field171 = 5;
 		Method201();
-		int var17 = Method48();
+		int var17 = readUnsignedShort();
 		int var19 = 0x140000;
 		if(!var1) {
 			var19 = 0x0c0000;
@@ -5278,44 +5277,44 @@ public final class Game extends GameCanvas implements Runnable {
 		Method161(var35, 0, 0, 4, 65536, 65500, false, false);
 	
 		for(int var20 = 0; var20 < var17; var20++) {
-			Method161(var5++, var6 + Method48(), var6 + Method48(), Method51(), Method48() << 16, Method48(), Method51() == 1, true);
+			Method161(var5++, var6 + readUnsignedShort(), var6 + readUnsignedShort(), readByte(), readUnsignedShort() << 16, readUnsignedShort(), readByte() == 1, true);
 		}
 	
 		byte var21;
-		Method209(var21 = Method51());
+		Method209(var21 = readByte());
 	
 		for(int var10 = 0; var10 < var21; var10++) {
-			Method210(var10, Method222(Method48() << 16), Method48() << 16, var6 + Method51(), Method51(), Method48(), Method48(), Method48(), Method48(), Method48());
+			Method210(var10, Method222(readUnsignedShort() << 16), readUnsignedShort() << 16, var6 + readByte(), readByte(), readUnsignedShort(), readUnsignedShort(), readUnsignedShort(), readUnsignedShort(), readUnsignedShort());
 		}
 	
-		Method184(var21 = Method51());
+		Method184(var21 = readByte());
 	
 		for(int var27 = 0; var27 < var21; var27++) {
-			Method185(var27, var6 + Method50(), Method51() == 1, Method48(), Method48() << 14, Method51() == 1, Method48(), Method48() << 14, Method48() << 16, Method51() == 1, Method48());
+			Method185(var27, var6 + readUnsignedByte(), readByte() == 1, readUnsignedShort(), readUnsignedShort() << 14, readByte() == 1, readUnsignedShort(), readUnsignedShort() << 14, readUnsignedShort() << 16, readByte() == 1, readUnsignedShort());
 		}
 	
-		Method166(var21 = Method51());
+		Method166(var21 = readByte());
 	
 		for(int var28 = 0; var28 < var21; var28++) {
-			Method167(var28, var6 + Method50(), Method51(), Method48() << 16, Method48());
+			Method167(var28, var6 + readUnsignedByte(), readByte(), readUnsignedShort() << 16, readUnsignedShort());
 		}
 	
-		Method170(var21 = Method51());
+		Method170(var21 = readByte());
 	
 		for(int var29 = 0; var29 < var21; var29++) {
-			Method171(var29, var6 + Method50(), Method51() == 1, Method48(), Method48() << 16);
+			Method171(var29, var6 + readUnsignedByte(), readByte() == 1, readUnsignedShort(), readUnsignedShort() << 16);
 		}
 	
-		Method195(var21 = Method51());
+		Method195(var21 = readByte());
 	
 		for(int var30 = 0; var30 < var21; var30++) {
-			Method196(var30, var30, Method48() << 16, Method48() << 16, Method48() << 8, Method48(), Method48());
+			Method196(var30, var30, readUnsignedShort() << 16, readUnsignedShort() << 16, readUnsignedShort() << 8, readUnsignedShort(), readUnsignedShort());
 		}
 	
-		Method206(var21 = Method51());
+		Method206(var21 = readByte());
 	
 		for(int var31 = 0; var31 < var21; var31++) {
-			Method207(var31, Method222(Method48() << 16), Method48() << 16, Method51());
+			Method207(var31, Method222(readUnsignedShort() << 16), readUnsignedShort() << 16, readByte());
 		}
 	
 		Method150(var1);
@@ -5925,7 +5924,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field396 = -1;
 		} else {
 			if(Field389 >= -1) {
-				Method220(Field389);
+				loadLevel(Field389);
 				Field389 = -2;
 				if(Field327 < 0) {
 					Field390 = 120;
@@ -6283,7 +6282,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method254(int var0) {
-		Method220(var0);
+		loadLevel(var0);
 	}
 	
 	public static final void Method255() {
@@ -6749,7 +6748,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method275() {
 		Method107(2, 12, 92, 46);
 		Field409 = 100;
-		Method220(-2);
+		loadLevel(-2);
 		Method274();
 		Field321 = 40000;
 		Method238(Field298[0], Field320 / 2, 0);
