@@ -14,7 +14,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field3 = 0;
 	public static int Field4 = 0;
 	public static int Field5 = 0;
-	public static final short[][] Field6 = new short[][] {{53, -6, -5}, {48}, {-7}, {52, -3}, {54, -4}, {50, -1}, {56, -2}, {49}, {51}, {55}, {57}};
+	public static final short[][] keymap = new short[][] {{53, -6, -5}, {48}, {-7}, {52, -3}, {54, -4}, {50, -1}, {56, -2}, {49}, {51}, {55}, {57}};
+	// image decoding
 	private static byte[] pngTemplate; // for getting png from pim/ppl
 	private static int pplOptions;
 	private static int pplColorCount;
@@ -530,11 +531,11 @@ public final class Game extends GameCanvas implements Runnable {
 		Field5 = 0;
 	}
 	
-	private static int Method3(int var0) {
-		for(int var1 = 0; var1 < Field6.length; var1++) {
-			for(int var2 = 0; var2 < Field6[var1].length; var2++) {
-				if(var0 == Field6[var1][var2]) {
-					return 1 << var1;
+	private static int pressedKeyValue(int keyCode) {
+		for(int k = 0; k < keymap.length; k++) {
+			for(int i = 0; i < keymap[k].length; i++) {
+				if(keyCode == keymap[k][i]) {
+					return 1 << k;
 				}
 			}
 		}
@@ -543,7 +544,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public final void keyPressed(int keyCode) {
-		Field4 |= Method3(keyCode);
+		Field4 |= pressedKeyValue(keyCode);
 		super.keyPressed(keyCode);
 		if(keyCode == -6) {
 			Field5 |= 1;
@@ -560,7 +561,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public final void keyReleased(int keyCode) {
-		Field4 &= ~Method3(keyCode);
+		Field4 &= ~pressedKeyValue(keyCode);
 		super.keyReleased(keyCode);
 	}
 	
