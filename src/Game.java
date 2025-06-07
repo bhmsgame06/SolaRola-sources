@@ -61,11 +61,12 @@ public final class Game extends GameCanvas implements Runnable {
 	public static byte[] Field50;
 	public static int Field51 = -1;
 	public static short Field52;
-	private static int Field53;
-	private static int Field54;
-	public static int[] Field55;
-	public static int[] Field56;
-	public static Image[] Field57;
+	// softkeys
+	private static int leftSoftkey; // current pressed left softkey
+	private static int rightSoftkey; // current pressed right softkey
+	public static int[] softkeyWidth;
+	public static int[] softkeyHeight;
+	public static Image[] softkeyIcons;
 	public static Image[] Field58;
 	public static int[] Field59;
 	public static int[] Field60;
@@ -337,7 +338,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean Field326;
 	public static int Field327 = 0;
 	public static int level = 0;
-	public static int Field329 = 0xffffff;
+	public static int levelColor = 0xffffff;
 	public static int Field330 = 0xffffff;
 	public static int Field331 = 0xffffff;
 	public static int Field332 = 0xffffff;
@@ -413,7 +414,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field402 = 0;
 	public static boolean Field403 = false;
 	public static boolean Field404 = true;
-	public static boolean Field405 = false;
+	public static boolean pauseScreen = false;
 	public static int[] Field406 = new int[12];
 	public static int Field407 = 9;
 	public static boolean Field408 = false;
@@ -681,7 +682,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method14() {
 		Method31();
-		Method65();
+		drawSoftkeyIcons();
 		Method2();
 		Method259();
 		flushGrp();
@@ -1627,19 +1628,21 @@ public final class Game extends GameCanvas implements Runnable {
 		return var15 << 8;
 	}
 	
-	public static final int Method63(int var0, int var1) {
-		Field53 = var0;
-		Field54 = var1;
+	public static final int softkeyPressed(int l, int r) {
+		leftSoftkey = l;
+		rightSoftkey = r;
+
 		if((Field2 & 0x800) > 0 && (Field3 & 0x800) == 0) {
-			return var0;
+			return l;
 		} else {
-			return (Field2 & 0x1000) > 0 && (Field3 & 0x1000) == 0 ? var1 : -1;
+			return (Field2 & 0x1000) > 0 && (Field3 & 0x1000) == 0 ? r : -1;
 		}
 	}
 	
 	public static final int Method64(int var0, int var1, boolean var2) {
-		Field53 = var0;
-		Field54 = var1;
+		leftSoftkey = var0;
+		rightSoftkey = var1;
+
 		if((Field2 & 0x800) > 0 && (Field3 & 0x800) == 0) {
 			return var0;
 		} else if((Field2 & 0x1000) > 0 && (Field3 & 0x1000) == 0) {
@@ -1649,44 +1652,44 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method65() {
-		if(Field57 != null) {
-			if(Field53 > -1) {
-				drawImage(Field57[Field53], 1, 127 - Field56[Field53], 0);
-				Field53 = -1;
+	public static final void drawSoftkeyIcons() {
+		if(softkeyIcons != null) {
+			if(leftSoftkey > -1) {
+				drawImage(softkeyIcons[leftSoftkey], 1, 127 - softkeyHeight[leftSoftkey], 0);
+				leftSoftkey = -1;
 			}
 	
-			if(Field54 > -1) {
-				drawImage(Field57[Field54], 127 - Field55[Field54], 127 - Field56[Field54], 0);
-				Field54 = -1;
+			if(rightSoftkey > -1) {
+				drawImage(softkeyIcons[rightSoftkey], 127 - softkeyWidth[rightSoftkey], 127 - softkeyHeight[rightSoftkey], 0);
+				rightSoftkey = -1;
 			}
 	
 		}
 	}
 	
-	public static final void initSoftKeyImages() {
+	public static final void initSoftkeyIcons() {
 		Method68();
-		Field57 = new Image[5];
-		Field55 = new int[5];
-		Field56 = new int[5];
-		Field53 = -1;
-		Field54 = -1;
+		softkeyIcons = new Image[5];
+		softkeyWidth = new int[5];
+		softkeyHeight = new int[5];
+		leftSoftkey = -1;
+		rightSoftkey = -1;
 	}
 	
-	public static final void setSoftKeyImage(int var0, Image var1) {
-		if(Field57 != null) {
-			if(var0 >= 0 && var0 < Field57.length) {
-				Field57[var0] = var1;
-				Field55[var0] = var1.getWidth();
-				Field56[var0] = var1.getHeight();
+	public static final void setSoftkeyIcon(int var0, Image var1) {
+		if(softkeyIcons != null) {
+			if(var0 >= 0 && var0 < softkeyIcons.length) {
+				softkeyIcons[var0] = var1;
+				softkeyWidth[var0] = var1.getWidth();
+				softkeyHeight[var0] = var1.getHeight();
 			}
 		}
 	}
 	
 	public static final void Method68() {
-		Field57 = null;
-		Field55 = null;
-		Field56 = null;
+		softkeyIcons = null;
+		softkeyWidth = null;
+		softkeyHeight = null;
 	}
 	
 	public static final void setFontNum(int var0) {
@@ -2114,8 +2117,8 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		do {
 			if(Field12) {
-				Method262();
-				Method65();
+				pauseScreenOnce();
+				drawSoftkeyIcons();
 				flushGrp();
 				Method2();
 				if(Method6(1)) {
@@ -2510,7 +2513,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method111() {
 		Method112();
-		if(Method63(2, -1) == 2) {
+		if(softkeyPressed(2, -1) == 2) {
 			Method97(2, 0);
 		}
 	
@@ -2619,7 +2622,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Method92(-1000, 114, Field103, 0);
 		}
 	
-		if(Field108 < 120 && Method63(-1, 3) == 3 || Field108 > 120 && Method64(2, -1, true) == 2) {
+		if(Field108 < 120 && softkeyPressed(-1, 3) == 3 || Field108 > 120 && Method64(2, -1, true) == 2) {
 			Method97(4, 0);
 		}
 	
@@ -3092,14 +3095,14 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		Method247();
 		if(Field127) {
-			int var3 = Method63(2, 4);
+			int var3 = softkeyPressed(2, 4);
 			if(var3 >= 0) {
 				for(Field128 = var3 == 2; Field126 < Field125.length; Field126 = Method135(Field125, Field126, true)) {
 				}
 	
 				Field136 = false;
 			}
-		} else if(Field135 && Method63(2, 3) == 3 || !Field135 && Method63(-1, 3) == 3) {
+		} else if(Field135 && softkeyPressed(2, 3) == 3 || !Field135 && softkeyPressed(-1, 3) == 3) {
 			while(Field126 < Field125.length) {
 				Field126 = Method135(Field125, Field126, true);
 			}
@@ -4795,7 +4798,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Method267(Field260[var0], Field261[var0], Field262[var0], Field263[var0]);
 		}
 	
-		Method265(Field329);
+		Method265(levelColor);
 	
 		for(int var1 = 0; var1 < Field259; var1++) {
 			Method267(Field260[var1], Field261[var1], Field262[var1], Field263[var1]);
@@ -5222,7 +5225,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Method232(readByte(), readByte());
 		readByte();
 		readInt();
-		Field329 = readInt();
+		levelColor = readInt();
 		Field330 = readInt();
 		readInt();
 		Field331 = readInt();
@@ -6005,11 +6008,11 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			int var2 = -1;
 			if(Field390 < 100) {
-				var2 = Method63(-1, 3);
+				var2 = softkeyPressed(-1, 3);
 			} else if(Field327 == -1) {
-				var2 = Method63(-1, 4);
+				var2 = softkeyPressed(-1, 4);
 			} else if(Field165 > 0) {
-				var2 = Method63(-1, 0);
+				var2 = softkeyPressed(-1, 0);
 			}
 	
 			if(var2 == 4) {
@@ -6021,7 +6024,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			if(var2 == 0) {
-				Method63(-1, -1);
+				softkeyPressed(-1, -1);
 				Field427 = true;
 				Field409 = 100;
 				Method225(0);
@@ -6243,7 +6246,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		Method253(Field347, 0);
 		Method200();
-		Method253(Field347, Field329);
+		Method253(Field347, levelColor);
 		Method253(Field342, 0);
 		Method253(Field342, 0xffffff);
 		Method253(Field343, 0);
@@ -6529,38 +6532,39 @@ public final class Game extends GameCanvas implements Runnable {
 		setRandSeed(0);
 		bfcLoadHead();
 		loadRecordData();
+
 		setFontNum(4);
 		loadFontByHash(3, (short)0xb6ce, (short)0x7b1d, (short)0xc674, (byte)4, (short)0x88a8, 1, -2);
 		loadFontByHash(1, (short)0xe878, (short)0x25ab, (short)0x98c2, (byte)3, (short)0xd61e, 1, -1);
 		loadFontByHash(2, (short)0xa1c0, (short)0x6c13, (short)0xd17a, (byte)3, (short)0x9fa6, 1, -1);
 		loadFontByHash(0, (short)0x86ec, (short)0x4b3f, (short)0xf656, (byte)3, (short)0xb88a, -1, -1);
-		initSoftKeyImages();
-		setSoftKeyImage(2, loadImageByHash((short)0xe4f2, (short)0x2921));
-		setSoftKeyImage(1, loadImageByHash((short)0x31d7, (short)0xfc04));
-		setSoftKeyImage(0, loadImageByHash((short)0x9207, (short)0x5fd4));
-		setSoftKeyImage(3, loadImageByHash((short)0x0545, (short)0xc896));
-		setSoftKeyImage(4, loadImageByHash((short)0x5c21, (short)0x91f2));
+
+		initSoftkeyIcons();
+		setSoftkeyIcon(2, loadImageByHash((short)0xe4f2, (short)0x2921));
+		setSoftkeyIcon(1, loadImageByHash((short)0x31d7, (short)0xfc04));
+		setSoftkeyIcon(0, loadImageByHash((short)0x9207, (short)0x5fd4));
+		setSoftkeyIcon(3, loadImageByHash((short)0x0545, (short)0xc896));
+		setSoftkeyIcon(4, loadImageByHash((short)0x5c21, (short)0x91f2));
 	}
 	
 	public static final void Method261() {
-		Field405 = true;
+		pauseScreen = true;
 	}
 	
-	public static final void Method262() {
-		if(Field405) {
-			Field405 = false;
+	public static final void pauseScreenOnce() {
+		if(pauseScreen) {
+			pauseScreen = false;
 			setColor(0, 0, 0);
 	
-			for(int var0 = 0; var0 < 128; var0++) {
-				for(int var1 = var0 & 1; var1 < 128; var1 += 2) {
-					drawLine(var1, var0, var1, var0);
+			for(int y = 0; y < 128; y++) {
+				for(int x = y & 1; x < 128; x += 2) {
+					drawLine(x, y, x, y);
 				}
 			}
 	
 			fillRect(0, 109, 128, 128);
-			Method63(2, -1);
+			softkeyPressed(2, -1);
 		}
-	
 	}
 
 	// funny circle again	
@@ -7175,7 +7179,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Method92((128 - Method71(Field448, 0)) / 2 + 128 * cosine[var2] / 1000, 43, Field448, 0);
 		Method14();
 		Field443 -= 2;
-		if(Method63(2, -1) == 2) {
+		if(softkeyPressed(2, -1) == 2) {
 			Field443 = -38;
 		}
 	
