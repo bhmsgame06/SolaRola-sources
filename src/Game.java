@@ -14,7 +14,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field3 = 0;
 	public static int Field4 = 0;
 	public static int Field5 = 0;
-	public static final short[][] keymap = new short[][] {{53, -6, -5}, {48}, {-7}, {52, -3}, {54, -4}, {50, -1}, {56, -2}, {49}, {51}, {55}, {57}};
+	public static final short[][] keymap = new short[][] {{'5', -6, -5},  {'0'},  {-7},  {'4', -3},  {'6', -4},  {'2', -1},  {'8', -2},  {'1'},  {'3'},  {'7'},  {'9'}};
 	// image decoding
 	private static byte[] pngTemplate; // for getting png from pim/ppl
 	private static int pplOptions;
@@ -68,14 +68,14 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] softkeyWidth;
 	public static int[] softkeyHeight;
 	public static Image[] softkeyIcons;
-	public static Image[] Field58;
-	public static int[] Field59;
-	public static int[] Field60;
-	public static int[] Field61;
-	public static int[] Field62;
-	public static short[][] Field63;
-	public static byte[][] Field64;
-	public static short[][] Field65;
+	public static Image[] fontImages;
+	public static int[] fontGeneralWidth;
+	public static int[] fontSpaceBetweenChars;
+	public static int[] fontGeneralHeight;
+	public static int[] fontSpaceBetweenStrings;
+	public static short[][] fontChrOffsets;
+	public static byte[][] fontChrWidths;
+	public static short[][] fontIndexes;
 	public static Graphics g;
 	private static long randSeed;
 	public static boolean Field68 = true;
@@ -1694,69 +1694,68 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void setFontNum(int var0) {
-		Field65 = new short[var0][];
-		Field59 = new int[var0];
-		Field61 = new int[var0];
-		Field60 = new int[var0];
-		Field58 = new Image[var0];
-		Field62 = new int[var0];
-		Field63 = new short[var0][];
-		Field64 = new byte[var0][];
+		fontIndexes = new short[var0][];
+		fontGeneralWidth = new int[var0];
+		fontGeneralHeight = new int[var0];
+		fontSpaceBetweenChars = new int[var0];
+		fontImages = new Image[var0];
+		fontSpaceBetweenStrings = new int[var0];
+		fontChrOffsets = new short[var0][];
+		fontChrWidths = new byte[var0][];
 	}
 	
-	public static final void loadFontByHash(int var0, short var1, short var2, short var3, byte var4, short var5, int var6, int var7) {
-		Field65[var0] = new short[230];
-		Field64[var0] = new byte[230];
-		byte[] var8 = loadFile8ByHash(var3);
-		short[] var9 = loadFile16ByHash(var5);
-		int var10 = var9.length;
-		Field58[var0] = loadImageByHash(var1, var2);
-		Field63[var0] = new short[var10];
-		boolean var11 = false;
+	public static final void loadFontByHash(int index, short pimHash, short pplHash, short cwtHash, byte spaceWidth, short chrHash, int sbc, int sbs) {
+		fontIndexes[index] = new short[230];
+		fontChrWidths[index] = new byte[230];
+		byte[] charWidth = loadFile8ByHash(cwtHash);
+		short[] charMap = loadFile16ByHash(chrHash);
+		int charNum = charMap.length;
+		fontImages[index] = loadImageByHash(pimHash, pplHash);
+		fontChrOffsets[index] = new short[charNum];
 	
-		for(short var12 = 0; var12 < 230; var12++) {
-			Field65[var0][var12] = -1;
-			Field64[var0][var12] = var4;
+		for(short i = 0; i < 230; i++) {
+			fontIndexes[index][i] = -1;
+			fontChrWidths[index][i] = spaceWidth;
 		}
 	
-		short var15 = 0;
+		short curOff = 0;
 	
-		for(short var13 = 0; var13 < var10; var13++) {
-			int var14 = var9[var13] - 30;
-			Field65[var0][var14] = var13;
-			Field64[var0][var14] = var8[var13];
-			Field63[var0][var13] = var15;
-			var15 = (short)(var15 + var8[var13]);
+		for(short i = 0; i < charNum; i++) {
+			int printable = charMap[i] - 30;
+			fontIndexes[index][printable] = i;
+			fontChrWidths[index][printable] = charWidth[i];
+			fontChrOffsets[index][i] = curOff;
+			curOff = (short)(curOff + charWidth[i]);
 		}
 	
-		Field61[var0] = Field58[var0].getHeight() / 1;
-		Field59[var0] = Field58[var0].getWidth() / var10;
-		Field60[var0] = var6;
-		Field62[var0] = var7;
+		fontGeneralHeight[index] = fontImages[index].getHeight() / 1;
+		fontGeneralWidth[index] = fontImages[index].getWidth() / charNum;
+		fontSpaceBetweenChars[index] = sbc;
+		fontSpaceBetweenStrings[index] = sbs;
 	}
 	
 	public static final int Method71(String var0, int var1) {
-		if(Field64[var1] == null) {
-			return var0.length() * (Field59[var1] + Field60[var1]) - Field60[var1];
+		if(fontChrWidths[var1] == null) {
+			return var0.length() * (fontGeneralWidth[var1] + fontSpaceBetweenChars[var1]) - fontSpaceBetweenChars[var1];
 		} else {
 			int var2 = 0;
 			int var3 = var0.length();
 	
 			for(int var4 = 0; var4 < var3; var4++) {
 				int var5 = var0.charAt(var4) - 30;
-				var2 += Field64[var1][var5];
+				var2 += fontChrWidths[var1][var5];
 			}
 	
-			return var2 + (var3 - 1) * Field60[var1];
+			return var2 + (var3 - 1) * fontSpaceBetweenChars[var1];
 		}
 	}
 	
 	public static final int Method72(int var0, int var1) {
-		return (var0 + Field60[var1]) / (Field59[var1] + Field60[var1]);
+		return (var0 + fontSpaceBetweenChars[var1]) / (fontGeneralWidth[var1] + fontSpaceBetweenChars[var1]);
 	}
 	
 	public static final int Method73(int var0, int var1, String var2, int var3) {
-		if(Field64[var1] == null) {
+		if(fontChrWidths[var1] == null) {
 			return Method72(var0, var1);
 		} else {
 			int var4 = var2.length();
@@ -1768,11 +1767,11 @@ public final class Game extends GameCanvas implements Runnable {
 					return var5 - var3 + 1;
 				}
 	
-				if((var0 = var0 - Field64[var1][var6]) < 0) {
+				if((var0 = var0 - fontChrWidths[var1][var6]) < 0) {
 					break;
 				}
 	
-				var0 -= Field60[var1];
+				var0 -= fontSpaceBetweenChars[var1];
 			}
 	
 			return var5 - var3;
@@ -1780,7 +1779,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final int[] Method74(int var0, String var1, int var2) {
-		if(Field58[var2] == null) {
+		if(fontImages[var2] == null) {
 			return null;
 		} else {
 			int var3 = 0;
@@ -1932,12 +1931,12 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final int Method91(int var0, int var1, int var2, int var3, String var4, int var5, int var6, int var7, boolean var8) {
-		if(Field58[var5] == null) {
+		if(fontImages[var5] == null) {
 			return -2;
 		} else {
 			int var9 = var4.length();
 			int var10 = var6;
-			int var12 = var1 + var3 - (Field61[var5] + Field62[var5] - 1);
+			int var12 = var1 + var3 - (fontGeneralHeight[var5] + fontSpaceBetweenStrings[var5] - 1);
 			boolean var14 = false;
 			boolean var15 = true;
 			int var16 = 0;
@@ -1945,7 +1944,7 @@ public final class Game extends GameCanvas implements Runnable {
 			while(var10 < var9 && var1 < var12) {
 				switch (var4.charAt(var10)) {
 					case '\n':
-						if(!var15 && var16 > 0 && (var1 += Field61[var5] + Field62[var5]) > var12) {
+						if(!var15 && var16 > 0 && (var1 += fontGeneralHeight[var5] + fontSpaceBetweenStrings[var5]) > var12) {
 							return var10;
 						}
 	
@@ -2002,7 +2001,7 @@ public final class Game extends GameCanvas implements Runnable {
 						Method92(var0, var1, var18, var5);
 					}
 	
-					var1 += Field61[var5] + Field62[var5];
+					var1 += fontGeneralHeight[var5] + fontSpaceBetweenStrings[var5];
 					var10 = var11;
 				}
 			}
@@ -2012,19 +2011,19 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method92(int var0, int var1, String var2, int var3) {
-		if(Field58[var3] != null) {
+		if(fontImages[var3] != null) {
 			int var4 = getClipHeight();
 			int var5 = getClipWidth();
 			int var6 = getClipX();
 			int var7 = getClipY();
-			if(var1 + Field61[var3] >= var7 && var7 + var4 >= var1) {
+			if(var1 + fontGeneralHeight[var3] >= var7 && var7 + var4 >= var1) {
 				int var8 = var2.length();
 				if(var0 == -1000) {
 					var0 = (128 - Method71(var2, var3)) / 2;
 				}
 	
 				int var9 = var1;
-				int var10 = Field61[var3];
+				int var10 = fontGeneralHeight[var3];
 				if(var7 > var1) {
 					var10 -= var7 - var1;
 					var9 = var7;
@@ -2040,26 +2039,26 @@ public final class Game extends GameCanvas implements Runnable {
 					int var15 = var2.charAt(var14) - 30;
 					if(var13 <= 128 && var15 >= 0) {
 						short var16;
-						if((var16 = Field65[var3][var15]) == -1) {
-							if(Field64[var3] == null) {
-								var13 += Field59[var3] + Field60[var3];
+						if((var16 = fontIndexes[var3][var15]) == -1) {
+							if(fontChrWidths[var3] == null) {
+								var13 += fontGeneralWidth[var3] + fontSpaceBetweenChars[var3];
 							} else {
-								var13 += Field64[var3][0] + Field60[var3];
+								var13 += fontChrWidths[var3][0] + fontSpaceBetweenChars[var3];
 							}
 						} else {
 							int var11 = var13;
 							int var12;
-							if(Field64[var3] == null) {
-								var12 = Field59[var3];
+							if(fontChrWidths[var3] == null) {
+								var12 = fontGeneralWidth[var3];
 							} else {
-								var12 = Field64[var3][var15];
+								var12 = fontChrWidths[var3][var15];
 							}
 	
 							if(var13 + var12 < 0) {
-								if(Field64[var3] != null) {
-									var13 += Field64[var3][var15] + Field60[var3];
+								if(fontChrWidths[var3] != null) {
+									var13 += fontChrWidths[var3][var15] + fontSpaceBetweenChars[var3];
 								} else {
-									var13 += Field59[var3] + Field60[var3];
+									var13 += fontGeneralWidth[var3] + fontSpaceBetweenChars[var3];
 								}
 							} else {
 								if(var13 < var6 || var13 + var12 > var6 + var5) {
@@ -2082,12 +2081,12 @@ public final class Game extends GameCanvas implements Runnable {
 								}
 	
 								setClip(var11, var9, var12, var10);
-								if(Field64[var3] != null) {
-									drawImage(Field58[var3], var13 - Field63[var3][var16], var1, 0);
-									var13 += Field64[var3][var15] + Field60[var3];
+								if(fontChrWidths[var3] != null) {
+									drawImage(fontImages[var3], var13 - fontChrOffsets[var3][var16], var1, 0);
+									var13 += fontChrWidths[var3][var15] + fontSpaceBetweenChars[var3];
 								} else {
-									drawImage(Field58[var3], var13 - Field59[var3] * var16, var1, 0);
-									var13 += Field59[var3] + Field60[var3];
+									drawImage(fontImages[var3], var13 - fontGeneralWidth[var3] * var16, var1, 0);
+									var13 += fontGeneralWidth[var3] + fontSpaceBetweenChars[var3];
 								}
 							}
 						}
