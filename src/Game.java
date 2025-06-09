@@ -10,6 +10,7 @@ import javax.microedition.rms.*;
 public final class Game extends GameCanvas implements Runnable {
 	public static Game instance;
 	public static PMMIDlet midlet;
+	// keys
 	public static int Field2 = 0;
 	public static int Field3 = 0;
 	public static int Field4 = 0;
@@ -523,7 +524,7 @@ public final class Game extends GameCanvas implements Runnable {
 		throbberNextFrame();
 	}
 	
-	public static final void Method2() {
+	public static final void updateKeys() {
 		sleep(5L);
 		Field3 = Field2;
 		Field2 = Field4;
@@ -557,7 +558,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Field5 |= 0x1000;
 			Field4 |= 0x1000;
 		}
-	
 	}
 	
 	public final void keyReleased(int keyCode) {
@@ -684,7 +684,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method14() {
 		Method31();
 		drawSoftkeyIcons();
-		Method2();
+		updateKeys();
 		Method259();
 		flushGrp();
 		Method17();
@@ -2120,7 +2120,7 @@ public final class Game extends GameCanvas implements Runnable {
 				pauseScreenOnce();
 				drawSoftkeyIcons();
 				flushGrp();
-				Method2();
+				updateKeys();
 				if(Method6(1)) {
 					Field12 = false;
 				}
