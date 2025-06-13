@@ -1,8 +1,8 @@
 MIDlet-Name: SolaRola
 MIDlet-Version: 1.0.3
 MIDlet-Vendor: Eidos
-MIDlet-1: SolaRola,/icon.png,PMMIDlet
 MIDlet-Icon: /icon.png
+MIDlet-1: SolaRola,/icon.png,PMMIDlet
 Created-By: Metaflow
 MicroEdition-Profile: MIDP-2.0
 MicroEdition-Configuration: CLDC-1.1
