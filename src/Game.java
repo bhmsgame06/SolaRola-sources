@@ -69,7 +69,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] softkeyWidth;
 	public static int[] softkeyHeight;
 	public static Image[] softkeyIcons;
-	public static Image[] fontImages;
+	// fonts
+	public static Image[] fontImages; // sprite
 	public static int[] fontGeneralWidth;
 	public static int[] fontSpaceBetweenChars;
 	public static int[] fontGeneralHeight;
@@ -577,7 +578,7 @@ public final class Game extends GameCanvas implements Runnable {
 		return (Field3 & var0) > 0 && (Field2 & var0) == 0;
 	}
 	
-	public static final void Method7() {
+	public static final void clearKeys() {
 		Field2 = 0;
 		Field3 = 0;
 		Field4 = 0;
@@ -2664,7 +2665,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method117() {
 		Method227(-1);
-		Method7();
+		clearKeys();
 		Field99 = null;
 		Field100 = null;
 		Field101 = null;
