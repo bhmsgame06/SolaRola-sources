@@ -935,12 +935,12 @@ public final class Game extends GameCanvas implements Runnable {
 		Player var1 = null;
 		if(Field30[var0] != null) {
 			var1 = Field30[var0];
-			++Field18;
+			Field18++;
 		}
 	
 		if(Field31[var0] != null) {
 			var1 = Field31[var0];
-			++Field17;
+			Field17++;
 		}
 	
 		if(var1 != null) {
