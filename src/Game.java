@@ -80,11 +80,11 @@ public final class Game extends GameCanvas implements Runnable {
 	public static short[][] fontIndexes;
 	public static Graphics g;
 	private static long randSeed;
-	public static boolean Field68 = true;
-	public static int Field69;
-	public static int Field70 = -1;
-	public static int Field71;
-	public static int Field72;
+	public static boolean isNewScreen = true;
+	public static int oldScreenIndex;
+	public static int curScreenIndex = -1;
+	public static int newScreenIndex;
+	public static int screenArg;
 	private static Display dpy;
 	public static boolean vibration = true;
 	public static int[] Field75;
@@ -122,14 +122,14 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field107;
 	public static int Field108;
 	public static int Field109 = 0;
-	public static Image Field110;
-	public static Image Field111;
-	public static Image Field112;
-	public static int Field113;
-	public static int Field114;
-	public static int Field115;
-	public static long Field116;
-	public static int Field117 = 0;
+	public static Image centerLogo;
+	public static Image eidosLegalLine;
+	public static Image pmRocket;
+	public static int ttlScrLogoX;
+	public static int ttlScrLogoY;
+	public static int ttlScrTick;
+	public static long ttlScrDuration;
+	public static int ttlScr = 0;
 	public static boolean showControlsGuide;
 	public static int Field119 = 0;
 	public static int Field120 = 0;
@@ -2125,34 +2125,35 @@ public final class Game extends GameCanvas implements Runnable {
 				if(Method6(1)) {
 					paused = false;
 				}
-			} else if(Field68) {
-				Field68 = false;
-				Method98(Field70, 2);
-				Field69 = Field70;
-				Field70 = Field71;
-				Method98(Field70, 0);
+			} else if(isNewScreen) {
+				isNewScreen = false;
+				screen(curScreenIndex, 2);
+				oldScreenIndex = curScreenIndex;
+				curScreenIndex = newScreenIndex;
+				screen(curScreenIndex, 0);
 			} else {
-				Method98(Field70, 1);
+				screen(curScreenIndex, 1);
 			}
-		} while(Field70 != -1);
+		} while(curScreenIndex != -1);
 	
 		Method29();
 		Method31();
 	}
 	
-	public static final void Method97(int var0, int var1) {
-		Field71 = var0;
-		Field72 = var1;
-		Field68 = true;
+	public static final void setNewScreen(int scr, int arg) {
+		newScreenIndex = scr;
+		screenArg = arg;
+		isNewScreen = true;
 	}
 	
-	public static final void Method98(int var0, int var1) {
-		if(var0 >= 0) {
-			switch (var0) {
+	// res: 0 - load, 1 - display, 2 - cleanup
+	public static final void screen(int scr, int res) {
+		if(scr >= 0) {
+			switch (scr) {
 				case 0:
-					switch (var1) {
+					switch (res) {
 						case 0:
-							Method137(Field72);
+							Method137(screenArg);
 							break;
 						case 1:
 							Method136();
@@ -2160,25 +2161,26 @@ public final class Game extends GameCanvas implements Runnable {
 						case 2:
 							Method138();
 					}
-	
 					return;
+
+				// game developers
 				case 1:
-					switch (var1) {
+					switch (res) {
 						case 0:
-							Method122(Field72);
+							titleScreenResLoad(screenArg);
 							break;
 						case 1:
-							Method121();
+							titleScreen();
 							break;
 						case 2:
-							Method123();
+							titleScreenResReset();
 					}
-	
 					return;
+
 				case 2:
-					switch (var1) {
+					switch (res) {
 						case 0:
-							Method125(Field72);
+							Method125(screenArg);
 							break;
 						case 1:
 							Method124();
@@ -2186,12 +2188,12 @@ public final class Game extends GameCanvas implements Runnable {
 						case 2:
 							Method126();
 					}
-	
 					return;
+
 				case 3:
-					switch (var1) {
+					switch (res) {
 						case 0:
-							Method116(Field72);
+							Method116(screenArg);
 							break;
 						case 1:
 							Method115();
@@ -2199,12 +2201,12 @@ public final class Game extends GameCanvas implements Runnable {
 						case 2:
 							Method117();
 					}
-	
 					return;
+
 				case 4:
-					switch (var1) {
+					switch (res) {
 						case 0:
-							Method119(Field72);
+							Method119(screenArg);
 							break;
 						case 1:
 							Method118();
@@ -2212,12 +2214,12 @@ public final class Game extends GameCanvas implements Runnable {
 						case 2:
 							Method120();
 					}
-	
 					return;
+
 				case 5:
-					switch (var1) {
+					switch (res) {
 						case 0:
-							Method128(Field72);
+							Method128(screenArg);
 							break;
 						case 1:
 							Method127();
@@ -2225,12 +2227,12 @@ public final class Game extends GameCanvas implements Runnable {
 						case 2:
 							Method129();
 					}
-	
 					return;
+
 				case 6:
-					switch (var1) {
+					switch (res) {
 						case 0:
-							Method144(Field72);
+							Method144(screenArg);
 							break;
 						case 1:
 							Method142();
@@ -2238,12 +2240,12 @@ public final class Game extends GameCanvas implements Runnable {
 						case 2:
 							Method145();
 					}
-	
 					return;
+
 				case 7:
-					switch (var1) {
+					switch (res) {
 						case 0:
-							Method140(Field72);
+							Method140(screenArg);
 							break;
 						case 1:
 							Method139();
@@ -2251,12 +2253,12 @@ public final class Game extends GameCanvas implements Runnable {
 						case 2:
 							Method141();
 					}
-	
 					return;
+
 				case 8:
-					switch (var1) {
+					switch (res) {
 						case 0:
-							Method113(Field72);
+							Method113(screenArg);
 							return;
 						case 1:
 							Method111();
@@ -2264,6 +2266,7 @@ public final class Game extends GameCanvas implements Runnable {
 						case 2:
 							Method114();
 					}
+
 				default:
 			}
 		}
@@ -2515,7 +2518,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method111() {
 		Method112();
 		if(softkeyPressed(2, -1) == 2) {
-			Method97(2, 0);
+			setNewScreen(2, 0);
 		}
 	
 		if(Method4(0x40)) {
@@ -2624,7 +2627,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		if(Field108 < 120 && softkeyPressed(-1, 3) == 3 || Field108 > 120 && Method64(2, -1, true) == 2) {
-			Method97(4, 0);
+			setNewScreen(4, 0);
 		}
 	
 		Field108++;
@@ -2690,18 +2693,18 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 				break;
 			case 3:
-				Method97(2, 10);
+				setNewScreen(2, 10);
 		}
 	
 		if(Field391) {
-			Method97(2, 0);
+			setNewScreen(2, 0);
 		}
 	
 	}
 	
 	public static final void Method119(int var0) {
 		Field427 = false;
-		if(Field69 != 5 && var0 != 1) {
+		if(oldScreenIndex != 5 && var0 != 1) {
 			throbberToggle = true;
 			Field109 = 0;
 			Method148();
@@ -2714,7 +2717,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		Field409 = 100;
-		if(Field69 != 5 && Field69 != 6) {
+		if(oldScreenIndex != 5 && oldScreenIndex != 6) {
 			Method229();
 		}
 	
@@ -2727,49 +2730,54 @@ public final class Game extends GameCanvas implements Runnable {
 			Field324 = false;
 		}
 	
-		if(Field71 != 5 && Field71 != 6) {
+		if(newScreenIndex != 5 && newScreenIndex != 6) {
 			Method227(-1);
 			Method16();
 		}
 	
 	}
 	
-	public static final void Method121() {
+	public static final void titleScreen() {
 		setColor(0xffffff);
 		fillRect(0, 0, 128, 128);
-		switch (Field117) {
+		switch (ttlScr) {
+			// Eidos image
 			case 0:
-				drawImage(Field110, (128 - Field110.getWidth()) / 2, (128 - Field110.getHeight()) / 2, 0);
+				drawImage(centerLogo, (128 - centerLogo.getWidth()) / 2, (128 - centerLogo.getHeight()) / 2, 0);
 				break;
+			// Eidos legal line
 			case 1:
-				drawImage(Field111, (128 - Field111.getWidth()) / 2, 128 - Field111.getHeight() - 4, 0);
+				drawImage(eidosLegalLine, (128 - eidosLegalLine.getWidth()) / 2, 128 - eidosLegalLine.getHeight() - 4, 0);
 				break;
+			// PM RocketFuel image
 			case 2:
-				drawImage(Field110, Field113 - 27, Field114 - 1, 0);
-				drawImage(Field112, Field113, Field114, 0);
+				drawImage(centerLogo, ttlScrLogoX - 27, ttlScrLogoY - 1, 0);
+				drawImage(pmRocket, ttlScrLogoX, ttlScrLogoY, 0);
 				break;
+			// PM RocketFuel anim
 			case 3:
-				int var0 = Field113;
-				int var1 = Field114;
-				if(Field115 < 20) {
-					var0 = Field113 + rand8() % 5 - 2;
-					var1 = Field114 + rand8() % 5 - 2;
-					drawImage(Field110, var0 - 27, var1 - 1, 0);
+				int x = ttlScrLogoX;
+				int y = ttlScrLogoY;
+				if(ttlScrTick < 20) {
+					x = ttlScrLogoX + rand8() % 5 - 2;
+					y = ttlScrLogoY + rand8() % 5 - 2;
+					drawImage(centerLogo, x - 27, y - 1, 0);
 				} else {
-					Field113 += (Field115 - 20) / 8;
-					Field114 -= (Field115 - 20) / 8;
-					drawImage(Field110, 15, 19, 0);
+					ttlScrLogoX += (ttlScrTick - 20) / 8;
+					ttlScrLogoY -= (ttlScrTick - 20) / 8;
+					drawImage(centerLogo, 15, 19, 0);
 				}
 	
-				drawImage(Field112, var0, var1, 0);
-				if(var0 > 158) {
-					Field116 = 0L;
+				drawImage(pmRocket, x, y, 0);
+				if(x > 158) {
+					ttlScrDuration = 0L;
 				} else {
-					Field116 = millis() + 2000L;
+					ttlScrDuration = millis() + 2000L;
 				}
 	
-				Field115++;
+				ttlScrTick++;
 				break;
+			// Maniacs of Noice scaling up
 			case 4:
 				int[] var2 = new int[] {0, 0xffffff, 0, 0xffffff, 0x3aaec7};
 				int[] var3 = new int[] {54, 54, 37, 37, 18};
@@ -2777,8 +2785,8 @@ public final class Game extends GameCanvas implements Runnable {
 	
 				for(int var5 = 0; var5 < 5; var5++) {
 					setColor(var2[var5]);
-					int var6 = sine[Field115 * 2] * var4[var5] / 1000;
-					int var7 = sine[Field115 * 2] * var3[var5] / 1000;
+					int var6 = sine[ttlScrTick * 2] * var4[var5] / 1000;
+					int var7 = sine[ttlScrTick * 2] * var3[var5] / 1000;
 					if(var5 != 2 && var5 != 3) {
 						fillArc(64 + var6 - var7 / 2 - 1, 64 - var7 / 2, var7, var7, 0, 360);
 					} else {
@@ -2786,89 +2794,97 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 				}
 	
-				drawImage(Field112, Field113, Field114, 0);
-				Field113 += 4;
-				Field114 -= 4;
-				if(Field115 > 45) {
-					Field116 = 0L;
+				drawImage(pmRocket, ttlScrLogoX, ttlScrLogoY, 0);
+				ttlScrLogoX += 4;
+				ttlScrLogoY -= 4;
+				if(ttlScrTick > 45) {
+					ttlScrDuration = 0L;
 				}
 	
-				Field115++;
+				ttlScrTick++;
 				break;
+			// Maniacs of Noise image
 			case 5:
-				drawImage(Field110, 19, 18, 0);
+				drawImage(centerLogo, 19, 18, 0);
 		}
 	
-		if(millis() > Field116 || Method6(1)) {
-			Method97(1, Field117 + 1);
+		if(millis() > ttlScrDuration || Method6(1)) {
+			setNewScreen(1, ttlScr + 1);
 		}
 	
 		Method14();
 	}
 	
-	public static final void Method122(int var0) {
-		Field117 = var0;
-		switch (var0) {
+	public static final void titleScreenResLoad(int screen) {
+		ttlScr = screen;
+		switch (screen) {
+			// Eidos image
 			case 0:
-				Field110 = loadImage("eidos.pim", "eidos.ppl");
-				Field116 = millis() + 2500L;
+				centerLogo = loadImage("eidos.pim", "eidos.ppl");
+				ttlScrDuration = millis() + 2500L;
 				return;
+			// Eidos legal line
 			case 1:
-				Field111 = loadImage("eidos_legal_line.pim", "eidos_legal_line.ppl");
-				Field116 = millis() + 2500L;
+				eidosLegalLine = loadImage("eidos_legal_line.pim", "eidos_legal_line.ppl");
+				ttlScrDuration = millis() + 2500L;
 				return;
+			// PM RocketFuel image
 			case 2:
+			// PM RocketFuel anim
 			case 3:
-				if(Field110 == null) {
-					Field110 = loadImage("pmback.pim", "pmback.ppl");
+				if(centerLogo == null) {
+					centerLogo = loadImage("pmback.pim", "pmback.ppl");
 				}
 	
-				if(Field112 == null) {
-					Field112 = loadImage("pmrocket.pim", "pmrocket.ppl");
+				if(pmRocket == null) {
+					pmRocket = loadImage("pmrocket.pim", "pmrocket.ppl");
 				}
 	
-				Field113 = 42;
-				Field114 = 20;
-				Field115 = 0;
-				Field116 = millis() + 2000L;
+				ttlScrLogoX = 42;
+				ttlScrLogoY = 20;
+				ttlScrTick = 0;
+				ttlScrDuration = millis() + 2000L;
 				return;
+			// Maniacs of Noice scaling up
 			case 4:
-				Field113 = -49;
-				Field114 = 128;
-				Field115 = 0;
-				Field116 = millis() + 10000L;
+				ttlScrLogoX = -49;
+				ttlScrLogoY = 128;
+				ttlScrTick = 0;
+				ttlScrDuration = millis() + 10000L;
 				return;
+			// Maniacs of Noise image
 			case 5:
-				Field110 = loadImage("mon.pim", "mon.ppl");
-				Field116 = millis() + 2000L;
+				centerLogo = loadImage("mon.pim", "mon.ppl");
+				ttlScrDuration = millis() + 2000L;
 				return;
+
 			default:
-				Method97(7, 0);
+				setNewScreen(7, 0);
 				throbberToggle = true;
 		}
 	}
 	
-	public static final void Method123() {
-		switch (Field117) {
+	public static final void titleScreenResReset() {
+		switch (ttlScr) {
 			case 0:
-				Field110 = null;
+				centerLogo = null;
 			case 1:
-				Field111 = null;
+				eidosLegalLine = null;
 			case 2:
 				break;
 			case 3:
-				Field110 = null;
+				centerLogo = null;
 				break;
 			case 4:
-				Field112 = null;
+				pmRocket = null;
 				break;
 			case 5:
-				Field110 = null;
+				centerLogo = null;
 				break;
 			default:
-				Field110 = null;
-				Field111 = null;
-				Field112 = null;
+				centerLogo = null;
+				eidosLegalLine = null;
+				pmRocket = null;
 		}
 	
 		Method16();
@@ -2888,17 +2904,17 @@ public final class Game extends GameCanvas implements Runnable {
 		} else if(Field121 > 0) {
 			switch (Field121) {
 				case 1:
-					Method97(3, 0);
+					setNewScreen(3, 0);
 					break;
 				case 2:
 					if(Field128) {
-						Method97(-1, 0);
+						setNewScreen(-1, 0);
 					}
 					break;
 				case 3:
 					if(Field128) {
 						Field389 = Field327;
-						Method97(4, 0);
+						setNewScreen(4, 0);
 						Method225(1);
 					}
 					break;
@@ -2906,7 +2922,7 @@ public final class Game extends GameCanvas implements Runnable {
 					Method254(-1);
 					Field165 = 500;
 					Field390 = 120;
-					Method97(4, 0);
+					setNewScreen(4, 0);
 					break;
 				case 5:
 					if(Field128) {
@@ -2915,12 +2931,12 @@ public final class Game extends GameCanvas implements Runnable {
 						saveRecordData();
 						Field427 = false;
 						Field348 = -1;
-						Method97(7, 0);
+						setNewScreen(7, 0);
 						return;
 					}
 					break;
 				case 6:
-					Method97(4, 0);
+					setNewScreen(4, 0);
 					Method225(1);
 			}
 	
@@ -2966,7 +2982,7 @@ public final class Game extends GameCanvas implements Runnable {
 			mirrored = !mirrored;
 			level = 0;
 			saveRecordData();
-			Method97(7, 0);
+			setNewScreen(7, 0);
 		} else {
 			if(Field348 != 0) {
 				Method275();
@@ -3013,7 +3029,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method126() {
-		if(Field71 != 5) {
+		if(newScreenIndex != 5) {
 			Method227(-1);
 			Method16();
 		}
@@ -3109,13 +3125,13 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			Field136 = false;
-			Method97(6, 100 + Field130);
+			setNewScreen(6, 100 + Field130);
 			return;
 		}
 	
 		Method14();
 		if(Field126 >= Field125.length && !Field136) {
-			Method97(Field130, 0);
+			setNewScreen(Field130, 0);
 		}
 	
 	}
@@ -3123,11 +3139,11 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method128(int var0) {
 		Field132 = Field398 * 1000;
 		if(Field125 == null) {
-			Method97(Field130, 0);
+			setNewScreen(Field130, 0);
 		} else if(!Field131) {
 			Field126 = 0;
 			Field128 = false;
-			Field130 = Field69;
+			Field130 = oldScreenIndex;
 			Field461 = 0;
 			Field129 = Field348;
 			Field143 = Field129 == 0;
@@ -3197,7 +3213,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field127 = var3;
 		Field125 = var0;
 		Method245();
-		Method97(5, 0);
+		setNewScreen(5, 0);
 	}
 	
 	public static final int Method135(int[] var0, int var1, boolean var2) {
@@ -3336,7 +3352,7 @@ public final class Game extends GameCanvas implements Runnable {
 				case 8:
 					if(!var2) {
 						Field131 = true;
-						Method97(6, var0[var1 + 1]);
+						setNewScreen(6, var0[var1 + 1]);
 						var1 += 2;
 						return var1;
 					}
@@ -3436,13 +3452,13 @@ public final class Game extends GameCanvas implements Runnable {
 				language = var0;
 				saveRecordData();
 				Method54((new short[] {(short)0x0085, (short)0x9e91, (short)0xdc77, (short)0x0d48, (short)0x4f2a})[language]);
-				Method97(0, 1);
+				setNewScreen(0, 1);
 				return;
 			}
 	
 			Field16 = var0 == 1 || var0 == 3;
 			Method226();
-			Method97(1, 0);
+			setNewScreen(1, 0);
 		}
 	
 	}
@@ -3483,7 +3499,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		if(Method64(2, -1, true) == 2) {
 			Field149 = true;
-			Method97(6, 2);
+			setNewScreen(6, 2);
 		}
 	
 		Method14();
@@ -3492,7 +3508,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method140(int var0) {
 		if(Field149) {
 			Field149 = false;
-			Method97(2, 10);
+			setNewScreen(2, 10);
 		} else {
 			if(Field103 == null) {
 				Field103 = Method57(0x1000f);
@@ -3527,7 +3543,7 @@ public final class Game extends GameCanvas implements Runnable {
 			int var1 = Field155 + 1000 * var0 / Field152;
 			if(Field155 == 0 && var1 > 1000) {
 				var1 = 1000;
-				Method97(Field150, 1);
+				setNewScreen(Field150, 1);
 			}
 	
 			if(var1 > 2000) {
@@ -3550,7 +3566,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field154 = false;
 		Field151 = millis();
 		int var1 = Field150;
-		Field150 = Field69;
+		Field150 = oldScreenIndex;
 		if(var0 >= 100) {
 			Field150 = var0 - 100;
 			var0 = 2;
@@ -6029,7 +6045,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field427 = true;
 				Field409 = 100;
 				Method225(0);
-				Method97(2, 0);
+				setNewScreen(2, 0);
 			} else {
 				if(Field404 && Field390 >= 100) {
 					Method251();
@@ -6521,7 +6537,7 @@ public final class Game extends GameCanvas implements Runnable {
 			skipDialogueAtStart = true;
 		}
 	
-		Method97(0, 0);
+		setNewScreen(0, 0);
 	}
 	
 	public static final void Method259() {
@@ -6802,7 +6818,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 				break;
 			case 4:
-				Method97(8, 0);
+				setNewScreen(8, 0);
 				break;
 			case 5:
 				if(Field16) {
@@ -7185,7 +7201,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		if(Field443 < -40) {
-			Method97(6, 0);
+			setNewScreen(6, 0);
 			Field393 = true;
 			return true;
 		} else {
