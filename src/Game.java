@@ -2099,8 +2099,8 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void setRandSeed(int var0) {
-		randSeed = (long)var0;
+	public static final void setRandSeed(int seed) {
+		randSeed = (long)seed;
 	}
 	
 	public static final int rand8() {
