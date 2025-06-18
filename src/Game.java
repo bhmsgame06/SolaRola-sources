@@ -22,7 +22,7 @@ public final class Game extends GameCanvas implements Runnable {
 	private static int pplColorCount;
 	private static int pplCRC;
 	private static byte[] pplData;
-	public static boolean Field12;
+	public static boolean paused;
 	public static long Field13;
 	public static long Field14;
 	public static String recordStoreName = "PMDATA";
@@ -417,7 +417,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field402 = 0;
 	public static boolean Field403 = false;
 	public static boolean Field404 = true;
-	public static boolean pauseScreen = false;
+	public static boolean pauseScreenDrawn = false;
 	public static int[] Field406 = new int[12];
 	public static int Field407 = 9;
 	public static boolean Field408 = false;
@@ -497,7 +497,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public final void hideNotify() {
 		Field4 = 0;
-		Field12 = true;
+		paused = true;
 		Method29();
 		Method31();
 		Method261();
@@ -2117,13 +2117,13 @@ public final class Game extends GameCanvas implements Runnable {
 		loadGeneral();
 	
 		do {
-			if(Field12) {
+			if(paused) {
 				pauseScreenOnce();
 				drawSoftkeyIcons();
 				flushGrp();
 				updateKeys();
 				if(Method6(1)) {
-					Field12 = false;
+					paused = false;
 				}
 			} else if(Field68) {
 				Field68 = false;
@@ -5484,7 +5484,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method228() {
-		if(Field355 >= 0 && !Field12 && !Method27(Field355, -1)) {
+		if(Field355 >= 0 && !paused && !Method27(Field355, -1)) {
 			Method28(Field355, -1);
 		}
 	
@@ -6549,12 +6549,12 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method261() {
-		pauseScreen = true;
+		pauseScreenDrawn = true;
 	}
 	
 	public static final void pauseScreenOnce() {
-		if(pauseScreen) {
-			pauseScreen = false;
+		if(pauseScreenDrawn) {
+			pauseScreenDrawn = false;
 			setColor(0, 0, 0);
 	
 			for(int y = 0; y < 128; y++) {
