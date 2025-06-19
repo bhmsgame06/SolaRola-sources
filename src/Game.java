@@ -1294,11 +1294,11 @@ public final class Game extends GameCanvas implements Runnable {
 			return true;
 		} else {
 			try {
-				InputStream var5 = file.getClass().getResourceAsStream("/" + file);
-				if(var5 == null) {
+				InputStream is = file.getClass().getResourceAsStream("/" + file);
+				if(is == null) {
 					return false;
 				} else {
-					currentData = new DataInputStream(var5);
+					currentData = new DataInputStream(is);
 					return true;
 				}
 			} catch(Exception var4) {
