@@ -463,8 +463,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static String Field447;
 	public static String Field448;
 	// trigonometric
-	public static short[] sine;
-	public static short[] cosine;
+	public static short[] sin1000;
+	public static short[] cos1000;
 	public static Image[] Field451;
 	public static int[] Field452;
 	public static boolean Field453 = true;
@@ -2302,7 +2302,7 @@ public final class Game extends GameCanvas implements Runnable {
 			int[] var10000 = Field79;
 			var10000[var0] += 128 * (1 + rand8() % 5) / 176;
 			var10000 = Field78;
-			var10000[var0] += 3 * cosine[Field77[var0]] / 1000;
+			var10000[var0] += 3 * cos1000[Field77[var0]] / 1000;
 			var10000 = Field76;
 			var10000[var0] += 4 + rand8() % 5;
 			if(Field76[var0] >= 40) {
@@ -2409,7 +2409,7 @@ public final class Game extends GameCanvas implements Runnable {
 			drawLine(Field84[var0] - 1, Field85[var0], Field84[var0] + 1, Field85[var0]);
 			drawLine(Field84[var0], Field85[var0] - 1, Field84[var0], Field85[var0] + 1);
 			int[] var10000 = Field84;
-			var10000[var0] += 3 * cosine[Field86[var0]] / 1000;
+			var10000[var0] += 3 * cos1000[Field86[var0]] / 1000;
 			var10000 = Field85;
 			var10000[var0] += 2;
 			var10000 = Field86;
@@ -2769,8 +2769,8 @@ public final class Game extends GameCanvas implements Runnable {
 	
 				for(int var5 = 0; var5 < 5; var5++) {
 					setColor(var2[var5]);
-					int var6 = sine[ttlScrTick * 2] * var4[var5] / 1000;
-					int var7 = sine[ttlScrTick * 2] * var3[var5] / 1000;
+					int var6 = sin1000[ttlScrTick * 2] * var4[var5] / 1000;
+					int var7 = sin1000[ttlScrTick * 2] * var3[var5] / 1000;
 					if(var5 != 2 && var5 != 3) {
 						fillArc(64 + var6 - var7 / 2 - 1, 64 - var7 / 2, var7, var7, 0, 360);
 					} else {
@@ -4380,7 +4380,7 @@ public final class Game extends GameCanvas implements Runnable {
 			var4 = 179;
 		}
 	
-		return var3 / 1500 * cosine[var4];
+		return var3 / 1500 * cos1000[var4];
 	}
 	
 	public static final void Method183() {
@@ -7105,8 +7105,8 @@ public final class Game extends GameCanvas implements Runnable {
 			var2 = (150 - Field443) * 2;
 		}
 	
-		Method92((128 - Method71(Field447, 0)) / 2 - 128 * cosine[var2] / 1000, 32, Field447, 0);
-		Method92((128 - Method71(Field448, 0)) / 2 + 128 * cosine[var2] / 1000, 43, Field448, 0);
+		Method92((128 - Method71(Field447, 0)) / 2 - 128 * cos1000[var2] / 1000, 32, Field447, 0);
+		Method92((128 - Method71(Field448, 0)) / 2 + 128 * cos1000[var2] / 1000, 43, Field448, 0);
 		Method14();
 		Field443 -= 2;
 		if(softkeyPressed(2, -1) == 2) {
@@ -7125,13 +7125,13 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final int Method293(int var0, int var1, int var2) {
 		var0 /= 100000 / Field398;
 		var1 /= 100000 / Field398;
-		return cosine[var2] * var0 - sine[var2] * var1;
+		return cos1000[var2] * var0 - sin1000[var2] * var1;
 	}
 	
 	public static final int Method294(int var0, int var1, int var2) {
 		var0 /= 100000 / Field398;
 		var1 /= 100000 / Field398;
-		return sine[var2] * var0 + cosine[var2] * var1;
+		return sin1000[var2] * var0 + cos1000[var2] * var1;
 	}
 	
 	public static final int sin(int var0) {
@@ -7143,7 +7143,7 @@ public final class Game extends GameCanvas implements Runnable {
 			var0 -= 360;
 		}
 	
-		return sine[var0];
+		return sin1000[var0];
 	}
 	
 	public static final int cos(int var0) {
@@ -7155,16 +7155,16 @@ public final class Game extends GameCanvas implements Runnable {
 			var0 -= 360;
 		}
 	
-		return cosine[var0];
+		return cos1000[var0];
 	}
 	
 	public static final void loadTrigonometric() {
-		if(sine == null) {
-			sine = loadFile16("sin1000.bin");
+		if(sin1000 == null) {
+			sin1000 = loadFile16("sin1000.bin");
 		}
 	
-		if(cosine == null) {
-			cosine = loadFile16("cos1000.bin");
+		if(cos1000 == null) {
+			cos1000 = loadFile16("cos1000.bin");
 		}
 	}
 	
@@ -7187,7 +7187,7 @@ public final class Game extends GameCanvas implements Runnable {
 		setColor(Field460);
 		fillRect(0, 0, 128, 128);
 		if(Field454) {
-			Method300(Field457 + 12 * sine[(int)(millis() / 5L % 360L)] / 1000, Field458 + 12 * sine[(int)(millis() / 3L % 360L)] / 1000, Field459 + 40 + 20 * sine[(int)(millis() / 14L % 360L)] / 1000);
+			Method300(Field457 + 12 * sin1000[(int)(millis() / 5L % 360L)] / 1000, Field458 + 12 * sin1000[(int)(millis() / 3L % 360L)] / 1000, Field459 + 40 + 20 * sin1000[(int)(millis() / 14L % 360L)] / 1000);
 		} else {
 			Method300(Field457, Field458, Field459);
 		}
@@ -7403,7 +7403,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field473 -= 180;
 			}
 	
-			int var7 = 1 + 6 * sine[Field473] / 1000;
+			int var7 = 1 + 6 * sin1000[Field473] / 1000;
 			drawImage(arrows[0], var7, 85 - arrows[0].getHeight() / 2, 0);
 			drawImage(arrows[1], 128 - var7 - arrows[1].getWidth(), 85 - arrows[1].getHeight() / 2, 0);
 		}
