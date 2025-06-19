@@ -426,14 +426,14 @@ public final class Game extends GameCanvas implements Runnable {
 	public static short[] decorForeground;
 	public static short[] decorBackground;
 	public static Image[] decors;
-	public static Image Field413;
-	public static Image Field414;
-	public static Image[] Field415;
-	public static Image[] Field416;
-	public static Image[] Field417;
-	public static Image[] Field418;
-	public static Image Field419;
-	public static Image Field420;
+	public static Image arrowLeft;
+	public static Image arrowRight;
+	public static Image[] shipIcons;
+	public static Image[] shipIconsOff;
+	public static Image[] piston;
+	public static Image[] inside;
+	public static Image insideLamp;
+	public static Image window;
 	public static Image Field421;
 	public static Image[] Field422;
 	public static int Field423;
@@ -478,7 +478,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field461 = 0;
 	public static String[] Field462 = new String[] {"Kachoo", "NikSak", "Rara", "Corakllquar", "Brad", "NotPing"};
 	public static Image[] Field463;
-	public static Image[] arrows;
+	public static Image[] selectionMenuArrows;
 	public static int Field465;
 	public static long Field466;
 	public static int Field467;
@@ -2997,7 +2997,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field423 = 0;
 			Field404 = true;
 			Method107(2, 12, 92, 46);
-			Method274();
+			insideShipInit();
 			Method148();
 			if(Field425 == null) {
 				Field425 = Method56(6, -1);
@@ -6641,61 +6641,61 @@ public final class Game extends GameCanvas implements Runnable {
 		return var0 > 128 || var2 < 0 || var1 > 128 || var3 < 0;
 	}
 	
-	public static final void Method274() {
-		if(Field420 == null) {
-			Field420 = loadImage("window.pim", "window.ppl");
+	public static final void insideShipInit() {
+		if(window == null) {
+			window = loadImage("window.pim", "window.ppl");
 		}
 	
-		if(Field413 == null) {
-			Field413 = loadImage("arrow_left.pim", "arrow_left.ppl");
+		if(arrowLeft == null) {
+			arrowLeft = loadImage("arrow_left.pim", "arrow_left.ppl");
 		}
 	
-		if(Field414 == null) {
-			Field414 = loadImage("arrow_right.pim", "arrow_right.ppl");
+		if(arrowRight == null) {
+			arrowRight = loadImage("arrow_right.pim", "arrow_right.ppl");
 		}
 	
-		if(Field418 == null) {
-			Field418 = new Image[3];
+		if(inside == null) {
+			inside = new Image[3];
 	
-			for(int var0 = 0; var0 < 3; var0++) {
-				Field418[var0] = loadImage("inside" + var0 + ".pim", "inside" + var0 + ".ppl");
+			for(int i = 0; i < 3; i++) {
+				inside[i] = loadImage("inside" + i + ".pim", "inside" + i + ".ppl");
 			}
 		}
 	
-		if(Field419 == null) {
-			Field419 = loadImage("inside_lamp.pim", "inside_lamp.ppl");
+		if(insideLamp == null) {
+			insideLamp = loadImage("inside_lamp.pim", "inside_lamp.ppl");
 		}
 	
-		if(Field417 == null) {
-			Field417 = new Image[2];
-			Field417[0] = loadImage("piston_top.pim", "piston_top.ppl");
-			Field417[1] = loadImage("piston_bottom.pim", "piston_bottom.ppl");
+		if(piston == null) {
+			piston = new Image[2];
+			piston[0] = loadImage("piston_top.pim", "piston_top.ppl");
+			piston[1] = loadImage("piston_bottom.pim", "piston_bottom.ppl");
 		}
 	
 		if(decors == null) {
 			decors = new Image[10];
 	
-			for(int var1 = 0; var1 < decors.length; var1++) {
-				decors[var1] = loadImage("shipDecor" + var1 + ".pim", "shipDecor" + var1 + ".ppl");
+			for(int i = 0; i < decors.length; i++) {
+				decors[i] = loadImage("shipDecor" + i + ".pim", "shipDecor" + i + ".ppl");
 			}
 	
 			decorBackground = loadFile16("decor_background.bin");
 			decorForeground = loadFile16("decor_foreground.bin");
 		}
 	
-		if(Field415 == null) {
-			Field415 = new Image[9];
+		if(shipIcons == null) {
+			shipIcons = new Image[9];
 	
-			for(int var2 = 0; var2 < 9; var2++) {
-				Field415[var2] = loadImage("shipicon" + var2 + ".pim", "shipicon" + var2 + ".ppl");
+			for(int i = 0; i < 9; i++) {
+				shipIcons[i] = loadImage("shipicon" + i + ".pim", "shipicon" + i + ".ppl");
 			}
 		}
 	
-		if(Field416 == null) {
-			Field416 = new Image[9];
+		if(shipIconsOff == null) {
+			shipIconsOff = new Image[9];
 	
-			for(int var3 = 0; var3 < 9; var3++) {
-				Field416[var3] = loadImage("shipicon" + var3 + "b.pim", "shipicon" + var3 + "b.ppl");
+			for(int i = 0; i < 9; i++) {
+				shipIconsOff[i] = loadImage("shipicon" + i + "b.pim", "shipicon" + i + "b.ppl");
 			}
 		}
 	}
@@ -6704,7 +6704,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Method107(2, 12, 92, 46);
 		gamma = 100;
 		loadLevel(-2);
-		Method274();
+		insideShipInit();
 		Field321 = 40000;
 		Method238(Field298[0], Field320 / 2, 0);
 	}
@@ -6790,11 +6790,11 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method278() {
 		if(Field298[0] > 0x6e0000) {
-			drawImage(Field413, 4, 88, 0);
+			drawImage(arrowLeft, 4, 88, 0);
 		}
 	
 		if(Field298[0] < 0x41a0000) {
-			drawImage(Field414, 107, 88, 0);
+			drawImage(arrowRight, 107, 88, 0);
 		}
 	}
 	
@@ -6823,28 +6823,28 @@ public final class Game extends GameCanvas implements Runnable {
 			var2 = 0;
 		}
 	
-		drawImage(Field418[0], var2, -16, 0);
+		drawImage(inside[0], var2, -16, 0);
 		var2 += 28;
 	
 		for(int var3 = 0; var3 < 17; var3++) {
 			if(var2 + 46 > 0 && var2 <= 128) {
-				drawImage(Field418[1], var2, -16, 0);
+				drawImage(inside[1], var2, -16, 0);
 			}
 	
 			var2 += 46;
 		}
 	
 		if(var2 <= 128) {
-			drawImage(Field418[2], var2, -16, 0);
+			drawImage(inside[2], var2, -16, 0);
 		}
 	
 		int var4 = var1 + 72 * Method222(193) / 100;
-		drawImage(Field419, var4 - Field419.getWidth() / 2, 2, 0);
+		drawImage(insideLamp, var4 - insideLamp.getWidth() / 2, 2, 0);
 		Method281(var1 + 299, 30, 0);
 		Method281(var1 + 553, 30, 1);
 		decor(decorBackground);
 		if(Field424 > 0) {
-			int var12 = 2 + Field419.getHeight() / 2;
+			int var12 = 2 + insideLamp.getHeight() / 2;
 			setColor(0xff0000);
 			int var5 = Field424;
 			if(var4 > -var5 && var4 < 128 + var5 && var12 > -var5 && var12 < 128 + var5) {
@@ -6868,19 +6868,19 @@ public final class Game extends GameCanvas implements Runnable {
 				int var14 = 72 * (Field298[var13] / 100) >> 16;
 				int var15 = 72 * (Field299[var13] / 100) >> 16;
 				Image var8;
-				drawImage(var8 = Field417[1], var1 + var14 - var8.getWidth() / 2, -16 + var15 - var8.getHeight(), 0);
-				drawImage(var8 = Field417[0], var1 + var14 - var8.getWidth() / 2, -16, 0);
+				drawImage(var8 = piston[1], var1 + var14 - var8.getWidth() / 2, -16 + var15 - var8.getHeight(), 0);
+				drawImage(var8 = piston[0], var1 + var14 - var8.getWidth() / 2, -16, 0);
 				int var9 = Field305[var13] - 1;
-				var8 = Field415[var9];
+				var8 = shipIcons[var9];
 				switch(var9) {
 					case 4:
 						if(!audio) {
-							var8 = Field416[var9];
+							var8 = shipIconsOff[var9];
 						}
 						break;
 					case 5:
 						if(!vibration) {
-							var8 = Field416[var9];
+							var8 = shipIconsOff[var9];
 						}
 				}
 	
@@ -6898,8 +6898,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method281(int var0, int var1, int var2) {
-		int var3 = Field420.getWidth();
-		int var4 = Field420.getHeight();
+		int var3 = window.getWidth();
+		int var4 = window.getHeight();
 		var0 -= var3 / 2;
 		setColor(0);
 		setClip(var0, var1, var3, var4);
@@ -6907,7 +6907,7 @@ public final class Game extends GameCanvas implements Runnable {
 		setColor(0xffffff);
 		Method108(var2, var0 - var3 + var3 * var0 / 128, var1);
 		if(var0 >= -var3 && var0 <= 128) {
-			drawImage(Field420, var0, var1, 0);
+			drawImage(window, var0, var1, 0);
 		}
 	
 		setClip(0, 0, 128, 128);
@@ -7274,7 +7274,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method301() {
 		Field463 = null;
-		arrows = null;
+		selectionMenuArrows = null;
 	}
 	
 	public static final void Method302(String[] imageFiles, int var1) {
@@ -7287,9 +7287,9 @@ public final class Game extends GameCanvas implements Runnable {
 			Field463[var2] = loadImage(imageFiles[(var2 + var1) % numSelections] + ".pim", imageFiles[(var2 + var1) % numSelections] + ".ppl");
 		}
 	
-		arrows = new Image[2];
-		arrows[0] = loadImage("arrow_left.pim", "arrow_left.ppl");
-		arrows[1] = loadImage("arrow_right.pim", "arrow_right.ppl");
+		selectionMenuArrows = new Image[2];
+		selectionMenuArrows[0] = loadImage("arrow_left.pim", "arrow_left.ppl");
+		selectionMenuArrows[1] = loadImage("arrow_right.pim", "arrow_right.ppl");
 		Method213(10 + numSelections * 2 + 1);
 		Method160(numSelections);
 		Field348 = -10;
@@ -7404,8 +7404,8 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			int var7 = 1 + 6 * sin1000[Field473] / 1000;
-			drawImage(arrows[0], var7, 85 - arrows[0].getHeight() / 2, 0);
-			drawImage(arrows[1], 128 - var7 - arrows[1].getWidth(), 85 - arrows[1].getHeight() / 2, 0);
+			drawImage(selectionMenuArrows[0], var7, 85 - selectionMenuArrows[0].getHeight() / 2, 0);
+			drawImage(selectionMenuArrows[1], 128 - var7 - selectionMenuArrows[1].getWidth(), 85 - selectionMenuArrows[1].getHeight() / 2, 0);
 		}
 	
 		Method14();
