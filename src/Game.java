@@ -482,9 +482,9 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field465;
 	public static long Field466;
 	public static int Field467;
-	public static int Field468;
+	public static int degreeBetweenSelections;
 	public static int Field469;
-	public static int numFlags;
+	public static int numSelections;
 	public static int Field471;
 	public static int Field472;
 	public static int Field473;
@@ -7277,41 +7277,41 @@ public final class Game extends GameCanvas implements Runnable {
 		arrows = null;
 	}
 	
-	public static final void Method302(String[] var0, int var1) {
-		numFlags = var0.length;
-		Field468 = 360 / numFlags;
-		Field469 = Field468 / 2;
-		Field463 = new Image[numFlags];
+	public static final void Method302(String[] imageFiles, int var1) {
+		numSelections = imageFiles.length;
+		degreeBetweenSelections = 360 / numSelections;
+		Field469 = degreeBetweenSelections / 2;
+		Field463 = new Image[numSelections];
 	
-		for(int var2 = 0; var2 < numFlags; var2++) {
-			Field463[var2] = loadImage(var0[(var2 + var1) % numFlags] + ".pim", var0[(var2 + var1) % numFlags] + ".ppl");
+		for(int var2 = 0; var2 < numSelections; var2++) {
+			Field463[var2] = loadImage(imageFiles[(var2 + var1) % numSelections] + ".pim", imageFiles[(var2 + var1) % numSelections] + ".ppl");
 		}
 	
 		arrows = new Image[2];
 		arrows[0] = loadImage("arrow_left.pim", "arrow_left.ppl");
 		arrows[1] = loadImage("arrow_right.pim", "arrow_right.ppl");
-		Method213(10 + numFlags * 2 + 1);
-		Method160(numFlags);
+		Method213(10 + numSelections * 2 + 1);
+		Method160(numSelections);
 		Field348 = -10;
 		Field321 = 30000;
 		Field322 = 64000;
 		Field467 = 0;
-		Field471 = 10 + numFlags * 2;
+		Field471 = 10 + numSelections * 2;
 		Field472 = var1;
 	
-		for(int var5 = 0; var5 < numFlags; var5++) {
-			int var3 = 5242 * cos(90 + var5 * Field468);
-			int var4 = 5242 * sin(90 + var5 * Field468);
+		for(int var5 = 0; var5 < numSelections; var5++) {
+			int var3 = 5242 * cos(90 + var5 * degreeBetweenSelections);
+			int var4 = 5242 * sin(90 + var5 * degreeBetweenSelections);
 			Method214(var5 + 10, var3, var4, 0x50000, 200, 0, 0, false);
-			var3 = 6881 * cos(90 + var5 * Field468);
-			var4 = 6881 * sin(90 + var5 * Field468);
-			Method214(var5 + 10 + numFlags, var3, var4, 0x190000, 100, 3, 0, true);
+			var3 = 6881 * cos(90 + var5 * degreeBetweenSelections);
+			var4 = 6881 * sin(90 + var5 * degreeBetweenSelections);
+			Method214(var5 + 10 + numSelections, var3, var4, 0x190000, 100, 3, 0, true);
 		}
 	
 		Method214(Field471, 0, 0, 0x500000, 200, 2, 0, false);
 	
-		for(int var6 = 0; var6 < numFlags; var6++) {
-			Method161(var6, var6 + 10, var6 + 10 + numFlags, 4, 0x3c0000, 65000, true, true);
+		for(int var6 = 0; var6 < numSelections; var6++) {
+			Method161(var6, var6 + 10, var6 + 10 + numSelections, 4, 0x3c0000, 65000, true, true);
 		}
 	
 		Method238(Field298[Field471], Field299[Field471] + 6553600, 0);
@@ -7330,7 +7330,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} else if(Method4(16)) {
 			Field467 -= 4;
 		} else {
-			int var0 = Field467 % Field468;
+			int var0 = Field467 % degreeBetweenSelections;
 			if(var0 > Field469) {
 				Field467 += 2;
 			} else if(var0 > 0) {
@@ -7346,9 +7346,9 @@ public final class Game extends GameCanvas implements Runnable {
 			Field467 += 360;
 		}
 	
-		for(int var3 = 0; var3 < numFlags; var3++) {
-			int var1 = 5242 * cos(Field467 + 90 + var3 * Field468);
-			int var2 = 5242 * sin(Field467 + 90 + var3 * Field468);
+		for(int var3 = 0; var3 < numSelections; var3++) {
+			int var1 = 5242 * cos(Field467 + 90 + var3 * degreeBetweenSelections);
+			int var2 = 5242 * sin(Field467 + 90 + var3 * degreeBetweenSelections);
 			Field298[var3 + 10] = var1;
 			Field299[var3 + 10] = var2;
 		}
@@ -7378,14 +7378,14 @@ public final class Game extends GameCanvas implements Runnable {
 		Method269(Field298[Field471], Field299[Field471], Field300[Field471] / 2, 0xdddddd);
 		Method265(0);
 	
-		for(int var4 = 10; var4 < 10 + numFlags; var4++) {
-			Method264(Field298[var4], Field299[var4], Field298[var4 + numFlags], Field299[var4 + numFlags]);
+		for(int var4 = 10; var4 < 10 + numSelections; var4++) {
+			Method264(Field298[var4], Field299[var4], Field298[var4 + numSelections], Field299[var4 + numSelections]);
 		}
 	
-		for(int var5 = 0; var5 < numFlags; var5++) {
-			Method270(Field298[var5 + 10 + numFlags], Field299[var5 + 10 + numFlags], Field300[var5 + 10 + numFlags]);
+		for(int var5 = 0; var5 < numSelections; var5++) {
+			Method270(Field298[var5 + 10 + numSelections], Field299[var5 + 10 + numSelections], Field300[var5 + 10 + numSelections]);
 			if(Field409 > 20) {
-				Method268(Field463[var5], Field298[var5 + 10 + numFlags], Field299[var5 + 10 + numFlags]);
+				Method268(Field463[var5], Field298[var5 + 10 + numSelections], Field299[var5 + 10 + numSelections]);
 			}
 		}
 	
@@ -7410,17 +7410,17 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		Method14();
 		if(Field465 == 3) {
-			int var8 = (360 - Field467) / Field468 + Field472;
-			if(Field467 % Field468 > Field469) {
+			int var8 = (360 - Field467) / degreeBetweenSelections + Field472;
+			if(Field467 % degreeBetweenSelections > Field469) {
 				var8++;
 			}
 	
-			if(var8 >= numFlags) {
-				var8 -= numFlags;
+			if(var8 >= numSelections) {
+				var8 -= numSelections;
 			}
 	
 			if(var8 < 0) {
-				var8 += numFlags;
+				var8 += numSelections;
 			}
 	
 			return var8;
