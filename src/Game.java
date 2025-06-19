@@ -159,8 +159,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean Field144;
 	public static int[] Field145 = new int[] {-1, -1, -1, -1, -1, -1, -1, -1};
 	public static int Field146 = 0;
-	public static Image Field147;
-	public static Image Field148;
+	public static Image gamelogoTop;
+	public static Image gamelogoBottom;
 	public static boolean Field149 = false;
 	public static int Field150;
 	public static long Field151;
@@ -3485,12 +3485,12 @@ public final class Game extends GameCanvas implements Runnable {
 		setColor(0);
 		fillRect(0, 0, 128, 128);
 		Method109(0, 0, 0, true);
-		if(Field147 != null) {
-			drawImage(Field147, 17, 0, 0);
+		if(gamelogoTop != null) {
+			drawImage(gamelogoTop, 17, 0, 0);
 		}
 	
-		if(Field148 != null) {
-			drawImage(Field148, 24, 55, 0);
+		if(gamelogoBottom != null) {
+			drawImage(gamelogoBottom, 24, 55, 0);
 		}
 	
 		if((millis() & 512L) > 0L) {
@@ -3514,8 +3514,8 @@ public final class Game extends GameCanvas implements Runnable {
 				Field103 = Method57(0x1000f);
 			}
 	
-			Field147 = loadImage("gamelogo.pim", "gamelogo.ppl");
-			Field148 = loadImage("gamelogo2.pim", "gamelogo2.ppl");
+			gamelogoTop = loadImage("gamelogo.pim", "gamelogo.ppl");
+			gamelogoBottom = loadImage("gamelogo2.pim", "gamelogo2.ppl");
 			Method107(1, 50, 128, 128);
 			Method227(8);
 			Field393 = false;
@@ -3523,8 +3523,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method141() {
-		Field147 = null;
-		Field148 = null;
+		gamelogoTop = null;
+		gamelogoBottom = null;
 		Method16();
 		Method227(-1);
 	}
