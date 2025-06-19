@@ -417,7 +417,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field402 = 0;
 	public static boolean Field403 = false;
 	public static boolean Field404 = true;
-	public static boolean noPauseScreen = false;
+	public static boolean pauseScreenDraw = false;
 	public static int[] Field406 = new int[12];
 	public static int Field407 = 9;
 	public static boolean Field408 = false;
@@ -500,7 +500,7 @@ public final class Game extends GameCanvas implements Runnable {
 		paused = true;
 		Method29();
 		Method31();
-		setNoPauseScreen();
+		setPauseScreenDraw();
 	}
 	
 	public final void showNotify() {
@@ -6564,13 +6564,13 @@ public final class Game extends GameCanvas implements Runnable {
 		setSoftkeyIcon(4, loadImageByHash((short)0x5c21, (short)0x91f2));
 	}
 	
-	public static final void setNoPauseScreen() {
-		noPauseScreen = true;
+	public static final void setPauseScreenDraw() {
+		pauseScreenDraw = true;
 	}
 	
 	public static final void pauseScreenOnce() {
-		if(noPauseScreen) {
-			noPauseScreen = false;
+		if(pauseScreenDraw) {
+			pauseScreenDraw = false;
 			setColor(0, 0, 0);
 	
 			for(int y = 0; y < 128; y++) {

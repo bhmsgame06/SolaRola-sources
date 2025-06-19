@@ -27,7 +27,7 @@ public class PMMIDlet extends MIDlet {
 		Game.Method29();
 		Game.Method31();
 		notifyPaused();
-		Game.setNoPauseScreen();
+		Game.setPauseScreenDraw();
 	}
 
 	public final void destroyApp(boolean unconditional) {
