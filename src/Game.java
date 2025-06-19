@@ -587,7 +587,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final byte[] decodeImageData(byte[] pimData, short pplHash) {
 		if(pngTemplate == null) {
-			pngTemplate = loadFile8ByHash((short)0xdee7);
+			pngTemplate = loadFile8((short)0xdee7);
 		}
 	
 		loadPalette(pplHash);
@@ -650,7 +650,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void loadPalette(short pplHash) {
-		openFileByHash(pplHash);
+		openFile(pplHash);
 		pplOptions = readByte();
 		pplColorCount = 1 + readUnsignedByte();
 		pplCRC = readInt();
@@ -659,15 +659,15 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final Image loadImage(String pimHash, String pplHash) {
-		return loadImageByHash(bfcHashFilename(pimHash), bfcHashFilename(pplHash));
+		return loadImage(bfcHashFilename(pimHash), bfcHashFilename(pplHash));
 	}
 	
-	public static final Image loadImageByHash(short pimHash, short pplHash) {
-		return decodeImageByHash(pimHash, pplHash);
+	public static final Image loadImage(short pimHash, short pplHash) {
+		return decodeImage(pimHash, pplHash);
 	}
 	
-	public static final Image decodeImageByHash(short pimHash, short pplHash) {
-		byte[] pimData = getFile8ByHash(pimHash);
+	public static final Image decodeImage(short pimHash, short pplHash) {
+		byte[] pimData = getFile8(pimHash);
 		if(pimData == null) {
 			return null;
 		} else {
@@ -1234,8 +1234,8 @@ public final class Game extends GameCanvas implements Runnable {
 		return (short)(val & 0xffff);
 	}
 	
-	public static final byte[] loadFile8ByHash(short fnHash) {
-		if(!openFileByHash(fnHash)) {
+	public static final byte[] loadFile8(short fnHash) {
+		if(!openFile(fnHash)) {
 			return null;
 		} else {
 			byte[] var1 = new byte[currentSize];
@@ -1244,21 +1244,21 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final byte[] getFile8ByHash(short fnHash) {
+	public static final byte[] getFile8(short fnHash) {
 		int index = getFileIndex(fnHash);
 		if(index < 0) {
 			return null;
 		} else {
-			return bfcReservedData[index] != null ? bfcReservedData[index] : loadFile8ByHash(fnHash);
+			return bfcReservedData[index] != null ? bfcReservedData[index] : loadFile8(fnHash);
 		}
 	}
 	
 	public static final short[] loadFile16(String file) {
-		return loadFile16ByHash(bfcHashFilename(file));
+		return loadFile16(bfcHashFilename(file));
 	}
 	
-	public static final short[] loadFile16ByHash(short fnHash) {
-		if(!openFileByHash(fnHash)) {
+	public static final short[] loadFile16(short fnHash) {
+		if(!openFile(fnHash)) {
 			return null;
 		} else {
 			short[] arr = new short[currentSize / 2];
@@ -1272,11 +1272,11 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final int[] loadFile32(String file) {
-		return loadFile32ByHash(bfcHashFilename(file));
+		return loadFile32(bfcHashFilename(file));
 	}
 	
-	public static final int[] loadFile32ByHash(short fnHash) {
-		if(!openFileByHash(fnHash)) {
+	public static final int[] loadFile32(short fnHash) {
+		if(!openFile(fnHash)) {
 			return null;
 		} else {
 			int[] arr = new int[currentSize / 4];
@@ -1290,7 +1290,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final boolean openFile(String file) {
-		if(openFileByHash(bfcHashFilename(file))) {
+		if(openFile(bfcHashFilename(file))) {
 			return true;
 		} else {
 			try {
@@ -1307,7 +1307,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final boolean openFileByHash(short fnHash) {
+	public static final boolean openFile(short fnHash) {
 		if(throbberToggle) {
 			throbber();
 		}
@@ -1497,7 +1497,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} else {
 			boolean var2 = throbberToggle;
 			throbberToggle = false;
-			if(!openFileByHash(Field52)) {
+			if(!openFile(Field52)) {
 				Field49 = null;
 				Field50 = null;
 			}
@@ -1697,13 +1697,13 @@ public final class Game extends GameCanvas implements Runnable {
 		fontChrWidths = new byte[var0][];
 	}
 	
-	public static final void loadFontByHash(int index, short pimHash, short pplHash, short cwtHash, byte spaceWidth, short chrHash, int sbc, int sbs) {
+	public static final void loadFont(int index, short pimHash, short pplHash, short cwtHash, byte spaceWidth, short chrHash, int sbc, int sbs) {
 		fontIndexes[index] = new short[230];
 		fontChrWidths[index] = new byte[230];
-		byte[] charWidth = loadFile8ByHash(cwtHash);
-		short[] charMap = loadFile16ByHash(chrHash);
+		byte[] charWidth = loadFile8(cwtHash);
+		short[] charMap = loadFile16(chrHash);
 		int charNum = charMap.length;
-		fontImages[index] = loadImageByHash(pimHash, pplHash);
+		fontImages[index] = loadImage(pimHash, pplHash);
 		fontChrOffsets[index] = new short[charNum];
 	
 		for(short i = 0; i < 230; i++) {
@@ -6473,17 +6473,17 @@ public final class Game extends GameCanvas implements Runnable {
 		loadRecordData();
 
 		setFontNum(4);
-		loadFontByHash(3, (short)0xb6ce, (short)0x7b1d, (short)0xc674, (byte)4, (short)0x88a8, 1, -2);
-		loadFontByHash(1, (short)0xe878, (short)0x25ab, (short)0x98c2, (byte)3, (short)0xd61e, 1, -1);
-		loadFontByHash(2, (short)0xa1c0, (short)0x6c13, (short)0xd17a, (byte)3, (short)0x9fa6, 1, -1);
-		loadFontByHash(0, (short)0x86ec, (short)0x4b3f, (short)0xf656, (byte)3, (short)0xb88a, -1, -1);
+		loadFont(3, (short)0xb6ce, (short)0x7b1d, (short)0xc674, (byte)4, (short)0x88a8, 1, -2);
+		loadFont(1, (short)0xe878, (short)0x25ab, (short)0x98c2, (byte)3, (short)0xd61e, 1, -1);
+		loadFont(2, (short)0xa1c0, (short)0x6c13, (short)0xd17a, (byte)3, (short)0x9fa6, 1, -1);
+		loadFont(0, (short)0x86ec, (short)0x4b3f, (short)0xf656, (byte)3, (short)0xb88a, -1, -1);
 
 		initSoftkeyIcons();
-		setSoftkeyIcon(2, loadImageByHash((short)0xe4f2, (short)0x2921));
-		setSoftkeyIcon(1, loadImageByHash((short)0x31d7, (short)0xfc04));
-		setSoftkeyIcon(0, loadImageByHash((short)0x9207, (short)0x5fd4));
-		setSoftkeyIcon(3, loadImageByHash((short)0x0545, (short)0xc896));
-		setSoftkeyIcon(4, loadImageByHash((short)0x5c21, (short)0x91f2));
+		setSoftkeyIcon(2, loadImage((short)0xe4f2, (short)0x2921));
+		setSoftkeyIcon(1, loadImage((short)0x31d7, (short)0xfc04));
+		setSoftkeyIcon(0, loadImage((short)0x9207, (short)0x5fd4));
+		setSoftkeyIcon(3, loadImage((short)0x0545, (short)0xc896));
+		setSoftkeyIcon(4, loadImage((short)0x5c21, (short)0x91f2));
 	}
 	
 	public static final void setPauseScreenDraw() {
