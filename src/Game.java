@@ -420,8 +420,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean pauseScreenDraw = false;
 	public static int[] Field406 = new int[12];
 	public static int Field407 = 9;
-	public static boolean Field408 = false;
-	public static int Field409 = 100;
+	public static boolean gammaBlackSet = false;
+	public static int gamma = 100;
 	// decors inside ship: socks, flowers, cubes, etc
 	public static short[] decorForeground;
 	public static short[] decorBackground;
@@ -2702,7 +2702,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field324 = false;
 		}
 	
-		Field409 = 100;
+		gamma = 100;
 		if(oldScreenIndex != 5 && oldScreenIndex != 6) {
 			Method229();
 		}
@@ -3345,7 +3345,7 @@ public final class Game extends GameCanvas implements Runnable {
 							Method107(2, 12, 92, 46);
 							Method225(0);
 							Method151(Field298[6], Field299[6], 6, 0x140000);
-							Field409 = 100;
+							gamma = 100;
 							Field398 = 72;
 							break;
 						case 1:
@@ -3441,7 +3441,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void selectionMenuResLoad(int var0) {
-		Field409 = 100;
+		gamma = 100;
 		Field146 = var0;
 		if(Field146 == 0) {
 			Method302(new String[] {"flag_uk", "flag_france", "flag_germany", "flag_spain", "flag_italy"}, language);
@@ -3453,7 +3453,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void selectionMenuResClean() {
-		Field409 = 100;
+		gamma = 100;
 		Method301();
 	}
 	
@@ -3843,7 +3843,7 @@ public final class Game extends GameCanvas implements Runnable {
 			var13[var8] = var6[var8] << 1;
 		}
 	
-		Method265(0);
+		setGammaColor(0);
 		setClip(var4, 0, 200, var5);
 		fillArc(var4 - var6[1] - 2, var5 - var6[0] - 2, var13[1] + 4, var13[0] + 4, 0, 360);
 		setClip(0, 0, var4, var5);
@@ -3852,7 +3852,7 @@ public final class Game extends GameCanvas implements Runnable {
 		fillArc(var4 - var6[3] - 2, var5 - var6[2] - 2, var13[3] + 4, var13[2] + 4, 180, 360);
 		setClip(var4, var5, 200, 200);
 		fillArc(var4 - var6[1] - 2, var5 - var6[2] - 2, var13[1] + 4, var13[2] + 4, 270, 360);
-		Method265(var1);
+		setGammaColor(var1);
 		setClip(var4, 0, 200, var5);
 		fillArc(var4 - var6[1], var5 - var6[0], var6[1] * 2, var6[0] * 2, 0, 360);
 		setClip(0, 0, var4, var5);
@@ -3862,7 +3862,7 @@ public final class Game extends GameCanvas implements Runnable {
 		setClip(var4, var5, 200, 200);
 		fillArc(var4 - var6[1], var5 - var6[2], var6[1] * 2, var6[2] * 2, 270, 360);
 		setClip(0, 0, 128, 128);
-		if(Field409 > 50 && Field165 > 0) {
+		if(gamma > 50 && Field165 > 0) {
 			int var14 = Field161;
 			if(var2) {
 				var14 = 0;
@@ -4341,7 +4341,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method181() {
-		Method266(160, 32, 240);
+		setGammaColor(160, 32, 240);
 	
 		for(int var0 = 0; var0 < Field232.length; var0++) {
 			Method270(Field298[Field232[var0]], Field299[Field232[var0]], Field300[Field232[var0]]);
@@ -4354,17 +4354,17 @@ public final class Game extends GameCanvas implements Runnable {
 		int var3 = Field300[Field231] / 5;
 	
 		for(int var4 = -1; var4 < 2; var4++) {
-			Method265(0);
+			setGammaColor(0);
 			Method270(var1 + var4 * var7, var2, var3);
 			if(var4 < Field234) {
-				Method265(0xffffff);
+				setGammaColor(0xffffff);
 				Method270(var1 + var4 * var7, var2, var3);
-				Method265(0);
+				setGammaColor(0);
 				int var5 = Method182(var1 + var4 * var7, Field372, 0x960000, 3 * var3 / 4);
 				int var6 = Method182(var2, Field373, 0x640000, 3 * var3 / 4);
 				Method270(var1 + var4 * var7 + var5, var2 + var6, var3 / 3);
 			} else {
-				Method266(160, 32, 240);
+				setGammaColor(160, 32, 240);
 				Method270(var1 + var4 * var7, var2, var3);
 			}
 		}
@@ -4757,13 +4757,13 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method200() {
-		Method266(0, 0, 0);
+		setGammaColor(0, 0, 0);
 	
 		for(int var0 = 0; var0 < Field259; var0++) {
 			Method267(Field260[var0], Field261[var0], Field262[var0], Field263[var0]);
 		}
 	
-		Method265(levelColor);
+		setGammaColor(levelColor);
 	
 		for(int var1 = 0; var1 < Field259; var1++) {
 			Method267(Field260[var1], Field261[var1], Field262[var1], Field263[var1]);
@@ -5527,9 +5527,9 @@ public final class Game extends GameCanvas implements Runnable {
 				Method235(Field358, var1, var3, true);
 			}
 		} else {
-			Method265(0xdcc86d);
+			setGammaColor(0xdcc86d);
 			fillRect(0, 0, 128, 128);
-			Method265(0);
+			setGammaColor(0);
 	
 			for(int var0 = 0; var0 < 128; var0 += 40) {
 				drawLine(0, var0, 128, var0);
@@ -5972,7 +5972,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if(var2 == 0) {
 				softkeyPressed(-1, -1);
 				Field427 = true;
-				Field409 = 100;
+				gamma = 100;
 				Method225(0);
 				setNewScreen(2, 0);
 			} else {
@@ -6124,9 +6124,9 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method252(boolean var0) {
 		long var1 = millis();
 		if(Field317 == 1 && Field348 == 1) {
-			Field409 = 100;
+			gamma = 100;
 			if(rand16() % 100 == 50) {
-				Field409 = 0;
+				gamma = 0;
 			}
 		}
 	
@@ -6134,9 +6134,9 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		for(int var3 = 0; var3 < Field344.length; var3++) {
 			short var4 = Field344[var3];
-			Method265(Field331);
+			setGammaColor(Field331);
 			Method270(Field298[var4], Field299[var4], Field300[var4]);
-			Method266(255, 255, 255);
+			setGammaColor(255, 255, 255);
 			if(Field300[var4] > Field340) {
 				Method272(Field298[var4], Field299[var4], Field340);
 			} else {
@@ -6162,27 +6162,27 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		for(int var8 = 0; var8 < Field297; var8++) {
 			if((Field303[var8] & 4) > 0 && Field306[var8] && (Field303[var8] & 0x2000) == 0 && (Field303[var8] & 8) == 0 && var8 != Field171) {
-				Method266(0, 0, 0);
+				setGammaColor(0, 0, 0);
 				Method270(Field298[var8], Field299[var8], Field300[var8]);
-				Method265(Field330);
+				setGammaColor(Field330);
 				Method270(Field298[var8], Field299[var8], Field300[var8]);
 			}
 		}
 	
 		if(Field306[Field171]) {
-			Method266(0, 0, 0);
+			setGammaColor(0, 0, 0);
 			Method270(Field298[Field171], Field299[Field171], Field300[Field171]);
 			if(Field167 != -1 && Field395 > Field168) {
 				if(Field169) {
-					Method266(255, 255, 255);
+					setGammaColor(255, 255, 255);
 					Field169 = false;
 					Field168 = Field395 + (Field167 + 100 - Field395) / 4;
 				} else {
-					Method266(200, 0, 0);
+					setGammaColor(200, 0, 0);
 					Field169 = true;
 				}
 			} else {
-				Method266(200, 0, 0);
+				setGammaColor(200, 0, 0);
 			}
 	
 			Method270(Field298[Field171], Field299[Field171], Field300[Field171]);
@@ -6205,7 +6205,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Method253(Field345, (Field334 + var9 * (Field335 - Field334) / 800 << 16) + (Field336 + var9 * (Field337 - Field336) / 800 << 8) + Field338 + var9 * (Field339 - Field338) / 800);
 		Method253(Field341, 0);
 		Method253(Field341, Field333);
-		Method266(0, 0, 0);
+		setGammaColor(0, 0, 0);
 	
 		for(int var10 = 16; var10 < Field198; var10++) {
 			if(Field206[var10] && Field205[var10]) {
@@ -6235,7 +6235,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method253(short[] var0, int var1) {
-		Method265(var1);
+		setGammaColor(var1);
 	
 		for(int var2 = 0; var2 < var0.length; var2++) {
 			Method270(Field298[var0[var2]], Field299[var0[var2]], Field300[var0[var2]]);
@@ -6536,30 +6536,30 @@ public final class Game extends GameCanvas implements Runnable {
 		drawLine(var4, var5, var6, var7);
 	}
 	
-	public static final void Method265(int var0) {
-		Method266(var0 >> 16 & 255, var0 >> 8 & 255, var0 & 255);
+	public static final void setGammaColor(int c) {
+		setGammaColor(c >> 16 & 255, c >> 8 & 255, c & 255);
 	}
 	
-	public static final void Method266(int var0, int var1, int var2) {
-		Field408 = false;
-		if(var0 + var1 + var2 == 0) {
-			Field408 = true;
+	public static final void setGammaColor(int r, int g, int b) {
+		gammaBlackSet = false;
+		if(r + g + b == 0) {
+			gammaBlackSet = true;
 		}
 	
-		if(Field409 == 100) {
-			setColor(var0, var1, var2);
+		if(gamma == 100) {
+			setColor(r, g, b);
 		} else {
-			int var3 = Field409;
-			if(var3 > 100) {
-				setColor(var0 - var0 * (200 - var3) / 100, var1 - var1 * (200 - var3) / 100, var2 - var2 * (200 - var3) / 100);
+			int gm = gamma;
+			if(gm > 100) {
+				setColor(r - r * (200 - gm) / 100, g - g * (200 - gm) / 100, b - b * (200 - gm) / 100);
 			} else {
-				setColor(var0 + (255 - var0) * (100 - var3) / 100, var1 + (255 - var1) * (100 - var3) / 100, var2 + (255 - var2) * (100 - var3) / 100);
+				setColor(r + (255 - r) * (100 - gm) / 100, g + (255 - g) * (100 - gm) / 100, b + (255 - b) * (100 - gm) / 100);
 			}
 		}
 	}
 	
 	public static final void Method267(int var0, int var1, int var2, int var3) {
-		if(Field408) {
+		if(gammaBlackSet) {
 			int var4 = 0x20000;
 			var4 = 100 * var4 / Field398;
 			var2 += var4;
@@ -6593,9 +6593,9 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method269(int var0, int var1, int var2, int var3) {
-		Method265(0);
+		setGammaColor(0);
 		Method270(var0, var1, var2);
-		Method265(var3);
+		setGammaColor(var3);
 		Method270(var0, var1, var2);
 	}
 	
@@ -6605,7 +6605,7 @@ public final class Game extends GameCanvas implements Runnable {
 			int var4 = Method242(var0, var1);
 			var2 >>= 16;
 			var2 = Field398 * var2 / 100;
-			if(Field408) {
+			if(gammaBlackSet) {
 				var2 += 2;
 			}
 	
@@ -6628,7 +6628,7 @@ public final class Game extends GameCanvas implements Runnable {
 		int var4 = Method242(var0, var1);
 		var2 >>= 16;
 		var2 = Field398 * var2 / 100;
-		if(Field408) {
+		if(gammaBlackSet) {
 			var2 += 2;
 		}
 	
@@ -6702,7 +6702,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method275() {
 		Method107(2, 12, 92, 46);
-		Field409 = 100;
+		gamma = 100;
 		loadLevel(-2);
 		Method274();
 		Field321 = 40000;
@@ -7028,14 +7028,14 @@ public final class Game extends GameCanvas implements Runnable {
 		Method255();
 		Method280();
 		if(var0 < 100) {
-			Field409 = var0;
+			gamma = var0;
 			Field398 = var0 * 72 / 100;
 			if(Field398 == 0) {
 				Field398 = 1;
 			}
 	
 			Method156(6, 0xc80000, true);
-			Field409 = 100;
+			gamma = 100;
 			Field398 = 72;
 		} else {
 			Method156(6, 0xc80000, true);
@@ -7070,7 +7070,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final boolean Method292() {
 		Method239(Field444, Field445, 0);
-		Field409 = 100;
+		gamma = 100;
 		Field398 = Field446;
 		Method252(false);
 		if(Field443 < 100) {
@@ -7078,7 +7078,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field446++;
 			}
 	
-			Field409 = Field443;
+			gamma = Field443;
 		}
 	
 		if(Field443 > 0) {
@@ -7355,28 +7355,28 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		Method212();
 		if(Field465 == 0) {
-			Field409 = (int)((millis() - Field466) / 5L);
+			gamma = (int)((millis() - Field466) / 5L);
 		}
 	
 		if(Field465 == 2) {
-			Field409 = (int)((Field466 - millis()) / 20L);
+			gamma = (int)((Field466 - millis()) / 20L);
 		}
 	
-		if(Field409 < 0) {
-			Field409 = 0;
+		if(gamma < 0) {
+			gamma = 0;
 			Field465++;
 		}
 	
-		if(Field409 > 100) {
-			Field409 = 100;
+		if(gamma > 100) {
+			gamma = 100;
 			Field465++;
 		}
 	
-		Method265(0xdddddd);
+		setGammaColor(0xdddddd);
 		fillRect(0, 0, 128, 128);
 		Method269(Field298[Field471], Field299[Field471], Field300[Field471], 0xaaaaaa);
 		Method269(Field298[Field471], Field299[Field471], Field300[Field471] / 2, 0xdddddd);
-		Method265(0);
+		setGammaColor(0);
 	
 		for(int var4 = 10; var4 < 10 + numSelections; var4++) {
 			Method264(Field298[var4], Field299[var4], Field298[var4 + numSelections], Field299[var4 + numSelections]);
@@ -7384,12 +7384,12 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		for(int var5 = 0; var5 < numSelections; var5++) {
 			Method270(Field298[var5 + 10 + numSelections], Field299[var5 + 10 + numSelections], Field300[var5 + 10 + numSelections]);
-			if(Field409 > 20) {
+			if(gamma > 20) {
 				Method268(Field463[var5], Field298[var5 + 10 + numSelections], Field299[var5 + 10 + numSelections]);
 			}
 		}
 	
-		Method265(0x888888);
+		setGammaColor(0x888888);
 	
 		for(int var6 = 0; var6 < 5; var6++) {
 			int var9 = 3932 * cos(Field467 + 90 - 36 + var6 * 72);
@@ -7397,7 +7397,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Method270(var9, var10, 0x50000);
 		}
 	
-		if(Field409 > 50) {
+		if(gamma > 50) {
 			Field473 += 12;
 			if(Field473 > 179) {
 				Field473 -= 180;
