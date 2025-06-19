@@ -914,7 +914,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 	
 				return 0;
-			} catch(Exception var8) {
+			} catch(Exception e) {
 				if(var5 != null) {
 					var5.close();
 					Field30[var0] = null;
@@ -1039,10 +1039,10 @@ public final class Game extends GameCanvas implements Runnable {
 						var5.stop();
 						var5.setMediaTime(0L);
 					}
-				} catch(IllegalStateException var3) {
+				} catch(IllegalStateException e) {
 				}
 			}
-		} catch(MediaException var4) {
+		} catch(MediaException e) {
 		}
 	}
 	
@@ -1109,7 +1109,7 @@ public final class Game extends GameCanvas implements Runnable {
 							if((var10 = (VolumeControl)var9.getControl("VolumeControl")) != null) {
 								var10.setLevel(Field26[var0] * 10);
 							}
-						} catch(IllegalStateException var4) {
+						} catch(IllegalStateException e) {
 						}
 					}
 				}
@@ -1123,7 +1123,7 @@ public final class Game extends GameCanvas implements Runnable {
 							var9.start();
 							Field20 = var0;
 						}
-					} catch(MediaException var3) {
+					} catch(MediaException e) {
 					}
 				}
 			}
@@ -1301,7 +1301,7 @@ public final class Game extends GameCanvas implements Runnable {
 					currentData = new DataInputStream(is);
 					return true;
 				}
-			} catch(Exception var4) {
+			} catch(Exception e) {
 				return false;
 			}
 		}
