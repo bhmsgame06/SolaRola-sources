@@ -1800,7 +1800,7 @@ public final class Game extends GameCanvas implements Runnable {
 			int var15 = 0;
 	
 			while(var7 < var6) {
-				switch (var1.charAt(var7)) {
+				switch(var1.charAt(var7)) {
 					case '\n':
 						if(!var14 && var15 > 0) {
 							var12[var3++] = var7;
@@ -1943,7 +1943,7 @@ public final class Game extends GameCanvas implements Runnable {
 			int var16 = 0;
 	
 			while(var10 < var9 && var1 < var12) {
-				switch (var4.charAt(var10)) {
+				switch(var4.charAt(var10)) {
 					case '\n':
 						if(!var15 && var16 > 0 && (var1 += fontGeneralHeight[var5] + fontSpaceBetweenStrings[var5]) > var12) {
 							return var10;
@@ -2149,9 +2149,9 @@ public final class Game extends GameCanvas implements Runnable {
 	// res: 0 - load, 1 - display, 2 - cleanup
 	public static final void screen(int scr, int res) {
 		if(scr >= 0) {
-			switch (scr) {
+			switch(scr) {
 				case 0:
-					switch (res) {
+					switch(res) {
 						case 0:
 							Method137(screenArg);
 							break;
@@ -2165,7 +2165,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 				// game developers
 				case 1:
-					switch (res) {
+					switch(res) {
 						case 0:
 							titleScreenResLoad(screenArg);
 							break;
@@ -2178,7 +2178,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case 2:
-					switch (res) {
+					switch(res) {
 						case 0:
 							Method125(screenArg);
 							break;
@@ -2191,7 +2191,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case 3:
-					switch (res) {
+					switch(res) {
 						case 0:
 							Method116(screenArg);
 							break;
@@ -2204,7 +2204,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case 4:
-					switch (res) {
+					switch(res) {
 						case 0:
 							Method119(screenArg);
 							break;
@@ -2217,7 +2217,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case 5:
-					switch (res) {
+					switch(res) {
 						case 0:
 							Method128(screenArg);
 							break;
@@ -2230,7 +2230,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case 6:
-					switch (res) {
+					switch(res) {
 						case 0:
 							Method144(screenArg);
 							break;
@@ -2243,7 +2243,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case 7:
-					switch (res) {
+					switch(res) {
 						case 0:
 							Method140(screenArg);
 							break;
@@ -2256,7 +2256,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case 8:
-					switch (res) {
+					switch(res) {
 						case 0:
 							Method113(screenArg);
 							return;
@@ -2676,7 +2676,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method118() {
-		switch (Field109) {
+		switch(Field109) {
 			case 0:
 				Method250();
 				if(Field324) {
@@ -2740,7 +2740,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void titleScreen() {
 		setColor(0xffffff);
 		fillRect(0, 0, 128, 128);
-		switch (ttlScr) {
+		switch(ttlScr) {
 			// Eidos image
 			case 0:
 				drawImage(centerLogo, (128 - centerLogo.getWidth()) / 2, (128 - centerLogo.getHeight()) / 2, 0);
@@ -2817,7 +2817,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void titleScreenResLoad(int screen) {
 		ttlScr = screen;
-		switch (screen) {
+		switch(screen) {
 			// Eidos image
 			case 0:
 				centerLogo = loadImage("eidos.pim", "eidos.ppl");
@@ -2865,7 +2865,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void titleScreenResReset() {
-		switch (ttlScr) {
+		switch(ttlScr) {
 			case 0:
 				centerLogo = null;
 			case 1:
@@ -2902,7 +2902,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field122 = false;
 			Method131("intro" + level + ".bms", Field298[0], Field299[0]);
 		} else if(Field121 > 0) {
-			switch (Field121) {
+			switch(Field121) {
 				case 1:
 					setNewScreen(3, 0);
 					break;
@@ -3065,7 +3065,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	
-		switch (Field138) {
+		switch(Field138) {
 			case 0:
 				Method280();
 				if(Field143 && !Field427) {
@@ -3218,7 +3218,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final int Method135(int[] var0, int var1, boolean var2) {
 		while(var1 < var0.length) {
-			switch (var0[var1]) {
+			switch(var0[var1]) {
 				case 0:
 					return var1 + 1;
 				case 1:
@@ -3245,7 +3245,7 @@ public final class Game extends GameCanvas implements Runnable {
 						break;
 					}
 	
-					switch (var0[var1 + 1]) {
+					switch(var0[var1 + 1]) {
 						case 0:
 							Field139 = Field298[0];
 							Field140 = Field299[0];
@@ -3291,7 +3291,7 @@ public final class Game extends GameCanvas implements Runnable {
 						break;
 					}
 	
-					switch (var0[var1 + 1]) {
+					switch(var0[var1 + 1]) {
 						case 0:
 							Field139 = Field298[0];
 							Field140 = Field299[0];
@@ -3362,7 +3362,7 @@ public final class Game extends GameCanvas implements Runnable {
 				case 9:
 					Field138 = var0[var1 + 1];
 					Method245();
-					switch (Field138) {
+					switch(Field138) {
 						case 0:
 							Method107(2, 12, 92, 46);
 							Method225(0);
@@ -3549,7 +3549,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if(var1 > 2000) {
 				Field154 = true;
 			} else {
-				switch (Field153) {
+				switch(Field153) {
 					case 0:
 						Method147(var1);
 					default:
@@ -5386,7 +5386,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method221() {
 		for(int var0 = 0; var0 < Field297; var0++) {
 			if((Field303[var0] & 4) > 0 && Field306[var0]) {
-				switch (Field305[var0]) {
+				switch(Field305[var0]) {
 					case 7:
 						Field303[var0] = 0;
 						Field306[var0] = false;
@@ -5507,7 +5507,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method229() {
-		switch (Field318) {
+		switch(Field318) {
 			case 0:
 				Method227(7);
 				return;
@@ -6792,7 +6792,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final int Method276(int var0, boolean var1) {
 		byte var2 = 0;
-		switch (var0) {
+		switch(var0) {
 			case 1:
 				if(!var1) {
 					Method131("start" + level + ".bms", Field298[0], Field299[0]);
@@ -6955,7 +6955,7 @@ public final class Game extends GameCanvas implements Runnable {
 				drawImage(var8 = Field417[0], var1 + var14 - var8.getWidth() / 2, -16, 0);
 				int var9 = Field305[var13] - 1;
 				var8 = Field415[var9];
-				switch (var9) {
+				switch(var9) {
 					case 4:
 						if(!Field16) {
 							var8 = Field416[var9];
