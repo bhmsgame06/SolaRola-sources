@@ -2173,7 +2173,7 @@ public final class Game extends GameCanvas implements Runnable {
 							titleScreen();
 							break;
 						case 2:
-							titleScreenResReset();
+							titleScreenResClean();
 					}
 					return;
 
@@ -2864,7 +2864,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void titleScreenResReset() {
+	public static final void titleScreenResClean() {
 		switch(ttlScr) {
 			case 0:
 				centerLogo = null;
