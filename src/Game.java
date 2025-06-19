@@ -708,7 +708,6 @@ public final class Game extends GameCanvas implements Runnable {
 				return;
 			}
 		}
-	
 	}
 	
 	public static final void Method17() {
@@ -732,7 +731,6 @@ public final class Game extends GameCanvas implements Runnable {
 	
 				rs.closeRecordStore();
 			}
-	
 		} catch(Exception e) {
 		}
 	}
@@ -810,7 +808,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Field30[var2] = null;
 			Field31[var2] = null;
 		}
-	
 	}
 	
 	public static final int Method23(int var0, String var1, int var2, int var3) {
@@ -953,7 +950,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Field30[var0] = Field31[var0] = null;
 			Field29++;
 		}
-	
 	}
 	
 	public static final boolean Method26(int var0) {
@@ -1020,7 +1016,6 @@ public final class Game extends GameCanvas implements Runnable {
 			for(int var0 = 0; var0 < Field19; var0++) {
 				Field24[var0] = true;
 			}
-	
 		}
 	}
 	
@@ -1047,7 +1042,6 @@ public final class Game extends GameCanvas implements Runnable {
 				} catch(IllegalStateException var3) {
 				}
 			}
-	
 		} catch(MediaException var4) {
 		}
 	}
@@ -1133,7 +1127,6 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 				}
 			}
-	
 		}
 	}
 	
@@ -1665,7 +1658,6 @@ public final class Game extends GameCanvas implements Runnable {
 				drawImage(softkeyIcons[rightSoftkey], 127 - softkeyWidth[rightSoftkey], 127 - softkeyHeight[rightSoftkey], 0);
 				rightSoftkey = -1;
 			}
-	
 		}
 	}
 	
@@ -2332,7 +2324,6 @@ public final class Game extends GameCanvas implements Runnable {
 			setColor(Field75[var0]);
 			fillRect(Field78[var0], Field79[var0], 128 * Field80[var0] / 176, 128 * var1 / 176);
 		}
-	
 	}
 	
 	public static final void Method104(int var0, int var1, int var2, int var3, int var4, int var5) {
@@ -2366,7 +2357,6 @@ public final class Game extends GameCanvas implements Runnable {
 				drawLine(var6, var7, var8, var9);
 			}
 		}
-	
 	}
 	
 	public static final void Method105() {
@@ -2389,7 +2379,6 @@ public final class Game extends GameCanvas implements Runnable {
 			var10000 = Field83;
 			var10000[var0] += 30;
 		}
-	
 	}
 	
 	public static final void Method106() {
@@ -2429,7 +2418,6 @@ public final class Game extends GameCanvas implements Runnable {
 				var10000[var0] -= 360;
 			}
 		}
-	
 	}
 	
 	public static final void Method107(int var0, int var1, int var2, int var3) {
@@ -2454,7 +2442,6 @@ public final class Game extends GameCanvas implements Runnable {
 					Field90[var4][var5] = 0;
 				}
 			}
-	
 		}
 	}
 	
@@ -2501,7 +2488,6 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 				}
 			}
-	
 		}
 	}
 	
@@ -2699,7 +2685,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(Field391) {
 			setNewScreen(2, 0);
 		}
-	
 	}
 	
 	public static final void Method119(int var0) {
@@ -2720,7 +2705,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(oldScreenIndex != 5 && oldScreenIndex != 6) {
 			Method229();
 		}
-	
 	}
 	
 	public static final void Method120() {
@@ -2734,7 +2718,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Method227(-1);
 			Method16();
 		}
-	
 	}
 	
 	public static final void titleScreen() {
@@ -2897,7 +2880,6 @@ public final class Game extends GameCanvas implements Runnable {
 			if(Field123 >= 130) {
 				Field393 = false;
 			}
-	
 		} else if(Field122) {
 			Field122 = false;
 			Method131("intro" + level + ".bms", Field298[0], Field299[0]);
@@ -3024,7 +3006,6 @@ public final class Game extends GameCanvas implements Runnable {
 			if(!Field427) {
 				Method227(2);
 			}
-	
 		}
 	}
 	
@@ -3033,7 +3014,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Method227(-1);
 			Method16();
 		}
-	
 	}
 	
 	public static final void Method127() {
@@ -3133,7 +3113,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(Field126 >= Field125.length && !Field136) {
 			setNewScreen(Field130, 0);
 		}
-	
 	}
 	
 	public static final void Method128(int var0) {
@@ -3174,7 +3153,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Method225(Field129);
 			Method130();
 		}
-	
 	}
 	
 	public static final void Method130() {
@@ -3196,7 +3174,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(var4 != null) {
 			Method134(var4, var1, var2, var3);
 		}
-	
 	}
 	
 	public static final void Method133(int var0) {
@@ -3460,7 +3437,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Method226();
 			setNewScreen(1, 0);
 		}
-	
 	}
 	
 	public static final void Method137(int var0) {
@@ -3473,7 +3449,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(Field146 == 1) {
 			Method302(new String[] {"audio_off", "audio_on", "audio_off", "audio_on"}, 0);
 		}
-	
 	}
 	
 	public static final void Method138() {
@@ -3581,7 +3556,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(Field150 == 6) {
 			Field150 = var1;
 		}
-	
 	}
 	
 	public static final void Method145() {
@@ -3659,7 +3633,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field183[var0][1] = loadImage("mouthWaz_" + var0 + ".pim", "mouthWaz_" + var0 + ".ppl");
 			}
 		}
-	
 	}
 	
 	public static final void Method149() {
@@ -3680,7 +3653,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field185[var1][1] = loadImage("eyesWaz_C" + var1 + ".pim", "eyesWaz_C" + var1 + ".ppl");
 			}
 		}
-	
 	}
 	
 	public static final void Method150(boolean var0) {
@@ -3718,7 +3690,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Field301[var4] = Field298[var4];
 			Field302[var4] = Field299[var4];
 		}
-	
 	}
 	
 	public static final void Method152() {
@@ -3786,7 +3757,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field161 += 360;
 			}
 		}
-	
 	}
 	
 	public static final void Method154(int var0, int var1) {
@@ -3962,7 +3932,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field177[var3] = 3;
 			}
 		}
-	
 	}
 	
 	public static final void Method157() {
@@ -3993,7 +3962,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Field197[0] = loadImage("bombbase.pim", "bombbase.ppl");
 			Field197[1] = loadImage("bombbutton.pim", "bombbutton.ppl");
 		}
-	
 	}
 	
 	public static final void Method159(int var0, int var1) {
@@ -4040,7 +4008,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final void Method163() {
@@ -4063,7 +4030,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final void Method164(int var0, int var1, int var2, int var3, int var4, boolean var5) {
@@ -4095,7 +4061,6 @@ public final class Game extends GameCanvas implements Runnable {
 					if(var5) {
 						Method257(var0, var1);
 					}
-	
 				}
 			}
 		}
@@ -4166,7 +4131,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final void Method169() {
@@ -4215,7 +4179,6 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 				}
 			}
-	
 		}
 	}
 	
@@ -4246,7 +4209,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field225[var1] = true;
 			}
 		}
-	
 	}
 	
 	public static final void Method173() {
@@ -4264,14 +4226,12 @@ public final class Game extends GameCanvas implements Runnable {
 				Field225[var0] = false;
 			}
 		}
-	
 	}
 	
 	public static final void Method174() {
 		if(Field230 == null && Field229 != null && Field229.length > 0) {
 			Field230 = loadImage("grabber.pim", "grabber.ppl");
 		}
-	
 	}
 	
 	public static final void Method175(int var0) {
@@ -4289,7 +4249,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Method268(Field230, Field298[var1], Field299[var1]);
 			}
 		}
-	
 	}
 	
 	public static final void Method178() {
@@ -4330,7 +4289,6 @@ public final class Game extends GameCanvas implements Runnable {
 			var5[0] = Field232[0];
 			Field232 = var5;
 		}
-	
 	}
 	
 	public static final void Method179() {
@@ -4356,7 +4314,6 @@ public final class Game extends GameCanvas implements Runnable {
 		} else if(Field234 < 0) {
 			Field324 = true;
 		}
-	
 	}
 	
 	public static final void Method180() {
@@ -4380,7 +4337,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final void Method181() {
@@ -4411,7 +4367,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Method270(var1 + var4 * var7, var2, var3);
 			}
 		}
-	
 	}
 	
 	public static final int Method182(int var0, int var1, int var2, int var3) {
@@ -4434,7 +4389,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field234 = -1;
 				Field235 = 80;
 			}
-	
 		}
 	}
 	
@@ -4507,7 +4461,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final boolean Method187(int var0) {
@@ -4547,7 +4500,6 @@ public final class Game extends GameCanvas implements Runnable {
 				return;
 			}
 		}
-	
 	}
 	
 	public static final void Method190() {
@@ -4591,7 +4543,6 @@ public final class Game extends GameCanvas implements Runnable {
 					Field238[var3] = loadImage("pointy_mouth_" + var3 + ".pim", "pointy_mouth_" + var3 + ".ppl");
 				}
 			}
-	
 		}
 	}
 	
@@ -4599,7 +4550,6 @@ public final class Game extends GameCanvas implements Runnable {
 		for(int var0 = 0; var0 < Field245.length; var0++) {
 			Method192(Field245[var0], var0);
 		}
-	
 	}
 	
 	public static final void Method192(int var0, int var1) {
@@ -4672,7 +4622,6 @@ public final class Game extends GameCanvas implements Runnable {
 					drawImage(var5, var2 + 0 - var5.getWidth() / 2, var3 + -6 - var5.getHeight() / 2, 0);
 					drawImage(var6, var2 + 0 - var6.getWidth() / 2, var3 + 3 - var6.getHeight() / 2, 0);
 				}
-	
 			}
 		}
 	}
@@ -4758,7 +4707,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final void Method198() {
@@ -4771,7 +4719,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final void Method199(int var0, int var1) {
@@ -4820,7 +4767,6 @@ public final class Game extends GameCanvas implements Runnable {
 		for(int var1 = 0; var1 < Field259; var1++) {
 			Method267(Field260[var1], Field261[var1], Field262[var1], Field263[var1]);
 		}
-	
 	}
 	
 	public static final void Method201() {
@@ -4829,7 +4775,6 @@ public final class Game extends GameCanvas implements Runnable {
 		for(int var0 = 0; var0 < Field259; var0++) {
 			Method194(var0, Method222(readUnsignedShort() << 16), readUnsignedShort() << 16, readUnsignedShort() << 16, readUnsignedShort() << 16);
 		}
-	
 	}
 	
 	public static final void Method202() {
@@ -4860,7 +4805,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Field279[0] = loadImage("vertFlame0.pim", "vertFlame0.ppl");
 			Field279[1] = loadImage("vertFlame1.pim", "vertFlame1.ppl");
 		}
-	
 	}
 	
 	public static final void Method204(int var0, int var1, int var2) {
@@ -4869,7 +4813,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(var2 >= 0) {
 			drawImage(Field279[var2 & 1], var0 + 36, var1 + 33, 0);
 		}
-	
 	}
 	
 	public static final void Method205() {
@@ -4880,7 +4823,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field283[var0] = loadImage("sign" + var0 + ".pim", "sign" + var0 + ".ppl");
 			}
 		}
-	
 	}
 	
 	public static final void Method206(int var0) {
@@ -4890,7 +4832,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(var0 > 0) {
 			Field284 = true;
 		}
-	
 	}
 	
 	public static final void Method207(int var0, int var1, int var2, int var3) {
@@ -4918,7 +4859,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Method268(var1, Field280[var0], Field281[var0]);
 			}
 		}
-	
 	}
 	
 	public static final void Method209(int var0) {
@@ -4987,7 +4927,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final void Method212() {
@@ -5078,7 +5017,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field302[var5] = var2;
 			}
 		}
-	
 	}
 	
 	public static final void Method216() {
@@ -5109,7 +5047,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final void Method217() {
@@ -5380,7 +5317,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(Field326) {
 			Method178();
 		}
-	
 	}
 	
 	public static final void Method221() {
@@ -5393,7 +5329,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final int Method222(int var0) {
@@ -5486,7 +5421,6 @@ public final class Game extends GameCanvas implements Runnable {
 				if(!Method27(Field355, -1)) {
 					Method28(Field355, -1);
 				}
-	
 			}
 		} else {
 			Method29();
@@ -5495,7 +5429,6 @@ public final class Game extends GameCanvas implements Runnable {
 			if(var0 >= 0) {
 				Method28(Field355, -1);
 			}
-	
 		}
 	}
 	
@@ -5503,7 +5436,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(Field355 >= 0 && !paused && !Method27(Field355, -1)) {
 			Method28(Field355, -1);
 		}
-	
 	}
 	
 	public static final void Method229() {
@@ -5605,7 +5537,6 @@ public final class Game extends GameCanvas implements Runnable {
 			for(int var2 = 0; var2 < 128; var2 += 40) {
 				drawLine(var2, 0, var2, 128);
 			}
-	
 		}
 	}
 	
@@ -5642,7 +5573,6 @@ public final class Game extends GameCanvas implements Runnable {
 			var2 += var9.getHeight();
 			var4++;
 		}
-	
 	}
 	
 	public static final int Method236(int[][] var0) {
@@ -5853,7 +5783,6 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			Method245();
 		}
-	
 	}
 	
 	public static final void Method245() {
@@ -5929,7 +5858,6 @@ public final class Game extends GameCanvas implements Runnable {
 	
 					Field383++;
 				}
-	
 			}
 		}
 	}
@@ -6190,7 +6118,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field402 = 0;
 			}
 		}
-	
 	}
 	
 	public static final void Method252(boolean var0) {
@@ -6304,7 +6231,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Method106();
 			}
 		}
-	
 	}
 	
 	public static final void Method253(short[] var0, int var1) {
@@ -6313,7 +6239,6 @@ public final class Game extends GameCanvas implements Runnable {
 		for(int var2 = 0; var2 < var0.length; var2++) {
 			Method270(Field298[var0[var2]], Field299[var0[var2]], Field300[var0[var2]]);
 		}
-	
 	}
 	
 	public static final void Method254(int var0) {
@@ -6338,7 +6263,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(Field326) {
 			Method179();
 		}
-	
 	}
 	
 	public static final void Method256(int var0, int var1) {
@@ -6416,7 +6340,6 @@ public final class Game extends GameCanvas implements Runnable {
 						int var10001 = Field171;
 						var4[var10001] += var3 * 0x30000;
 					}
-	
 				}
 			} else {
 				Field423 = var2;
@@ -6511,7 +6434,6 @@ public final class Game extends GameCanvas implements Runnable {
 							Method183();
 						}
 					}
-	
 				}
 			} else {
 				if(var0 >= 5) {
@@ -6521,7 +6443,6 @@ public final class Game extends GameCanvas implements Runnable {
 				if(var1 >= 5) {
 					Method256(var0, var1);
 				}
-	
 			}
 		}
 	}
@@ -6690,7 +6611,6 @@ public final class Game extends GameCanvas implements Runnable {
 			if(var3 > -var2 && var3 < 128 + var2 && var4 > -var2 && var4 < 128 + var2) {
 				fillArc(var3 - var2, var4 - var2, var2 + var2, var2 + var2, 0, 360);
 			}
-	
 		}
 	}
 	
@@ -6714,7 +6634,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(var3 > -var2 && var3 < 128 + var2 && var4 > -var2 && var4 < 128 + var2) {
 			drawArc(var3 - var2, var4 - var2, var2 + var2, var2 + var2, 0, 360);
 		}
-	
 	}
 	
 	public static final boolean Method273(int var0, int var1, int var2, int var3) {
@@ -6778,7 +6697,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Field416[var3] = loadImage("shipicon" + var3 + "b.pim", "shipicon" + var3 + "b.ppl");
 			}
 		}
-	
 	}
 	
 	public static final void Method275() {
@@ -6877,7 +6795,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(Field298[0] < 0x41a0000) {
 			drawImage(Field414, 107, 88, 0);
 		}
-	
 	}
 	
 	public static final void decor(short[] decorData) {
@@ -6895,7 +6812,6 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 				}
 			}
-	
 		}
 	}
 	
@@ -6978,7 +6894,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
 	}
 	
 	public static final void Method281(int var0, int var1, int var2) {
@@ -7043,7 +6958,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(Field440 == null) {
 			Field440 = loadImage("pointer.pim", "pointer.ppl");
 		}
-	
 	}
 	
 	public static final void Method284() {
@@ -7107,7 +7021,6 @@ public final class Game extends GameCanvas implements Runnable {
 			drawImage(Field440, var2 - 16, var3 - 58 - 2, 0);
 			drawImage(Field442, var2 - Field442.getWidth() / 2, var3 - 58 + (33 - Field442.getHeight()) / 2 - 2, 0);
 		}
-	
 	}
 	
 	public static final void Method290(int var0) {
@@ -7152,7 +7065,6 @@ public final class Game extends GameCanvas implements Runnable {
 			Field447 = Method57(0x50000);
 			Field448 = Method57(0x50001);
 		}
-	
 	}
 	
 	public static final boolean Method292() {
@@ -7253,7 +7165,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(cosine == null) {
 			cosine = loadFile16("cos1000.bin");
 		}
-	
 	}
 	
 	public static final void Method298() {
@@ -7268,7 +7179,6 @@ public final class Game extends GameCanvas implements Runnable {
 		if(Field452 == null) {
 			Field452 = new int[42];
 		}
-	
 	}
 	
 	public static final void Method299() {
@@ -7309,7 +7219,6 @@ public final class Game extends GameCanvas implements Runnable {
 				Method92(-1000, 106, Field462[Field461], 1);
 			}
 		}
-	
 	}
 	
 	public static final void Method300(int var0, int var1, int var2) {
@@ -7360,7 +7269,6 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			Field456 = !Field456;
 		}
-	
 	}
 	
 	public static final void Method301() {
