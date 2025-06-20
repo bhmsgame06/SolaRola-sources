@@ -7134,28 +7134,28 @@ public final class Game extends GameCanvas implements Runnable {
 		return sin1000[var2] * var0 + cos1000[var2] * var1;
 	}
 	
-	public static final int sin(int var0) {
-		while(var0 < 0) {
-			var0 += 360;
+	public static final int sin(int deg) {
+		while(deg < 0) {
+			deg += 360;
 		}
 	
-		while(var0 >= 360) {
-			var0 -= 360;
+		while(deg >= 360) {
+			deg -= 360;
 		}
 	
-		return sin1000[var0];
+		return sin1000[deg];
 	}
 	
-	public static final int cos(int var0) {
-		while(var0 < 0) {
-			var0 += 360;
+	public static final int cos(int deg) {
+		while(deg < 0) {
+			deg += 360;
 		}
 	
-		while(var0 >= 360) {
-			var0 -= 360;
+		while(deg >= 360) {
+			deg -= 360;
 		}
 	
-		return cos1000[var0];
+		return cos1000[deg];
 	}
 	
 	public static final void loadTrigonometric() {
