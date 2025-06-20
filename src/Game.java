@@ -477,7 +477,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field460 = 0;
 	public static int Field461 = 0;
 	public static String[] Field462 = new String[] {"Kachoo", "NikSak", "Rara", "Corakllquar", "Brad", "NotPing"};
-	public static Image[] Field463;
+	public static Image[] selectionMenuImages;
 	public static Image[] selectionMenuArrows;
 	public static int Field465;
 	public static long Field466;
@@ -3454,7 +3454,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void selectionMenuResClean() {
 		gamma = 100;
-		Method301();
+		selectionMenuFreeMem();
 	}
 	
 	public static final void Method139() {
@@ -7272,8 +7272,8 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method301() {
-		Field463 = null;
+	public static final void selectionMenuFreeMem() {
+		selectionMenuImages = null;
 		selectionMenuArrows = null;
 	}
 	
@@ -7281,10 +7281,10 @@ public final class Game extends GameCanvas implements Runnable {
 		numSelections = imageFiles.length;
 		degreeBetweenSelections = 360 / numSelections;
 		Field469 = degreeBetweenSelections / 2;
-		Field463 = new Image[numSelections];
+		selectionMenuImages = new Image[numSelections];
 	
 		for(int var2 = 0; var2 < numSelections; var2++) {
-			Field463[var2] = loadImage(imageFiles[(var2 + var1) % numSelections] + ".pim", imageFiles[(var2 + var1) % numSelections] + ".ppl");
+			selectionMenuImages[var2] = loadImage(imageFiles[(var2 + var1) % numSelections] + ".pim", imageFiles[(var2 + var1) % numSelections] + ".ppl");
 		}
 	
 		selectionMenuArrows = new Image[2];
@@ -7385,7 +7385,7 @@ public final class Game extends GameCanvas implements Runnable {
 		for(int var5 = 0; var5 < numSelections; var5++) {
 			Method270(Field298[var5 + 10 + numSelections], Field299[var5 + 10 + numSelections], Field300[var5 + 10 + numSelections]);
 			if(gamma > 20) {
-				Method268(Field463[var5], Field298[var5 + 10 + numSelections], Field299[var5 + 10 + numSelections]);
+				Method268(selectionMenuImages[var5], Field298[var5 + 10 + numSelections], Field299[var5 + 10 + numSelections]);
 			}
 		}
 	
