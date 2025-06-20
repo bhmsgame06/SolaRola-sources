@@ -7314,7 +7314,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Method161(var6, var6 + 10, var6 + 10 + numSelections, 4, 0x3c0000, 65000, true, true);
 		}
 	
-		Method238(Field298[Field471], Field299[Field471] + 6553600, 0);
+		Method238(Field298[Field471], Field299[Field471] + 0x640000, 0);
 		Field465 = 0;
 		Field466 = millis();
 	}
