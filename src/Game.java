@@ -418,8 +418,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean Field403 = false;
 	public static boolean Field404 = true;
 	public static boolean pauseScreenDraw = false;
-	public static int[] Field406 = new int[12];
-	public static int Field407 = 9;
+	public static int[] throbberColors = new int[12];
+	public static int throbberColorIndex = 9;
 	public static boolean gammaBlackSet = false;
 	public static int gamma = 100;
 	// decors inside ship: socks, flowers, cubes, etc
@@ -6510,17 +6510,17 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void throbberNextFrame() {
 		setColor(0, 0, 0);
 		fillRect(0, 0, 128, 128);
-		Field407--;
-		if(Field407 < 0) {
-			Field407 = Field406.length - 1;
+		throbberColorIndex--;
+		if(throbberColorIndex < 0) {
+			throbberColorIndex = throbberColors.length - 1;
 		}
 	
-		Field406[Field407] = 200;
+		throbberColors[throbberColorIndex] = 200;
 	
-		for(int var1 = 0; var1 < 12; var1++) {
-			setColor(Field406[var1], 0, 0);
-			Field406[var1] = Field406[var1] * 80 / 100;
-			fillArc(32, 32, 64, 64, var1 * 30, 20);
+		for(int i = 0; i < 12; i++) {
+			setColor(throbberColors[i], 0, 0);
+			throbberColors[i] = throbberColors[i] * 80 / 100;
+			fillArc(32, 32, 64, 64, i * 30, 20);
 		}
 	
 		setColor(0, 0, 0);
