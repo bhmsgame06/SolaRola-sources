@@ -400,7 +400,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field385;
 	public static String Field386;
 	public static boolean Field387;
-	public static Image[][] Field388;
+	public static Image[][] emoticons;
 	public static int Field389 = -2;
 	public static int Field390 = 0;
 	public static boolean Field391 = false;
@@ -3135,7 +3135,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			Method130();
 			Method149();
-			Method244();
+			loadEmoticons();
 			Field136 = false;
 			Field133 = 0L;
 			Field144 = false;
@@ -5755,31 +5755,31 @@ public final class Game extends GameCanvas implements Runnable {
 		Field379 = var0;
 	}
 	
-	public static final void Method244() {
-		if(Field388 == null) {
-			Field388 = new Image[5][];
-			Field388[0] = new Image[2];
+	public static final void loadEmoticons() {
+		if(emoticons == null) {
+			emoticons = new Image[5][];
+			emoticons[0] = new Image[2];
 	
-			for(int var0 = 0; var0 < 2; var0++) {
-				Field388[0][var0] = loadImage("wiz" + var0 + ".pim", "wiz" + var0 + ".ppl");
+			for(int i = 0; i < 2; i++) {
+				emoticons[0][i] = loadImage("wiz" + i + ".pim", "wiz" + i + ".ppl");
 			}
 	
-			Field388[1] = new Image[2];
+			emoticons[1] = new Image[2];
 	
-			for(int var1 = 0; var1 < 2; var1++) {
-				Field388[1][var1] = loadImage("waz" + var1 + ".pim", "waz" + var1 + ".ppl");
+			for(int i = 0; i < 2; i++) {
+				emoticons[1][i] = loadImage("waz" + i + ".pim", "waz" + i + ".ppl");
 			}
 	
-			Field388[2] = new Image[2];
+			emoticons[2] = new Image[2];
 	
-			for(int var2 = 0; var2 < 2; var2++) {
-				Field388[2][var2] = loadImage("purple" + var2 + ".pim", "purple" + var2 + ".ppl");
+			for(int i = 0; i < 2; i++) {
+				emoticons[2][i] = loadImage("purple" + i + ".pim", "purple" + i + ".ppl");
 			}
 	
-			Field388[3] = new Image[2];
+			emoticons[3] = new Image[2];
 	
-			for(int var3 = 0; var3 < 2; var3++) {
-				Field388[3][var3] = loadImage("hal" + var3 + ".pim", "hal" + var3 + ".ppl");
+			for(int i = 0; i < 2; i++) {
+				emoticons[3][i] = loadImage("hal" + i + ".pim", "hal" + i + ".ppl");
 			}
 	
 			hideDialogueBox();
@@ -5824,11 +5824,12 @@ public final class Game extends GameCanvas implements Runnable {
 			drawLine(0, boxHeight + 1, 128, boxHeight + 1);
 			setColor(0);
 			drawLine(0, boxHeight + 2, 128, boxHeight + 2);
+
 			if(Field385 != 0 || var2 >= 400) {
 				byte var4 = 0;
 				boolean var5 = false;
-				if(Field388[Field381] != null) {
-					Image var6 = Field388[Field381][Field383 % Field388[Field381].length];
+				if(emoticons[Field381] != null) {
+					Image var6 = emoticons[Field381][Field383 % emoticons[Field381].length];
 					int var7 = (21 - var6.getWidth()) / 2;
 					if(Field381 == 0) {
 						drawImage(var6, 0 + var7, 6 + (textRows * 13 - var6.getHeight()) / 2, 0);
