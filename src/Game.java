@@ -51,14 +51,14 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean currentReserved;
 	public static byte[][] bfcReservedData; // reserve data to RAM for future use (prevent reloading from bfc)
 	public static int currentOffsetReserved = 0;
-	public static short[] bfcHeadHashes; // hashed string
+	public static short[] bfcHeadCrces; // filenames' checksums
 	public static byte[] bfcHeadMemStates; // preserve or not
 	public static int[] bfcHeadOffsets; // offset from start of N.bfc
 	public static byte[] bfcHeadLocations; // N.bfc
 	public static int[] bfcHeadSizes; // size of file contents
 	public static int bfcHeadNumEntries;
-	private static int bfcXorValue = 0x1021; // used for filename hashing table generating
-	private static int[] bfcHashTable = new int[256]; // filename hashing table (we'll hash strings into 16-bit value)
+	private static int bfcXorValue = 0x1021; // used for filename crc table generating
+	private static int[] bfcCrcTable = new int[256]; // filename crc table (we'll turn strings into 16-bit value)
 	public static String[] Field49;
 	public static byte[] Field50;
 	public static int Field51 = -1;
@@ -585,12 +585,12 @@ public final class Game extends GameCanvas implements Runnable {
 		Field5 = 0;
 	}
 	
-	public static final byte[] decodeImageData(byte[] pimData, short pplHash) {
+	public static final byte[] decodeImageData(byte[] pimData, short pplCrc) {
 		if(pngTemplate == null) {
 			pngTemplate = loadFile8((short)0xdee7);
 		}
 	
-		loadPalette(pplHash);
+		loadPalette(pplCrc);
 
 		if((pimData[0] & 3) != 3) {
 			return null;
@@ -649,8 +649,8 @@ public final class Game extends GameCanvas implements Runnable {
 		return b;
 	}
 	
-	public static final void loadPalette(short pplHash) {
-		openFile(pplHash);
+	public static final void loadPalette(short pplCrc) {
+		openFile(pplCrc);
 		pplOptions = readByte();
 		pplColorCount = 1 + readUnsignedByte();
 		pplCRC = readInt();
@@ -658,21 +658,21 @@ public final class Game extends GameCanvas implements Runnable {
 		readBytes(pplData, 0, pplData.length);
 	}
 	
-	public static final Image loadImage(String pimHash, String pplHash) {
-		return loadImage(bfcHashFilename(pimHash), bfcHashFilename(pplHash));
+	public static final Image loadImage(String pimCrc, String pplCrc) {
+		return loadImage(bfcCrcFilename(pimCrc), bfcCrcFilename(pplCrc));
 	}
 	
-	public static final Image loadImage(short pimHash, short pplHash) {
-		return decodeImage(pimHash, pplHash);
+	public static final Image loadImage(short pimCrc, short pplCrc) {
+		return decodeImage(pimCrc, pplCrc);
 	}
 	
-	public static final Image decodeImage(short pimHash, short pplHash) {
-		byte[] pimData = getFile8(pimHash);
+	public static final Image decodeImage(short pimCrc, short pplCrc) {
+		byte[] pimData = getFile8(pimCrc);
 		if(pimData == null) {
 			return null;
 		} else {
 			if(pimData[0] != 0x89 && pimData[1] != 'P') {
-				pimData = decodeImageData(pimData, pplHash);
+				pimData = decodeImageData(pimData, pplCrc);
 			}
 	
 			Image img = Image.createImage(pimData, 0, pimData.length);
@@ -1130,9 +1130,9 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final int getFileIndex(short fnHash) {
+	public static final int getFileIndex(short fnCrc) {
 		for(int i = 0; i < bfcHeadNumEntries; i++) {
-			if(bfcHeadHashes[i] == fnHash) {
+			if(bfcHeadCrces[i] == fnCrc) {
 				return i;
 			}
 		}
@@ -1173,7 +1173,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void bfcLoadHead() {
 		currentLocation = -1;
 		currentOffset = 0;
-		bfcGenHashTable();
+		bfcGenCrcTable();
 	
 		try {
 			String file = "/head.bfc";
@@ -1181,14 +1181,14 @@ public final class Game extends GameCanvas implements Runnable {
 
 			int numEntries = currentData.readUnsignedShort();
 			bfcHeadNumEntries = numEntries;
-			bfcHeadHashes = new short[numEntries];
+			bfcHeadCrces = new short[numEntries];
 			bfcHeadMemStates = new byte[numEntries];
 			bfcHeadOffsets = new int[numEntries];
 			bfcHeadLocations = new byte[numEntries];
 			bfcHeadSizes = new int[numEntries];
 	
 			for(int i = 0; i < numEntries; i++) {
-				bfcHeadHashes[i] = (short)currentData.readUnsignedShort();
+				bfcHeadCrces[i] = (short)currentData.readUnsignedShort();
 				bfcHeadMemStates[i] = currentData.readByte();
 				bfcHeadOffsets[i] = currentData.readUnsignedByte() << 16 | currentData.readUnsignedByte() << 8 | currentData.readUnsignedByte();
 				bfcHeadLocations[i] = (byte)currentData.readUnsignedByte();
@@ -1200,7 +1200,7 @@ public final class Game extends GameCanvas implements Runnable {
 		bfcInitReservedData(bfcHeadNumEntries);
 	}
 	
-	public static final void bfcGenHashTable() {
+	public static final void bfcGenCrcTable() {
 		for(int i = 0; i < 256; ++i) {
 			int val = 0;
 			int x = i << 8;
@@ -1216,26 +1216,26 @@ public final class Game extends GameCanvas implements Runnable {
 				val &= 0xffff;
 			}
 	
-			bfcHashTable[i] = val;
+			bfcCrcTable[i] = val;
 		}
 	}
 	
-	public static final short bfcHashFilename(String file) {
+	public static final short bfcCrcFilename(String file) {
 		int val = 0xffff;
 	
 		for(int i = 0; i < file.length(); i++) {
 			char c = file.charAt(i);
 			byte b = (byte)(c >> 8);
-			val = (bfcHashTable[(b ^ val >> 8) & 0xff] ^ val << 8) & 0xffff;
+			val = (bfcCrcTable[(b ^ val >> 8) & 0xff] ^ val << 8) & 0xffff;
 			b = (byte)(c & 0xff);
-			val = (bfcHashTable[(b ^ val >> 8) & 0xff] ^ val << 8) & 0xffff;
+			val = (bfcCrcTable[(b ^ val >> 8) & 0xff] ^ val << 8) & 0xffff;
 		}
 	
 		return (short)(val & 0xffff);
 	}
 	
-	public static final byte[] loadFile8(short fnHash) {
-		if(!openFile(fnHash)) {
+	public static final byte[] loadFile8(short fnCrc) {
+		if(!openFile(fnCrc)) {
 			return null;
 		} else {
 			byte[] var1 = new byte[currentSize];
@@ -1244,21 +1244,21 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final byte[] getFile8(short fnHash) {
-		int index = getFileIndex(fnHash);
+	public static final byte[] getFile8(short fnCrc) {
+		int index = getFileIndex(fnCrc);
 		if(index < 0) {
 			return null;
 		} else {
-			return bfcReservedData[index] != null ? bfcReservedData[index] : loadFile8(fnHash);
+			return bfcReservedData[index] != null ? bfcReservedData[index] : loadFile8(fnCrc);
 		}
 	}
 	
 	public static final short[] loadFile16(String file) {
-		return loadFile16(bfcHashFilename(file));
+		return loadFile16(bfcCrcFilename(file));
 	}
 	
-	public static final short[] loadFile16(short fnHash) {
-		if(!openFile(fnHash)) {
+	public static final short[] loadFile16(short fnCrc) {
+		if(!openFile(fnCrc)) {
 			return null;
 		} else {
 			short[] arr = new short[currentSize / 2];
@@ -1272,11 +1272,11 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final int[] loadFile32(String file) {
-		return loadFile32(bfcHashFilename(file));
+		return loadFile32(bfcCrcFilename(file));
 	}
 	
-	public static final int[] loadFile32(short fnHash) {
-		if(!openFile(fnHash)) {
+	public static final int[] loadFile32(short fnCrc) {
+		if(!openFile(fnCrc)) {
 			return null;
 		} else {
 			int[] arr = new int[currentSize / 4];
@@ -1290,7 +1290,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final boolean openFile(String file) {
-		if(openFile(bfcHashFilename(file))) {
+		if(openFile(bfcCrcFilename(file))) {
 			return true;
 		} else {
 			try {
@@ -1307,12 +1307,12 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final boolean openFile(short fnHash) {
+	public static final boolean openFile(short fnCrc) {
 		if(throbberToggle) {
 			throbber();
 		}
 	
-		int index = getFileIndex(fnHash);
+		int index = getFileIndex(fnCrc);
 		currentIndex = index;
 		currentOffsetReserved = 0;
 		currentReserved = false;
@@ -1697,13 +1697,13 @@ public final class Game extends GameCanvas implements Runnable {
 		fontChrWidths = new byte[var0][];
 	}
 	
-	public static final void loadFont(int index, short pimHash, short pplHash, short cwtHash, byte spaceWidth, short chrHash, int sbc, int sbs) {
+	public static final void loadFont(int index, short pimCrc, short pplCrc, short cwtCrc, byte spaceWidth, short chrCrc, int sbc, int sbs) {
 		fontIndexes[index] = new short[230];
 		fontChrWidths[index] = new byte[230];
-		byte[] charWidth = loadFile8(cwtHash);
-		short[] charMap = loadFile16(chrHash);
+		byte[] charWidth = loadFile8(cwtCrc);
+		short[] charMap = loadFile16(chrCrc);
 		int charNum = charMap.length;
-		fontImages[index] = loadImage(pimHash, pplHash);
+		fontImages[index] = loadImage(pimCrc, pplCrc);
 		fontChrOffsets[index] = new short[charNum];
 	
 		for(short i = 0; i < 230; i++) {
