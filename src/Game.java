@@ -810,7 +810,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final int Method23(int var0, String var1, int var2, int boxHeight) {
+	public static final int Method23(int var0, String var1, int var2, int var3) {
 		if(Method26(var0)) {
 			return -2;
 		} else if(var0 >= Field19) {
@@ -831,7 +831,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final int Method24(int var0, String var1, int var2, int boxHeight) {
+	public static final int Method24(int var0, String var1, int var2, int var3) {
 		if(Method26(var0)) {
 			return -2;
 		} else if(var0 >= Field19) {
@@ -1503,7 +1503,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			throbberToggle = var2;
-			int boxHeight = readUnsignedByte();
+			int var3 = readUnsignedByte();
 			int var4 = readUnsignedByte();
 			if(var0 >= var4) {
 				return Field49;
@@ -1535,7 +1535,7 @@ public final class Game extends GameCanvas implements Runnable {
 					int var10002 = var7[var12]--;
 					int var9 = 0;
 					char[] var10 = new char[var7[var12]];
-					if(boxHeight == 1) {
+					if(var3 == 1) {
 						var9 = readUnsignedByte();
 	
 						for(int var11 = 0; var11 < var7[var12]; var11++) {
@@ -1581,11 +1581,11 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final int Method60(int var0, int var1, int var2) {
-		long boxHeight = (long)var0;
+		long var3 = (long)var0;
 		long var5 = (long)var1;
-		boxHeight = boxHeight * boxHeight >> 16;
+		var3 = var3 * var3 >> 16;
 		var5 = var5 * var5 >> 16;
-		return (int)Method61(boxHeight + var5, (long)var2);
+		return (int)Method61(var3 + var5, (long)var2);
 	}
 	
 	public static final long Method61(long var0, long var2) {
@@ -1732,14 +1732,14 @@ public final class Game extends GameCanvas implements Runnable {
 			return var0.length() * (fontGeneralWidth[var1] + fontSpaceBetweenChars[var1]) - fontSpaceBetweenChars[var1];
 		} else {
 			int var2 = 0;
-			int boxHeight = var0.length();
+			int var3 = var0.length();
 	
-			for(int var4 = 0; var4 < boxHeight; var4++) {
+			for(int var4 = 0; var4 < var3; var4++) {
 				int var5 = var0.charAt(var4) - 30;
 				var2 += fontChrWidths[var1][var5];
 			}
 	
-			return var2 + (boxHeight - 1) * fontSpaceBetweenChars[var1];
+			return var2 + (var3 - 1) * fontSpaceBetweenChars[var1];
 		}
 	}
 	
@@ -1747,17 +1747,17 @@ public final class Game extends GameCanvas implements Runnable {
 		return (var0 + fontSpaceBetweenChars[var1]) / (fontGeneralWidth[var1] + fontSpaceBetweenChars[var1]);
 	}
 	
-	public static final int Method73(int var0, int var1, String var2, int boxHeight) {
+	public static final int Method73(int var0, int var1, String var2, int var3) {
 		if(fontChrWidths[var1] == null) {
 			return Method72(var0, var1);
 		} else {
 			int var4 = var2.length();
 	
 			int var5;
-			for(var5 = boxHeight; var5 < var4; var5++) {
+			for(var5 = var3; var5 < var4; var5++) {
 				int var6;
 				if((var6 = var2.charAt(var5) - 30) < 0) {
-					return var5 - boxHeight + 1;
+					return var5 - var3 + 1;
 				}
 	
 				if((var0 = var0 - fontChrWidths[var1][var6]) < 0) {
@@ -1767,7 +1767,7 @@ public final class Game extends GameCanvas implements Runnable {
 				var0 -= fontSpaceBetweenChars[var1];
 			}
 	
-			return var5 - boxHeight;
+			return var5 - var3;
 		}
 	}
 	
@@ -1775,7 +1775,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if(fontImages[var2] == null) {
 			return null;
 		} else {
-			int boxHeight = 0;
+			int var3 = 0;
 			boolean var4 = false;
 			int var5 = 99999;
 			int var6 = var1.length();
@@ -1795,7 +1795,7 @@ public final class Game extends GameCanvas implements Runnable {
 				switch(var1.charAt(var7)) {
 					case '\n':
 						if(!var14 && var15 > 0) {
-							var12[boxHeight++] = var7;
+							var12[var3++] = var7;
 						}
 	
 						var15++;
@@ -1844,14 +1844,14 @@ public final class Game extends GameCanvas implements Runnable {
 						var7 = var8;
 					}
 	
-					var12[boxHeight++] = var7;
+					var12[var3++] = var7;
 					var7 = var8;
 				}
 			}
 	
-			int[] var18 = new int[boxHeight];
+			int[] var18 = new int[var3];
 	
-			for(int var17 = 0; var17 < boxHeight; var17++) {
+			for(int var17 = 0; var17 < var3; var17++) {
 				var18[var17] = var12[var17];
 			}
 	
@@ -1871,36 +1871,36 @@ public final class Game extends GameCanvas implements Runnable {
 		return g.getColor();
 	}
 	
-	public static final void fillRect(int var0, int var1, int var2, int boxHeight) {
-		g.fillRect(var0, var1, var2, boxHeight);
+	public static final void fillRect(int var0, int var1, int var2, int var3) {
+		g.fillRect(var0, var1, var2, var3);
 	}
 	
-	public static final void drawRect(int var0, int var1, int var2, int boxHeight) {
-		g.drawRect(var0, var1, var2, boxHeight);
+	public static final void drawRect(int var0, int var1, int var2, int var3) {
+		g.drawRect(var0, var1, var2, var3);
 	}
 	
-	public static final void drawImage(Image var0, int var1, int var2, int boxHeight) {
-		g.drawImage(var0, var1, var2, boxHeight);
+	public static final void drawImage(Image var0, int var1, int var2, int var3) {
+		g.drawImage(var0, var1, var2, var3);
 	}
 	
-	public static final void drawLine(int var0, int var1, int var2, int boxHeight) {
-		g.drawLine(var0, var1, var2, boxHeight);
+	public static final void drawLine(int var0, int var1, int var2, int var3) {
+		g.drawLine(var0, var1, var2, var3);
 	}
 	
-	public static final void fillArc(int var0, int var1, int var2, int boxHeight, int var4, int var5) {
-		g.fillArc(var0, var1, var2, boxHeight, var4, var5);
+	public static final void fillArc(int var0, int var1, int var2, int var3, int var4, int var5) {
+		g.fillArc(var0, var1, var2, var3, var4, var5);
 	}
 	
-	public static final void drawArc(int var0, int var1, int var2, int boxHeight, int var4, int var5) {
-		g.drawArc(var0, var1, var2, boxHeight, var4, var5);
+	public static final void drawArc(int var0, int var1, int var2, int var3, int var4, int var5) {
+		g.drawArc(var0, var1, var2, var3, var4, var5);
 	}
 	
-	public static final void fillTriangle(int var0, int var1, int var2, int boxHeight, int var4, int var5) {
-		g.fillTriangle(var0, var1, var2, boxHeight, var4, var5);
+	public static final void fillTriangle(int var0, int var1, int var2, int var3, int var4, int var5) {
+		g.fillTriangle(var0, var1, var2, var3, var4, var5);
 	}
 	
-	public static final void setClip(int var0, int var1, int var2, int boxHeight) {
-		g.setClip(var0, var1, var2, boxHeight);
+	public static final void setClip(int var0, int var1, int var2, int var3) {
+		g.setClip(var0, var1, var2, var3);
 	}
 	
 	public static final int getClipX() {
@@ -1923,13 +1923,13 @@ public final class Game extends GameCanvas implements Runnable {
 		instance.flushGraphics();
 	}
 	
-	public static final int Method91(int var0, int var1, int var2, int boxHeight, String var4, int var5, int var6, int var7, boolean var8) {
+	public static final int Method91(int var0, int var1, int var2, int var3, String var4, int var5, int var6, int var7, boolean var8) {
 		if(fontImages[var5] == null) {
 			return -2;
 		} else {
 			int var9 = var4.length();
 			int var10 = var6;
-			int var12 = var1 + boxHeight - (fontGeneralHeight[var5] + fontSpaceBetweenStrings[var5] - 1);
+			int var12 = var1 + var3 - (fontGeneralHeight[var5] + fontSpaceBetweenStrings[var5] - 1);
 			boolean var14 = false;
 			boolean var15 = true;
 			int var16 = 0;
@@ -2003,20 +2003,20 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method92(int var0, int var1, String var2, int boxHeight) {
-		if(fontImages[boxHeight] != null) {
+	public static final void Method92(int var0, int var1, String var2, int var3) {
+		if(fontImages[var3] != null) {
 			int var4 = getClipHeight();
 			int var5 = getClipWidth();
 			int var6 = getClipX();
 			int var7 = getClipY();
-			if(var1 + fontGeneralHeight[boxHeight] >= var7 && var7 + var4 >= var1) {
+			if(var1 + fontGeneralHeight[var3] >= var7 && var7 + var4 >= var1) {
 				int var8 = var2.length();
 				if(var0 == -1000) {
-					var0 = (128 - Method71(var2, boxHeight)) / 2;
+					var0 = (128 - Method71(var2, var3)) / 2;
 				}
 	
 				int var9 = var1;
-				int var10 = fontGeneralHeight[boxHeight];
+				int var10 = fontGeneralHeight[var3];
 				if(var7 > var1) {
 					var10 -= var7 - var1;
 					var9 = var7;
@@ -2032,26 +2032,26 @@ public final class Game extends GameCanvas implements Runnable {
 					int var15 = var2.charAt(var14) - 30;
 					if(var13 <= 128 && var15 >= 0) {
 						short var16;
-						if((var16 = fontIndexes[boxHeight][var15]) == -1) {
-							if(fontChrWidths[boxHeight] == null) {
-								var13 += fontGeneralWidth[boxHeight] + fontSpaceBetweenChars[boxHeight];
+						if((var16 = fontIndexes[var3][var15]) == -1) {
+							if(fontChrWidths[var3] == null) {
+								var13 += fontGeneralWidth[var3] + fontSpaceBetweenChars[var3];
 							} else {
-								var13 += fontChrWidths[boxHeight][0] + fontSpaceBetweenChars[boxHeight];
+								var13 += fontChrWidths[var3][0] + fontSpaceBetweenChars[var3];
 							}
 						} else {
 							int var11 = var13;
 							int var12;
-							if(fontChrWidths[boxHeight] == null) {
-								var12 = fontGeneralWidth[boxHeight];
+							if(fontChrWidths[var3] == null) {
+								var12 = fontGeneralWidth[var3];
 							} else {
-								var12 = fontChrWidths[boxHeight][var15];
+								var12 = fontChrWidths[var3][var15];
 							}
 	
 							if(var13 + var12 < 0) {
-								if(fontChrWidths[boxHeight] != null) {
-									var13 += fontChrWidths[boxHeight][var15] + fontSpaceBetweenChars[boxHeight];
+								if(fontChrWidths[var3] != null) {
+									var13 += fontChrWidths[var3][var15] + fontSpaceBetweenChars[var3];
 								} else {
-									var13 += fontGeneralWidth[boxHeight] + fontSpaceBetweenChars[boxHeight];
+									var13 += fontGeneralWidth[var3] + fontSpaceBetweenChars[var3];
 								}
 							} else {
 								if(var13 < var6 || var13 + var12 > var6 + var5) {
@@ -2074,12 +2074,12 @@ public final class Game extends GameCanvas implements Runnable {
 								}
 	
 								setClip(var11, var9, var12, var10);
-								if(fontChrWidths[boxHeight] != null) {
-									drawImage(fontImages[boxHeight], var13 - fontChrOffsets[boxHeight][var16], var1, 0);
-									var13 += fontChrWidths[boxHeight][var15] + fontSpaceBetweenChars[boxHeight];
+								if(fontChrWidths[var3] != null) {
+									drawImage(fontImages[var3], var13 - fontChrOffsets[var3][var16], var1, 0);
+									var13 += fontChrWidths[var3][var15] + fontSpaceBetweenChars[var3];
 								} else {
-									drawImage(fontImages[boxHeight], var13 - fontGeneralWidth[boxHeight] * var16, var1, 0);
-									var13 += fontGeneralWidth[boxHeight] + fontSpaceBetweenChars[boxHeight];
+									drawImage(fontImages[var3], var13 - fontGeneralWidth[var3] * var16, var1, 0);
+									var13 += fontGeneralWidth[var3] + fontSpaceBetweenChars[var3];
 								}
 							}
 						}
@@ -2327,9 +2327,9 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method104(int var0, int var1, int var2, int boxHeight, int var4, int var5) {
+	public static final void Method104(int var0, int var1, int var2, int var3, int var4, int var5) {
 		int var11 = (var2 - var0) / 7;
-		int var12 = (boxHeight - var1) / 7;
+		int var12 = (var3 - var1) / 7;
 		boolean var13 = false;
 		boolean var14 = false;
 		boolean var15 = false;
@@ -2352,7 +2352,7 @@ public final class Game extends GameCanvas implements Runnable {
 				var9 = var1 + var18 * var12 + rand8() % var5 - var5 / 2;
 				if(var18 == 7) {
 					var8 = var2;
-					var9 = boxHeight;
+					var9 = var3;
 				}
 	
 				drawLine(var6, var7, var8, var9);
@@ -2421,10 +2421,10 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method107(int var0, int var1, int var2, int boxHeight) {
-		if(Field91 != var2 || Field92 != boxHeight || Field87 == null || Field87.length != var0 || Field87[0].length != var1) {
+	public static final void Method107(int var0, int var1, int var2, int var3) {
+		if(Field91 != var2 || Field92 != var3 || Field87 == null || Field87.length != var0 || Field87[0].length != var1) {
 			Field91 = var2;
-			Field92 = boxHeight;
+			Field92 = var3;
 			Field87 = new int[var0][];
 			Field88 = new int[var0][];
 			Field89 = new int[var0][];
@@ -2438,7 +2438,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 				for(int var5 = 0; var5 < var1; var5++) {
 					Field87[var4][var5] = rand16() % var2 << 4;
-					Field88[var4][var5] = rand16() % boxHeight << 4;
+					Field88[var4][var5] = rand16() % var3 << 4;
 					Field89[var4][var5] = -1 - rand8() % 32;
 					Field90[var4][var5] = 0;
 				}
@@ -2450,7 +2450,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Method109(var0, var1, var2, true);
 	}
 	
-	public static final void Method109(int var0, int var1, int var2, boolean boxHeight) {
+	public static final void Method109(int var0, int var1, int var2, boolean var3) {
 		if(var0 >= 0 && var0 < Field87.length) {
 			Field90[var0][rand16() % Field90[var0].length] = 9;
 	
@@ -2479,7 +2479,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 	
 				drawStar(var1 + (Field87[var0][var7] >> 4), var2 + (Field88[var0][var7] >> 4));
-				if(boxHeight) {
+				if(var3) {
 					int[] var10000 = Field87[var0];
 					var10000[var7] += Field89[var0][var7];
 					if(Field87[var0][var7] < 0) {
@@ -2551,8 +2551,8 @@ public final class Game extends GameCanvas implements Runnable {
 					var2 = 90 - (128 - var0) * 3 * 90 / 128;
 				}
 	
-				int boxHeight = 5 + 128 * sin(var2) / 2600;
-				Method92(boxHeight, var0, Field93[var1], 2);
+				int var3 = 5 + 128 * sin(var2) / 2600;
+				Method92(var3, var0, Field93[var1], 2);
 			}
 	
 			var0 += 14;
@@ -2764,13 +2764,13 @@ public final class Game extends GameCanvas implements Runnable {
 			// Maniacs of Noice scaling up
 			case 4:
 				int[] var2 = new int[] {0, 0xffffff, 0, 0xffffff, 0x3aaec7};
-				int[] boxHeight = new int[] {54, 54, 37, 37, 18};
+				int[] var3 = new int[] {54, 54, 37, 37, 18};
 				int[] var4 = new int[] {0, -10, -5, 2, 0};
 	
 				for(int var5 = 0; var5 < 5; var5++) {
 					setColor(var2[var5]);
 					int var6 = sin1000[ttlScrTick * 2] * var4[var5] / 1000;
-					int var7 = sin1000[ttlScrTick * 2] * boxHeight[var5] / 1000;
+					int var7 = sin1000[ttlScrTick * 2] * var3[var5] / 1000;
 					if(var5 != 2 && var5 != 3) {
 						fillArc(64 + var6 - var7 / 2 - 1, 64 - var7 / 2, var7, var7, 0, 360);
 					} else {
@@ -3093,9 +3093,9 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		drawDialogueBox();
 		if(Field127) {
-			int boxHeight = softkeyPressed(2, 4);
-			if(boxHeight >= 0) {
-				for(Field128 = boxHeight == 2; Field126 < Field125.length; Field126 = Method135(Field125, Field126, true)) {
+			int var3 = softkeyPressed(2, 4);
+			if(var3 >= 0) {
+				for(Field128 = var3 == 2; Field126 < Field125.length; Field126 = Method135(Field125, Field126, true)) {
 				}
 	
 				Field136 = false;
@@ -3168,12 +3168,12 @@ public final class Game extends GameCanvas implements Runnable {
 		Method132(var0, var1, var2, false);
 	}
 	
-	public static final void Method132(String var0, int var1, int var2, boolean boxHeight) {
+	public static final void Method132(String var0, int var1, int var2, boolean var3) {
 		throbberToggle = false;
 		int[] var4 = loadFile32(var0);
 		throbberToggle = true;
 		if(var4 != null) {
-			Method134(var4, var1, var2, boxHeight);
+			Method134(var4, var1, var2, var3);
 		}
 	}
 	
@@ -3185,10 +3185,10 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method134(int[] var0, int var1, int var2, boolean boxHeight) {
+	public static final void Method134(int[] var0, int var1, int var2, boolean var3) {
 		Field141 = var1;
 		Field142 = var2;
-		Field127 = boxHeight;
+		Field127 = var3;
 		Field125 = var0;
 		hideDialogueBox();
 		setNewScreen(5, 0);
@@ -3578,18 +3578,18 @@ public final class Game extends GameCanvas implements Runnable {
 		setColor(0);
 		setClip(0, 0, 128, 128);
 		fillRect(var1 - 128, 0, 128, 128);
-		int boxHeight = var1 + 1;
+		int var3 = var1 + 1;
 		if(var0 > 1000) {
-			boxHeight = 129;
+			var3 = 129;
 	
 			for(int var4 = 6; var4 > 0; var4--) {
-				fillRect(var1 - boxHeight - var4, 0, var4, 128);
-				boxHeight += var4 + (8 - var4);
+				fillRect(var1 - var3 - var4, 0, var4, 128);
+				var3 += var4 + (8 - var4);
 			}
 		} else {
 			for(int var6 = 6; var6 > 0; var6--) {
-				fillRect(boxHeight, 0, var6, 128);
-				boxHeight += var6 + (8 - var6);
+				fillRect(var3, 0, var6, 128);
+				var3 += var6 + (8 - var6);
 			}
 		}
 	
@@ -3675,16 +3675,16 @@ public final class Game extends GameCanvas implements Runnable {
 		Field176 = -1;
 	}
 	
-	public static final void Method151(int var0, int var1, int var2, int boxHeight) {
+	public static final void Method151(int var0, int var1, int var2, int var3) {
 		Field298[var2 + 0] = var0;
 		Field299[var2 + 0] = var1;
 		Field298[var2 + 1] = var0;
-		Field299[var2 + 1] = var1 - boxHeight;
+		Field299[var2 + 1] = var1 - var3;
 		Field298[var2 + 2] = var0;
-		Field299[var2 + 2] = var1 + boxHeight;
-		Field298[var2 + 3] = var0 - boxHeight;
+		Field299[var2 + 2] = var1 + var3;
+		Field298[var2 + 3] = var0 - var3;
 		Field299[var2 + 3] = var1;
-		Field298[var2 + 4] = var0 + boxHeight;
+		Field298[var2 + 4] = var0 + var3;
 		Field299[var2 + 4] = var1;
 	
 		for(int var4 = var2; var4 < var2 + 5; var4++) {
@@ -3762,19 +3762,19 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method154(int var0, int var1) {
 		int var2 = Method241(var0, var1);
-		int boxHeight = Method242(var0, var1);
+		int var3 = Method242(var0, var1);
 		int var4 = Field398 * 10 / 100;
 		int var5 = Field398 * 25 / 100;
-		if(!Method273(var2 - var4, boxHeight - var5, var2 + var4, boxHeight + var5)) {
+		if(!Method273(var2 - var4, var3 - var5, var2 + var4, var3 + var5)) {
 			setColor(0);
-			fillArc(var2 - var4 - 2, boxHeight - var5 - 2, 2 * (var4 + 2), 2 * (var5 + 2), 0, 360);
+			fillArc(var2 - var4 - 2, var3 - var5 - 2, 2 * (var4 + 2), 2 * (var5 + 2), 0, 360);
 			setColor(0xa020f0);
-			fillArc(var2 - var4, boxHeight - var5, 2 * var4, 2 * var5, 0, 360);
-			drawImage(Field186, var2 - Field186.getWidth() / 2, boxHeight - Field186.getHeight() / 2, 0);
+			fillArc(var2 - var4, var3 - var5, 2 * var4, 2 * var5, 0, 360);
+			drawImage(Field186, var2 - Field186.getWidth() / 2, var3 - Field186.getHeight() / 2, 0);
 			var2 -= Field180[1].getWidth() / 2;
-			drawImage(Field180[1], var2 - var4, boxHeight - 2 * var5 / 3, 0);
-			drawImage(Field180[1], var2, boxHeight - 2 * var5 / 3, 0);
-			drawImage(Field180[1], var2 + var4, boxHeight - 2 * var5 / 3, 0);
+			drawImage(Field180[1], var2 - var4, var3 - 2 * var5 / 3, 0);
+			drawImage(Field180[1], var2, var3 - 2 * var5 / 3, 0);
+			drawImage(Field180[1], var2 + var4, var3 - 2 * var5 / 3, 0);
 		}
 	}
 	
@@ -3791,12 +3791,12 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method156(int var0, int var1, boolean var2) {
-		byte boxHeight = 0;
+		byte var3 = 0;
 		if(var0 > 0 || var0 == 0 && Field348 == 1) {
-			boxHeight = 1;
+			var3 = 1;
 		}
 	
-		if(boxHeight == 0) {
+		if(var3 == 0) {
 			Field172 = 18;
 			var1 = 0xff;
 			if(Field327 == -1) {
@@ -3872,9 +3872,9 @@ public final class Game extends GameCanvas implements Runnable {
 				Image var9 = Field186;
 				drawImage(var9, var4 - var9.getWidth() / 2, var5 - var9.getHeight() / 2, 0);
 			} else {
-				Image var15 = Field183[Field178[boxHeight]][boxHeight];
-				if(Field178[boxHeight] > 0) {
-					drawImage(var15, var4 - var15.getWidth() / 2 + Field189[Field178[boxHeight]][boxHeight], var5 - var15.getHeight() / 2 + Field190[Field178[boxHeight]][boxHeight], 0);
+				Image var15 = Field183[Field178[var3]][var3];
+				if(Field178[var3] > 0) {
+					drawImage(var15, var4 - var15.getWidth() / 2 + Field189[Field178[var3]][var3], var5 - var15.getHeight() / 2 + Field190[Field178[var3]][var3], 0);
 				} else {
 					int var10 = 6 * Field398 / 100;
 					int var11 = var4 + var10 * cos(var14 + 90) / 1000;
@@ -3883,28 +3883,28 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 	
-			if(Field178[boxHeight] == 0) {
-				Image var16 = Field180[boxHeight];
+			if(Field178[var3] == 0) {
+				Image var16 = Field180[var3];
 				if(var0 > 0) {
 					if(Field298[0] + 0x160000 < Field298[var0]) {
-						var16 = Field179[boxHeight];
+						var16 = Field179[var3];
 					}
 	
 					if(Field298[0] - 0x160000 > Field298[var0]) {
-						var16 = Field181[boxHeight];
+						var16 = Field181[var3];
 					}
 				} else {
 					if(Field298[var0] + 0x010000 < Field301[var0]) {
-						var16 = Field179[boxHeight];
+						var16 = Field179[var3];
 					}
 	
 					if(Field298[var0] - 0x010000 > Field301[var0]) {
-						var16 = Field181[boxHeight];
+						var16 = Field181[var3];
 					}
 				}
 	
-				if(Field177[boxHeight] > 0) {
-					var16 = Field182[boxHeight];
+				if(Field177[var3] > 0) {
+					var16 = Field182[var3];
 				}
 	
 				int var18 = Field172 * Field398 / 100;
@@ -3916,21 +3916,21 @@ public final class Game extends GameCanvas implements Runnable {
 				drawImage(var16, var20 - var16.getWidth() / 2, var22 - var16.getHeight() / 2, 0);
 			} else {
 				int var17 = Field172 * Field398 / 100;
-				Image var19 = Field184[Field178[boxHeight]][boxHeight];
-				if(Field177[boxHeight] > 0) {
-					var19 = Field185[Field178[boxHeight]][boxHeight];
+				Image var19 = Field184[Field178[var3]][var3];
+				if(Field177[var3] > 0) {
+					var19 = Field185[Field178[var3]][var3];
 				}
 	
-				drawImage(var19, var4 - var19.getWidth() / 2 + Field187[Field178[boxHeight]][boxHeight], var5 - var17 - var19.getHeight() / 2 + Field188[Field178[boxHeight]][boxHeight], 0);
+				drawImage(var19, var4 - var19.getWidth() / 2 + Field187[Field178[var3]][var3], var5 - var17 - var19.getHeight() / 2 + Field188[Field178[var3]][var3], 0);
 			}
 	
-			if(Field177[boxHeight] > 0 || rand8() % 50 == boxHeight) {
-				if(Field177[boxHeight] > 0) {
-					int var10002 = Field177[boxHeight]--;
+			if(Field177[var3] > 0 || rand8() % 50 == var3) {
+				if(Field177[var3] > 0) {
+					int var10002 = Field177[var3]--;
 					return;
 				}
 	
-				Field177[boxHeight] = 3;
+				Field177[var3] = 3;
 			}
 		}
 	}
@@ -3967,14 +3967,14 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method159(int var0, int var1) {
 		int var2 = Method241(var0, var1);
-		int boxHeight = Method242(var0, var1);
+		int var3 = Method242(var0, var1);
 		if(Field167 + 200 > Field395) {
-			drawImage(Field197[1], var2 - 9, boxHeight - 11 - 2, 0);
+			drawImage(Field197[1], var2 - 9, var3 - 11 - 2, 0);
 		} else {
-			drawImage(Field197[1], var2 - 9, boxHeight - 11 - 5, 0);
+			drawImage(Field197[1], var2 - 9, var3 - 11 - 5, 0);
 		}
 	
-		drawImage(Field197[0], var2 - 14, boxHeight - 11, 0);
+		drawImage(Field197[0], var2 - 14, var3 - 11, 0);
 	}
 	
 	public static final void Method160(int var0) {
@@ -3989,10 +3989,10 @@ public final class Game extends GameCanvas implements Runnable {
 		Field205 = new boolean[var0];
 	}
 	
-	public static final void Method161(int var0, int var1, int var2, int boxHeight, int var4, int var5, boolean var6, boolean var7) {
+	public static final void Method161(int var0, int var1, int var2, int var3, int var4, int var5, boolean var6, boolean var7) {
 		Field199[var0] = var1;
 		Field200[var0] = var2;
-		Field201[var0] = boxHeight;
+		Field201[var0] = var3;
 		Field202[var0] = var4;
 		Field203[var0] = Method58(var4, var4);
 		Field204[var0] = var5;
@@ -4033,7 +4033,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method164(int var0, int var1, int var2, int boxHeight, int var4, boolean var5) {
+	public static final void Method164(int var0, int var1, int var2, int var3, int var4, boolean var5) {
 		int var6 = Field298[var1] - Field298[var0];
 		int var7 = Field299[var1] - Field299[var0];
 		int var8 = Method60(var6, var7, var2);
@@ -4043,8 +4043,8 @@ public final class Game extends GameCanvas implements Runnable {
 					int var9 = Field304[var0];
 					int var10 = Field304[var1];
 					int var11 = Method59(var8 - var2, Method58(var8, var9 + var10));
-					int var12 = Method58(boxHeight, Method58(var6, var11));
-					int var13 = Method58(boxHeight, Method58(var7, var11));
+					int var12 = Method58(var3, Method58(var6, var11));
+					int var13 = Method58(var3, Method58(var7, var11));
 					if(Field306[var0]) {
 						int[] var10000 = Field298;
 						var10000[var0] += Method58(var12, var9);
@@ -4106,10 +4106,10 @@ public final class Game extends GameCanvas implements Runnable {
 		Field221 = new int[var0];
 	}
 	
-	public static final void Method167(int var0, int var1, int var2, int boxHeight, int var4) {
+	public static final void Method167(int var0, int var1, int var2, int var3, int var4) {
 		Field216[var0] = var1;
-		Field217[var0] = Field298[var1] - boxHeight;
-		Field218[var0] = Field298[var1] + boxHeight;
+		Field217[var0] = Field298[var1] - var3;
+		Field218[var0] = Field298[var1] + var3;
 		if(var4 == 0) {
 			var4 = 1;
 		}
@@ -4169,9 +4169,9 @@ public final class Game extends GameCanvas implements Runnable {
 						if(Field298[var1] > Field218[var0]) {
 							Field219[var0] = Field220[var0];
 	
-							for(int boxHeight = 0; boxHeight < Field216.length; boxHeight++) {
-								if(Field221[var0] == Field221[boxHeight]) {
-									Field219[boxHeight] = Field219[var0];
+							for(int var3 = 0; var3 < Field216.length; var3++) {
+								if(Field221[var0] == Field221[var3]) {
+									Field219[var3] = Field219[var0];
 								}
 							}
 						} else {
@@ -4193,11 +4193,11 @@ public final class Game extends GameCanvas implements Runnable {
 		Field222 = 0;
 	}
 	
-	public static final void Method171(int var0, int var1, boolean var2, int boxHeight, int var4) {
+	public static final void Method171(int var0, int var1, boolean var2, int var3, int var4) {
 		Field223[var0] = var1;
 		Field224[var0] = var2;
 		Field225[var0] = false;
-		Field226[var0] = boxHeight;
+		Field226[var0] = var3;
 		Field227[var0] = var4;
 		Field228[var0] = Field300[var1];
 		int[] var10000 = Field303;
@@ -4272,8 +4272,8 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			if((Field303[var2] & 0x80) > 0 && Field305[var2] == 7) {
-				int boxHeight = (Field299[var2] >> 16) / 100 - 1;
-				Field233[boxHeight][var1[boxHeight]++] = var2;
+				int var3 = (Field299[var2] >> 16) / 100 - 1;
+				Field233[var3][var1[var3]++] = var2;
 				int[] var10000 = Field303;
 				var10000[var2] &= -2;
 	
@@ -4351,26 +4351,26 @@ public final class Game extends GameCanvas implements Runnable {
 		int var7 = 2 * Field300[Field231] / 5;
 		int var1 = Field298[Field231];
 		int var2 = Field299[Field231] - 7 * Field300[Field231] / 10;
-		int boxHeight = Field300[Field231] / 5;
+		int var3 = Field300[Field231] / 5;
 	
 		for(int var4 = -1; var4 < 2; var4++) {
 			setGammaColor(0);
-			Method270(var1 + var4 * var7, var2, boxHeight);
+			Method270(var1 + var4 * var7, var2, var3);
 			if(var4 < Field234) {
 				setGammaColor(0xffffff);
-				Method270(var1 + var4 * var7, var2, boxHeight);
+				Method270(var1 + var4 * var7, var2, var3);
 				setGammaColor(0);
-				int var5 = Method182(var1 + var4 * var7, Field372, 0x960000, 3 * boxHeight / 4);
-				int var6 = Method182(var2, Field373, 0x640000, 3 * boxHeight / 4);
-				Method270(var1 + var4 * var7 + var5, var2 + var6, boxHeight / 3);
+				int var5 = Method182(var1 + var4 * var7, Field372, 0x960000, 3 * var3 / 4);
+				int var6 = Method182(var2, Field373, 0x640000, 3 * var3 / 4);
+				Method270(var1 + var4 * var7 + var5, var2 + var6, var3 / 3);
 			} else {
 				setGammaColor(160, 32, 240);
-				Method270(var1 + var4 * var7, var2, boxHeight);
+				Method270(var1 + var4 * var7, var2, var3);
 			}
 		}
 	}
 	
-	public static final int Method182(int var0, int var1, int var2, int boxHeight) {
+	public static final int Method182(int var0, int var1, int var2, int var3) {
 		int var4 = 90 * (var0 - (var1 - var2)) / var2;
 		if(var4 < 0) {
 			var4 = 0;
@@ -4380,7 +4380,7 @@ public final class Game extends GameCanvas implements Runnable {
 			var4 = 179;
 		}
 	
-		return boxHeight / 1500 * cos1000[var4];
+		return var3 / 1500 * cos1000[var4];
 	}
 	
 	public static final void Method183() {
@@ -4412,10 +4412,10 @@ public final class Game extends GameCanvas implements Runnable {
 		Field244 = 0;
 	}
 	
-	public static final void Method185(int var0, int var1, boolean var2, int boxHeight, int var4, boolean var5, int var6, int var7, int var8, boolean var9, int var10) {
+	public static final void Method185(int var0, int var1, boolean var2, int var3, int var4, boolean var5, int var6, int var7, int var8, boolean var9, int var10) {
 		Field245[var0] = var1;
 		Field246[var0] = var2;
-		Field247[var0] = boxHeight;
+		Field247[var0] = var3;
 		Field248[var0] = var4;
 		Field249[var0] = var5;
 		Field250[var0] = var6;
@@ -4445,8 +4445,8 @@ public final class Game extends GameCanvas implements Runnable {
 				if(Field249[var0]) {
 					if(var1 % Field250[var0] == 0) {
 						int[] var2 = Field298;
-						int boxHeight = Field245[var0];
-						var2[boxHeight] += Field253[var0] * Field251[var0];
+						int var3 = Field245[var0];
+						var2[var3] += Field253[var0] * Field251[var0];
 						if(Field256[var0] && rand8() % 50 == 49) {
 							Field253[var0] = -Field253[var0];
 						}
@@ -4540,8 +4540,8 @@ public final class Game extends GameCanvas implements Runnable {
 			if(Field238 == null) {
 				Field238 = new Image[2];
 	
-				for(int boxHeight = 0; boxHeight < 2; boxHeight++) {
-					Field238[boxHeight] = loadImage("pointy_mouth_" + boxHeight + ".pim", "pointy_mouth_" + boxHeight + ".ppl");
+				for(int var3 = 0; var3 < 2; var3++) {
+					Field238[var3] = loadImage("pointy_mouth_" + var3 + ".pim", "pointy_mouth_" + var3 + ".ppl");
 				}
 			}
 		}
@@ -4556,7 +4556,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method192(int var0, int var1) {
 		if(Field300[var0] >= 30000) {
 			int var2 = Method241(Field298[var0], Field299[var0]);
-			int boxHeight = Method242(Field298[var0], Field299[var0]);
+			int var3 = Method242(Field298[var0], Field299[var0]);
 			if(Field258[var1]) {
 				int[] var11 = Field242;
 	
@@ -4580,14 +4580,14 @@ public final class Game extends GameCanvas implements Runnable {
 					var8 = Field240[Field242[var1] / 100];
 				}
 	
-				drawImage(var8, var2 - var8.getWidth() / 2, boxHeight - var8.getHeight() / 2, 0);
+				drawImage(var8, var2 - var8.getWidth() / 2, var3 - var8.getHeight() / 2, 0);
 			} else if(!Field246[var1] && !Field249[var1]) {
 				Image var7 = Field241[0];
 				if(!Field257[var1]) {
 					var7 = Field241[1];
 				}
 	
-				drawImage(var7, var2 - var7.getWidth() / 2, boxHeight - var7.getHeight() / 2, 0);
+				drawImage(var7, var2 - var7.getWidth() / 2, var3 - var7.getHeight() / 2, 0);
 			} else {
 				int[] var10000 = Field242;
 	
@@ -4618,10 +4618,10 @@ public final class Game extends GameCanvas implements Runnable {
 					Method271(Field298[1 + Field174 % 4], Field299[1 + Field174 % 4], Field298[var0], Field299[var0]);
 				}
 	
-				drawImage(var4, var2 - var4.getWidth() / 2, boxHeight - var4.getHeight() / 2, 0);
+				drawImage(var4, var2 - var4.getWidth() / 2, var3 - var4.getHeight() / 2, 0);
 				if(Field257[var1]) {
-					drawImage(var5, var2 + 0 - var5.getWidth() / 2, boxHeight + -6 - var5.getHeight() / 2, 0);
-					drawImage(var6, var2 + 0 - var6.getWidth() / 2, boxHeight + 3 - var6.getHeight() / 2, 0);
+					drawImage(var5, var2 + 0 - var5.getWidth() / 2, var3 + -6 - var5.getHeight() / 2, 0);
+					drawImage(var6, var2 + 0 - var6.getWidth() / 2, var3 + 3 - var6.getHeight() / 2, 0);
 				}
 			}
 		}
@@ -4636,10 +4636,10 @@ public final class Game extends GameCanvas implements Runnable {
 		Field264 = new boolean[var0];
 	}
 	
-	public static final void Method194(int var0, int var1, int var2, int boxHeight, int var4) {
+	public static final void Method194(int var0, int var1, int var2, int var3, int var4) {
 		Field260[var0] = var1;
 		Field261[var0] = var2;
-		Field262[var0] = boxHeight;
+		Field262[var0] = var3;
 		Field263[var0] = var4;
 		Field264[var0] = false;
 	}
@@ -4655,13 +4655,13 @@ public final class Game extends GameCanvas implements Runnable {
 		Field272 = new int[var0];
 	}
 	
-	public static final void Method196(int var0, int var1, int var2, int boxHeight, int var4, int var5, int var6) {
+	public static final void Method196(int var0, int var1, int var2, int var3, int var4, int var5, int var6) {
 		Field264[var1] = true;
 		Field265[var0] = var1;
 		Field266[var0] = Field262[var1];
 		Field267[var0] = var2;
 		Field268[var0] = Field263[var1];
-		Field269[var0] = boxHeight;
+		Field269[var0] = var3;
 		Field270[var0] = var4;
 		Field271[var0] = var5;
 		Field272[var0] = var6;
@@ -4691,10 +4691,10 @@ public final class Game extends GameCanvas implements Runnable {
 					Field272[var0] = -Field271[var0] - 1;
 				}
 			} else if(Field272[var0] == -1) {
-				int[] boxHeight = Field262;
-				boxHeight[var1] -= Field270[var0];
-				boxHeight = Field263;
-				boxHeight[var1] -= Field270[var0];
+				int[] var3 = Field262;
+				var3[var1] -= Field270[var0];
+				var3 = Field263;
+				var3[var1] -= Field270[var0];
 				if(Field262[var1] < Field266[var0]) {
 					Field262[var1] = Field266[var0];
 				}
@@ -4732,9 +4732,9 @@ public final class Game extends GameCanvas implements Runnable {
 			var2 = Field260[var1] - Field262[var1] - Field300[var0];
 		}
 	
-		int boxHeight = Field261[var1] + Field263[var1] + Field300[var0];
+		int var3 = Field261[var1] + Field263[var1] + Field300[var0];
 		if(Field299[var0] < Field261[var1]) {
-			boxHeight = Field261[var1] - Field263[var1] - Field300[var0];
+			var3 = Field261[var1] - Field263[var1] - Field300[var0];
 		}
 	
 		int var4 = Field298[var0] - var2;
@@ -4742,7 +4742,7 @@ public final class Game extends GameCanvas implements Runnable {
 			var4 = -var4;
 		}
 	
-		int var5 = Field299[var0] - boxHeight;
+		int var5 = Field299[var0] - var3;
 		if(var5 < 0) {
 			var5 = -var5;
 		}
@@ -4752,7 +4752,7 @@ public final class Game extends GameCanvas implements Runnable {
 			var6[var0] += (var2 - Field298[var0]) / 2;
 		} else {
 			int[] var10000 = Field299;
-			var10000[var0] += (boxHeight - Field299[var0]) / 2;
+			var10000[var0] += (var3 - Field299[var0]) / 2;
 		}
 	}
 	
@@ -4835,18 +4835,18 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method207(int var0, int var1, int var2, int boxHeight) {
-		if(mirrored && boxHeight == 2) {
-			boxHeight = 3;
+	public static final void Method207(int var0, int var1, int var2, int var3) {
+		if(mirrored && var3 == 2) {
+			var3 = 3;
 		}
 	
-		if(mirrored && boxHeight == 3) {
-			boxHeight = 2;
+		if(mirrored && var3 == 3) {
+			var3 = 2;
 		}
 	
 		Field280[var0] = var1;
 		Field281[var0] = var2;
-		Field282[var0] = boxHeight;
+		Field282[var0] = var3;
 	}
 	
 	public static final void Method208() {
@@ -4877,7 +4877,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field296 = new int[var0];
 	}
 	
-	public static final void Method210(int var0, int var1, int var2, int boxHeight, int var4, int var5, int var6, int var7, int var8, int var9) {
+	public static final void Method210(int var0, int var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8, int var9) {
 		if(mirrored) {
 			int var10 = var7 - var6;
 			short var11 = 180;
@@ -4890,12 +4890,12 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		Field285[var0] = var1;
 		Field286[var0] = var2;
-		Field287[var0] = boxHeight;
-		Field289[var0] = boxHeight + var4;
+		Field287[var0] = var3;
+		Field289[var0] = var3 + var4;
 		Field290[var0] = var5;
 		Field291[var0] = 0;
-		Field288[var0] = boxHeight;
-		Field292[var0] = Field300[boxHeight];
+		Field288[var0] = var3;
+		Field292[var0] = Field300[var3];
 		Field293[var0] = var6;
 		Field294[var0] = var7 - var6;
 		Field295[var0] = 2 * var8;
@@ -4918,9 +4918,9 @@ public final class Game extends GameCanvas implements Runnable {
 					Field298[var1] = Field285[var0];
 					Field299[var1] = Field286[var0];
 					int var2 = Field295[var0] + rand16() % Field296[var0];
-					int boxHeight = Field293[var0] + rand16() % Field294[var0];
-					Field301[var1] = Field285[var0] - var2 * cos(boxHeight);
-					Field302[var1] = Field286[var0] - var2 * sin(boxHeight);
+					int var3 = Field293[var0] + rand16() % Field294[var0];
+					Field301[var1] = Field285[var0] - var2 * cos(var3);
+					Field302[var1] = Field286[var0] - var2 * sin(var3);
 					var10002 = Field288[var0]++;
 					if(Field288[var0] >= Field289[var0]) {
 						Field288[var0] = Field287[var0];
@@ -4950,7 +4950,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field306 = new boolean[var0];
 	}
 	
-	public static final void Method214(int var0, int var1, int var2, int boxHeight, int var4, int var5, int var6, boolean var7) {
+	public static final void Method214(int var0, int var1, int var2, int var3, int var4, int var5, int var6, boolean var7) {
 		if(var6 == 3 && Field327 != -2) {
 			var5 &= -5;
 		}
@@ -4959,7 +4959,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field299[var0] = var2;
 		Field301[var0] = var1;
 		Field302[var0] = var2;
-		Field300[var0] = boxHeight;
+		Field300[var0] = var3;
 		Field303[var0] = var5;
 		Field306[var0] = var7;
 		Field305[var0] = (byte)var6;
@@ -5000,15 +5000,15 @@ public final class Game extends GameCanvas implements Runnable {
 			if(Field306[var5]) {
 				int var1 = Field298[var5];
 				int var2 = Field299[var5];
-				int boxHeight = Field322;
+				int var3 = Field322;
 				if(var5 < 5 && Field175 >= 0) {
-					boxHeight = 63000;
+					var3 = 63000;
 				}
 	
 				int[] var10000 = Field298;
-				var10000[var5] += Method58(boxHeight, Field298[var5] - Field301[var5]);
+				var10000[var5] += Method58(var3, Field298[var5] - Field301[var5]);
 				var10000 = Field299;
-				var10000[var5] += Method58(boxHeight, Field299[var5] - Field302[var5]);
+				var10000[var5] += Method58(var3, Field299[var5] - Field302[var5]);
 				if((Field303[var5] & 1) > 0) {
 					var10000 = Field299;
 					var10000[var5] += Field321;
@@ -5037,12 +5037,12 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		for(int var2 = 5; var2 < Field297; var2++) {
 			if(Field306[var2]) {
-				for(int boxHeight = var2 + 1; boxHeight < Field297; boxHeight++) {
-					if((Field303[boxHeight] & 2) > 0 && Field298[var2] - Field300[var2] < Field298[boxHeight] + Field300[boxHeight] && Field298[var2] + Field300[var2] > Field298[boxHeight] - Field300[boxHeight] && Field299[var2] - Field300[var2] < Field299[boxHeight] + Field300[boxHeight] && Field299[var2] + Field300[var2] > Field299[boxHeight] - Field300[boxHeight] && (Field303[boxHeight] & 0x20) == 0) {
-						if((Field303[boxHeight] & 0x10) > 0) {
-							Method257(var2, boxHeight);
+				for(int var3 = var2 + 1; var3 < Field297; var3++) {
+					if((Field303[var3] & 2) > 0 && Field298[var2] - Field300[var2] < Field298[var3] + Field300[var3] && Field298[var2] + Field300[var2] > Field298[var3] - Field300[var3] && Field299[var2] - Field300[var2] < Field299[var3] + Field300[var3] && Field299[var2] + Field300[var2] > Field299[var3] - Field300[var3] && (Field303[var3] & 0x20) == 0) {
+						if((Field303[var3] & 0x10) > 0) {
+							Method257(var2, var3);
 						} else {
-							Method164(var2, boxHeight, Field300[var2] + Field300[boxHeight], 55000, 3, true);
+							Method164(var2, var3, Field300[var2] + Field300[var3], 55000, 3, true);
 						}
 					}
 				}
@@ -5078,9 +5078,9 @@ public final class Game extends GameCanvas implements Runnable {
 		byte[] var2 = Field305;
 		Field305 = Field315;
 		Field315 = var2;
-		boolean[] boxHeight = Field306;
+		boolean[] var3 = Field306;
 		Field306 = Field316;
-		Field316 = boxHeight;
+		Field316 = var3;
 	}
 	
 	public static final void Method218() {
@@ -5137,9 +5137,9 @@ public final class Game extends GameCanvas implements Runnable {
 		short[] var5 = new short[var1];
 		var1 = 0;
 	
-		for(short boxHeight = 0; boxHeight < Field297; boxHeight++) {
-			if((Field303[boxHeight] & var0) == var0) {
-				var5[var1++] = boxHeight;
+		for(short var3 = 0; var3 < Field297; var3++) {
+			if((Field303[var3] & var0) == var0) {
+				var5[var1++] = var3;
 			}
 		}
 	
@@ -5186,7 +5186,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field331 = readInt();
 		Field332 = readInt();
 		int var2 = Method222(readUnsignedShort() << 16);
-		int boxHeight = readUnsignedShort() << 16;
+		int var3 = readUnsignedShort() << 16;
 		Field156 = Method222(readUnsignedShort() << 16);
 		Field157 = readUnsignedShort() << 16;
 		int var4 = readUnsignedShort();
@@ -5199,14 +5199,14 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		Method213(var6 + var4 + 1);
 		if(var1) {
-			var5 = Method223(0, var2, boxHeight, 0x140000);
+			var5 = Method223(0, var2, var3, 0x140000);
 		} else {
-			var5 = Method223(0, var2, boxHeight, 0x0d0000);
+			var5 = Method223(0, var2, var3, 0x0d0000);
 		}
 	
 		Method214(var5++, 0, 0, 0xa0000, 30, 0, 0, false);
 		if(!var1 && var0 != -1) {
-			var5 = Method223(var5, var2 + 0x370000, boxHeight, 0x140000);
+			var5 = Method223(var5, var2 + 0x370000, var3, 0x140000);
 		}
 	
 		var6 = var5;
@@ -5245,9 +5245,9 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		Method160(17 + var17);
-		int boxHeight5 = var5 = Method224(0, 0, var19);
+		int var35 = var5 = Method224(0, 0, var19);
 		var5++;
-		Method161(boxHeight5, 0, 0, 4, 65536, 65500, false, false);
+		Method161(var35, 0, 0, 4, 65536, 65500, false, false);
 	
 		for(int var20 = 0; var20 < var17; var20++) {
 			Method161(var5++, var6 + readUnsignedShort(), var6 + readUnsignedShort(), readByte(), readUnsignedShort() << 16, readUnsignedShort(), readByte() == 1, true);
@@ -5280,14 +5280,14 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		Method195(var21 = readByte());
 	
-		for(int boxHeight0 = 0; boxHeight0 < var21; boxHeight0++) {
-			Method196(boxHeight0, boxHeight0, readUnsignedShort() << 16, readUnsignedShort() << 16, readUnsignedShort() << 8, readUnsignedShort(), readUnsignedShort());
+		for(int var30 = 0; var30 < var21; var30++) {
+			Method196(var30, var30, readUnsignedShort() << 16, readUnsignedShort() << 16, readUnsignedShort() << 8, readUnsignedShort(), readUnsignedShort());
 		}
 	
 		Method206(var21 = readByte());
 	
-		for(int boxHeight1 = 0; boxHeight1 < var21; boxHeight1++) {
-			Method207(boxHeight1, Method222(readUnsignedShort() << 16), readUnsignedShort() << 16, readByte());
+		for(int var31 = 0; var31 < var21; var31++) {
+			Method207(var31, Method222(readUnsignedShort() << 16), readUnsignedShort() << 16, readByte());
 		}
 	
 		Method150(var1);
@@ -5300,11 +5300,11 @@ public final class Game extends GameCanvas implements Runnable {
 		Field322 = 62000;
 		Method238(Field298[0], Field299[0], 0);
 		if(var0 >= 0) {
-			for(int boxHeight2 = 0; boxHeight2 < 5; boxHeight2++) {
-				int[] boxHeight7 = Field299;
-				boxHeight7[boxHeight2] -= 0x750000;
-				boxHeight7 = Field302;
-				boxHeight7[boxHeight2] -= 0x750000;
+			for(int var32 = 0; var32 < 5; var32++) {
+				int[] var37 = Field299;
+				var37[var32] -= 0x750000;
+				var37 = Field302;
+				var37[var32] -= 0x750000;
 			}
 		}
 	
@@ -5340,17 +5340,17 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final int Method223(int var0, int var1, int var2, int boxHeight) {
+	public static final int Method223(int var0, int var1, int var2, int var3) {
 		byte var4 = 3;
 		if(var0 > 0) {
 			var4 = 0;
 		}
 	
 		Method214(var0++, var1, var2, 0xa0000, 60, var4, 0, true);
-		Method214(var0++, var1, var2 - boxHeight, 0x030000, 60, var4, 0, true);
-		Method214(var0++, var1, var2 + boxHeight, 0x030000, 60, var4, 0, true);
-		Method214(var0++, var1 - boxHeight, var2, 0x030000, 60, var4, 0, true);
-		Method214(var0++, var1 + boxHeight, var2, 0x030000, 60, var4, 0, true);
+		Method214(var0++, var1, var2 - var3, 0x030000, 60, var4, 0, true);
+		Method214(var0++, var1, var2 + var3, 0x030000, 60, var4, 0, true);
+		Method214(var0++, var1 - var3, var2, 0x030000, 60, var4, 0, true);
+		Method214(var0++, var1 + var3, var2, 0x030000, 60, var4, 0, true);
 		return var0;
 	}
 	
@@ -5472,8 +5472,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method232(int var0, int var1) {
 		boolean var2 = false;
 	
-		for(int boxHeight = 0; boxHeight < Field367.length; boxHeight++) {
-			if(Field367[boxHeight] == var1) {
+		for(int var3 = 0; var3 < Field367.length; var3++) {
+			if(Field367[var3] == var1) {
 				var2 = true;
 			}
 		}
@@ -5499,11 +5499,11 @@ public final class Game extends GameCanvas implements Runnable {
 		Field364 = Field365[var0];
 		Field357 = Field368[var0];
 		Field358 = Field369[var0];
-		int boxHeight = Method237(Field357);
+		int var3 = Method237(Field357);
 		int var2 = Method237(Field358) - Field356[Field358[0][0]].getHeight();
 		Field360 = 0;
-		Field361 = -(boxHeight - (128 - var2));
-		Field362 = boxHeight;
+		Field361 = -(var3 - (128 - var2));
+		Field362 = var3;
 		Field363 = 128 - var2;
 		Field359 = var0;
 	}
@@ -5519,12 +5519,12 @@ public final class Game extends GameCanvas implements Runnable {
 				int var7 = -((Method236(Field357) - 128) * (Field372 >> 16)) / (Field319 >> 16);
 				Method235(Field357, var7, var5, false);
 			} else {
-				int boxHeight = Field360 + (Field361 - Field360) * (Field373 >> 16) / (Field320 >> 16);
+				int var3 = Field360 + (Field361 - Field360) * (Field373 >> 16) / (Field320 >> 16);
 				int var1 = -((Method236(Field357) - 128) * (Field372 >> 16)) / (Field319 >> 16);
-				Method235(Field357, var1, boxHeight, false);
-				boxHeight = Field362 + (Field363 - Field362) * (Field373 >> 16) / (Field320 >> 16);
+				Method235(Field357, var1, var3, false);
+				var3 = Field362 + (Field363 - Field362) * (Field373 >> 16) / (Field320 >> 16);
 				var1 = -((Method236(Field358) - 128) * (Field372 >> 16)) / (Field319 >> 16);
-				Method235(Field358, var1, boxHeight, true);
+				Method235(Field358, var1, var3, true);
 			}
 		} else {
 			setGammaColor(0xdcc86d);
@@ -5541,9 +5541,9 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method235(int[][] var0, int var1, int var2, boolean boxHeight) {
+	public static final void Method235(int[][] var0, int var1, int var2, boolean var3) {
 		int var4 = 0;
-		if(boxHeight) {
+		if(var3) {
 			int var5 = var1;
 	
 			for(int var6 = 0; var6 < var0[0].length; var6++) {
@@ -5627,7 +5627,7 @@ public final class Game extends GameCanvas implements Runnable {
 		return Method240(var0, var1, var2, 0x1e0000);
 	}
 	
-	public static final boolean Method240(int var0, int var1, int var2, int boxHeight) {
+	public static final boolean Method240(int var0, int var1, int var2, int var3) {
 		if(Field348 == 0) {
 			var1 = Field320 / 2;
 		} else if(var1 > Field320 - 0x578000) {
@@ -5644,20 +5644,20 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		int var4 = var0 - Field372;
 		int var5 = var1 - Field373;
-		if(var4 > boxHeight) {
-			var4 = boxHeight;
+		if(var4 > var3) {
+			var4 = var3;
 		}
 	
-		if(var4 < -boxHeight) {
-			var4 = -boxHeight;
+		if(var4 < -var3) {
+			var4 = -var3;
 		}
 	
-		if(var5 > boxHeight) {
-			var5 = boxHeight;
+		if(var5 > var3) {
+			var5 = var3;
 		}
 	
-		if(var5 < -boxHeight) {
-			var5 = -boxHeight;
+		if(var5 < -var3) {
+			var5 = -var3;
 		}
 	
 		int var6 = var4 >> 17;
@@ -5778,8 +5778,8 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			Field388[3] = new Image[2];
 	
-			for(int boxHeight = 0; boxHeight < 2; boxHeight++) {
-				Field388[3][boxHeight] = loadImage("hal" + boxHeight + ".pim", "hal" + boxHeight + ".ppl");
+			for(int var3 = 0; var3 < 2; var3++) {
+				Field388[3][var3] = loadImage("hal" + var3 + ".pim", "hal" + var3 + ".ppl");
 			}
 	
 			hideDialogueBox();
@@ -5797,8 +5797,8 @@ public final class Game extends GameCanvas implements Runnable {
 		Field386 = var0;
 		Field384 = millis();
 		if(showDialogue == 1) {
-			int boxHeight = 12 + textRows * 13;
-			Field384 -= (long)(400 * var2 / boxHeight);
+			int var3 = 12 + textRows * 13;
+			Field384 -= (long)(400 * var2 / var3);
 		}
 	
 		showDialogue = 1;
@@ -5869,17 +5869,17 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final String[] Method249(String var0, int var1) {
 		int[] var2 = Method74(99, var0, var1);
-		String[] boxHeight = new String[var2.length];
+		String[] var3 = new String[var2.length];
 	
 		for(int var4 = 0; var4 < var2.length; var4++) {
 			if(var4 == var2.length - 1) {
-				boxHeight[var4] = var0.substring(var2[var4]);
+				var3[var4] = var0.substring(var2[var4]);
 			} else {
-				boxHeight[var4] = var0.substring(var2[var4], var2[var4 + 1]);
+				var3[var4] = var0.substring(var2[var4], var2[var4 + 1]);
 			}
 		}
 	
-		return boxHeight;
+		return var3;
 	}
 	
 	public static final void Method250() {
@@ -6008,15 +6008,15 @@ public final class Game extends GameCanvas implements Runnable {
 	
 				Method252(true);
 				if(Field390 < 100) {
-					int boxHeight;
+					int var3;
 					if(Field390 < 80) {
-						boxHeight = -51 + Field390 * 51 / 50;
+						var3 = -51 + Field390 * 51 / 50;
 					} else {
-						boxHeight = -51 + (100 - Field390) * 51 / 20;
+						var3 = -51 + (100 - Field390) * 51 / 20;
 					}
 	
-					if(boxHeight > 0) {
-						boxHeight = 0;
+					if(var3 > 0) {
+						var3 = 0;
 					}
 	
 					if(Field390 == 80) {
@@ -6024,9 +6024,9 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 	
 					if(Field390 < 80) {
-						Method204(14, boxHeight, -1);
+						Method204(14, var3, -1);
 					} else {
-						Method204(rand8() % 5 - 2 + 64 - 50, boxHeight, Field390);
+						Method204(rand8() % 5 - 2 + 64 - 50, var3, Field390);
 					}
 	
 					Method92(4, 114, Field102, 0);
@@ -6075,8 +6075,8 @@ public final class Game extends GameCanvas implements Runnable {
 			if(Field175 >= 0 && !Field323) {
 				if(Field298[0] <= Field301[0]) {
 					if(Field301[0] - Field298[0] < 0x10000) {
-						int[] boxHeight = Field298;
-						boxHeight[0] -= 0x28000;
+						int[] var3 = Field298;
+						var3[0] -= 0x28000;
 					} else {
 						int[] var4 = Field298;
 						var4[0] -= 0x14000;
@@ -6132,8 +6132,8 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		Method234();
 	
-		for(int boxHeight = 0; boxHeight < Field344.length; boxHeight++) {
-			short var4 = Field344[boxHeight];
+		for(int var3 = 0; var3 < Field344.length; var3++) {
+			short var4 = Field344[var3];
 			setGammaColor(Field331);
 			Method270(Field298[var4], Field299[var4], Field300[var4]);
 			setGammaColor(255, 255, 255);
@@ -6323,23 +6323,23 @@ public final class Game extends GameCanvas implements Runnable {
 						Field167 = Field395;
 						Field168 = Field395 + 33;
 						Field169 = false;
-						int boxHeight = Field166;
+						int var3 = Field166;
 						if(var2 == 10) {
-							boxHeight = -1;
+							var3 = -1;
 						}
 	
 						if(var2 == 11) {
-							boxHeight = 1;
+							var3 = 1;
 						}
 	
 						if(mirrored && var2 > 9) {
-							boxHeight *= -1;
+							var3 *= -1;
 						}
 	
-						Method214(Field171, Field298[var1] + boxHeight * 0x140000, Field299[var1], 0xa0000, 15, 71, 0, true);
+						Method214(Field171, Field298[var1] + var3 * 0x140000, Field299[var1], 0xa0000, 15, 71, 0, true);
 						int[] var4 = Field298;
 						int var10001 = Field171;
-						var4[var10001] += boxHeight * 0x30000;
+						var4[var10001] += var3 * 0x30000;
 					}
 				}
 			} else {
@@ -6353,29 +6353,29 @@ public final class Game extends GameCanvas implements Runnable {
 			if(var0 >= 5 && var1 >= 5) {
 				if((Field303[var0] & 16) > 0 || (Field303[var1] & 16) > 0) {
 					int var2 = var0;
-					int boxHeight = var1;
+					int var3 = var1;
 					if((Field303[var1] & 16) > 0) {
-						boxHeight = var0;
+						var3 = var0;
 						var2 = var1;
 					}
 	
-					if(Field303[boxHeight] != 0) {
-						Field298[boxHeight] = Field298[var2];
-						Field299[boxHeight] = Field299[var2];
-						Field301[boxHeight] = Field301[var2];
-						Field302[boxHeight] = Field302[var2];
-						Method162(boxHeight);
+					if(Field303[var3] != 0) {
+						Field298[var3] = Field298[var2];
+						Field299[var3] = Field299[var2];
+						Field301[var3] = Field301[var2];
+						Field302[var3] = Field302[var2];
+						Method162(var3);
 						int[] var10000 = Field300;
-						var10000[boxHeight] -= 0x8000;
+						var10000[var3] -= 0x8000;
 						Field340 += 0x8000;
 						if(Field340 >= Field300[var2]) {
 							Field340 = Field300[var2];
 							Field324 = true;
 						}
 	
-						if(Field300[boxHeight] <= 0) {
-							Field303[boxHeight] = 0;
-							Field306[boxHeight] = false;
+						if(Field300[var3] <= 0) {
+							Field303[var3] = 0;
+							Field306[var3] = false;
 						}
 					}
 				}
@@ -6528,11 +6528,11 @@ public final class Game extends GameCanvas implements Runnable {
 		flushGrp();
 	}
 	
-	public static final void Method264(int var0, int var1, int var2, int boxHeight) {
+	public static final void Method264(int var0, int var1, int var2, int var3) {
 		int var4 = Method241(var0, var1);
 		int var5 = Method242(var0, var1);
-		int var6 = Method241(var2, boxHeight);
-		int var7 = Method242(var2, boxHeight);
+		int var6 = Method241(var2, var3);
+		int var7 = Method242(var2, var3);
 		drawLine(var4, var5, var6, var7);
 	}
 	
@@ -6558,22 +6558,22 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method267(int var0, int var1, int var2, int boxHeight) {
+	public static final void Method267(int var0, int var1, int var2, int var3) {
 		if(gammaBlackSet) {
 			int var4 = 0x20000;
 			var4 = 100 * var4 / Field398;
 			var2 += var4;
-			boxHeight += var4;
+			var3 += var4;
 		}
 	
-		int var13 = Method241(var0 - var2, var1 - boxHeight);
-		int var5 = Method242(var0 - var2, var1 - boxHeight);
-		int var6 = Method241(var0 + var2, var1 - boxHeight);
-		int var7 = Method242(var0 + var2, var1 - boxHeight);
-		int var8 = Method241(var0 - var2, var1 + boxHeight);
-		int var9 = Method242(var0 - var2, var1 + boxHeight);
-		int var10 = Method241(var0 + var2, var1 + boxHeight);
-		int var11 = Method242(var0 + var2, var1 + boxHeight);
+		int var13 = Method241(var0 - var2, var1 - var3);
+		int var5 = Method242(var0 - var2, var1 - var3);
+		int var6 = Method241(var0 + var2, var1 - var3);
+		int var7 = Method242(var0 + var2, var1 - var3);
+		int var8 = Method241(var0 - var2, var1 + var3);
+		int var9 = Method242(var0 - var2, var1 + var3);
+		int var10 = Method241(var0 + var2, var1 + var3);
+		int var11 = Method242(var0 + var2, var1 + var3);
 		if(var13 <= 128 || var8 <= 128) {
 			if(var5 <= 128 || var7 <= 128) {
 				if(var10 >= 0 || var6 >= 0) {
@@ -6587,21 +6587,21 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method268(Image var0, int var1, int var2) {
-		int boxHeight = Method241(var1, var2);
+		int var3 = Method241(var1, var2);
 		int var4 = Method242(var1, var2);
-		drawImage(var0, boxHeight - var0.getWidth() / 2, var4 - var0.getHeight() / 2, 0);
+		drawImage(var0, var3 - var0.getWidth() / 2, var4 - var0.getHeight() / 2, 0);
 	}
 	
-	public static final void Method269(int var0, int var1, int var2, int boxHeight) {
+	public static final void Method269(int var0, int var1, int var2, int var3) {
 		setGammaColor(0);
 		Method270(var0, var1, var2);
-		setGammaColor(boxHeight);
+		setGammaColor(var3);
 		Method270(var0, var1, var2);
 	}
 	
 	public static final void Method270(int var0, int var1, int var2) {
 		if(var2 >= 35000) {
-			int boxHeight = Method241(var0, var1);
+			int var3 = Method241(var0, var1);
 			int var4 = Method242(var0, var1);
 			var2 >>= 16;
 			var2 = Field398 * var2 / 100;
@@ -6609,22 +6609,22 @@ public final class Game extends GameCanvas implements Runnable {
 				var2 += 2;
 			}
 	
-			if(boxHeight > -var2 && boxHeight < 128 + var2 && var4 > -var2 && var4 < 128 + var2) {
-				fillArc(boxHeight - var2, var4 - var2, var2 + var2, var2 + var2, 0, 360);
+			if(var3 > -var2 && var3 < 128 + var2 && var4 > -var2 && var4 < 128 + var2) {
+				fillArc(var3 - var2, var4 - var2, var2 + var2, var2 + var2, 0, 360);
 			}
 		}
 	}
 	
-	public static final void Method271(int var0, int var1, int var2, int boxHeight) {
+	public static final void Method271(int var0, int var1, int var2, int var3) {
 		int var4 = Method241(var0, var1);
 		int var5 = Method242(var0, var1);
-		int var6 = Method241(var2, boxHeight);
-		int var7 = Method242(var2, boxHeight);
+		int var6 = Method241(var2, var3);
+		int var7 = Method242(var2, var3);
 		Method104(var4, var5, var6, var7, 8, 6);
 	}
 	
 	public static final void Method272(int var0, int var1, int var2) {
-		int boxHeight = Method241(var0, var1);
+		int var3 = Method241(var0, var1);
 		int var4 = Method242(var0, var1);
 		var2 >>= 16;
 		var2 = Field398 * var2 / 100;
@@ -6632,13 +6632,13 @@ public final class Game extends GameCanvas implements Runnable {
 			var2 += 2;
 		}
 	
-		if(boxHeight > -var2 && boxHeight < 128 + var2 && var4 > -var2 && var4 < 128 + var2) {
-			drawArc(boxHeight - var2, var4 - var2, var2 + var2, var2 + var2, 0, 360);
+		if(var3 > -var2 && var3 < 128 + var2 && var4 > -var2 && var4 < 128 + var2) {
+			drawArc(var3 - var2, var4 - var2, var2 + var2, var2 + var2, 0, 360);
 		}
 	}
 	
-	public static final boolean Method273(int var0, int var1, int var2, int boxHeight) {
-		return var0 > 128 || var2 < 0 || var1 > 128 || boxHeight < 0;
+	public static final boolean Method273(int var0, int var1, int var2, int var3) {
+		return var0 > 128 || var2 < 0 || var1 > 128 || var3 < 0;
 	}
 	
 	public static final void insideShipInit() {
@@ -6826,7 +6826,7 @@ public final class Game extends GameCanvas implements Runnable {
 		drawImage(inside[0], var2, -16, 0);
 		var2 += 28;
 	
-		for(int boxHeight = 0; boxHeight < 17; boxHeight++) {
+		for(int var3 = 0; var3 < 17; var3++) {
 			if(var2 + 46 > 0 && var2 <= 128) {
 				drawImage(inside[1], var2, -16, 0);
 			}
@@ -6898,15 +6898,15 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method281(int var0, int var1, int var2) {
-		int boxHeight = window.getWidth();
+		int var3 = window.getWidth();
 		int var4 = window.getHeight();
-		var0 -= boxHeight / 2;
+		var0 -= var3 / 2;
 		setColor(0);
-		setClip(var0, var1, boxHeight, var4);
-		fillRect(var0, var1, boxHeight, var4);
+		setClip(var0, var1, var3, var4);
+		fillRect(var0, var1, var3, var4);
 		setColor(0xffffff);
-		Method108(var2, var0 - boxHeight + boxHeight * var0 / 128, var1);
-		if(var0 >= -boxHeight && var0 <= 128) {
+		Method108(var2, var0 - var3 + var3 * var0 / 128, var1);
+		if(var0 >= -var3 && var0 <= 128) {
 			drawImage(window, var0, var1, 0);
 		}
 	
@@ -6994,24 +6994,24 @@ public final class Game extends GameCanvas implements Runnable {
 		int var1 = -(Field430 >> 8);
 		Method109(0, var0 - 64, var1 - 64, false);
 		int var2 = Field433 + var0 + 64;
-		int boxHeight = Field434 + var1 + 64;
+		int var3 = Field434 + var1 + 64;
 		setColor(0xffffff);
-		drawStar(var2, boxHeight);
+		drawStar(var2, var3);
 		if(Field438) {
-			drawImage(Field440, var2 - 16, boxHeight - 58 - 2, 0);
-			drawImage(Field441, var2 - Field441.getWidth() / 2, boxHeight - 58 + (33 - Field441.getHeight()) / 2 - 2, 0);
+			drawImage(Field440, var2 - 16, var3 - 58 - 2, 0);
+			drawImage(Field441, var2 - Field441.getWidth() / 2, var3 - 58 + (33 - Field441.getHeight()) / 2 - 2, 0);
 		}
 	
 		var2 = Field435 + var0 + 64;
-		boxHeight = Field436 + var1 + 64;
-		drawStar(var2, boxHeight);
+		var3 = Field436 + var1 + 64;
+		drawStar(var2, var3);
 		if(Field437 > 0) {
 			setColor(0xff0000);
 			int var4 = Field437;
-			drawArc(var2 - var4, boxHeight - var4, var4 * 2, var4 * 2, 20, 50);
-			drawArc(var2 - var4, boxHeight - var4, var4 * 2, var4 * 2, 110, 50);
-			drawArc(var2 - var4, boxHeight - var4, var4 * 2, var4 * 2, 200, 50);
-			drawArc(var2 - var4, boxHeight - var4, var4 * 2, var4 * 2, 290, 50);
+			drawArc(var2 - var4, var3 - var4, var4 * 2, var4 * 2, 20, 50);
+			drawArc(var2 - var4, var3 - var4, var4 * 2, var4 * 2, 110, 50);
+			drawArc(var2 - var4, var3 - var4, var4 * 2, var4 * 2, 200, 50);
+			drawArc(var2 - var4, var3 - var4, var4 * 2, var4 * 2, 290, 50);
 			Field437++;
 			if(Field437 > 20) {
 				Field437 = 1;
@@ -7019,8 +7019,8 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		if(Field439) {
-			drawImage(Field440, var2 - 16, boxHeight - 58 - 2, 0);
-			drawImage(Field442, var2 - Field442.getWidth() / 2, boxHeight - 58 + (33 - Field442.getHeight()) / 2 - 2, 0);
+			drawImage(Field440, var2 - 16, var3 - 58 - 2, 0);
+			drawImage(Field442, var2 - Field442.getWidth() / 2, var3 - 58 + (33 - Field442.getHeight()) / 2 - 2, 0);
 		}
 	}
 	
@@ -7197,12 +7197,12 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			for(int var1 = 0; var1 <= 128; var1 += 23) {
 				for(int var2 = -rand8() % 30; var2 <= 128; var2 += 23) {
-					int boxHeight;
-					for(boxHeight = rand8() % 4; boxHeight == Field452[var0]; boxHeight = rand8() % 4) {
+					int var3;
+					for(var3 = rand8() % 4; var3 == Field452[var0]; var3 = rand8() % 4) {
 					}
 	
-					Field452[var0] = boxHeight;
-					drawImage(Field451[boxHeight], var2, var1, 0);
+					Field452[var0] = var3;
+					drawImage(Field451[var3], var2, var1, 0);
 					var0++;
 				}
 			}
@@ -7223,17 +7223,17 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method300(int var0, int var1, int var2) {
-		int boxHeight = 40 * var2 / 100;
+		int var3 = 40 * var2 / 100;
 		int var4 = 93 * var2 / 100;
 		setColor(0);
-		fillArc(var0 - boxHeight / 2 - 2, var1 - var4 / 2 - 2, boxHeight + 2 + 2, var4 + 2 + 2, 0, 360);
+		fillArc(var0 - var3 / 2 - 2, var1 - var4 / 2 - 2, var3 + 2 + 2, var4 + 2 + 2, 0, 360);
 		if(Field453) {
 			setColor(0x696969);
 		} else {
 			setColor(0xa020f0);
 		}
 	
-		fillArc(var0 - boxHeight / 2, var1 - var4 / 2, boxHeight, var4, 0, 360);
+		fillArc(var0 - var3 / 2, var1 - var4 / 2, var3, var4, 0, 360);
 		setColor(0);
 		int var5 = 23 * var2 / 100;
 		int var6 = 5 * var2 / 100;
@@ -7300,12 +7300,12 @@ public final class Game extends GameCanvas implements Runnable {
 		Field472 = var1;
 	
 		for(int var5 = 0; var5 < numSelections; var5++) {
-			int boxHeight = 5242 * cos(90 + var5 * degreeBetweenSelections);
+			int var3 = 5242 * cos(90 + var5 * degreeBetweenSelections);
 			int var4 = 5242 * sin(90 + var5 * degreeBetweenSelections);
-			Method214(var5 + 10, boxHeight, var4, 0x50000, 200, 0, 0, false);
-			boxHeight = 6881 * cos(90 + var5 * degreeBetweenSelections);
+			Method214(var5 + 10, var3, var4, 0x50000, 200, 0, 0, false);
+			var3 = 6881 * cos(90 + var5 * degreeBetweenSelections);
 			var4 = 6881 * sin(90 + var5 * degreeBetweenSelections);
-			Method214(var5 + 10 + numSelections, boxHeight, var4, 0x190000, 100, 3, 0, true);
+			Method214(var5 + 10 + numSelections, var3, var4, 0x190000, 100, 3, 0, true);
 		}
 	
 		Method214(Field471, 0, 0, 0x500000, 200, 2, 0, false);
@@ -7346,11 +7346,11 @@ public final class Game extends GameCanvas implements Runnable {
 			Field467 += 360;
 		}
 	
-		for(int boxHeight = 0; boxHeight < numSelections; boxHeight++) {
-			int var1 = 5242 * cos(Field467 + 90 + boxHeight * degreeBetweenSelections);
-			int var2 = 5242 * sin(Field467 + 90 + boxHeight * degreeBetweenSelections);
-			Field298[boxHeight + 10] = var1;
-			Field299[boxHeight + 10] = var2;
+		for(int var3 = 0; var3 < numSelections; var3++) {
+			int var1 = 5242 * cos(Field467 + 90 + var3 * degreeBetweenSelections);
+			int var2 = 5242 * sin(Field467 + 90 + var3 * degreeBetweenSelections);
+			Field298[var3 + 10] = var1;
+			Field299[var3 + 10] = var2;
 		}
 	
 		Method212();
