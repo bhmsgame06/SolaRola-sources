@@ -22,7 +22,7 @@ public class PMMIDlet extends MIDlet {
 	}
 
 	public final void pauseApp() {
-		Game.Field4 = 0;
+		Game._heldKeys = 0;
 		Game.paused = true;
 		Game.Method29();
 		Game.Method31();

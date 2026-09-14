@@ -11,9 +11,9 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Game instance;
 	public static PMMIDlet midlet;
 	// keys
-	public static int Field2 = 0;
-	public static int Field3 = 0;
-	public static int Field4 = 0;
+	public static int heldKeys = 0;
+	public static int heldPrevKeys = 0;
+	public static int _heldKeys = 0;
 	public static int Field5 = 0;
 	public static final short[][] keymap = new short[][] {{'5', -6, -5},  {'0'},  {-7},  {'4', -3},  {'6', -4},  {'2', -1},  {'8', -2},  {'1'},  {'3'},  {'7'},  {'9'}};
 	// image decoding
@@ -496,7 +496,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public final void hideNotify() {
-		Field4 = 0;
+		_heldKeys = 0;
 		paused = true;
 		Method29();
 		Method31();
@@ -527,9 +527,9 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void updateKeys() {
 		sleep(5L);
-		Field3 = Field2;
-		Field2 = Field4;
-		Field4 &= ~Field5;
+		heldPrevKeys = heldKeys;
+		heldKeys = _heldKeys;
+		_heldKeys &= ~Field5;
 		Field5 = 0;
 	}
 	
@@ -546,42 +546,42 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public final void keyPressed(int keyCode) {
-		Field4 |= pressedKeyValue(keyCode);
+		_heldKeys |= pressedKeyValue(keyCode);
 		super.keyPressed(keyCode);
 		if(keyCode == -6) {
 			Field5 |= 1;
 			Field5 |= 0x0800;
-			Field4 |= 0x0800;
+			_heldKeys |= 0x0800;
 		}
 	
 		if(keyCode == -7) {
 			Field5 |= 4;
 			Field5 |= 0x1000;
-			Field4 |= 0x1000;
+			_heldKeys |= 0x1000;
 		}
 	}
 	
 	public final void keyReleased(int keyCode) {
-		Field4 &= ~pressedKeyValue(keyCode);
+		_heldKeys &= ~pressedKeyValue(keyCode);
 		super.keyReleased(keyCode);
 	}
 	
 	public static final boolean Method4(int var0) {
-		return (Field2 & var0) > 0;
+		return (heldKeys & var0) > 0;
 	}
 	
 	public static final boolean Method5(int var0) {
-		return (Field2 & var0) > 0 && (Field3 & var0) == 0;
+		return (heldKeys & var0) > 0 && (heldPrevKeys & var0) == 0;
 	}
 	
 	public static final boolean Method6(int var0) {
-		return (Field3 & var0) > 0 && (Field2 & var0) == 0;
+		return (heldPrevKeys & var0) > 0 && (heldKeys & var0) == 0;
 	}
 	
 	public static final void clearKeys() {
-		Field2 = 0;
-		Field3 = 0;
-		Field4 = 0;
+		heldKeys = 0;
+		heldPrevKeys = 0;
+		_heldKeys = 0;
 		Field5 = 0;
 	}
 	
@@ -1627,10 +1627,10 @@ public final class Game extends GameCanvas implements Runnable {
 		leftSoftkey = l;
 		rightSoftkey = r;
 
-		if((Field2 & 0x800) > 0 && (Field3 & 0x800) == 0) {
+		if((heldKeys & 0x800) > 0 && (heldPrevKeys & 0x800) == 0) {
 			return l;
 		} else {
-			return (Field2 & 0x1000) > 0 && (Field3 & 0x1000) == 0 ? r : -1;
+			return (heldKeys & 0x1000) > 0 && (heldPrevKeys & 0x1000) == 0 ? r : -1;
 		}
 	}
 	
@@ -1638,12 +1638,12 @@ public final class Game extends GameCanvas implements Runnable {
 		leftSoftkey = var0;
 		rightSoftkey = var1;
 
-		if((Field2 & 0x800) > 0 && (Field3 & 0x800) == 0) {
+		if((heldKeys & 0x800) > 0 && (heldPrevKeys & 0x800) == 0) {
 			return var0;
-		} else if((Field2 & 0x1000) > 0 && (Field3 & 0x1000) == 0) {
+		} else if((heldKeys & 0x1000) > 0 && (heldPrevKeys & 0x1000) == 0) {
 			return var1;
 		} else {
-			return var2 && var0 >= 0 && (Field2 & 1) > 0 && (Field3 & 1) == 0 ? var0 : -1;
+			return var2 && var0 >= 0 && (heldKeys & 1) > 0 && (heldPrevKeys & 1) == 0 ? var0 : -1;
 		}
 	}
 	
