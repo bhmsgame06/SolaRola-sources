@@ -16,16 +16,16 @@ public class PMMIDlet extends MIDlet {
 			} catch (IOException e) {
 			}
 		} else {
-			Game.Method29();
-			Game.Method31();
+			Game.queueAllSoundsForCleanup();
+			Game.queueSoundCleanup();
 		}
 	}
 
 	public final void pauseApp() {
 		Game._heldKeys = 0;
 		Game.paused = true;
-		Game.Method29();
-		Game.Method31();
+		Game.queueAllSoundsForCleanup();
+		Game.queueSoundCleanup();
 		notifyPaused();
 		Game.setPauseScreenDraw();
 	}
