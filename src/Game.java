@@ -3135,7 +3135,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			Method130();
 			Method149();
-			loadEmoticons();
+			loadFacesIcons();
 			Field136 = false;
 			Field133 = 0L;
 			Field144 = false;
@@ -5755,7 +5755,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field379 = var0;
 	}
 	
-	public static final void loadEmoticons() {
+	public static final void loadFacesIcons() {
 		if(emoticons == null) {
 			emoticons = new Image[5][];
 			emoticons[0] = new Image[2];
