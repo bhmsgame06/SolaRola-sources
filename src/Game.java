@@ -51,7 +51,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean currentReserved;
 	public static byte[][] bfcReservedData; // reserve data to RAM for future use (prevent reloading from bfc)
 	public static int currentOffsetReserved = 0;
-	public static short[] bfcHeadCrces; // filenames' checksums
+	public static short[] bfcHeadCrcs; // filenames' checksums
 	public static byte[] bfcHeadMemStates; // preserve or not
 	public static int[] bfcHeadOffsets; // offset from start of N.bfc
 	public static byte[] bfcHeadLocations; // N.bfc
@@ -1132,7 +1132,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final int getFileIndex(short fnCrc) {
 		for(int i = 0; i < bfcHeadNumEntries; i++) {
-			if(bfcHeadCrces[i] == fnCrc) {
+			if(bfcHeadCrcs[i] == fnCrc) {
 				return i;
 			}
 		}
@@ -1181,14 +1181,14 @@ public final class Game extends GameCanvas implements Runnable {
 
 			int numEntries = currentData.readUnsignedShort();
 			bfcHeadNumEntries = numEntries;
-			bfcHeadCrces = new short[numEntries];
+			bfcHeadCrcs = new short[numEntries];
 			bfcHeadMemStates = new byte[numEntries];
 			bfcHeadOffsets = new int[numEntries];
 			bfcHeadLocations = new byte[numEntries];
 			bfcHeadSizes = new int[numEntries];
 	
 			for(int i = 0; i < numEntries; i++) {
-				bfcHeadCrces[i] = (short)currentData.readUnsignedShort();
+				bfcHeadCrcs[i] = (short)currentData.readUnsignedShort();
 				bfcHeadMemStates[i] = currentData.readByte();
 				bfcHeadOffsets[i] = currentData.readUnsignedByte() << 16 | currentData.readUnsignedByte() << 8 | currentData.readUnsignedByte();
 				bfcHeadLocations[i] = (byte)currentData.readUnsignedByte();
