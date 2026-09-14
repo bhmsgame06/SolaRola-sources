@@ -1145,7 +1145,7 @@ public final class Game extends GameCanvas implements Runnable {
 		currentReserved = false;
 	}
 	
-	public static final void reserve(int index) {
+	public static final void bfcReserve(int index) {
 		try {
 			currentIndex = index;
 			currentReserved = true;
@@ -1326,7 +1326,7 @@ public final class Game extends GameCanvas implements Runnable {
 				if(currentLocation == bfcHeadLocations[index] && currentOffset <= bfcHeadOffsets[index]) {
 					skipBytes(bfcHeadOffsets[index] - currentOffset);
 					if(bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null) {
-						reserve(index);
+						bfcReserve(index);
 					}
 	
 					return true;
@@ -1342,7 +1342,7 @@ public final class Game extends GameCanvas implements Runnable {
 					currentLocation = bfcHeadLocations[index];
 					currentOffset = bfcHeadOffsets[index];
 					if(bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null) {
-						reserve(index);
+						bfcReserve(index);
 					}
 	
 					return true;
