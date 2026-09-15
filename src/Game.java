@@ -3224,11 +3224,11 @@ public final class Game extends GameCanvas implements Runnable {
 				case 3:
 					if(dialogueEnvironment == 3) {
 						if(var0[var1 + 1] == 6) {
-							Method284();
+							spaceMapSetCameraPosInstant();
 						}
 	
 						if(var0[var1 + 1] == 5) {
-							Method285(0, 0);
+							spaceMapSetCameraPosInstant(0, 0);
 						}
 	
 						var1 += 2;
@@ -6974,13 +6974,13 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method284() {
-		Method285(Field435, Field436);
+	public static final void spaceMapSetCameraPosInstant() {
+		spaceMapSetCameraPosInstant(Field435, Field436);
 	}
 	
-	public static final void Method285(int var0, int var1) {
-		spaceMapCameraX = var0 << 8;
-		spaceMapCameraY = var1 << 8;
+	public static final void spaceMapSetCameraPosInstant(int x, int y) {
+		spaceMapCameraX = x << 8;
+		spaceMapCameraY = y << 8;
 		spaceMapTargetCameraX = spaceMapCameraX;
 		spaceMapTargetCameraY = spaceMapCameraY;
 	}
