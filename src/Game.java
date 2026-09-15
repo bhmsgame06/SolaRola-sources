@@ -2888,7 +2888,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void sceneShipRun() {
 		if(Field393) {
-			Method290(Field123);
+			renderBeamAnimation(Field123);
 			Field123 += 4;
 			if(Field123 >= 130) {
 				Field393 = false;
@@ -7037,12 +7037,15 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method290(int var0) {
+	public static final void renderBeamAnimation(int step) {
+		System.out.println(step);
 		Method255();
 		renderShipInside();
-		if(var0 < 100) {
-			gamma = var0;
-			levelCameraZoom = var0 * 72 / 100;
+
+		if(step < 100) {
+			gamma = step;
+			levelCameraZoom = step * 72 / 100;
+
 			if(levelCameraZoom == 0) {
 				levelCameraZoom = 1;
 			}
