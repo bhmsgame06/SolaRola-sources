@@ -2649,7 +2649,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		initSpace(1, 50, 128, 128);
-		Method230();
+		playJingleFlyIn();
 		scenePreLevelCurTick = 0;
 	}
 	
@@ -5471,12 +5471,12 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method230() {
+	public static final void playJingleFlyIn() {
 		playSound(-1);
 		playSound(0, 1);
 	}
 	
-	public static final void Method231() {
+	public static final void playJingleComplete() {
 		playSound(-1);
 		playSound(1, 1);
 	}
@@ -7082,7 +7082,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Method152();
 		}
 	
-		Method231();
+		playJingleComplete();
 		Field446 = levelCameraZoom;
 		levelCompleteTicks = 150;
 		initConfetti();
