@@ -5520,7 +5520,7 @@ public final class Game extends GameCanvas implements Runnable {
 		currentLoadedBackgroundID = var0;
 	}
 	
-	public static final void Method234() {
+	public static final void renderBackground() {
 		if(Field327 >= 0) {
 			if(imgsBackground == null || levelBackgroundID != currentLoadedBackgroundID) {
 				loadBackground(levelBackgroundID);
@@ -6143,7 +6143,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	
-		Method234();
+		renderBackground();
 	
 		for(int var3 = 0; var3 < levelIDGoals.length; var3++) {
 			short var4 = levelIDGoals[var3];
