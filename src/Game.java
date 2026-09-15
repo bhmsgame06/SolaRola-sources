@@ -5189,7 +5189,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field327 = var0;
 		levelWidth = sReadU16() << 16;
 		levelHeight = sReadU16() << 16;
-		Method232(sRead8(), sRead8());
+		setWeatherAndBackgroundIDs(sRead8(), sRead8());
 		sRead8();
 		sRead32();
 		levelColor = sRead32();
@@ -5481,7 +5481,7 @@ public final class Game extends GameCanvas implements Runnable {
 		playSound(1, 1);
 	}
 	
-	public static final void Method232(int var0, int var1) {
+	public static final void setWeatherAndBackgroundIDs(int var0, int var1) {
 		boolean var2 = false;
 	
 		for(int var3 = 0; var3 < knownBackgrounds.length; var3++) {
