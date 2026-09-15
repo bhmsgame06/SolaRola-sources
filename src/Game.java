@@ -71,10 +71,10 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image[] imgsSoftkey;
 	// fonts
 	public static Image[] fontImages; // sprite
-	public static int[] fontGeneralWidth;
-	public static int[] fontSpaceBetweenChars;
-	public static int[] fontGeneralHeight;
-	public static int[] fontSpaceBetweenStrings;
+	public static int[] fontAverageWidths;
+	public static int[] fontSpacesPerChars;
+	public static int[] fontHeights;
+	public static int[] fontLineGaps;
 	public static short[][] fontChrOffsets;
 	public static byte[][] fontChrWidths;
 	public static short[][] fontIndexes;
@@ -1688,11 +1688,11 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void initFonts(int var0) {
 		fontIndexes = new short[var0][];
-		fontGeneralWidth = new int[var0];
-		fontGeneralHeight = new int[var0];
-		fontSpaceBetweenChars = new int[var0];
+		fontAverageWidths = new int[var0];
+		fontHeights = new int[var0];
+		fontSpacesPerChars = new int[var0];
 		fontImages = new Image[var0];
-		fontSpaceBetweenStrings = new int[var0];
+		fontLineGaps = new int[var0];
 		fontChrOffsets = new short[var0][];
 		fontChrWidths = new byte[var0][];
 	}
@@ -1721,15 +1721,15 @@ public final class Game extends GameCanvas implements Runnable {
 			curOff = (short)(curOff + charWidth[i]);
 		}
 	
-		fontGeneralHeight[index] = fontImages[index].getHeight() / 1;
-		fontGeneralWidth[index] = fontImages[index].getWidth() / charNum;
-		fontSpaceBetweenChars[index] = sbc;
-		fontSpaceBetweenStrings[index] = sbs;
+		fontHeights[index] = fontImages[index].getHeight() / 1;
+		fontAverageWidths[index] = fontImages[index].getWidth() / charNum;
+		fontSpacesPerChars[index] = sbc;
+		fontLineGaps[index] = sbs;
 	}
 	
 	public static final int calcTextWidth(String var0, int var1) {
 		if(fontChrWidths[var1] == null) {
-			return var0.length() * (fontGeneralWidth[var1] + fontSpaceBetweenChars[var1]) - fontSpaceBetweenChars[var1];
+			return var0.length() * (fontAverageWidths[var1] + fontSpacesPerChars[var1]) - fontSpaceBetweenChars[var1];
 		} else {
 			int var2 = 0;
 			int var3 = var0.length();
@@ -1739,12 +1739,12 @@ public final class Game extends GameCanvas implements Runnable {
 				var2 += fontChrWidths[var1][var5];
 			}
 	
-			return var2 + (var3 - 1) * fontSpaceBetweenChars[var1];
+			return var2 + (var3 - 1) * fontSpacesPerChars[var1];
 		}
 	}
 	
 	public static final int Method72(int var0, int var1) {
-		return (var0 + fontSpaceBetweenChars[var1]) / (fontGeneralWidth[var1] + fontSpaceBetweenChars[var1]);
+		return (var0 + fontSpacesPerChars[var1]) / (fontAverageWidths[var1] + fontSpaceBetweenChars[var1]);
 	}
 	
 	public static final int lengthUntilTerminator(int var0, int var1, String var2, int var3) {
@@ -1764,7 +1764,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				}
 	
-				var0 -= fontSpaceBetweenChars[var1];
+				var0 -= fontSpacesPerChars[var1];
 			}
 	
 			return var5 - var3;
@@ -1929,7 +1929,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} else {
 			int var9 = var4.length();
 			int var10 = var6;
-			int var12 = var1 + var3 - (fontGeneralHeight[var5] + fontSpaceBetweenStrings[var5] - 1);
+			int var12 = var1 + var3 - (fontHeights[var5] + fontLineGaps[var5] - 1);
 			boolean var14 = false;
 			boolean var15 = true;
 			int var16 = 0;
@@ -1937,7 +1937,7 @@ public final class Game extends GameCanvas implements Runnable {
 			while(var10 < var9 && var1 < var12) {
 				switch(var4.charAt(var10)) {
 					case '\n':
-						if(!var15 && var16 > 0 && (var1 += fontGeneralHeight[var5] + fontSpaceBetweenStrings[var5]) > var12) {
+						if(!var15 && var16 > 0 && (var1 += fontHeights[var5] + fontLineGaps[var5]) > var12) {
 							return var10;
 						}
 	
@@ -1994,7 +1994,7 @@ public final class Game extends GameCanvas implements Runnable {
 						renderText(var0, var1, var18, var5);
 					}
 	
-					var1 += fontGeneralHeight[var5] + fontSpaceBetweenStrings[var5];
+					var1 += fontHeights[var5] + fontLineGaps[var5];
 					var10 = var11;
 				}
 			}
@@ -2009,14 +2009,14 @@ public final class Game extends GameCanvas implements Runnable {
 			int var5 = gGetClipWidth();
 			int var6 = gGetClipX();
 			int var7 = gGetClipY();
-			if(var1 + fontGeneralHeight[var3] >= var7 && var7 + var4 >= var1) {
+			if(var1 + fontHeights[var3] >= var7 && var7 + var4 >= var1) {
 				int var8 = var2.length();
 				if(var0 == -1000) {
 					var0 = (128 - calcTextWidth(var2, var3)) / 2;
 				}
 	
 				int var9 = var1;
-				int var10 = fontGeneralHeight[var3];
+				int var10 = fontHeights[var3];
 				if(var7 > var1) {
 					var10 -= var7 - var1;
 					var9 = var7;
@@ -2034,24 +2034,24 @@ public final class Game extends GameCanvas implements Runnable {
 						short var16;
 						if((var16 = fontIndexes[var3][var15]) == -1) {
 							if(fontChrWidths[var3] == null) {
-								var13 += fontGeneralWidth[var3] + fontSpaceBetweenChars[var3];
+								var13 += fontAverageWidths[var3] + fontSpacesPerChars[var3];
 							} else {
-								var13 += fontChrWidths[var3][0] + fontSpaceBetweenChars[var3];
+								var13 += fontChrWidths[var3][0] + fontSpacesPerChars[var3];
 							}
 						} else {
 							int var11 = var13;
 							int var12;
 							if(fontChrWidths[var3] == null) {
-								var12 = fontGeneralWidth[var3];
+								var12 = fontAverageWidths[var3];
 							} else {
 								var12 = fontChrWidths[var3][var15];
 							}
 	
 							if(var13 + var12 < 0) {
 								if(fontChrWidths[var3] != null) {
-									var13 += fontChrWidths[var3][var15] + fontSpaceBetweenChars[var3];
+									var13 += fontChrWidths[var3][var15] + fontSpacesPerChars[var3];
 								} else {
-									var13 += fontGeneralWidth[var3] + fontSpaceBetweenChars[var3];
+									var13 += fontAverageWidths[var3] + fontSpacesPerChars[var3];
 								}
 							} else {
 								if(var13 < var6 || var13 + var12 > var6 + var5) {
@@ -2076,10 +2076,10 @@ public final class Game extends GameCanvas implements Runnable {
 								gSetClip(var11, var9, var12, var10);
 								if(fontChrWidths[var3] != null) {
 									gDrawImage(fontImages[var3], var13 - fontChrOffsets[var3][var16], var1, 0);
-									var13 += fontChrWidths[var3][var15] + fontSpaceBetweenChars[var3];
+									var13 += fontChrWidths[var3][var15] + fontSpacesPerChars[var3];
 								} else {
-									gDrawImage(fontImages[var3], var13 - fontGeneralWidth[var3] * var16, var1, 0);
-									var13 += fontGeneralWidth[var3] + fontSpaceBetweenChars[var3];
+									gDrawImage(fontImages[var3], var13 - fontAverageWidths[var3] * var16, var1, 0);
+									var13 += fontAverageWidths[var3] + fontSpacesPerChars[var3];
 								}
 							}
 						}
