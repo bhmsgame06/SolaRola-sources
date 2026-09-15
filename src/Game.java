@@ -1697,7 +1697,7 @@ public final class Game extends GameCanvas implements Runnable {
 		fontChrWidths = new byte[var0][];
 	}
 	
-	public static final void loadFont(int index, short pimCrc, short pplCrc, short cwtCrc, byte spaceWidth, short chrCrc, int sbc, int sbs) {
+	public static final void loadFont(int index, short pimCrc, short pplCrc, short cwtCrc, byte spaceWidth, short chrCrc, int spacePerChar, int lineGap) {
 		fontIndexes[index] = new short[230];
 		fontChrWidths[index] = new byte[230];
 		byte[] charWidth = loadFile8(cwtCrc);
@@ -1723,8 +1723,8 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		fontHeights[index] = fontImages[index].getHeight() / 1;
 		fontAverageWidths[index] = fontImages[index].getWidth() / charNum;
-		fontSpacesPerChars[index] = sbc;
-		fontLineGaps[index] = sbs;
+		fontSpacesPerChars[index] = spacePerChar;
+		fontLineGaps[index] = lineGap;
 	}
 	
 	public static final int calcTextWidth(String var0, int var1) {
