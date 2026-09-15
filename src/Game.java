@@ -444,8 +444,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean Field428 = false;
 	public static int spaceMapCameraX;
 	public static int spaceMapCameraY;
-	public static int Field431;
-	public static int Field432;
+	public static int spaceMapTargetCameraX;
+	public static int spaceMapTargetCameraY;
 	public static int spaceMapBeaconX;
 	public static int spaceMapBeaconY;
 	public static int Field435;
@@ -3036,7 +3036,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} else {
 			if(!Field134 && !Field135 && Field133 == 0L) {
 				if(dialogueEnvironment == 3) {
-					if(Method288()) {
+					if(renderSpaceMapNextFrame()) {
 						Field136 = false;
 					}
 				} else if(!dialogueIsCameraMoving || levelCameraApproach(levelCameraTargetX, levelCameraTargetY, 0, 0x320000)) {
@@ -6947,8 +6947,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void initSpaceMap(int var0, int var1, int var2) {
 		spaceMapCameraX = 0;
 		spaceMapCameraY = 0;
-		Field431 = 0;
-		Field432 = 0;
+		spaceMapTargetCameraX = 0;
+		spaceMapTargetCameraY = 0;
 		spaceMapBeaconX = 0;
 		spaceMapBeaconY = 0;
 		spaceMapShowIcons = true;
@@ -6981,8 +6981,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method285(int var0, int var1) {
 		spaceMapCameraX = var0 << 8;
 		spaceMapCameraY = var1 << 8;
-		Field431 = spaceMapCameraX;
-		Field432 = spaceMapCameraY;
+		spaceMapTargetCameraX = spaceMapCameraX;
+		spaceMapTargetCameraY = spaceMapCameraY;
 	}
 	
 	public static final void Method286() {
@@ -6990,14 +6990,15 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method287(int var0, int var1) {
-		Field431 = (var0 << 8) + 128;
-		Field432 = (var1 << 8) + 128;
+		spaceMapTargetCameraX = (var0 << 8) + 128;
+		spaceMapTargetCameraY = (var1 << 8) + 128;
 	}
 	
-	public static final boolean Method288() {
-		spaceMapCameraX += (Field431 - spaceMapCameraX) / 10;
-		spaceMapCameraY += (Field432 - spaceMapCameraY) / 10;
-		return (spaceMapCameraX & 0xffff00) == (Field431 & 0xffff00) && (spaceMapCameraY & 0xffff00) == (Field432 & 0xffff00);
+	public static final boolean renderSpaceMapNextFrame() {
+		spaceMapCameraX += (spaceMapTargetCameraX - spaceMapCameraX) / 10;
+		spaceMapCameraY += (spaceMapTargetCameraY - spaceMapCameraY) / 10;
+		return (spaceMapCameraX & 0xffff00) == (spaceMapTargetCameraX & 0xffff00) &&
+			(spaceMapCameraY & 0xffff00) == (spaceMapTargetCameraY & 0xffff00);
 	}
 	
 	public static final void renderSpaceMap() {
