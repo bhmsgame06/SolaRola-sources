@@ -1729,7 +1729,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final int calcTextWidth(String var0, int var1) {
 		if(fontChrWidths[var1] == null) {
-			return var0.length() * (fontAverageWidths[var1] + fontSpacesPerChars[var1]) - fontSpaceBetweenChars[var1];
+			return var0.length() * (fontAverageWidths[var1] + fontSpacesPerChars[var1]) - fontSpacesPerChars[var1];
 		} else {
 			int var2 = 0;
 			int var3 = var0.length();
@@ -1743,13 +1743,13 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final int Method72(int var0, int var1) {
-		return (var0 + fontSpacesPerChars[var1]) / (fontAverageWidths[var1] + fontSpaceBetweenChars[var1]);
+	public static final int calcAverageLengthUntilTerminator(int var0, int var1) {
+		return (var0 + fontSpacesPerChars[var1]) / (fontAverageWidths[var1] + fontSpacesPerChars[var1]);
 	}
 	
-	public static final int lengthUntilTerminator(int var0, int var1, String var2, int var3) {
+	public static final int calcLengthUntilTerminator(int var0, int var1, String var2, int var3) {
 		if(fontChrWidths[var1] == null) {
-			return Method72(var0, var1);
+			return calcAverageLengthUntilTerminator(var0, var1);
 		} else {
 			int var4 = var2.length();
 	
@@ -1813,7 +1813,7 @@ public final class Game extends GameCanvas implements Runnable {
 					var14 = false;
 					var13 = false;
 					int var10;
-					if((var10 = var7 + lengthUntilTerminator(var0, var2, var1, var7)) > var6) {
+					if((var10 = var7 + calcLengthUntilTerminator(var0, var2, var1, var7)) > var6) {
 						var10 = var6;
 					}
 	
@@ -1956,7 +1956,7 @@ public final class Game extends GameCanvas implements Runnable {
 					var15 = false;
 					var14 = false;
 					int var13;
-					if((var13 = var10 + lengthUntilTerminator(var2, var5, var4, var10)) > var9) {
+					if((var13 = var10 + calcLengthUntilTerminator(var2, var5, var4, var10)) > var9) {
 						var13 = var9;
 					}
 	
