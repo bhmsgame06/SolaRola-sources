@@ -2943,7 +2943,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			if(!Field393) {
-				Method212();
+				levelUpdateAll();
 				updatePlayerControls();
 			}
 	
@@ -4942,7 +4942,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method212() {
+	public static final void levelUpdateAll() {
 		updatePlayerMovement();
 		levelUpdateHooks();
 		updateBlobCollision();
@@ -6273,7 +6273,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		updateSpawners();
-		Method212();
+		levelUpdateAll();
 		if(isFinalLevel) {
 			Method179();
 		}
@@ -7376,7 +7376,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelCircleY[var3 + 10] = var2;
 		}
 	
-		Method212();
+		levelUpdateAll();
 		if(Field465 == 0) {
 			gamma = (int)((millis() - Field466) / 5L);
 		}
