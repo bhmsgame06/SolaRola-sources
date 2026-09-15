@@ -3369,7 +3369,7 @@ public final class Game extends GameCanvas implements Runnable {
 						default:
 							break;
 						case 3:
-							Method283(72 * var0[var1 + 2] / 100, 72 * var0[var1 + 3] / 100, var0[var1 + 4]);
+							initSpaceMapIcons(72 * var0[var1 + 2] / 100, 72 * var0[var1 + 3] / 100, var0[var1 + 4]);
 							initSpace(1, 150, 256, 256);
 							var1 += 3;
 							break;
@@ -6944,7 +6944,7 @@ public final class Game extends GameCanvas implements Runnable {
 		gDrawImage(imgsFlame[(int)(millis() / 100L % 2L)], 30, 62, 0);
 	}
 	
-	public static final void Method283(int var0, int var1, int var2) {
+	public static final void initSpaceMapIcons(int var0, int var1, int var2) {
 		Field429 = 0;
 		Field430 = 0;
 		Field431 = 0;
