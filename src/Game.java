@@ -3269,11 +3269,11 @@ public final class Game extends GameCanvas implements Runnable {
 					dialogueIsCameraMoving = true;
 					if(dialogueEnvironment == 3) {
 						if(var0[var1 + 1] == 6) {
-							Method286();
+							spaceMapSetTargetCameraPos();
 						}
 	
 						if(var0[var1 + 1] == 5) {
-							Method287(0, 0);
+							spaceMapSetTargetCameraPos(0, 0);
 						}
 	
 						var1 += 2;
@@ -6985,13 +6985,13 @@ public final class Game extends GameCanvas implements Runnable {
 		spaceMapTargetCameraY = spaceMapCameraY;
 	}
 	
-	public static final void Method286() {
-		Method287(Field435, Field436);
+	public static final void spaceMapSetTargetCameraPos() {
+		spaceMapSetTargetCameraPos(Field435, Field436);
 	}
 	
-	public static final void Method287(int var0, int var1) {
-		spaceMapTargetCameraX = (var0 << 8) + 128;
-		spaceMapTargetCameraY = (var1 << 8) + 128;
+	public static final void spaceMapSetTargetCameraPos(int x, int y) {
+		spaceMapTargetCameraX = (x << 8) + 128;
+		spaceMapTargetCameraY = (y << 8) + 128;
 	}
 	
 	public static final boolean renderSpaceMapNextFrame() {
