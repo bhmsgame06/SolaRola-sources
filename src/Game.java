@@ -1771,7 +1771,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final int[] getNewLineIndices(int var0, String var1, int var2) {
+	public static final int[] getNewLineIndexes(int var0, String var1, int var2) {
 		if(fontImages[var2] == null) {
 			return null;
 		} else {
@@ -5877,11 +5877,11 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final int numNewLines(String var0) {
-		return getNewLineIndices(99, var0, 1).length;
+		return getNewLineIndexes(99, var0, 1).length;
 	}
 	
 	public static final String[] strSplitLines(String var0, int var1) {
-		int[] var2 = getNewLineIndices(99, var0, var1);
+		int[] var2 = getNewLineIndexes(99, var0, var1);
 		String[] var3 = new String[var2.length];
 	
 		for(int var4 = 0; var4 < var2.length; var4++) {
