@@ -574,7 +574,7 @@ public final class Game extends GameCanvas implements Runnable {
 		return (heldKeys & var0) > 0 && (heldPrevKeys & var0) == 0;
 	}
 	
-	public static final boolean Method6(int var0) {
+	public static final boolean isKeyReleased(int var0) {
 		return (heldPrevKeys & var0) > 0 && (heldKeys & var0) == 0;
 	}
 	
@@ -2114,7 +2114,7 @@ public final class Game extends GameCanvas implements Runnable {
 				renderSoftkeyIcons();
 				gfxFlush();
 				updateKeys();
-				if(Method6(1)) {
+				if(isKeyReleased(1)) {
 					paused = false;
 				}
 			} else if(isNewState) {
@@ -2798,7 +2798,7 @@ public final class Game extends GameCanvas implements Runnable {
 				gDrawImage(imgCenterLogo, 19, 18, 0);
 		}
 	
-		if(millis() > ttlScrDuration || Method6(1)) {
+		if(millis() > ttlScrDuration || isKeyReleased(1)) {
 			setNewState(1, ttlScr + 1);
 		}
 	
@@ -6104,8 +6104,8 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	
-		if(Method6(-1)) {
-			if(Method6(cheatCodeLevelComplete[iterCheatLevelComplete])) {
+		if(isKeyReleased(-1)) {
+			if(isKeyReleased(cheatCodeLevelComplete[iterCheatLevelComplete])) {
 				iterCheatLevelComplete++;
 				if(iterCheatLevelComplete >= cheatCodeLevelComplete.length) {
 					isLevelComplete = true;
@@ -6115,7 +6115,7 @@ public final class Game extends GameCanvas implements Runnable {
 				iterCheatLevelComplete = 0;
 			}
 	
-			if(Method6(cheatCodeInvincibility[iterCheatInvincibility])) {
+			if(isKeyReleased(cheatCodeInvincibility[iterCheatInvincibility])) {
 				iterCheatInvincibility++;
 				if(iterCheatInvincibility >= cheatCodeInvincibility.length) {
 					isPlayerInvincible = !isPlayerInvincible;
