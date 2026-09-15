@@ -7046,7 +7046,6 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void renderBeamAnimation(int step) {
-		System.out.println(step);
 		updateAll();
 		renderShipInside();
 
