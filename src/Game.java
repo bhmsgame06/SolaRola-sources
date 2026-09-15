@@ -5921,7 +5921,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			if(levelIntroTicks >= 50) {
-				Method255();
+				updateAll();
 				levelTicks++;
 			}
 	
@@ -6259,7 +6259,7 @@ public final class Game extends GameCanvas implements Runnable {
 		loadLevel(var0);
 	}
 	
-	public static final void Method255() {
+	public static final void updateAll() {
 		if(levelHookIsActive[16]) {
 			Field205[16] = true;
 		}
@@ -7047,7 +7047,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void renderBeamAnimation(int step) {
 		System.out.println(step);
-		Method255();
+		updateAll();
 		renderShipInside();
 
 		if(step < 100) {
