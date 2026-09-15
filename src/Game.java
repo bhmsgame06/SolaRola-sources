@@ -442,16 +442,16 @@ public final class Game extends GameCanvas implements Runnable {
 	public static String[] textTableShipPause;
 	public static boolean Field427 = false;
 	public static boolean Field428 = false;
-	public static int Field429;
-	public static int Field430;
+	public static int spaceMapCameraX;
+	public static int spaceMapCameraY;
 	public static int Field431;
 	public static int Field432;
-	public static int Field433;
-	public static int Field434;
+	public static int spaceMapBeaconX;
+	public static int spaceMapBeaconY;
 	public static int Field435;
 	public static int Field436;
-	public static int Field437;
-	public static boolean Field438;
+	public static int spaceMapEmergencyBeaconRadius;
+	public static boolean spaceMapShowIcons;
 	public static boolean Field439;
 	public static Image imgPointer;
 	public static Image imgShip;
@@ -3087,7 +3087,7 @@ public final class Game extends GameCanvas implements Runnable {
 			default:
 				break;
 			case 3:
-				Method289();
+				renderSpaceMap();
 				break;
 			case 4:
 				renderSplash();
@@ -3171,7 +3171,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method130() {
 		Field137 = false;
 		Field424 = 0;
-		Field437 = 0;
+		spaceMapEmergencyBeaconRadius = 0;
 		currentMouthState[0] = 0;
 		currentMouthState[1] = 0;
 	}
@@ -3369,7 +3369,7 @@ public final class Game extends GameCanvas implements Runnable {
 						default:
 							break;
 						case 3:
-							initSpaceMapIcons(72 * var0[var1 + 2] / 100, 72 * var0[var1 + 3] / 100, var0[var1 + 4]);
+							initSpaceMap(72 * var0[var1 + 2] / 100, 72 * var0[var1 + 3] / 100, var0[var1 + 4]);
 							initSpace(1, 150, 256, 256);
 							var1 += 3;
 							break;
@@ -3390,7 +3390,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				case 12:
 					if(dialogueEnvironment == 3) {
-						Field437 = var0[var1 + 1] == 1 ? 1 : 0;
+						spaceMapEmergencyBeaconRadius = var0[var1 + 1] == 1 ? 1 : 0;
 					}
 	
 					if(dialogueEnvironment == 0) {
@@ -3401,7 +3401,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				case 13:
 					if(var0[var1 + 1] == 5) {
-						Field438 = var0[var1 + 2] == 1;
+						spaceMapShowIcons = var0[var1 + 2] == 1;
 					} else {
 						Field439 = var0[var1 + 2] == 1;
 					}
@@ -6944,17 +6944,17 @@ public final class Game extends GameCanvas implements Runnable {
 		gDrawImage(imgsFlame[(int)(millis() / 100L % 2L)], 30, 62, 0);
 	}
 	
-	public static final void initSpaceMapIcons(int var0, int var1, int var2) {
-		Field429 = 0;
-		Field430 = 0;
+	public static final void initSpaceMap(int var0, int var1, int var2) {
+		spaceMapCameraX = 0;
+		spaceMapCameraY = 0;
 		Field431 = 0;
 		Field432 = 0;
-		Field433 = 0;
-		Field434 = 0;
-		Field438 = true;
+		spaceMapBeaconX = 0;
+		spaceMapBeaconY = 0;
+		spaceMapShowIcons = true;
 		Field435 = var0;
 		Field436 = var1;
-		Field437 = 1;
+		spaceMapEmergencyBeaconRadius = 1;
 		if(var2 >= 0) {
 			if(imgPlanet == null) {
 				imgPlanet = loadImage("planet.pim", "planet.ppl");
@@ -6979,10 +6979,10 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method285(int var0, int var1) {
-		Field429 = var0 << 8;
-		Field430 = var1 << 8;
-		Field431 = Field429;
-		Field432 = Field430;
+		spaceMapCameraX = var0 << 8;
+		spaceMapCameraY = var1 << 8;
+		Field431 = spaceMapCameraX;
+		Field432 = spaceMapCameraY;
 	}
 	
 	public static final void Method286() {
@@ -6995,45 +6995,52 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final boolean Method288() {
-		Field429 += (Field431 - Field429) / 10;
-		Field430 += (Field432 - Field430) / 10;
-		return (Field429 & 0xffff00) == (Field431 & 0xffff00) && (Field430 & 0xffff00) == (Field432 & 0xffff00);
+		spaceMapCameraX += (Field431 - spaceMapCameraX) / 10;
+		spaceMapCameraY += (Field432 - spaceMapCameraY) / 10;
+		return (spaceMapCameraX & 0xffff00) == (Field431 & 0xffff00) && (spaceMapCameraY & 0xffff00) == (Field432 & 0xffff00);
 	}
 	
-	public static final void Method289() {
+	public static final void renderSpaceMap() {
 		gSetColor(0);
 		gFillRect(0, 0, 128, 128);
-		int var0 = -(Field429 >> 8);
-		int var1 = -(Field430 >> 8);
-		renderSpace(0, var0 - 64, var1 - 64, false);
-		int var2 = Field433 + var0 + 64;
-		int var3 = Field434 + var1 + 64;
+
+		int camX = -(spaceMapCameraX >> 8);
+		int camY = -(spaceMapCameraY >> 8);
+		renderSpace(0, camX - 64, camY - 64, false);
+
+		int posX = spaceMapBeaconX + camX + 64;
+		int posY = spaceMapBeaconY + camY + 64;
+
 		gSetColor(0xffffff);
-		renderStar(var2, var3);
-		if(Field438) {
-			gDrawImage(imgPointer, var2 - 16, var3 - 58 - 2, 0);
-			gDrawImage(imgShip, var2 - imgShip.getWidth() / 2, var3 - 58 + (33 - imgShip.getHeight()) / 2 - 2, 0);
+		renderStar(posX, posY);
+
+		if(spaceMapShowIcons) {
+			gDrawImage(imgPointer, posX - 16, posY - 58 - 2, 0);
+			gDrawImage(imgShip, posX - imgShip.getWidth() / 2, posY - 58 + (33 - imgShip.getHeight()) / 2 - 2, 0);
 		}
 	
-		var2 = Field435 + var0 + 64;
-		var3 = Field436 + var1 + 64;
-		renderStar(var2, var3);
-		if(Field437 > 0) {
+		posX = Field435 + camX + 64;
+		posY = Field436 + camY + 64;
+		renderStar(posX, posY);
+
+		if(spaceMapEmergencyBeaconRadius > 0) {
 			gSetColor(0xff0000);
-			int var4 = Field437;
-			gDrawArc(var2 - var4, var3 - var4, var4 * 2, var4 * 2, 20, 50);
-			gDrawArc(var2 - var4, var3 - var4, var4 * 2, var4 * 2, 110, 50);
-			gDrawArc(var2 - var4, var3 - var4, var4 * 2, var4 * 2, 200, 50);
-			gDrawArc(var2 - var4, var3 - var4, var4 * 2, var4 * 2, 290, 50);
-			Field437++;
-			if(Field437 > 20) {
-				Field437 = 1;
+			int rad = spaceMapEmergencyBeaconRadius;
+
+			gDrawArc(posX - rad, posY - rad, rad * 2, rad * 2, 20, 50);
+			gDrawArc(posX - rad, posY - rad, rad * 2, rad * 2, 110, 50);
+			gDrawArc(posX - rad, posY - rad, rad * 2, rad * 2, 200, 50);
+			gDrawArc(posX - rad, posY - rad, rad * 2, rad * 2, 290, 50);
+
+			spaceMapEmergencyBeaconRadius++;
+			if(spaceMapEmergencyBeaconRadius > 20) {
+				spaceMapEmergencyBeaconRadius = 1;
 			}
 		}
 	
 		if(Field439) {
-			gDrawImage(imgPointer, var2 - 16, var3 - 58 - 2, 0);
-			gDrawImage(imgPlanet, var2 - imgPlanet.getWidth() / 2, var3 - 58 + (33 - imgPlanet.getHeight()) / 2 - 2, 0);
+			gDrawImage(imgPointer, posX - 16, posY - 58 - 2, 0);
+			gDrawImage(imgPlanet, posX - imgPlanet.getWidth() / 2, posY - 58 + (33 - imgPlanet.getHeight()) / 2 - 2, 0);
 		}
 	}
 	
