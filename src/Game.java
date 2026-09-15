@@ -521,8 +521,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	// funny circle
-	public static final void throbber() {
-		throbberNextFrame();
+	public static final void renderThrobber() {
+		renderThrobberNextFrame();
 	}
 	
 	public static final void updateKeys() {
@@ -819,7 +819,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return -1;
 		} else {
 			if(throbberToggle) {
-				throbber();
+				renderThrobber();
 			}
 	
 			soundTypes[var0] = var2;
@@ -840,7 +840,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return -1;
 		} else {
 			if(throbberToggle) {
-				throbber();
+				renderThrobber();
 			}
 	
 			soundTypes[var0] = var2;
@@ -1309,7 +1309,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final boolean sOpenFile(short fnCrc) {
 		if(throbberToggle) {
-			throbber();
+			renderThrobber();
 		}
 	
 		int index = getFileIndex(fnCrc);
@@ -6520,7 +6520,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	// funny circle again	
-	public static final void throbberNextFrame() {
+	public static final void renderThrobberNextFrame() {
 		gSetColor(0, 0, 0);
 		gFillRect(0, 0, 128, 128);
 		throbberColorIndex--;
