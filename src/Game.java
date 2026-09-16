@@ -3224,11 +3224,11 @@ public final class Game extends GameCanvas implements Runnable {
 				case 3:
 					if(dialogueEnvironment == 3) {
 						if(var0[var1 + 1] == 6) {
-							spaceMapSetCameraPosToBeacon();
+							spaceMapSetCameraToBeacon();
 						}
 	
 						if(var0[var1 + 1] == 5) {
-							spaceMapSetCameraPosInstant(0, 0);
+							spaceMapSetCameraInstant(0, 0);
 						}
 	
 						var1 += 2;
@@ -3269,11 +3269,11 @@ public final class Game extends GameCanvas implements Runnable {
 					dialogueIsCameraMoving = true;
 					if(dialogueEnvironment == 3) {
 						if(var0[var1 + 1] == 6) {
-							spaceMapSetTargetCameraPosToBeacon();
+							spaceMapSetTargetCameraToBeacon();
 						}
 	
 						if(var0[var1 + 1] == 5) {
-							spaceMapSetTargetCameraPos(0, 0);
+							spaceMapSetTargetCamera(0, 0);
 						}
 	
 						var1 += 2;
@@ -6974,22 +6974,22 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void spaceMapSetCameraPosToBeacon() {
-		spaceMapSetCameraPosInstant(spaceMapBeaconX, spaceMapBeaconY);
+	public static final void spaceMapSetCameraToBeacon() {
+		spaceMapSetCameraInstant(spaceMapBeaconX, spaceMapBeaconY);
 	}
 	
-	public static final void spaceMapSetCameraPosInstant(int x, int y) {
+	public static final void spaceMapSetCameraInstant(int x, int y) {
 		spaceMapCameraX = x << 8;
 		spaceMapCameraY = y << 8;
 		spaceMapTargetCameraX = spaceMapCameraX;
 		spaceMapTargetCameraY = spaceMapCameraY;
 	}
 	
-	public static final void spaceMapSetTargetCameraPosToBeacon() {
-		spaceMapSetTargetCameraPos(spaceMapBeaconX, spaceMapBeaconY);
+	public static final void spaceMapSetTargetCameraToBeacon() {
+		spaceMapSetTargetCamera(spaceMapBeaconX, spaceMapBeaconY);
 	}
 	
-	public static final void spaceMapSetTargetCameraPos(int x, int y) {
+	public static final void spaceMapSetTargetCamera(int x, int y) {
 		spaceMapTargetCameraX = (x << 8) + 128;
 		spaceMapTargetCameraY = (y << 8) + 128;
 	}
