@@ -352,7 +352,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelRAMaxGreen = 182;
 	public static int levelRAMinBlue = 16;
 	public static int levelRAMaxBlue = 33;
-	public static int Field340 = 0;
+	public static int levelPortalFilledRadius = 0;
 	public static short[] levelIDExpanders;
 	public static short[] levelIDFoam;
 	public static short[] levelIDDestructibles;
@@ -4072,7 +4072,7 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 	
 					if(var5) {
-						Method257(var0, var1);
+						processCirclesTypes(var0, var1);
 					}
 				}
 			}
@@ -4500,7 +4500,7 @@ public final class Game extends GameCanvas implements Runnable {
 		return false;
 	}
 	
-	public static final void Method189(int var0) {
+	public static final void killEnemy(int var0) {
 		for(int var1 = 0; var1 < levelEnemyIndex.length; var1++) {
 			if(levelEnemyIndex[var1] == var0 && levelEnemyIsAlive[var1]) {
 				levelEnemyIsAlive[var1] = false;
@@ -5052,7 +5052,7 @@ public final class Game extends GameCanvas implements Runnable {
 				for(int var3 = var2 + 1; var3 < levelNumCircles; var3++) {
 					if((levelCircleFlags[var3] & 2) > 0 && levelCircleX[var2] - levelCircleRadius[var2] < levelCircleX[var3] + levelCircleRadius[var3] && levelCircleX[var2] + levelCircleRadius[var2] > levelCircleX[var3] - levelCircleRadius[var3] && levelCircleY[var2] - levelCircleRadius[var2] < levelCircleY[var3] + levelCircleRadius[var3] && levelCircleY[var2] + levelCircleRadius[var2] > levelCircleY[var3] - levelCircleRadius[var3] && (levelCircleFlags[var3] & 0x20) == 0) {
 						if((levelCircleFlags[var3] & 0x10) > 0) {
-							Method257(var2, var3);
+							processCirclesTypes(var2, var3);
 						} else {
 							onCircleTouchCircle(var2, var3, levelCircleRadius[var2] + levelCircleRadius[var3], 55000, 3, true);
 						}
@@ -5202,7 +5202,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelFinishX = levelAlignToGameMirror(sReadU16() << 16);
 		levelFinishY = sReadU16() << 16;
 		int var4 = sReadU16();
-		Field340 = 0;
+		levelPortalFilledRadius = 0;
 		int var5 = 0;
 		int var6 = 6;
 		if(!var1 && var0 != -1) {
@@ -6150,8 +6150,8 @@ public final class Game extends GameCanvas implements Runnable {
 			setGammaColor(levelColorGoal);
 			levelRenderCircle(levelCircleX[var4], levelCircleY[var4], levelCircleRadius[var4]);
 			setGammaColor(255, 255, 255);
-			if(levelCircleRadius[var4] > Field340) {
-				levelRenderCircleOutline(levelCircleX[var4], levelCircleY[var4], Field340);
+			if(levelCircleRadius[var4] > levelPortalFilledRadius) {
+				levelRenderCircleOutline(levelCircleX[var4], levelCircleY[var4], levelPortalFilledRadius);
 			} else {
 				int var5 = levelCircleRadius[var4] / 4;
 				int var6 = (int)((long)var5 * (var1 % 700L)) / 700;
@@ -6314,7 +6314,7 @@ public final class Game extends GameCanvas implements Runnable {
 				if(var2 == 7 && levelPlayerHitTicks == 0 && isEnemyAlive(var1)) {
 					if(isEnemyStatic(var1) && var0 == 2) {
 						if(levelCircleY[2] - levelCirclePrevY[2] > 120000) {
-							Method189(var1);
+							killEnemy(var1);
 						}
 					} else {
 						if(!isPlayerInvincible) {
@@ -6361,101 +6361,146 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method257(int var0, int var1) {
+	public static final void processCirclesTypes(int id1, int id2) {
 		if(levelPlayerHealth > 0) {
-			if(var0 >= 5 && var1 >= 5) {
-				if((levelCircleFlags[var0] & 16) > 0 || (levelCircleFlags[var1] & 16) > 0) {
-					int var2 = var0;
-					int var3 = var1;
-					if((levelCircleFlags[var1] & 16) > 0) {
-						var3 = var0;
-						var2 = var1;
+
+			if(id1 >= 5 && id2 >= 5) { // level circles.
+
+				if((levelCircleFlags[id1] & 16) > 0 || (levelCircleFlags[id2] & 16) > 0) {
+
+					/* check if a ball touches portal's circle hitbox, if so,
+					 * fill the portal's radius with the ball's radius. */
+
+					int swpId1 = id1;
+					int swpId2 = id2;
+
+					if((levelCircleFlags[id2] & 16) > 0) {
+						swpId1 = id2;
+						swpId2 = id1;
 					}
 	
-					if(levelCircleFlags[var3] != 0) {
-						levelCircleX[var3] = levelCircleX[var2];
-						levelCircleY[var3] = levelCircleY[var2];
-						levelCirclePrevX[var3] = levelCirclePrevX[var2];
-						levelCirclePrevY[var3] = levelCirclePrevY[var2];
-						levelDetachHooks(var3);
-						int[] var10000 = levelCircleRadius;
-						var10000[var3] -= 0x8000;
-						Field340 += 0x8000;
-						if(Field340 >= levelCircleRadius[var2]) {
-							Field340 = levelCircleRadius[var2];
+					if(levelCircleFlags[swpId2] != 0) {
+						levelCircleX[swpId2] = levelCircleX[swpId1];
+						levelCircleY[swpId2] = levelCircleY[swpId1];
+						levelCirclePrevX[swpId2] = levelCirclePrevX[swpId1];
+						levelCirclePrevY[swpId2] = levelCirclePrevY[swpId1];
+						levelDetachHooks(swpId2);
+
+						levelCircleRadius[swpId2] -= 0x8000;
+						levelPortalFilledRadius += 0x8000;
+
+						if(levelPortalFilledRadius >= levelCircleRadius[swpId1]) {
+							levelPortalFilledRadius = levelCircleRadius[swpId1];
 							isLevelComplete = true;
 						}
 	
-						if(levelCircleRadius[var3] <= 0) {
-							levelCircleFlags[var3] = 0;
-							levelCircleHasPhysics[var3] = false;
+						if(levelCircleRadius[swpId2] <= 0) {
+							levelCircleFlags[swpId2] = 0;
+							levelCircleHasPhysics[swpId2] = false;
 						}
 					}
 				}
+
+				/* bomb destroys destructible objects. */
 	
-				if(levelBombExplodeTicks > 0 && (var0 == levelBombObjectID && (levelCircleFlags[var1] & 0x100) > 0 || var1 == levelBombObjectID && (levelCircleFlags[var0] & 0x100) > 0)) {
-					int var4 = var0;
-					if(var0 == levelBombObjectID) {
-						var4 = var1;
+				if(levelBombExplodeTicks > 0 &&
+						(id1 == levelBombObjectID &&
+						 (levelCircleFlags[id2] & 0x100) > 0 ||
+						 id2 == levelBombObjectID && (levelCircleFlags[id1] & 0x100) > 0)) {
+
+					int circleId = id1;
+					if(id1 == levelBombObjectID) {
+						circleId = id2;
 					}
-	
-					levelCircleRadius[var4] = levelCircleRadius[var4] * 7 / 10;
-					if(levelCircleRadius[var4] < 0xa0000) {
-						levelCircleRadius[var4] = 0;
-						levelCircleFlags[var4] = 0;
+
+					/* reduce 30% of the first circle radius when the explosion
+					 * wave (the second circle) reaches the first circle. */
+					levelCircleRadius[circleId] = levelCircleRadius[circleId] * 7 / 10;
+
+					if(levelCircleRadius[circleId] < 0xa0000) {
+						levelCircleRadius[circleId] = 0;
+						levelCircleFlags[circleId] = 0;
 					}
 				}
-	
-				byte var5 = levelCircleType[var0];
-				byte var6 = levelCircleType[var1];
-				if(var5 != 0 || var6 != 0) {
-					if(var5 == 6 || var6 == 6) {
-						if(var5 == 6) {
-							setExpanderVacant(var0);
+
+				byte circleType1 = levelCircleType[id1];
+				byte circleType2 = levelCircleType[id2];
+
+				if(circleType1 != 0 || circleType2 != 0) {
+
+					/* vacant an expander. */
+
+					if(circleType1 == 6 || circleType2 == 6) {
+
+						if(circleType1 == 6)
+							setExpanderVacant(id1);
+						else
+							setExpanderVacant(id2);
+
+					}
+
+					/* check if enemy's circle hitbox touches radioactive goo or
+					 * an explosion wave. */
+
+					if((circleType1 == 7 || circleType2 == 7) &&
+							((levelCircleFlags[id1] & 8) > 0 ||
+							 (levelCircleFlags[id2] & 8) > 0 ||
+							 levelBombExplodeTicks > 0 &&
+							 (id1 == levelBombObjectID || id2 == levelBombObjectID))) {
+
+						if(circleType1 == 7) {
+							killEnemy(id1);
 						} else {
-							setExpanderVacant(var1);
+							killEnemy(id2);
 						}
+
 					}
 	
-					if((var5 == 7 || var6 == 7) && ((levelCircleFlags[var0] & 8) > 0 || (levelCircleFlags[var1] & 8) > 0 || levelBombExplodeTicks > 0 && (var0 == levelBombObjectID || var1 == levelBombObjectID))) {
-						if(var5 == 7) {
-							Method189(var0);
-						} else {
-							Method189(var1);
-						}
-					}
-	
-					if((var5 == 1 || var6 == 1) && (var5 == 2 || var6 == 2)) {
+					/* a circle touches a finish circle. */
+					if((circleType1 == 1 || circleType2 == 1) &&
+							(circleType1 == 2 || circleType2 == 2)) {
+
 						isLevelComplete = true;
 					}
 	
-					if((var5 == 1 || var6 == 1) && (var5 == 12 || var6 == 12)) {
+					/* a circle touches a radioactive circle. */
+					if((circleType1 == 1 || circleType2 == 1) &&
+							(circleType1 == 12 || circleType2 == 12)) {
+
 						levelPlayerHealth -= 4000;
 					}
 	
+					/* an explosion wave reaches Ping. */
 					if(isFinalLevel) {
-						if((var5 == 13 || var6 == 13) && (var5 == 14 || var6 == 14)) {
-							if(var5 == 14) {
-								levelCircleFlags[var0] = 0;
+
+						if((circleType1 == 13 || circleType2 == 13) &&
+								(circleType1 == 14 || circleType2 == 14)) {
+
+							if(circleType1 == 14) {
+								levelCircleFlags[id1] = 0;
 							} else {
-								levelCircleFlags[var1] = 0;
+								levelCircleFlags[id2] = 0;
 							}
 	
 							Method180();
 						}
 	
-						if(levelBombExplodeTicks > 0 && (var0 == levelBombObjectID && var6 == 13 || var1 == levelBombObjectID && var5 == 13)) {
+						if(levelBombExplodeTicks > 0 &&
+								(id1 == levelBombObjectID && circleType2 == 13 ||
+								 id2 == levelBombObjectID && circleType1 == 13)) {
+
 							Method183();
 						}
 					}
 				}
-			} else {
-				if(var0 >= 5) {
-					Method256(var1, var0);
+			} else { // system circles.
+
+				if(id1 >= 5) {
+					Method256(id2, id1);
 				}
 	
-				if(var1 >= 5) {
-					Method256(var0, var1);
+				if(id2 >= 5) {
+					Method256(id1, id2);
 				}
 			}
 		}
