@@ -446,11 +446,11 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int spaceMapCameraY;
 	public static int spaceMapTargetCameraX;
 	public static int spaceMapTargetCameraY;
+	public static int spaceMapShipX;
+	public static int spaceMapShipY;
 	public static int spaceMapBeaconX;
 	public static int spaceMapBeaconY;
-	public static int Field435;
-	public static int Field436;
-	public static int spaceMapEmergencyBeaconRadius;
+	public static int spaceMapBeaconRadius;
 	public static boolean spaceMapShowIcons;
 	public static boolean Field439;
 	public static Image imgPointer;
@@ -3171,7 +3171,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method130() {
 		Field137 = false;
 		Field424 = 0;
-		spaceMapEmergencyBeaconRadius = 0;
+		spaceMapBeaconRadius = 0;
 		currentMouthState[0] = 0;
 		currentMouthState[1] = 0;
 	}
@@ -3390,7 +3390,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				case 12:
 					if(dialogueEnvironment == 3) {
-						spaceMapEmergencyBeaconRadius = var0[var1 + 1] == 1 ? 1 : 0;
+						spaceMapBeaconRadius = var0[var1 + 1] == 1 ? 1 : 0;
 					}
 	
 					if(dialogueEnvironment == 0) {
@@ -6949,12 +6949,12 @@ public final class Game extends GameCanvas implements Runnable {
 		spaceMapCameraY = 0;
 		spaceMapTargetCameraX = 0;
 		spaceMapTargetCameraY = 0;
-		spaceMapBeaconX = 0;
-		spaceMapBeaconY = 0;
+		spaceMapShipX = 0;
+		spaceMapShipY = 0;
 		spaceMapShowIcons = true;
-		Field435 = var0;
-		Field436 = var1;
-		spaceMapEmergencyBeaconRadius = 1;
+		spaceMapBeaconX = var0;
+		spaceMapBeaconY = var1;
+		spaceMapBeaconRadius = 1;
 		if(var2 >= 0) {
 			if(imgPlanet == null) {
 				imgPlanet = loadImage("planet.pim", "planet.ppl");
@@ -6975,7 +6975,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void spaceMapSetCameraPosInstant() {
-		spaceMapSetCameraPosInstant(Field435, Field436);
+		spaceMapSetCameraPosInstant(spaceMapBeaconX, spaceMapBeaconY);
 	}
 	
 	public static final void spaceMapSetCameraPosInstant(int x, int y) {
@@ -6986,7 +6986,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void spaceMapSetTargetCameraPos() {
-		spaceMapSetTargetCameraPos(Field435, Field436);
+		spaceMapSetTargetCameraPos(spaceMapBeaconX, spaceMapBeaconY);
 	}
 	
 	public static final void spaceMapSetTargetCameraPos(int x, int y) {
@@ -7009,8 +7009,8 @@ public final class Game extends GameCanvas implements Runnable {
 		int camY = -(spaceMapCameraY >> 8);
 		renderSpace(0, camX - 64, camY - 64, false);
 
-		int posX = spaceMapBeaconX + camX + 64;
-		int posY = spaceMapBeaconY + camY + 64;
+		int posX = spaceMapShipX + camX + 64;
+		int posY = spaceMapShipY + camY + 64;
 
 		gSetColor(0xffffff);
 		renderStar(posX, posY);
@@ -7020,22 +7020,21 @@ public final class Game extends GameCanvas implements Runnable {
 			gDrawImage(imgShip, posX - imgShip.getWidth() / 2, posY - 58 + (33 - imgShip.getHeight()) / 2 - 2, 0);
 		}
 	
-		posX = Field435 + camX + 64;
-		posY = Field436 + camY + 64;
+		posX = spaceMapBeaconX + camX + 64;
+		posY = spaceMapBeaconY + camY + 64;
 		renderStar(posX, posY);
 
-		if(spaceMapEmergencyBeaconRadius > 0) {
+		if(spaceMapBeaconRadius > 0) {
 			gSetColor(0xff0000);
-			int rad = spaceMapEmergencyBeaconRadius;
+			int rad = spaceMapBeaconRadius;
 
 			gDrawArc(posX - rad, posY - rad, rad * 2, rad * 2, 20, 50);
 			gDrawArc(posX - rad, posY - rad, rad * 2, rad * 2, 110, 50);
 			gDrawArc(posX - rad, posY - rad, rad * 2, rad * 2, 200, 50);
 			gDrawArc(posX - rad, posY - rad, rad * 2, rad * 2, 290, 50);
 
-			spaceMapEmergencyBeaconRadius++;
-			if(spaceMapEmergencyBeaconRadius > 20) {
-				spaceMapEmergencyBeaconRadius = 1;
+			if(spaceMapBeaconRadius++ > 20) {
+				spaceMapBeaconRadius = 1;
 			}
 		}
 	
