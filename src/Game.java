@@ -245,9 +245,9 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image imgGrabber;
 	public static int Field231;
 	public static int[] Field232;
-	public static int[][] Field233;
-	public static int Field234;
-	public static int Field235;
+	public static int[][] levelPingEnemyIDs;
+	public static int levelPingEnemyCurrentID;
+	public static int levelPingTimeout;
 	public static Image[] imgsPointyRoll;
 	public static Image[] imgsPointyEyes;
 	public static Image[] imgsPointyMouth;
@@ -4267,12 +4267,12 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method178() {
 		int var0 = 0;
 		Field232 = new int[3];
-		Field234 = 3;
+		levelPingEnemyCurrentID = 3;
 		int[] var1 = new int[3];
-		Field233 = new int[3][];
-		Field233[0] = new int[] {-1, -1, -1, -1, -1, -1};
-		Field233[1] = new int[] {-1, -1, -1, -1, -1, -1};
-		Field233[2] = new int[] {-1, -1, -1, -1, -1, -1};
+		levelPingEnemyIDs = new int[3][];
+		levelPingEnemyIDs[0] = new int[] {-1, -1, -1, -1, -1, -1};
+		levelPingEnemyIDs[1] = new int[] {-1, -1, -1, -1, -1, -1};
+		levelPingEnemyIDs[2] = new int[] {-1, -1, -1, -1, -1, -1};
 	
 		for(int var2 = 0; var2 < levelNumCircles; var2++) {
 			if(levelCircleType[var2] == 13) {
@@ -4285,7 +4285,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			if((levelCircleFlags[var2] & 0x80) > 0 && levelCircleType[var2] == 7) {
 				int var3 = (levelCircleY[var2] >> 16) / 100 - 1;
-				Field233[var3][var1[var3]++] = var2;
+				levelPingEnemyIDs[var3][var1[var3]++] = var2;
 				int[] var10000 = levelCircleFlags;
 				var10000[var2] &= -2;
 	
@@ -4317,34 +4317,35 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	
-		if(Field235 > 0) {
-			Field235--;
-			if(Field235 == 85) {
-				Method180();
+		if(levelPingTimeout > 0) {
+			levelPingTimeout--;
+			if(levelPingTimeout == 85) {
+				levelPingInplace();
 				startDialogue("ping_hit.bms", levelCircleX[Field231], levelCircleY[Field231] - 2 * levelCircleRadius[Field231] / 3);
 				return;
 			}
-		} else if(Field234 < 0) {
+		} else if(levelPingEnemyCurrentID < 0) {
 			isLevelComplete = true;
 		}
 	}
 	
-	public static final void Method180() {
-		if(Field235 == 0) {
+	public static final void levelPingInplace() {
+		if(levelPingTimeout == 0) {
 			startDialogue("ping_inplace.bms", levelCircleX[Field231], levelCircleY[Field231] - 2 * levelCircleRadius[Field231] / 3);
 		}
 	
-		Field234--;
-		if(Field234 >= 0) {
-			for(int var0 = 0; var0 < Field233[Field234].length; var0++) {
-				if(Field233[Field234][var0] != -1) {
-					int var1 = Field233[Field234][var0];
-					int[] var10000 = levelCircleFlags;
-					var10000[var1] |= 1;
+		/* Ping spawns enemies. */
+		levelPingEnemyCurrentID--;
+		if(levelPingEnemyCurrentID >= 0) {
+			for(int i = 0; i < levelPingEnemyIDs[levelPingEnemyCurrentID].length; i++) {
+				int enemyID = levelPingEnemyIDs[levelPingEnemyCurrentID][i];
+
+				if(enemyID != -1) {
+					levelCircleFlags[enemyID] |= 1;
 	
-					for(int var2 = 0; var2 < levelEnemyIndex.length; var2++) {
-						if(levelEnemyIndex[var2] == var1) {
-							levelEnemyIsAlive[var2] = true;
+					for(int k = 0; k < levelEnemyIndex.length; k++) {
+						if(levelEnemyIndex[k] == enemyID) {
+							levelEnemyIsAlive[k] = true;
 						}
 					}
 				}
@@ -4368,7 +4369,7 @@ public final class Game extends GameCanvas implements Runnable {
 		for(int var4 = -1; var4 < 2; var4++) {
 			setGammaColor(0);
 			levelRenderCircle(var1 + var4 * var7, var2, var3);
-			if(var4 < Field234) {
+			if(var4 < levelPingEnemyCurrentID) {
 				setGammaColor(0xffffff);
 				levelRenderCircle(var1 + var4 * var7, var2, var3);
 				setGammaColor(0);
@@ -4395,12 +4396,12 @@ public final class Game extends GameCanvas implements Runnable {
 		return var3 / 1500 * cos1000[var4];
 	}
 	
-	public static final void Method183() {
-		if(Field235 <= 0) {
-			Field235 = 100;
-			if(Field234 < 1) {
-				Field234 = -1;
-				Field235 = 80;
+	public static final void levelPingHit() {
+		if(levelPingTimeout <= 0) {
+			levelPingTimeout = 100;
+			if(levelPingEnemyCurrentID < 1) {
+				levelPingEnemyCurrentID = -1;
+				levelPingTimeout = 80;
 			}
 		}
 	}
@@ -6497,14 +6498,14 @@ public final class Game extends GameCanvas implements Runnable {
 								levelCircleFlags[id2] = 0;
 							}
 	
-							Method180();
+							levelPingInplace();
 						}
 	
 						if(levelBombExplodeTicks > 0 &&
 								(id1 == levelBombObjectID && circleType2 == 13 ||
 								 id2 == levelBombObjectID && circleType1 == 13)) {
 
-							Method183();
+							levelPingHit();
 						}
 					}
 				}
