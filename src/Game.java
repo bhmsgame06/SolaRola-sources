@@ -181,13 +181,13 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelPlayerDirection = 1;
 	public static int levelBombStartTicks = -1000;
 	public static int levelBombNextFlashTick = -1;
-	public static boolean Field169 = false;
+	public static boolean levelBombFlashed = false;
 	public static int levelBombExplodeTicks = 0;
 	public static int levelBombObjectID;
 	public static int Field172;
 	public static int Field173 = 0;
 	public static int levelPlayerHitTicks = 0;
-	public static int Field175 = -1;
+	public static int levelCurrentGrabberFlags = -1;
 	public static int Field176 = -1;
 	public static int[] blobEyeState = new int[2];
 	public static int[] currentMouthState = new int[2];
@@ -436,7 +436,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image imgWindow;
 	public static Image imgSplashShip;
 	public static Image[] imgsFlame;
-	public static int Field423;
+	public static int levelShipTouchedIconIndex;
 	public static int Field424 = 0;
 	public static String[] textTableShip;
 	public static String[] textTableShipPause;
@@ -2947,11 +2947,11 @@ public final class Game extends GameCanvas implements Runnable {
 				updatePlayerControls();
 			}
 	
-			if(Field423 > 0) {
-				if(Field423 == Field119) {
-					Field423 = 0;
+			if(levelShipTouchedIconIndex > 0) {
+				if(levelShipTouchedIconIndex == Field119) {
+					levelShipTouchedIconIndex = 0;
 				} else {
-					Field119 = Field423;
+					Field119 = levelShipTouchedIconIndex;
 				}
 			}
 	
@@ -2959,11 +2959,11 @@ public final class Game extends GameCanvas implements Runnable {
 				Field119 = 0;
 			}
 	
-			if(Field423 > 0) {
-				Field120 = Field423;
+			if(levelShipTouchedIconIndex > 0) {
+				Field120 = levelShipTouchedIconIndex;
 			}
 	
-			Field423 = 0;
+			levelShipTouchedIconIndex = 0;
 			levelSetCamera(levelCircleX[0], levelHeight / 2, 0);
 			levelSetPlayerPos(levelCircleX[6], levelCircleY[6], 6, 0x140000);
 			renderShipBlobs(Field427);
@@ -3006,7 +3006,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 	
-			Field423 = 0;
+			levelShipTouchedIconIndex = 0;
 			Field404 = true;
 			initSpace(2, 12, 92, 46);
 			initInsideShip();
@@ -3683,7 +3683,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		levelPlayerRotationRate = 0;
-		Field175 = -1;
+		levelCurrentGrabberFlags = -1;
 		Field176 = -1;
 	}
 	
@@ -3708,8 +3708,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method152() {
 		levelHookIsActive[16] = false;
 		Field205[16] = false;
-		levelCircleFlags[levelHookID2[16]] = Field175;
-		Field175 = -1;
+		levelCircleFlags[levelHookID2[16]] = levelCurrentGrabberFlags;
+		levelCurrentGrabberFlags = -1;
 		Field176 = levelHookID2[16];
 		levelHookID2[16] = -1;
 	}
@@ -3880,7 +3880,7 @@ public final class Game extends GameCanvas implements Runnable {
 				var14 = 0;
 			}
 	
-			if(Field175 >= 0) {
+			if(levelCurrentGrabberFlags >= 0) {
 				Image var9 = imgMouth;
 				gDrawImage(var9, var4 - var9.getWidth() / 2, var5 - var9.getHeight() / 2, 0);
 			} else {
@@ -3951,8 +3951,8 @@ public final class Game extends GameCanvas implements Runnable {
 		int var0 = Field158;
 		Field158 = Field191;
 		Field191 = var0;
-		var0 = Field175;
-		Field175 = Field193;
+		var0 = levelCurrentGrabberFlags;
+		levelCurrentGrabberFlags = Field193;
 		Field193 = var0;
 		var0 = Field159;
 		Field159 = Field192;
@@ -5013,7 +5013,7 @@ public final class Game extends GameCanvas implements Runnable {
 				int var1 = levelCircleX[var5];
 				int var2 = levelCircleY[var5];
 				int var3 = xLossRate;
-				if(var5 < 5 && Field175 >= 0) {
+				if(var5 < 5 && levelCurrentGrabberFlags >= 0) {
 					var3 = 63000;
 				}
 	
@@ -5945,10 +5945,10 @@ public final class Game extends GameCanvas implements Runnable {
 						}
 					}
 	
-					if(Field175 >= 0) {
+					if(levelCurrentGrabberFlags >= 0) {
 						levelHookIsActive[16] = false;
-						levelCircleFlags[levelHookID2[16]] = Field175;
-						Field175 = -1;
+						levelCircleFlags[levelHookID2[16]] = levelCurrentGrabberFlags;
+						levelCurrentGrabberFlags = -1;
 						Field176 = levelHookID2[16];
 					}
 				}
@@ -6052,8 +6052,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void updatePlayerControls() {
-		if((isKeyNewlyHeld(0x1a0) || isKeyNewlyHeld(1) && !isKeyNewlyHeld(0x800)) && (levelPlayerOnCircle || Field175 >= 0)) {
-			if(Field175 >= 0) {
+		if((isKeyNewlyHeld(0x1a0) || isKeyNewlyHeld(1) && !isKeyNewlyHeld(0x800)) && (levelPlayerOnCircle || levelCurrentGrabberFlags >= 0)) {
+			if(levelCurrentGrabberFlags >= 0) {
 				Method152();
 			}
 	
@@ -6064,7 +6064,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		if(isKeyHeld(0x110)) {
 			levelPlayerDirection = 1;
-			if(Field175 >= 0 && !levelPlayerOnCircle) {
+			if(levelCurrentGrabberFlags >= 0 && !levelPlayerOnCircle) {
 				if(levelCircleX[0] >= levelCirclePrevX[0]) {
 					if(levelCircleX[0] - levelCirclePrevX[0] < 0x10000) {
 						int[] var0 = levelCircleX;
@@ -6085,7 +6085,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		if(isKeyHeld(0x88)) {
 			levelPlayerDirection = -1;
-			if(Field175 >= 0 && !levelPlayerOnCircle) {
+			if(levelCurrentGrabberFlags >= 0 && !levelPlayerOnCircle) {
 				if(levelCircleX[0] <= levelCirclePrevX[0]) {
 					if(levelCirclePrevX[0] - levelCircleX[0] < 0x10000) {
 						int[] var3 = levelCircleX;
@@ -6186,13 +6186,13 @@ public final class Game extends GameCanvas implements Runnable {
 			setGammaColor(0, 0, 0);
 			levelRenderCircle(levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID], levelCircleRadius[levelBombObjectID]);
 			if(levelBombStartTicks != -1 && levelTicks > levelBombNextFlashTick) {
-				if(Field169) {
+				if(levelBombFlashed) {
 					setGammaColor(255, 255, 255);
-					Field169 = false;
+					levelBombFlashed = false;
 					levelBombNextFlashTick = levelTicks + (levelBombStartTicks + 100 - levelTicks) / 4;
 				} else {
 					setGammaColor(200, 0, 0);
-					Field169 = true;
+					levelBombFlashed = true;
 				}
 			} else {
 				setGammaColor(200, 0, 0);
@@ -6280,9 +6280,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void processPlayerCircles(int id1, int id2) {
-		if(id1 == 2) {
+		if(id1 == 2)
 			levelPlayerOnCircle = true;
-		}
 
 		/* destructive objects. */
 		if((levelCircleFlags[id2] & 0x2000) > 0) {
@@ -6301,17 +6300,19 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		byte circleType = levelCircleType[id2];
+
 		if(circleType != 0) {
-			if(currentLevelLoaded != -2 && activeSwapKey != 0) {
+			if(currentLevelLoaded != -2 &&
+					activeSwapKey != 0) {
 
 				/* grabber. */
 				if(circleType == 3 &&
-						Field175 == -1 &&
+						levelCurrentGrabberFlags == -1 &&
 						id2 != Field176) {
 
 					levelHookIsActive[16] = true;
 					levelHookID2[16] = id2;
-					Field175 = levelCircleFlags[id2];
+					levelCurrentGrabberFlags = levelCircleFlags[id2];
 					levelCircleFlags[id2] = 0;
 				}
 	
@@ -6354,27 +6355,27 @@ public final class Game extends GameCanvas implements Runnable {
 
 					levelBombStartTicks = levelTicks;
 					levelBombNextFlashTick = levelTicks + 33;
-					Field169 = false;
-					int var3 = levelPlayerDirection;
+
+					levelBombFlashed = false;
+
+					int dir = levelPlayerDirection;
 					if(circleType == 10) {
-						var3 = -1;
+						dir = -1;
 					}
 	
 					if(circleType == 11) {
-						var3 = 1;
+						dir = 1;
 					}
 	
 					if(mirrored && circleType > 9) {
-						var3 *= -1;
+						dir *= -1;
 					}
 	
-					levelSetCircle(levelBombObjectID, levelCircleX[id2] + var3 * 0x140000, levelCircleY[id2], 0xa0000, 15, 71, 0, true);
-					int[] var4 = levelCircleX;
-					int id20001 = levelBombObjectID;
-					var4[id20001] += var3 * 0x30000;
+					levelSetCircle(levelBombObjectID, levelCircleX[id2] + dir * 0x140000, levelCircleY[id2], 0xa0000, 15, 71, 0, true);
+					levelCircleX[levelBombObjectID] += dir * 0x30000;
 				}
 			} else {
-				Field423 = circleType;
+				levelShipTouchedIconIndex = circleType;
 			}
 		}
 	}
@@ -6388,39 +6389,37 @@ public final class Game extends GameCanvas implements Runnable {
 
 					/* check if a ball touches portal's circle hitbox, if so,
 					 * fill the portal's radius with the ball's radius. */
-
-					int swpId1 = id1;
-					int swpId2 = id2;
+					int swpID1 = id1;
+					int swpID2 = id2;
 
 					if((levelCircleFlags[id2] & 16) > 0) {
-						swpId1 = id2;
-						swpId2 = id1;
+						swpID1 = id2;
+						swpID2 = id1;
 					}
 	
-					if(levelCircleFlags[swpId2] != 0) {
-						levelCircleX[swpId2] = levelCircleX[swpId1];
-						levelCircleY[swpId2] = levelCircleY[swpId1];
-						levelCirclePrevX[swpId2] = levelCirclePrevX[swpId1];
-						levelCirclePrevY[swpId2] = levelCirclePrevY[swpId1];
-						levelDetachHooks(swpId2);
+					if(levelCircleFlags[swpID2] != 0) {
+						levelCircleX[swpID2] = levelCircleX[swpID1];
+						levelCircleY[swpID2] = levelCircleY[swpID1];
+						levelCirclePrevX[swpID2] = levelCirclePrevX[swpID1];
+						levelCirclePrevY[swpID2] = levelCirclePrevY[swpID1];
+						levelDetachHooks(swpID2);
 
-						levelCircleRadius[swpId2] -= 0x8000;
+						levelCircleRadius[swpID2] -= 0x8000;
 						levelPortalFilledRadius += 0x8000;
 
-						if(levelPortalFilledRadius >= levelCircleRadius[swpId1]) {
-							levelPortalFilledRadius = levelCircleRadius[swpId1];
+						if(levelPortalFilledRadius >= levelCircleRadius[swpID1]) {
+							levelPortalFilledRadius = levelCircleRadius[swpID1];
 							isLevelComplete = true;
 						}
 	
-						if(levelCircleRadius[swpId2] <= 0) {
-							levelCircleFlags[swpId2] = 0;
-							levelCircleHasPhysics[swpId2] = false;
+						if(levelCircleRadius[swpID2] <= 0) {
+							levelCircleFlags[swpID2] = 0;
+							levelCircleHasPhysics[swpID2] = false;
 						}
 					}
 				}
 
 				/* bomb destroys destructible objects. */
-	
 				if(levelBombExplodeTicks > 0 &&
 						(id1 == levelBombObjectID &&
 						 (levelCircleFlags[id2] & 0x100) > 0 ||
@@ -6447,7 +6446,6 @@ public final class Game extends GameCanvas implements Runnable {
 				if(circleType1 != 0 || circleType2 != 0) {
 
 					/* vacant an expander. */
-
 					if(circleType1 == 6 || circleType2 == 6) {
 
 						if(circleType1 == 6)
@@ -6459,7 +6457,6 @@ public final class Game extends GameCanvas implements Runnable {
 
 					/* check if enemy's circle hitbox touches radioactive goo or
 					 * an explosion wave. */
-
 					if((circleType1 == 7 || circleType2 == 7) &&
 							((levelCircleFlags[id1] & 8) > 0 ||
 							 (levelCircleFlags[id2] & 8) > 0 ||
@@ -7139,7 +7136,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelCirclePrevY[var0] = levelCircleY[var0];
 		}
 	
-		if(Field175 >= 0) {
+		if(levelCurrentGrabberFlags >= 0) {
 			Method152();
 		}
 	
