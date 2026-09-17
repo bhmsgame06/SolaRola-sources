@@ -335,7 +335,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelHeight;
 	public static int Field321;
 	public static int xLossRate;
-	public static boolean Field323;
+	public static boolean levelPlayerOnCircle;
 	public static boolean isLevelComplete;
 	public static boolean mirrored = false;
 	public static boolean isFinalLevel;
@@ -2937,7 +2937,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 			shipNextOp = 0;
 		} else {
-			if(Field323 && levelCircleY[0] > 0x960000 && Field120 > 0) {
+			if(levelPlayerOnCircle && levelCircleY[0] > 0x960000 && Field120 > 0) {
 				shipNextOp = processMainMenuDialogue(Field120, Field427);
 				Field120 = 0;
 			}
@@ -2955,7 +2955,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 	
-			if(Field323) {
+			if(levelPlayerOnCircle) {
 				Field119 = 0;
 			}
 	
@@ -3750,7 +3750,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		if(levelPlayerRotationRate == 0) {
 			byte var0 = 95;
-			if(!Field323) {
+			if(!levelPlayerOnCircle) {
 				var0 = 90;
 			}
 	
@@ -4736,7 +4736,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void onCircleTouchRect(int var0, int var1) {
 		if(var0 == 2) {
-			Field323 = true;
+			levelPlayerOnCircle = true;
 		}
 	
 		int var2 = levelRectX[var1] + levelRectHWidth[var1] + levelCircleRadius[var0];
@@ -5033,7 +5033,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void updateBlobCollision() {
-		Field323 = false;
+		levelPlayerOnCircle = false;
 	
 		for(int var0 = 0; var0 < 5; var0++) {
 			for(int var1 = var0 + 1; var1 < levelNumCircles; var1++) {
@@ -5401,8 +5401,8 @@ public final class Game extends GameCanvas implements Runnable {
 			var1 = xLossRate;
 			xLossRate = Field352;
 			Field352 = var1;
-			boolean var2 = Field323;
-			Field323 = Field353;
+			boolean var2 = levelPlayerOnCircle;
+			levelPlayerOnCircle = Field353;
 			Field353 = var2;
 			var2 = isLevelComplete;
 			isLevelComplete = Field354;
@@ -6052,19 +6052,19 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void updatePlayerControls() {
-		if((isKeyNewlyHeld(0x1a0) || isKeyNewlyHeld(1) && !isKeyNewlyHeld(0x800)) && (Field323 || Field175 >= 0)) {
+		if((isKeyNewlyHeld(0x1a0) || isKeyNewlyHeld(1) && !isKeyNewlyHeld(0x800)) && (levelPlayerOnCircle || Field175 >= 0)) {
 			if(Field175 >= 0) {
 				Method152();
 			}
 	
-			if(Field323) {
+			if(levelPlayerOnCircle) {
 				Field173 = 3;
 			}
 		}
 	
 		if(isKeyHeld(0x110)) {
 			levelPlayerDirection = 1;
-			if(Field175 >= 0 && !Field323) {
+			if(Field175 >= 0 && !levelPlayerOnCircle) {
 				if(levelCircleX[0] >= levelCirclePrevX[0]) {
 					if(levelCircleX[0] - levelCirclePrevX[0] < 0x10000) {
 						int[] var0 = levelCircleX;
@@ -6077,7 +6077,7 @@ public final class Game extends GameCanvas implements Runnable {
 			} else {
 				int[] var10000 = levelCircleX;
 				var10000[0] += 0x14000;
-				if(Field323) {
+				if(levelPlayerOnCircle) {
 					levelPlayerRotationRate += 3;
 				}
 			}
@@ -6085,7 +6085,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		if(isKeyHeld(0x88)) {
 			levelPlayerDirection = -1;
-			if(Field175 >= 0 && !Field323) {
+			if(Field175 >= 0 && !levelPlayerOnCircle) {
 				if(levelCircleX[0] <= levelCirclePrevX[0]) {
 					if(levelCirclePrevX[0] - levelCircleX[0] < 0x10000) {
 						int[] var3 = levelCircleX;
@@ -6098,7 +6098,7 @@ public final class Game extends GameCanvas implements Runnable {
 			} else {
 				int[] var2 = levelCircleX;
 				var2[0] -= 0x14000;
-				if(Field323) {
+				if(levelPlayerOnCircle) {
 					levelPlayerRotationRate -= 3;
 				}
 			}
@@ -6281,9 +6281,10 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void processPlayerCircles(int id1, int id2) {
 		if(id1 == 2) {
-			Field323 = true;
+			levelPlayerOnCircle = true;
 		}
-	
+
+		/* destructive objects. */
 		if((levelCircleFlags[id2] & 0x2000) > 0) {
 			levelCircleRadius[id2] -= 0x10000;
 			if(levelCircleRadius[id2] < 0x40000) {
@@ -6292,25 +6293,38 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	
-		if((levelCircleFlags[id2] & 8) > 0 && !isPlayerInvincible) {
+		/* radioactive goo. */
+		if((levelCircleFlags[id2] & 8) > 0 &&
+				!isPlayerInvincible) {
+
 			levelPlayerHealth -= 4000;
 		}
-	
-		byte var2 = levelCircleType[id2];
-		if(var2 != 0) {
+
+		byte circleType = levelCircleType[id2];
+		if(circleType != 0) {
 			if(Field327 != -2 && activeSwapKey != 0) {
-				if(var2 == 3 && Field175 == -1 && id2 != Field176) {
+
+				/* grabber. */
+				if(circleType == 3 &&
+						Field175 == -1 &&
+						id2 != Field176) {
+
 					levelHookIsActive[16] = true;
 					levelHookID2[16] = id2;
 					Field175 = levelCircleFlags[id2];
 					levelCircleFlags[id2] = 0;
 				}
 	
-				if(var2 == 6) {
+				/* vacant an expander. */
+				if(circleType == 6) {
 					setExpanderVacant(id2);
 				}
 	
-				if(var2 == 7 && levelPlayerHitTicks == 0 && isEnemyAlive(id2)) {
+				/* enemy hurts a player. */
+				if(circleType == 7 &&
+						levelPlayerHitTicks == 0 &&
+						isEnemyAlive(id2)) {
+
 					if(isEnemyStatic(id2) && id1 == 2) {
 						if(levelCircleY[2] - levelCirclePrevY[2] > 120000) {
 							killEnemy(id2);
@@ -6328,34 +6342,39 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 				}
 	
-				if(var2 == 8) {
+				/* finish the level. */
+				if(circleType == 8) {
+
 					isLevelComplete = true;
-				} else {
-					if(var2 >= 9 && var2 <= 11 && id1 == 2 && levelBombStartTicks + 200 < levelTicks) {
-						levelBombStartTicks = levelTicks;
-						levelBombNextFlashTick = levelTicks + 33;
-						Field169 = false;
-						int var3 = levelPlayerDirection;
-						if(var2 == 10) {
-							var3 = -1;
-						}
-	
-						if(var2 == 11) {
-							var3 = 1;
-						}
-	
-						if(mirrored && var2 > 9) {
-							var3 *= -1;
-						}
-	
-						levelSetCircle(levelBombObjectID, levelCircleX[id2] + var3 * 0x140000, levelCircleY[id2], 0xa0000, 15, 71, 0, true);
-						int[] var4 = levelCircleX;
-						int id20001 = levelBombObjectID;
-						var4[id20001] += var3 * 0x30000;
+
+				} else if(circleType >= 9 &&
+						circleType <= 11 &&
+						id1 == 2 &&
+						levelBombStartTicks + 200 < levelTicks) {
+
+					levelBombStartTicks = levelTicks;
+					levelBombNextFlashTick = levelTicks + 33;
+					Field169 = false;
+					int var3 = levelPlayerDirection;
+					if(circleType == 10) {
+						var3 = -1;
 					}
+	
+					if(circleType == 11) {
+						var3 = 1;
+					}
+	
+					if(mirrored && circleType > 9) {
+						var3 *= -1;
+					}
+	
+					levelSetCircle(levelBombObjectID, levelCircleX[id2] + var3 * 0x140000, levelCircleY[id2], 0xa0000, 15, 71, 0, true);
+					int[] var4 = levelCircleX;
+					int id20001 = levelBombObjectID;
+					var4[id20001] += var3 * 0x30000;
 				}
 			} else {
-				Field423 = var2;
+				Field423 = circleType;
 			}
 		}
 	}
