@@ -339,7 +339,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean isLevelComplete;
 	public static boolean mirrored = false;
 	public static boolean isFinalLevel;
-	public static int Field327 = 0;
+	public static int currentLevelLoaded = 0;
 	public static int level = 0;
 	public static int levelColor = 0xffffff;
 	public static int levelColorMovable = 0xffffff;
@@ -2908,7 +2908,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				case 3:
 					if(mustResetData) {
-						Field389 = Field327;
+						Field389 = currentLevelLoaded;
 						setNewState(4, 0);
 						swapLevelData(1);
 					}
@@ -3811,7 +3811,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if(var3 == 0) {
 			Field172 = 18;
 			var1 = 0xff;
-			if(Field327 == -1) {
+			if(currentLevelLoaded == -1) {
 				var1 = 100 + 155 * levelPlayerHealth / 500 & 255;
 			}
 		} else {
@@ -4963,7 +4963,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void levelSetCircle(int var0, int var1, int var2, int var3, int var4, int var5, int var6, boolean var7) {
-		if(var6 == 3 && Field327 != -2) {
+		if(var6 == 3 && currentLevelLoaded != -2) {
 			var5 &= -5;
 		}
 	
@@ -5186,7 +5186,7 @@ public final class Game extends GameCanvas implements Runnable {
 			isFinalLevel = var0 == 24;
 		}
 	
-		Field327 = var0;
+		currentLevelLoaded = var0;
 		levelWidth = sReadU16() << 16;
 		levelHeight = sReadU16() << 16;
 		setWeatherAndBackgroundIDs(sRead8(), sRead8());
@@ -5521,7 +5521,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void renderBackground() {
-		if(Field327 >= 0) {
+		if(currentLevelLoaded >= 0) {
 			if(imgsBackground == null || levelBackgroundID != currentLoadedBackgroundID) {
 				loadBackground(levelBackgroundID);
 			}
@@ -5903,12 +5903,12 @@ public final class Game extends GameCanvas implements Runnable {
 			if(Field389 >= -1) {
 				loadLevel(Field389);
 				Field389 = -2;
-				if(Field327 < 0) {
+				if(currentLevelLoaded < 0) {
 					levelIntroTicks = 120;
 				}
 	
 				if(!isDejaVuMessageShown) {
-					if(Field327 >= 0) {
+					if(currentLevelLoaded >= 0) {
 						startDialogue("respawn.bms", levelCircleX[0], levelCircleY[0]);
 					}
 	
@@ -5961,14 +5961,14 @@ public final class Game extends GameCanvas implements Runnable {
 	
 				levelDeathTicks--;
 				if(levelDeathTicks <= 0) {
-					Field389 = Field327;
+					Field389 = currentLevelLoaded;
 				}
 			}
 	
 			int var2 = -1;
 			if(levelIntroTicks < 100) {
 				var2 = softkeyPressed(-1, 3);
-			} else if(Field327 == -1) {
+			} else if(currentLevelLoaded == -1) {
 				var2 = softkeyPressed(-1, 4);
 			} else if(levelPlayerHealth > 0) {
 				var2 = softkeyPressed(-1, 0);
@@ -6302,7 +6302,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		byte circleType = levelCircleType[id2];
 		if(circleType != 0) {
-			if(Field327 != -2 && activeSwapKey != 0) {
+			if(currentLevelLoaded != -2 && activeSwapKey != 0) {
 
 				/* grabber. */
 				if(circleType == 3 &&
