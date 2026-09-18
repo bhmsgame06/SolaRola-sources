@@ -4950,7 +4950,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void levelUpdateAll() {
 		updatePlayerMovement();
 		levelUpdateHooks();
-		updateBlobCollision();
+		updatePlayerCollision();
 		updateCollisionCircleRect();
 	}
 	
@@ -5037,7 +5037,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void updateBlobCollision() {
+	public static final void updatePlayerCollision() {
 		levelPlayerOnCircle = false;
 	
 		for(int var0 = 0; var0 < 5; var0++) {
