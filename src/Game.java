@@ -346,12 +346,12 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelColorGoal = 0xffffff;
 	public static int levelColorDestructible = 0xffffff;
 	public static int levelColorBouncer = 0xff4500;
-	public static int levelRAMinRed = 152;
-	public static int levelRAMaxRed = 255;
-	public static int levelRAMinGreen = 36;
-	public static int levelRAMaxGreen = 182;
-	public static int levelRAMinBlue = 16;
-	public static int levelRAMaxBlue = 33;
+	public static int levelRadioactiveMinRed = 152;
+	public static int levelRadioactiveMaxRed = 255;
+	public static int levelRadioactiveMinGreen = 36;
+	public static int levelRadioactiveMaxGreen = 182;
+	public static int levelRadioactiveMinBlue = 16;
+	public static int levelRadioactiveMaxBlue = 33;
 	public static int levelPortalFilledRadius = 0;
 	public static short[] levelIDExpanders;
 	public static short[] levelIDFoam;
@@ -6220,7 +6220,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		levelRenderCircleIDs(levelIDRadioactive, 0);
-		levelRenderCircleIDs(levelIDRadioactive, (levelRAMinRed + (levelRAMaxRed - levelRAMinRed) * var9 / 800 << 16) + (levelRAMinGreen + (levelRAMaxGreen - levelRAMinGreen) * var9 / 800 << 8) + levelRAMinBlue + (levelRAMaxBlue - levelRAMinBlue) * var9 / 800);
+		levelRenderCircleIDs(levelIDRadioactive, (levelRadioactiveMinRed + (levelRadioactiveMaxRed - levelRadioactiveMinRed) * var9 / 800 << 16) + (levelRadioactiveMinGreen + (levelRadioactiveMaxGreen - levelRadioactiveMinGreen) * var9 / 800 << 8) + levelRadioactiveMinBlue + (levelRadioactiveMaxBlue - levelRadioactiveMinBlue) * var9 / 800);
 		levelRenderCircleIDs(levelIDExpanders, 0);
 		levelRenderCircleIDs(levelIDExpanders, levelColorBouncer);
 		setGammaColor(0, 0, 0);
