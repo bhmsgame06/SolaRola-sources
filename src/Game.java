@@ -2300,9 +2300,9 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			int[] var10000 = confettiY;
-			var10000[var0] += 128 * (1 + rand8() % 5) / 176;
+			var10000[var0] += (1 + rand8() % 5) * 128 / 176;
 			var10000 = confettiX;
-			var10000[var0] += 3 * cos1000[confettiAngles[var0]] / 1000;
+			var10000[var0] += cos1000[confettiAngles[var0]] * 3 / 1000;
 			var10000 = confettiHeights;
 			var10000[var0] += 4 + rand8() % 5;
 			if(confettiHeights[var0] >= 40) {
@@ -2323,7 +2323,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			gSetColor(confettiColors[var0]);
-			gFillRect(confettiX[var0], confettiY[var0], 128 * confettiWidths[var0] / 176, 128 * var1 / 176);
+			gFillRect(confettiX[var0], confettiY[var0], confettiWidths[var0] * 128 / 176, var1 * 128 / 176);
 		}
 	}
 	
@@ -2409,7 +2409,7 @@ public final class Game extends GameCanvas implements Runnable {
 			gDrawLine(Field84[var0] - 1, Field85[var0], Field84[var0] + 1, Field85[var0]);
 			gDrawLine(Field84[var0], Field85[var0] - 1, Field84[var0], Field85[var0] + 1);
 			int[] var10000 = Field84;
-			var10000[var0] += 3 * cos1000[Field86[var0]] / 1000;
+			var10000[var0] += cos1000[Field86[var0]] * 3 / 1000;
 			var10000 = Field85;
 			var10000[var0] += 2;
 			var10000 = Field86;
@@ -2518,7 +2518,7 @@ public final class Game extends GameCanvas implements Runnable {
 			sceneHelpAutoscrollActive = false;
 		}
 	
-		sceneHelpScrollAccel = 95 * sceneHelpScrollAccel / 100;
+		sceneHelpScrollAccel = sceneHelpScrollAccel * 95 / 100;
 		if(sceneHelpAutoscrollActive) {
 			sceneHelpScrollAccel = -0xff;
 		}
@@ -2546,12 +2546,12 @@ public final class Game extends GameCanvas implements Runnable {
 			if(var0 > -14 && var0 < 128) {
 				int var2 = 0;
 				if(var0 < 42) {
-					var2 = 90 - 90 * var0 * 3 / 128;
+					var2 = 90 - var0 * 90 * 3 / 128;
 				} else if(var0 > 85) {
-					var2 = 90 - (128 - var0) * 3 * 90 / 128;
+					var2 = 90 - (128 - var0) * 90 * 3 / 128;
 				}
 	
-				int var3 = 5 + 128 * sin(var2) / 2600;
+				int var3 = 5 + sin(var2) * 128 / 2600;
 				renderText(var3, var0, sceneHelpText[var1], 2);
 			}
 	
@@ -2559,7 +2559,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		gDrawImage(imgSceneHelpScrollbar[0], 120, 43 - (sceneHelpScroll >> 2 & 3), 0);
-		gDrawImage(imgSceneHelpScrollbar[1], 118, 46 - 39 * ((sceneHelpScrollDistance >> 8) - 128) / (sceneHelpText.length * 14), 0);
+		gDrawImage(imgSceneHelpScrollbar[1], 118, 46 - ((sceneHelpScrollDistance >> 8) - 128) * 39 / (sceneHelpText.length * 14), 0);
 		gDrawImage(imgSceneHelpScrollbar[2], 120, 92 + (sceneHelpScroll >> 2 & 3), 0);
 	}
 	
@@ -3075,10 +3075,10 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 	
 				if(levelPlayerAngle < 180) {
-					levelPlayerAngle = 90 * levelPlayerAngle / 100;
+					levelPlayerAngle = levelPlayerAngle * 90 / 100;
 				} else {
 					levelPlayerAngle -= 360;
-					levelPlayerAngle = 90 * levelPlayerAngle / 100;
+					levelPlayerAngle = levelPlayerAngle * 90 / 100;
 					levelPlayerAngle += 360;
 				}
 	
@@ -3327,8 +3327,8 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				case 7:
 					if(dialogueEnvironment == 5) {
-						currentPurpleX = 128 * var0[var1 + 2] / 1000;
-						currentPurpleY = 128 * var0[var1 + 3] / 1000;
+						currentPurpleX = var0[var1 + 2] * 128 / 1000;
+						currentPurpleY = var0[var1 + 3] * 128 / 1000;
 					} else if(activeSwapKey == 0) {
 						if(var0[var1 + 1] == 0) {
 							levelSetPlayerPos(levelAlignToGameMirror(var0[var1 + 2] << 16), var0[var1 + 3] << 16, 0, 0x0c0000);
@@ -3369,7 +3369,7 @@ public final class Game extends GameCanvas implements Runnable {
 						default:
 							break;
 						case 3:
-							initSpaceMap(72 * var0[var1 + 2] / 100, 72 * var0[var1 + 3] / 100, var0[var1 + 4]);
+							initSpaceMap(var0[var1 + 2] * 72 / 100, var0[var1 + 3] * 72 / 100, var0[var1 + 4]);
 							initSpace(1, 150, 256, 256);
 							var1 += 3;
 							break;
@@ -3528,7 +3528,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			int var0 = (int)(millis() - sceneTransitionStartMs);
-			int var1 = Field155 + 1000 * var0 / Field152;
+			int var1 = Field155 + var0 * 1000 / Field152;
 			if(Field155 == 0 && var1 > 1000) {
 				var1 = 1000;
 				setNewState(sceneTransitionNextState, 1);
@@ -3755,10 +3755,10 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			if(levelPlayerAngle < 180) {
-				levelPlayerAngle = var0 * levelPlayerAngle / 100;
+				levelPlayerAngle = levelPlayerAngle * var0 / 100;
 			} else {
 				levelPlayerAngle -= 360;
-				levelPlayerAngle = var0 * levelPlayerAngle / 100;
+				levelPlayerAngle = levelPlayerAngle * var0 / 100;
 				levelPlayerAngle += 360;
 			}
 	
@@ -3784,15 +3784,15 @@ public final class Game extends GameCanvas implements Runnable {
 			gFillArc(var2 - var4, var3 - var5, 2 * var4, 2 * var5, 0, 360);
 			gDrawImage(imgMouth, var2 - imgMouth.getWidth() / 2, var3 - imgMouth.getHeight() / 2, 0);
 			var2 -= imgsEyeM[1].getWidth() / 2;
-			gDrawImage(imgsEyeM[1], var2 - var4, var3 - 2 * var5 / 3, 0);
-			gDrawImage(imgsEyeM[1], var2, var3 - 2 * var5 / 3, 0);
-			gDrawImage(imgsEyeM[1], var2 + var4, var3 - 2 * var5 / 3, 0);
+			gDrawImage(imgsEyeM[1], var2 - var4, var3 - var5 * 2 / 3, 0);
+			gDrawImage(imgsEyeM[1], var2, var3 - var5 * 2 / 3, 0);
+			gDrawImage(imgsEyeM[1], var2 + var4, var3 - var5 * 2 / 3, 0);
 		}
 	}
 	
 	public static final void levelRenderPlayer() {
 		if(levelPlayerHealth > 0) {
-			levelPlayerRed = 100 + 100 * levelPlayerHealth / 500;
+			levelPlayerRed = 100 + levelPlayerHealth * 100 / 500;
 		}
 	
 		if((levelPlayerHitTicks & 1) > 0) {
@@ -3812,7 +3812,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field172 = 18;
 			var1 = 0xff;
 			if(currentLevelLoaded == -1) {
-				var1 = 100 + 155 * levelPlayerHealth / 500 & 255;
+				var1 = 100 + levelPlayerHealth * 155 / 500 & 255;
 			}
 		} else {
 			Field172 = 13;
@@ -3888,9 +3888,9 @@ public final class Game extends GameCanvas implements Runnable {
 				if(currentMouthState[var3] > 0) {
 					gDrawImage(var15, var4 - var15.getWidth() / 2 + mouthX[currentMouthState[var3]][var3], var5 - var15.getHeight() / 2 + mouthY[currentMouthState[var3]][var3], 0);
 				} else {
-					int var10 = 6 * levelCameraZoom / 100;
-					int var11 = var4 + var10 * cos(var14 + 90) / 1000;
-					int var12 = var5 + var10 * sin(var14 + 90) / 1000;
+					int var10 = levelCameraZoom * 6 / 100;
+					int var11 = var4 + cos(var14 + 90) * var10 / 1000;
+					int var12 = var5 + sin(var14 + 90) * var10 / 1000;
 					gDrawImage(var15, var11 - var15.getWidth() / 2, var12 - var15.getHeight() / 2, 0);
 				}
 			}
@@ -3919,15 +3919,15 @@ public final class Game extends GameCanvas implements Runnable {
 					var16 = imgsEyeC[var3];
 				}
 	
-				int var18 = Field172 * levelCameraZoom / 100;
-				int var20 = var4 + var18 * cos(var14 - 115) / 1000;
-				int var22 = var5 + var18 * sin(var14 - 115) / 1000;
+				int var18 = levelCameraZoom * Field172 / 100;
+				int var20 = var4 + cos(var14 - 115) * var18 / 1000;
+				int var22 = var5 + sin(var14 - 115) * var18 / 1000;
 				gDrawImage(var16, var20 - var16.getWidth() / 2, var22 - var16.getHeight() / 2, 0);
-				var20 = var4 + var18 * cos(var14 - 65) / 1000;
-				var22 = var5 + var18 * sin(var14 - 65) / 1000;
+				var20 = var4 + cos(var14 - 65) * var18 / 1000;
+				var22 = var5 + sin(var14 - 65) * var18 / 1000;
 				gDrawImage(var16, var20 - var16.getWidth() / 2, var22 - var16.getHeight() / 2, 0);
 			} else {
-				int var17 = Field172 * levelCameraZoom / 100;
+				int var17 = levelCameraZoom * Field172 / 100;
 				Image var19 = imgsEyes[currentMouthState[var3]][var3];
 				if(blobEyeState[var3] > 0) {
 					var19 = imgsEyesC[currentMouthState[var3]][var3];
@@ -4325,7 +4325,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelPingHitTimeout--;
 			if(levelPingHitTimeout == 85) {
 				levelPingInplace();
-				startDialogue("ping_hit.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - 2 * levelCircleRadius[levelPingCircleID] / 3);
+				startDialogue("ping_hit.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 2 / 3);
 				return;
 			}
 		} else if(levelPingEnemyCurrentIndex < 0) {
@@ -4335,7 +4335,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void levelPingInplace() {
 		if(levelPingHitTimeout == 0) {
-			startDialogue("ping_inplace.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - 2 * levelCircleRadius[levelPingCircleID] / 3);
+			startDialogue("ping_inplace.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 2 / 3);
 		}
 	
 		/* Ping spawns enemies. */
@@ -4365,9 +4365,9 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		levelRenderCircle(levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID], levelCircleRadius[levelPingCircleID]);
-		int var7 = 2 * levelCircleRadius[levelPingCircleID] / 5;
+		int var7 = levelCircleRadius[levelPingCircleID] * 2 / 5;
 		int var1 = levelCircleX[levelPingCircleID];
-		int var2 = levelCircleY[levelPingCircleID] - 7 * levelCircleRadius[levelPingCircleID] / 10;
+		int var2 = levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 7 / 10;
 		int var3 = levelCircleRadius[levelPingCircleID] / 5;
 	
 		for(int var4 = -1; var4 < 2; var4++) {
@@ -4377,8 +4377,8 @@ public final class Game extends GameCanvas implements Runnable {
 				setGammaColor(0xffffff);
 				levelRenderCircle(var1 + var4 * var7, var2, var3);
 				setGammaColor(0);
-				int var5 = Method182(var1 + var4 * var7, levelCameraX, 0x960000, 3 * var3 / 4);
-				int var6 = Method182(var2, levelCameraY, 0x640000, 3 * var3 / 4);
+				int var5 = Method182(var1 + var4 * var7, levelCameraX, 0x960000, var3 * 3 / 4);
+				int var6 = Method182(var2, levelCameraY, 0x640000, var3 * 3 / 4);
 				levelRenderCircle(var1 + var4 * var7 + var5, var2 + var6, var3 / 3);
 			} else {
 				setGammaColor(160, 32, 240);
@@ -4388,7 +4388,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final int Method182(int var0, int var1, int var2, int var3) {
-		int var4 = 90 * (var0 - (var1 - var2)) / var2;
+		int var4 = (var0 - (var1 - var2)) * 90 / var2;
 		if(var4 < 0) {
 			var4 = 0;
 		}
@@ -4397,7 +4397,7 @@ public final class Game extends GameCanvas implements Runnable {
 			var4 = 179;
 		}
 	
-		return var3 / 1500 * cos1000[var4];
+		return var3 * cos1000[var4] / 1500;
 	}
 	
 	public static final void levelPingHit() {
@@ -5715,7 +5715,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			var7 >>= 8;
-			int var8 = 82 - var7 * 45 * 72 / 0x32000;
+			int var8 = 82 - var7 * 72 * 45 / 0x32000;
 			if(var8 < 36) {
 				var8 = 36;
 			}
@@ -5815,7 +5815,7 @@ public final class Game extends GameCanvas implements Runnable {
 		currentSpeechStartMs = millis();
 		if(showDialogue == 1) {
 			int var3 = 12 + currentSpeechNumLines * 13;
-			currentSpeechStartMs -= (long)(400 * var2 / var3);
+			currentSpeechStartMs -= (long)(var2 * 400 / var3);
 		}
 	
 		showDialogue = 1;
@@ -6220,7 +6220,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		levelRenderCircleIDs(levelIDRadioactive, 0);
-		levelRenderCircleIDs(levelIDRadioactive, (levelRAMinRed + var9 * (levelRAMaxRed - levelRAMinRed) / 800 << 16) + (levelRAMinGreen + var9 * (levelRAMaxGreen - levelRAMinGreen) / 800 << 8) + levelRAMinBlue + var9 * (levelRAMaxBlue - levelRAMinBlue) / 800);
+		levelRenderCircleIDs(levelIDRadioactive, (levelRAMinRed + (levelRAMaxRed - levelRAMinRed) * var9 / 800 << 16) + (levelRAMinGreen + (levelRAMaxGreen - levelRAMinGreen) * var9 / 800 << 8) + levelRAMinBlue + (levelRAMaxBlue - levelRAMinBlue) * var9 / 800);
 		levelRenderCircleIDs(levelIDExpanders, 0);
 		levelRenderCircleIDs(levelIDExpanders, levelColorBouncer);
 		setGammaColor(0, 0, 0);
@@ -6629,9 +6629,13 @@ public final class Game extends GameCanvas implements Runnable {
 		} else {
 			int gm = gamma;
 			if(gm > 100) {
-				gSetColor(r - r * (200 - gm) / 100, g - g * (200 - gm) / 100, b - b * (200 - gm) / 100);
+				gSetColor(r - r * (200 - gm) / 100,
+						g - g * (200 - gm) / 100,
+						b - b * (200 - gm) / 100);
 			} else {
-				gSetColor(r + (255 - r) * (100 - gm) / 100, g + (255 - g) * (100 - gm) / 100, b + (255 - b) * (100 - gm) / 100);
+				gSetColor(r + (255 - r) * (100 - gm) / 100,
+						g + (255 - g) * (100 - gm) / 100,
+						b + (255 - b) * (100 - gm) / 100);
 			}
 		}
 	}
@@ -6639,7 +6643,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void levelDrawRect(int var0, int var1, int var2, int var3) {
 		if(gammaBlackSet) {
 			int var4 = 0x20000;
-			var4 = 100 * var4 / levelCameraZoom;
+			var4 = var4 * 100 / levelCameraZoom;
 			var2 += var4;
 			var3 += var4;
 		}
@@ -6916,7 +6920,7 @@ public final class Game extends GameCanvas implements Runnable {
 			gDrawImage(imgsInside[2], var2, -16, 0);
 		}
 	
-		int var4 = var1 + 72 * levelAlignToGameMirror(193) / 100;
+		int var4 = var1 + levelAlignToGameMirror(193) * 72 / 100;
 		gDrawImage(imgInsideLamp, var4 - imgInsideLamp.getWidth() / 2, 2, 0);
 		renderWindow(var1 + 299, 30, 0);
 		renderWindow(var1 + 553, 30, 1);
@@ -7170,14 +7174,14 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		if(levelCompleteTicks > 0) {
 			if(levelCompleteTicks < 50) {
-				levelCameraZoom = levelCompleteTicks * 2 * 72 / 100;
+				levelCameraZoom = levelCompleteTicks * 72 * 2 / 100;
 	
 				for(int var0 = 0; var0 < 5; var0++) {
 					int var1 = (100 - levelCompleteTicks * 2) * (100 - levelCompleteTicks * 2) * (100 - levelCompleteTicks * 2) * (100 - levelCompleteTicks * 2);
 					int[] var10000 = levelCircleY;
 					var10000[var0] -= var1 >> 2;
 					var10000 = levelCircleX;
-					var10000[var0] += var1 / 2000 * cos((50 - levelCompleteTicks) * 45);
+					var10000[var0] += var1 * cos((50 - levelCompleteTicks) * 45) / 2000;
 				}
 	
 				levelCompleteTicks++;
@@ -7192,8 +7196,8 @@ public final class Game extends GameCanvas implements Runnable {
 			var2 = (150 - levelCompleteTicks) * 2;
 		}
 	
-		renderText((128 - calcTextWidth(textMission, 0)) / 2 - 128 * cos1000[var2] / 1000, 32, textMission, 0);
-		renderText((128 - calcTextWidth(textCompleted, 0)) / 2 + 128 * cos1000[var2] / 1000, 43, textCompleted, 0);
+		renderText((128 - calcTextWidth(textMission, 0)) / 2 - cos1000[var2] * 128 / 1000, 32, textMission, 0);
+		renderText((128 - calcTextWidth(textCompleted, 0)) / 2 + cos1000[var2] * 128 / 1000, 43, textCompleted, 0);
 		refreshGame();
 		levelCompleteTicks -= 2;
 		if(softkeyPressed(2, -1) == 2) {
@@ -7274,7 +7278,7 @@ public final class Game extends GameCanvas implements Runnable {
 		gSetColor(pingBackgroundColor);
 		gFillRect(0, 0, 128, 128);
 		if(isPurpleTransmissionShaky) {
-			renderPurple(currentPurpleX + 12 * sin1000[(int)(millis() / 5L % 360L)] / 1000, currentPurpleY + 12 * sin1000[(int)(millis() / 3L % 360L)] / 1000, currentPurpleSize + 40 + 20 * sin1000[(int)(millis() / 14L % 360L)] / 1000);
+			renderPurple(currentPurpleX + sin1000[(int)(millis() / 5L % 360L)] * 12 / 1000, currentPurpleY + sin1000[(int)(millis() / 3L % 360L)] * 12 / 1000, currentPurpleSize + 40 + sin1000[(int)(millis() / 14L % 360L)] * 20 / 1000);
 		} else {
 			renderPurple(currentPurpleX, currentPurpleY, currentPurpleSize);
 		}
@@ -7310,8 +7314,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void renderPurple(int var0, int var1, int var2) {
-		int var3 = 40 * var2 / 100;
-		int var4 = 93 * var2 / 100;
+		int var3 = var2 * 40 / 100;
+		int var4 = var2 * 93 / 100;
 		gSetColor(0);
 		gFillArc(var0 - var3 / 2 - 2, var1 - var4 / 2 - 2, var3 + 2 + 2, var4 + 2 + 2, 0, 360);
 		if(isTransmodigrafierMissing) {
@@ -7322,8 +7326,8 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		gFillArc(var0 - var3 / 2, var1 - var4 / 2, var3, var4, 0, 360);
 		gSetColor(0);
-		int var5 = 23 * var2 / 100;
-		int var6 = 5 * var2 / 100;
+		int var5 = var2 * 23 / 100;
+		int var6 = var2 * 5 / 100;
 		if(Field134 && !isShowingShardPicture && (millis() / 150L & 1L) > 0L) {
 			gFillArc(var0 - var5 / 2, var1 - var6 * 2, var5, var6 * 2, 0, 360);
 		} else {
@@ -7331,17 +7335,17 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		gSetColor(0xffffff);
-		int var7 = 14 * var2 / 100;
-		int var8 = 6 * var2 / 100;
+		int var7 = var2 * 14 / 100;
+		int var8 = var2 * 6 / 100;
 	
 		for(int var9 = 0; var9 < 3; var9++) {
-			gFillArc(var0 - 3 * var7 / 2 + var9 * var7, var1 - 45 * var4 / 100, var7, var7, 0, 360);
+			gFillArc(var0 - var7 * 3 / 2 + var9 * var7, var1 - var4 * 45 / 100, var7, var7, 0, 360);
 		}
 	
 		gSetColor(0);
 	
 		for(int var10 = 0; var10 < 3; var10++) {
-			gFillArc(var0 - 3 * var7 / 2 + var10 * var7 + var7 / 3, var1 - 45 * var4 / 100 + var7 / 3, var8, var8, 0, 360);
+			gFillArc(var0 - var7 * 3 / 2 + var10 * var7 + var7 / 3, var1 - var4 * 45 / 100 + var7 / 3, var8, var8, 0, 360);
 		}
 	
 		if(Field456 || !isShowingShardPicture && rand8() > 240) {
@@ -7352,7 +7356,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			for(int var11 = 0; var11 < 3; var11++) {
-				gFillArc(var0 - 3 * var7 / 2 + var11 * var7, var1 - 45 * var4 / 100, var7, var7, 0, 360);
+				gFillArc(var0 - var7 * 3 / 2 + var11 * var7, var1 - var4 * 45 / 100, var7, var7, 0, 360);
 			}
 	
 			Field456 = !Field456;
@@ -7490,7 +7494,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field473 -= 180;
 			}
 	
-			int var7 = 1 + 6 * sin1000[Field473] / 1000;
+			int var7 = 1 + sin1000[Field473] * 6 / 1000;
 			gDrawImage(imgsSelectionMenuArrows[0], var7, 85 - imgsSelectionMenuArrows[0].getHeight() / 2, 0);
 			gDrawImage(imgsSelectionMenuArrows[1], 128 - var7 - imgsSelectionMenuArrows[1].getWidth(), 85 - imgsSelectionMenuArrows[1].getHeight() / 2, 0);
 		}
