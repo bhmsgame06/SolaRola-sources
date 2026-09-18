@@ -246,7 +246,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelPingCircleID;
 	public static int[] levelPingShardIDs;
 	public static int[][] levelPingEnemyIDs;
-	public static int levelPingEnemyCurrentID;
+	public static int levelPingEnemyCurrentIndex;
 	public static int levelPingHitTimeout;
 	public static Image[] imgsPointyRoll;
 	public static Image[] imgsPointyEyes;
@@ -4267,7 +4267,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method178() {
 		int var0 = 0;
 		levelPingShardIDs = new int[3];
-		levelPingEnemyCurrentID = 3;
+		levelPingEnemyCurrentIndex = 3;
 		int[] var1 = new int[3];
 		levelPingEnemyIDs = new int[3][];
 		levelPingEnemyIDs[0] = new int[] {-1, -1, -1, -1, -1, -1};
@@ -4328,7 +4328,7 @@ public final class Game extends GameCanvas implements Runnable {
 				startDialogue("ping_hit.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - 2 * levelCircleRadius[levelPingCircleID] / 3);
 				return;
 			}
-		} else if(levelPingEnemyCurrentID < 0) {
+		} else if(levelPingEnemyCurrentIndex < 0) {
 			isLevelComplete = true;
 		}
 	}
@@ -4339,10 +4339,10 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		/* Ping spawns enemies. */
-		levelPingEnemyCurrentID--;
-		if(levelPingEnemyCurrentID >= 0) {
-			for(int i = 0; i < levelPingEnemyIDs[levelPingEnemyCurrentID].length; i++) {
-				int enemyID = levelPingEnemyIDs[levelPingEnemyCurrentID][i];
+		levelPingEnemyCurrentIndex--;
+		if(levelPingEnemyCurrentIndex >= 0) {
+			for(int i = 0; i < levelPingEnemyIDs[levelPingEnemyCurrentIndex].length; i++) {
+				int enemyID = levelPingEnemyIDs[levelPingEnemyCurrentIndex][i];
 
 				if(enemyID != -1) {
 					levelCircleFlags[enemyID] |= 1;
@@ -4373,7 +4373,7 @@ public final class Game extends GameCanvas implements Runnable {
 		for(int var4 = -1; var4 < 2; var4++) {
 			setGammaColor(0);
 			levelRenderCircle(var1 + var4 * var7, var2, var3);
-			if(var4 < levelPingEnemyCurrentID) {
+			if(var4 < levelPingEnemyCurrentIndex) {
 				setGammaColor(0xffffff);
 				levelRenderCircle(var1 + var4 * var7, var2, var3);
 				setGammaColor(0);
@@ -4403,8 +4403,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void levelPingHit() {
 		if(levelPingHitTimeout <= 0) {
 			levelPingHitTimeout = 100;
-			if(levelPingEnemyCurrentID < 1) {
-				levelPingEnemyCurrentID = -1;
+			if(levelPingEnemyCurrentIndex < 1) {
+				levelPingEnemyCurrentIndex = -1;
 				levelPingHitTimeout = 80;
 			}
 		}
