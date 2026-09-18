@@ -243,8 +243,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelExpanderMinRadius;
 	public static int[] levelGrabberIDs;
 	public static Image imgGrabber;
-	public static int Field231;
-	public static int[] Field232;
+	public static int levelPingCircleID;
+	public static int[] levelPingShardIDs;
 	public static int[][] levelPingEnemyIDs;
 	public static int levelPingEnemyCurrentID;
 	public static int levelPingHitTimeout;
@@ -4266,7 +4266,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void Method178() {
 		int var0 = 0;
-		Field232 = new int[3];
+		levelPingShardIDs = new int[3];
 		levelPingEnemyCurrentID = 3;
 		int[] var1 = new int[3];
 		levelPingEnemyIDs = new int[3][];
@@ -4276,11 +4276,11 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		for(int var2 = 0; var2 < levelNumCircles; var2++) {
 			if(levelCircleType[var2] == 13) {
-				Field231 = var2;
+				levelPingCircleID = var2;
 			}
 	
 			if(levelCircleType[var2] == 15) {
-				Field232[var0++] = var2;
+				levelPingShardIDs[var0++] = var2;
 			}
 	
 			if((levelCircleFlags[var2] & 0x80) > 0 && levelCircleType[var2] == 7) {
@@ -4299,29 +4299,33 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		if(var0 == 1) {
 			int[] var5 = new int[1];
-			var5[0] = Field232[0];
-			Field232 = var5;
+			var5[0] = levelPingShardIDs[0];
+			levelPingShardIDs = var5;
 		}
 	}
 	
-	public static final void Method179() {
-		for(int var0 = 0; var0 < Field232.length; var0++) {
-			if(levelCircleRadius[Field232[var0]] > 0 && levelCircleX[Field232[var0]] > levelCircleX[Field231] - levelCircleRadius[Field231] && levelCircleX[Field232[var0]] < levelCircleX[Field231] + levelCircleRadius[Field231]) {
-				int[] var10000 = levelCircleRadius;
-				int var10001 = Field232[var0];
-				var10000[var10001] -= 0x4000;
-				if(levelCircleRadius[Field232[var0]] <= 0) {
-					levelCircleFlags[Field232[var0]] = 0;
-					levelDetachHooks(Field232[var0]);
+	public static final void updatePing() {
+		/* process every Ping's shard, and if the X axis of the shard is within
+		 * Ping's circle radius, we'll reduce the shard radius. */
+		for(int i = 0; i < levelPingShardIDs.length; i++) {
+			if(levelCircleRadius[levelPingShardIDs[i]] > 0 &&
+					levelCircleX[levelPingShardIDs[i]] > levelCircleX[levelPingCircleID] - levelCircleRadius[levelPingCircleID] &&
+					levelCircleX[levelPingShardIDs[i]] < levelCircleX[levelPingCircleID] + levelCircleRadius[levelPingCircleID]) {
+
+				levelCircleRadius[levelPingShardIDs[i]] -= 0x4000;
+				if(levelCircleRadius[levelPingShardIDs[i]] <= 0) {
+					levelCircleFlags[levelPingShardIDs[i]] = 0;
+					levelDetachHooks(levelPingShardIDs[i]);
 				}
 			}
 		}
 	
+		/* levelPingHitTimeout = 100 if Ping is hit (levelPingHit()). */
 		if(levelPingHitTimeout > 0) {
 			levelPingHitTimeout--;
 			if(levelPingHitTimeout == 85) {
 				levelPingInplace();
-				startDialogue("ping_hit.bms", levelCircleX[Field231], levelCircleY[Field231] - 2 * levelCircleRadius[Field231] / 3);
+				startDialogue("ping_hit.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - 2 * levelCircleRadius[levelPingCircleID] / 3);
 				return;
 			}
 		} else if(levelPingEnemyCurrentID < 0) {
@@ -4331,7 +4335,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void levelPingInplace() {
 		if(levelPingHitTimeout == 0) {
-			startDialogue("ping_inplace.bms", levelCircleX[Field231], levelCircleY[Field231] - 2 * levelCircleRadius[Field231] / 3);
+			startDialogue("ping_inplace.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - 2 * levelCircleRadius[levelPingCircleID] / 3);
 		}
 	
 		/* Ping spawns enemies. */
@@ -4356,15 +4360,15 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method181() {
 		setGammaColor(160, 32, 240);
 	
-		for(int var0 = 0; var0 < Field232.length; var0++) {
-			levelRenderCircle(levelCircleX[Field232[var0]], levelCircleY[Field232[var0]], levelCircleRadius[Field232[var0]]);
+		for(int var0 = 0; var0 < levelPingShardIDs.length; var0++) {
+			levelRenderCircle(levelCircleX[levelPingShardIDs[var0]], levelCircleY[levelPingShardIDs[var0]], levelCircleRadius[levelPingShardIDs[var0]]);
 		}
 	
-		levelRenderCircle(levelCircleX[Field231], levelCircleY[Field231], levelCircleRadius[Field231]);
-		int var7 = 2 * levelCircleRadius[Field231] / 5;
-		int var1 = levelCircleX[Field231];
-		int var2 = levelCircleY[Field231] - 7 * levelCircleRadius[Field231] / 10;
-		int var3 = levelCircleRadius[Field231] / 5;
+		levelRenderCircle(levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID], levelCircleRadius[levelPingCircleID]);
+		int var7 = 2 * levelCircleRadius[levelPingCircleID] / 5;
+		int var1 = levelCircleX[levelPingCircleID];
+		int var2 = levelCircleY[levelPingCircleID] - 7 * levelCircleRadius[levelPingCircleID] / 10;
+		int var3 = levelCircleRadius[levelPingCircleID] / 5;
 	
 		for(int var4 = -1; var4 < 2; var4++) {
 			setGammaColor(0);
@@ -6276,7 +6280,7 @@ public final class Game extends GameCanvas implements Runnable {
 		updateSpawners();
 		levelUpdateAll();
 		if(isFinalLevel) {
-			Method179();
+			updatePing();
 		}
 	}
 	
