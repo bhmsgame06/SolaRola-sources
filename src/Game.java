@@ -247,7 +247,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] Field232;
 	public static int[][] levelPingEnemyIDs;
 	public static int levelPingEnemyCurrentID;
-	public static int levelPingTimeout;
+	public static int levelPingHitTimeout;
 	public static Image[] imgsPointyRoll;
 	public static Image[] imgsPointyEyes;
 	public static Image[] imgsPointyMouth;
@@ -4317,9 +4317,9 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	
-		if(levelPingTimeout > 0) {
-			levelPingTimeout--;
-			if(levelPingTimeout == 85) {
+		if(levelPingHitTimeout > 0) {
+			levelPingHitTimeout--;
+			if(levelPingHitTimeout == 85) {
 				levelPingInplace();
 				startDialogue("ping_hit.bms", levelCircleX[Field231], levelCircleY[Field231] - 2 * levelCircleRadius[Field231] / 3);
 				return;
@@ -4330,7 +4330,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void levelPingInplace() {
-		if(levelPingTimeout == 0) {
+		if(levelPingHitTimeout == 0) {
 			startDialogue("ping_inplace.bms", levelCircleX[Field231], levelCircleY[Field231] - 2 * levelCircleRadius[Field231] / 3);
 		}
 	
@@ -4397,11 +4397,11 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void levelPingHit() {
-		if(levelPingTimeout <= 0) {
-			levelPingTimeout = 100;
+		if(levelPingHitTimeout <= 0) {
+			levelPingHitTimeout = 100;
 			if(levelPingEnemyCurrentID < 1) {
 				levelPingEnemyCurrentID = -1;
-				levelPingTimeout = 80;
+				levelPingHitTimeout = 80;
 			}
 		}
 	}
