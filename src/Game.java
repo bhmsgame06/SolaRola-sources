@@ -187,7 +187,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field172;
 	public static int Field173 = 0;
 	public static int levelPlayerHitTicks = 0;
-	public static int levelCurrentGrabberFlags = -1;
+	public static int levelPlayerCurrentGrabberFlags = -1;
 	public static int Field176 = -1;
 	public static int[] blobEyeState = new int[2];
 	public static int[] currentMouthState = new int[2];
@@ -205,9 +205,9 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[][] mouthY = new int[][] {{0, 0}, {5, 2}, {3, 6}, {5, 9}, {4, 9}, {2, 4}, {3, 7}, {3, 6}};
 	public static int Field191;
 	public static int Field192;
-	public static int Field193;
-	public static int Field194;
-	public static int Field195;
+	public static int swappedLevelCurrentGrabberFlags;
+	public static int swappedLevelPlayerRotationRate;
+	public static int swappedLevelPlayerAngle;
 	public static Image imgFuse;
 	public static Image[] imgsBomb;
 	public static int levelNumHooks;
@@ -3683,7 +3683,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		levelPlayerRotationRate = 0;
-		levelCurrentGrabberFlags = -1;
+		levelPlayerCurrentGrabberFlags = -1;
 		Field176 = -1;
 	}
 	
@@ -3708,8 +3708,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void Method152() {
 		levelHookIsActive[16] = false;
 		Field205[16] = false;
-		levelCircleFlags[levelHookID2[16]] = levelCurrentGrabberFlags;
-		levelCurrentGrabberFlags = -1;
+		levelCircleFlags[levelHookID2[16]] = levelPlayerCurrentGrabberFlags;
+		levelPlayerCurrentGrabberFlags = -1;
 		Field176 = levelHookID2[16];
 		levelHookID2[16] = -1;
 	}
@@ -3880,7 +3880,7 @@ public final class Game extends GameCanvas implements Runnable {
 				var14 = 0;
 			}
 	
-			if(levelCurrentGrabberFlags >= 0) {
+			if(levelPlayerCurrentGrabberFlags >= 0) {
 				Image var9 = imgMouth;
 				gDrawImage(var9, var4 - var9.getWidth() / 2, var5 - var9.getHeight() / 2, 0);
 			} else {
@@ -3947,22 +3947,28 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method157() {
-		int var0 = Field158;
+	public static final void swapLevelPlayerData() {
+		int tmp;
+
+		tmp = Field158;
 		Field158 = Field191;
-		Field191 = var0;
-		var0 = levelCurrentGrabberFlags;
-		levelCurrentGrabberFlags = Field193;
-		Field193 = var0;
-		var0 = Field159;
+		Field191 = tmp;
+
+		tmp = levelPlayerCurrentGrabberFlags;
+		levelPlayerCurrentGrabberFlags = swappedLevelCurrentGrabberFlags;
+		swappedLevelCurrentGrabberFlags = tmp;
+
+		tmp = Field159;
 		Field159 = Field192;
-		Field192 = var0;
-		var0 = levelPlayerRotationRate;
-		levelPlayerRotationRate = Field194;
-		Field194 = var0;
-		var0 = levelPlayerAngle;
-		levelPlayerAngle = Field195;
-		Field195 = var0;
+		Field192 = tmp;
+
+		tmp = levelPlayerRotationRate;
+		levelPlayerRotationRate = swappedLevelPlayerRotationRate;
+		swappedLevelPlayerRotationRate = tmp;
+
+		tmp = levelPlayerAngle;
+		levelPlayerAngle = swappedLevelPlayerAngle;
+		swappedLevelPlayerAngle = tmp;
 	}
 	
 	public static final void initExplosives() {
@@ -5033,7 +5039,7 @@ public final class Game extends GameCanvas implements Runnable {
 				int var1 = levelCircleX[var5];
 				int var2 = levelCircleY[var5];
 				int var3 = xLossRate;
-				if(var5 < 5 && levelCurrentGrabberFlags >= 0) {
+				if(var5 < 5 && levelPlayerCurrentGrabberFlags >= 0) {
 					var3 = 63000;
 				}
 	
@@ -5431,7 +5437,7 @@ public final class Game extends GameCanvas implements Runnable {
 			swapLevelRectData();
 			swapLevelHookData();
 			swapCameraData();
-			Method157();
+			swapLevelPlayerData();
 		}
 	}
 	
@@ -5965,10 +5971,10 @@ public final class Game extends GameCanvas implements Runnable {
 						}
 					}
 	
-					if(levelCurrentGrabberFlags >= 0) {
+					if(levelPlayerCurrentGrabberFlags >= 0) {
 						levelHookIsActive[16] = false;
-						levelCircleFlags[levelHookID2[16]] = levelCurrentGrabberFlags;
-						levelCurrentGrabberFlags = -1;
+						levelCircleFlags[levelHookID2[16]] = levelPlayerCurrentGrabberFlags;
+						levelPlayerCurrentGrabberFlags = -1;
 						Field176 = levelHookID2[16];
 					}
 				}
@@ -6072,8 +6078,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void updatePlayerControls() {
-		if((isKeyNewlyHeld(0x1a0) || isKeyNewlyHeld(1) && !isKeyNewlyHeld(0x800)) && (levelPlayerOnCircle || levelCurrentGrabberFlags >= 0)) {
-			if(levelCurrentGrabberFlags >= 0) {
+		if((isKeyNewlyHeld(0x1a0) || isKeyNewlyHeld(1) && !isKeyNewlyHeld(0x800)) && (levelPlayerOnCircle || levelPlayerCurrentGrabberFlags >= 0)) {
+			if(levelPlayerCurrentGrabberFlags >= 0) {
 				Method152();
 			}
 	
@@ -6084,7 +6090,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		if(isKeyHeld(0x110)) {
 			levelPlayerDirection = 1;
-			if(levelCurrentGrabberFlags >= 0 && !levelPlayerOnCircle) {
+			if(levelPlayerCurrentGrabberFlags >= 0 && !levelPlayerOnCircle) {
 				if(levelCircleX[0] >= levelCirclePrevX[0]) {
 					if(levelCircleX[0] - levelCirclePrevX[0] < 0x10000) {
 						int[] var0 = levelCircleX;
@@ -6105,7 +6111,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		if(isKeyHeld(0x88)) {
 			levelPlayerDirection = -1;
-			if(levelCurrentGrabberFlags >= 0 && !levelPlayerOnCircle) {
+			if(levelPlayerCurrentGrabberFlags >= 0 && !levelPlayerOnCircle) {
 				if(levelCircleX[0] <= levelCirclePrevX[0]) {
 					if(levelCirclePrevX[0] - levelCircleX[0] < 0x10000) {
 						int[] var3 = levelCircleX;
@@ -6327,12 +6333,12 @@ public final class Game extends GameCanvas implements Runnable {
 
 				/* grabber. */
 				if(circleType == 3 &&
-						levelCurrentGrabberFlags == -1 &&
+						levelPlayerCurrentGrabberFlags == -1 &&
 						id2 != Field176) {
 
 					levelHookIsActive[16] = true;
 					levelHookID2[16] = id2;
-					levelCurrentGrabberFlags = levelCircleFlags[id2];
+					levelPlayerCurrentGrabberFlags = levelCircleFlags[id2];
 					levelCircleFlags[id2] = 0;
 				}
 	
@@ -7160,7 +7166,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelCirclePrevY[var0] = levelCircleY[var0];
 		}
 	
-		if(levelCurrentGrabberFlags >= 0) {
+		if(levelPlayerCurrentGrabberFlags >= 0) {
 			Method152();
 		}
 	
