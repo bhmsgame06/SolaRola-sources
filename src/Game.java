@@ -4348,7 +4348,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if(levelPingHitTimeout > 0) {
 			levelPingHitTimeout--;
 			if(levelPingHitTimeout == 85) {
-				levelPingInplace();
+				levelPingSpawnEnemies();
 				startDialogue("ping_hit.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 2 / 3);
 				return;
 			}
@@ -4357,7 +4357,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void levelPingInplace() {
+	public static final void levelPingSpawnEnemies() {
 		if(levelPingHitTimeout == 0) {
 			startDialogue("ping_inplace.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 2 / 3);
 		}
@@ -6532,7 +6532,7 @@ public final class Game extends GameCanvas implements Runnable {
 								levelCircleFlags[id2] = 0;
 							}
 	
-							levelPingInplace();
+							levelPingSpawnEnemies();
 						}
 	
 						if(levelBombExplodeTicks > 0 &&
