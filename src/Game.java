@@ -5358,7 +5358,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		levelIntroTicks = 0;
 		if(var0 == -2) {
-			Method221();
+			levelShipDisablePods();
 		} else {
 			levelObtainIDs();
 		}
@@ -5368,10 +5368,15 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method221() {
+	/* hardcoded ship pods disabling. */
+	public static final void levelShipDisablePods() {
 		for(int var0 = 0; var0 < levelNumCircles; var0++) {
-			if((levelCircleFlags[var0] & 4) > 0 && levelCircleHasPhysics[var0]) {
+			if((levelCircleFlags[var0] & 4) > 0 &&
+					levelCircleHasPhysics[var0]) {
+
 				switch(levelCircleType[var0]) {
+
+					/* disable "more games" pod physics. */
 					case 7:
 						levelCircleFlags[var0] = 0;
 						levelCircleHasPhysics[var0] = false;
