@@ -1020,7 +1020,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	private static void Method30(int var0, boolean var1) {
+	private static void stopSoundAtIndex(int var0, boolean var1) {
 		Player var5;
 		if(soundPlayersMIDI[var0] != null) {
 			var5 = soundPlayersMIDI[var0];
@@ -1052,7 +1052,7 @@ public final class Game extends GameCanvas implements Runnable {
 			for(int var0 = 0; var0 < numSounds; var0++) {
 				if(soundQueueCleanup[var0]) {
 					soundQueueCleanup[var0] = false;
-					Method30(var0, false);
+					stopSoundAtIndex(var0, false);
 					if(soundTypes[var0] != 0) {
 						closeSoundAtIndex(var0);
 					}
@@ -1067,7 +1067,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 					for(int var5 = 0; var5 < numSounds; var5++) {
 						if(var5 != var0) {
-							Method30(var5, false);
+							stopSoundAtIndex(var5, false);
 							soundActiveStates[var5] = false;
 						}
 					}
