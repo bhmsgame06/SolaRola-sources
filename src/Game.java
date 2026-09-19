@@ -4289,43 +4289,56 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void Method178() {
-		int var0 = 0;
+	public static final void initPing() {
+		int shardIndex = 0;
+
 		levelPingShardIDs = new int[3];
 		levelPingEnemyCurrentIndex = 3;
-		int[] var1 = new int[3];
+
+		int[] partIndexes = new int[3];
+
 		levelPingEnemyIDs = new int[3][];
 		levelPingEnemyIDs[0] = new int[] {-1, -1, -1, -1, -1, -1};
 		levelPingEnemyIDs[1] = new int[] {-1, -1, -1, -1, -1, -1};
 		levelPingEnemyIDs[2] = new int[] {-1, -1, -1, -1, -1, -1};
 
-		for(int var2 = 0; var2 < levelNumCircles; var2++) {
-			if(levelCircleType[var2] == 13) {
-				levelPingCircleID = var2;
+		for(int i = 0; i < levelNumCircles; i++) {
+			/* Ping itself. */
+			if(levelCircleType[i] == 13) {
+				levelPingCircleID = i;
 			}
 
-			if(levelCircleType[var2] == 15) {
-				levelPingShardIDs[var0++] = var2;
+			/* Ping's shards. */
+			if(levelCircleType[i] == 15) {
+				levelPingShardIDs[shardIndex++] = i;
 			}
 
-			if((levelCircleFlags[var2] & 0x80) > 0 && levelCircleType[var2] == 7) {
-				int var3 = (levelCircleY[var2] >> 16) / 100 - 1;
-				levelPingEnemyIDs[var3][var1[var3]++] = var2;
-				int[] var10000 = levelCircleFlags;
-				var10000[var2] &= -2;
+			/* enemies. */
+			if((levelCircleFlags[i] & 0x80) > 0 &&
+					levelCircleType[i] == 7) {
 
-				for(int var4 = 0; var4 < levelEnemyIndex.length; var4++) {
-					if(levelEnemyIndex[var4] == var2) {
-						levelEnemyIsAlive[var4] = false;
+				/* Ping summons enemies in groups, and every group depends on Y
+				 * value of the enemies.
+				 * At least it's not hardcoded in the code...
+				 *
+				 * Generally all the enemies are at the top of the 25th level. */
+				int enemyGroup = (levelCircleY[i] >> 16) / 100 - 1;
+				levelPingEnemyIDs[enemyGroup][partIndexes[enemyGroup]++] = i;
+				levelCircleFlags[i] &= -2;
+
+				for(int k = 0; k < levelEnemyIndex.length; k++) {
+					if(levelEnemyIndex[k] == i) {
+						levelEnemyIsAlive[k] = false;
 					}
 				}
 			}
 		}
 
-		if(var0 == 1) {
-			int[] var5 = new int[1];
-			var5[0] = levelPingShardIDs[0];
-			levelPingShardIDs = var5;
+		/* Wha?... */
+		if(shardIndex == 1) {
+			int[] shardIDs = new int[1];
+			shardIDs[0] = levelPingShardIDs[0];
+			levelPingShardIDs = shardIDs;
 		}
 	}
 
@@ -5364,7 +5377,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		if(isFinalLevel) {
-			Method178();
+			initPing();
 		}
 	}
 
