@@ -4591,76 +4591,82 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void renderEnemies(int var0, int var1) {
-		if(levelCircleRadius[var0] >= 30000) {
-			int var2 = levelAlignX(levelCircleX[var0], levelCircleY[var0]);
-			int var3 = levelAlignY(levelCircleX[var0], levelCircleY[var0]);
-			if(Field258[var1]) {
-				int[] var11 = levelEnemyFrame;
-	
-				for(var11[var1] += (levelCircleX[var0] - levelCirclePrevX[var0]) / 7000; levelEnemyFrame[var1] >= 500; var11[var1] -= 500) {
-					var11 = levelEnemyFrame;
+	public static final void renderEnemies(int circleID, int enemyIndex) {
+		if(levelCircleRadius[circleID] >= 30000) {
+			int alignX = levelAlignX(levelCircleX[circleID], levelCircleY[circleID]);
+			int alignY = levelAlignY(levelCircleX[circleID], levelCircleY[circleID]);
+
+			if(Field258[enemyIndex]) {
+
+				levelEnemyFrame[enemyIndex] += (levelCircleX[circleID] - levelCirclePrevX[circleID]) / 7000;
+
+				while(levelEnemyFrame[enemyIndex] >= 500) {
+					levelEnemyFrame[enemyIndex] -= 500;
 				}
-	
-				while(levelEnemyFrame[var1] < 0) {
-					var11 = levelEnemyFrame;
-					var11[var1] += 500;
+
+				while(levelEnemyFrame[enemyIndex] < 0) {
+					levelEnemyFrame[enemyIndex] += 500;
 				}
-	
-				if(!levelEnemyIsAlive[var1]) {
-					levelEnemyFrame[var1] = 510;
+
+				if(!levelEnemyIsAlive[enemyIndex]) {
+					levelEnemyFrame[enemyIndex] = 510;
 				}
-	
-				Image var8;
-				if(levelCirclePrevX[var0] > levelCircleX[var0]) {
-					var8 = imgsBirdLeft[levelEnemyFrame[var1] / 100];
+
+				Image bird;
+				if(levelCirclePrevX[circleID] > levelCircleX[circleID]) {
+					bird = imgsBirdLeft[levelEnemyFrame[enemyIndex] / 100];
 				} else {
-					var8 = imgsBirdRight[levelEnemyFrame[var1] / 100];
+					bird = imgsBirdRight[levelEnemyFrame[enemyIndex] / 100];
 				}
-	
-				gDrawImage(var8, var2 - var8.getWidth() / 2, var3 - var8.getHeight() / 2, 0);
-			} else if(!levelEnemyCanJump[var1] && !levelEnemyIsMovingInX[var1]) {
-				Image var7 = imgsSpider[0];
-				if(!levelEnemyIsAlive[var1]) {
-					var7 = imgsSpider[1];
+
+				gDrawImage(bird, alignX - bird.getWidth() / 2, alignY - bird.getHeight() / 2, 0);
+
+			} else if(!levelEnemyCanJump[enemyIndex] && !levelEnemyIsMovingInX[enemyIndex]) {
+
+				Image spider = imgsSpider[0];
+				if(!levelEnemyIsAlive[enemyIndex]) {
+					spider = imgsSpider[1];
 				}
-	
-				gDrawImage(var7, var2 - var7.getWidth() / 2, var3 - var7.getHeight() / 2, 0);
+
+				gDrawImage(spider, alignX - spider.getWidth() / 2, alignY - spider.getHeight() / 2, 0);
+
 			} else {
-				int[] var10000 = levelEnemyFrame;
-	
-				for(var10000[var1] += (levelCircleX[var0] - levelCirclePrevX[var0]) / 3000; levelEnemyFrame[var1] >= 300; var10000[var1] -= 300) {
-					var10000 = levelEnemyFrame;
+
+				levelEnemyFrame[enemyIndex] += (levelCircleX[circleID] - levelCirclePrevX[circleID]) / 3000;
+
+				while(levelEnemyFrame[enemyIndex] >= 300) {
+					levelEnemyFrame[enemyIndex] -= 300;
 				}
-	
-				while(levelEnemyFrame[var1] < 0) {
-					var10000 = levelEnemyFrame;
-					var10000[var1] += 300;
+
+				while(levelEnemyFrame[enemyIndex] < 0) {
+					levelEnemyFrame = levelEnemyFrame;
+					levelEnemyFrame[enemyIndex] += 300;
 				}
-	
-				Image var4 = imgsPointyRoll[levelEnemyFrame[var1] / 100];
-				if(var4 == null) {
-					var4 = imgsPointyRoll[0];
+
+				Image pointyRoll = imgsPointyRoll[levelEnemyFrame[enemyIndex] / 100];
+				if(pointyRoll == null) {
+					pointyRoll = imgsPointyRoll[0];
 				}
-	
-				Image var5;
-				if(levelCircleY[var0] < levelCircleY[0]) {
-					var5 = imgsPointyEyes[0];
+
+				Image pointyEyes;
+				if(levelCircleY[circleID] < levelCircleY[0]) {
+					pointyEyes = imgsPointyEyes[0];
 				} else {
-					var5 = imgsPointyEyes[1];
+					pointyEyes = imgsPointyEyes[1];
 				}
-	
-				Image var6 = imgsPointyMouth[0];
-				if(var0 == lastAttackingEnemy && levelPlayerHitTicks > 0) {
-					var6 = imgsPointyMouth[1];
-					levelRenderCritterShock(levelCircleX[1 + levelPlayerHitTicks % 4], levelCircleY[1 + levelPlayerHitTicks % 4], levelCircleX[var0], levelCircleY[var0]);
+
+				Image pointyMouth = imgsPointyMouth[0];
+				if(circleID == lastAttackingEnemy && levelPlayerHitTicks > 0) {
+					pointyMouth = imgsPointyMouth[1];
+					levelRenderCritterShock(levelCircleX[1 + levelPlayerHitTicks % 4], levelCircleY[1 + levelPlayerHitTicks % 4], levelCircleX[circleID], levelCircleY[circleID]);
 				}
-	
-				gDrawImage(var4, var2 - var4.getWidth() / 2, var3 - var4.getHeight() / 2, 0);
-				if(levelEnemyIsAlive[var1]) {
-					gDrawImage(var5, var2 + 0 - var5.getWidth() / 2, var3 + -6 - var5.getHeight() / 2, 0);
-					gDrawImage(var6, var2 + 0 - var6.getWidth() / 2, var3 + 3 - var6.getHeight() / 2, 0);
+
+				gDrawImage(pointyRoll, alignX - pointyRoll.getWidth() / 2, alignY - pointyRoll.getHeight() / 2, 0);
+				if(levelEnemyIsAlive[enemyIndex]) {
+					gDrawImage(pointyEyes, alignX + 0 - pointyEyes.getWidth() / 2, alignY + -6 - pointyEyes.getHeight() / 2, 0);
+					gDrawImage(pointyMouth, alignX + 0 - pointyMouth.getWidth() / 2, alignY + 3 - pointyMouth.getHeight() / 2, 0);
 				}
+
 			}
 		}
 	}
