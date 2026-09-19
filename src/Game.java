@@ -270,7 +270,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelEnemyMovementStartTicks;
 	public static boolean[] levelEnemyIsJitteringX;
 	public static boolean[] levelEnemyIsAlive;
-	public static boolean[] Field258;
+	public static boolean[] levelEnemyIsBird;
 	public static int levelNumRects;
 	public static int[] levelRectX;
 	public static int[] levelRectY;
@@ -4442,7 +4442,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelEnemyXMovementDistance = new int[var0];
 		levelEnemyIsJitteringX = new boolean[var0];
 		levelEnemyIsAlive = new boolean[var0];
-		Field258 = new boolean[var0];
+		levelEnemyIsBird = new boolean[var0];
 		levelEnemyMovementStartTicks = new int[var0];
 		levelEnemyFrame = new int[var0];
 		levelEnemyXMovementDirection = new int[var0];
@@ -4465,7 +4465,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelEnemyFrame[var0] = 0;
 		levelEnemyMovementStartTicks[var0] = var10;
 		levelEnemyCenterX[var0] = levelCircleX[var1];
-		Field258[var0] = (levelCircleFlags[var1] & 1) == 0;
+		levelEnemyIsBird[var0] = (levelCircleFlags[var1] & 1) == 0;
 	}
 	
 	public static final void updateEnemies() {
@@ -4596,7 +4596,7 @@ public final class Game extends GameCanvas implements Runnable {
 			int alignX = levelAlignX(levelCircleX[circleID], levelCircleY[circleID]);
 			int alignY = levelAlignY(levelCircleX[circleID], levelCircleY[circleID]);
 
-			if(Field258[enemyIndex]) {
+			if(levelEnemyIsBird[enemyIndex]) {
 
 				levelEnemyFrame[enemyIndex] += (levelCircleX[circleID] - levelCirclePrevX[circleID]) / 7000;
 
