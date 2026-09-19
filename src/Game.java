@@ -488,13 +488,13 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field471;
 	public static int Field472;
 	public static int Field473;
-	
+
 	public Game() throws IOException {
 		super(false);
 		setFullScreenMode(true);
 		instance = this;
 	}
-	
+
 	public final void hideNotify() {
 		tmpHeldKeys = 0;
 		paused = true;
@@ -502,29 +502,29 @@ public final class Game extends GameCanvas implements Runnable {
 		queueSoundCleanup();
 		setPauseScreenDraw();
 	}
-	
+
 	public final void showNotify() {
 	}
-	
+
 	public final void init(PMMIDlet midlet) {
 		Game.midlet = midlet;
 		Thread th = new Thread(this);
 		th.setPriority(5);
 		th.start();
 	}
-	
+
 	public final void run() {
 		gfx = this.getGraphics();
 		gSetClip(0, 0, 128, 128);
 		start();
 		midlet.exit();
 	}
-	
+
 	// funny circle
 	public static final void renderLoadingBar() {
 		renderLoadingBarNextFrame();
 	}
-	
+
 	public static final void updateKeys() {
 		sleep(5L);
 		heldPrevKeys = heldKeys;
@@ -532,7 +532,7 @@ public final class Game extends GameCanvas implements Runnable {
 		tmpHeldKeys &= ~pressOnlyKeys;
 		pressOnlyKeys = 0;
 	}
-	
+
 	private static int pressedKeyValue(int keyCode) {
 		for(int k = 0; k < KEYMAP.length; k++) {
 			for(int i = 0; i < KEYMAP[k].length; i++) {
@@ -541,7 +541,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
+
 		return 0x100000;
 	}
 
@@ -554,43 +554,43 @@ public final class Game extends GameCanvas implements Runnable {
 			pressOnlyKeys |= 0x0800;
 			tmpHeldKeys |= 0x0800;
 		}
-	
+
 		if(keyCode == -7) {
 			pressOnlyKeys |= 4;
 			pressOnlyKeys |= 0x1000;
 			tmpHeldKeys |= 0x1000;
 		}
 	}
-	
+
 	public final void keyReleased(int keyCode) {
 		tmpHeldKeys &= ~pressedKeyValue(keyCode);
 		super.keyReleased(keyCode);
 	}
-	
+
 	public static final boolean isKeyHeld(int var0) {
 		return (heldKeys & var0) > 0;
 	}
-	
+
 	public static final boolean isKeyPressed(int var0) {
 		return (heldKeys & var0) > 0 && (heldPrevKeys & var0) == 0;
 	}
-	
+
 	public static final boolean isKeyReleased(int var0) {
 		return (heldPrevKeys & var0) > 0 && (heldKeys & var0) == 0;
 	}
-	
+
 	public static final void clearKeys() {
 		heldKeys = 0;
 		heldPrevKeys = 0;
 		tmpHeldKeys = 0;
 		pressOnlyKeys = 0;
 	}
-	
+
 	public static final byte[] makePNG(byte[] pimData, short pplCrc) {
 		if(pngTemplate == null) {
 			pngTemplate = loadFile8((short)0xdee7);
 		}
-	
+
 		loadPalette(pplCrc);
 
 		if((pimData[0] & 3) != 3) {
@@ -623,7 +623,7 @@ public final class Game extends GameCanvas implements Runnable {
 				System.arraycopy(pngTemplate, 0x1d, pngData, off, 0x0d);
 				off += 13;
 			}
-	
+
 			// IDAT
 			System.arraycopy(intToBytes(idatLen + 4), 0x00, pngData, off, 0x04);
 			System.arraycopy(pngTemplate, 0x2e, pngData, off + 4, 0x04);
@@ -640,7 +640,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return pngData;
 		}
 	}
-	
+
 	public static final byte[] intToBytes(int i) {
 		byte[] b = new byte[4];
 		b[0] = (byte)(i >> 24 & 0xff);
@@ -649,7 +649,7 @@ public final class Game extends GameCanvas implements Runnable {
 		b[3] = (byte)(i & 0xff);
 		return b;
 	}
-	
+
 	public static final void loadPalette(short pplCrc) {
 		sOpenFile(pplCrc);
 		pplOptions = sRead8();
@@ -658,15 +658,15 @@ public final class Game extends GameCanvas implements Runnable {
 		pplData = new byte[pplColorCount * 3];
 		sReadBytes(pplData, 0, pplData.length);
 	}
-	
+
 	public static final Image loadImage(String pimCrc, String pplCrc) {
 		return loadImage(bfcCrcFilename(pimCrc), bfcCrcFilename(pplCrc));
 	}
-	
+
 	public static final Image loadImage(short pimCrc, short pplCrc) {
 		return _loadImage(pimCrc, pplCrc);
 	}
-	
+
 	public static final Image _loadImage(short pimCrc, short pplCrc) {
 		byte[] pimData = getFile8(pimCrc);
 		if(pimData == null) {
@@ -675,14 +675,14 @@ public final class Game extends GameCanvas implements Runnable {
 			if(pimData[0] != 0x89 && pimData[1] != 'P') {
 				pimData = makePNG(pimData, pplCrc);
 			}
-	
+
 			Image img = Image.createImage(pimData, 0, pimData.length);
 			System.gc();
 			sleep(10L);
 			return img;
 		}
 	}
-	
+
 	public static final void refreshGame() {
 		queueSoundCleanup();
 		renderSoftkeyIcons();
@@ -691,18 +691,18 @@ public final class Game extends GameCanvas implements Runnable {
 		gfxFlush();
 		lockFPS();
 	}
-	
+
 	public static final void sleep(long ms) {
 		try {
 			Thread.sleep(ms);
 		} catch(Exception e) {
 		}
 	}
-	
+
 	public static final void garbageCollector() {
 		long initFreeMem = Runtime.getRuntime().freeMemory();
 		System.gc();
-	
+
 		for(int i = 0; i < 10; i++) {
 			Thread.yield();
 			if(Runtime.getRuntime().freeMemory() < initFreeMem) {
@@ -710,16 +710,16 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void lockFPS() {
 		currTime = millis();
 		if(currTime - prevTime < 45L) {
 			sleep(45L - (currTime - prevTime));
 		}
-	
+
 		prevTime = millis();
 	}
-	
+
 	public static final void writeRecordBytes(byte[] data) {
 		try {
 			RecordStore rs = RecordStore.openRecordStore(recordStoreName, true);
@@ -729,16 +729,16 @@ public final class Game extends GameCanvas implements Runnable {
 				} else {
 					rs.setRecord(1, data, 0, data.length);
 				}
-	
+
 				rs.closeRecordStore();
 			}
 		} catch(Exception e) {
 		}
 	}
-	
+
 	public static final byte[] readRecordBytes() {
 		byte[] data = null;
-	
+
 		try {
 			RecordStore rs = RecordStore.openRecordStore(recordStoreName, true);
 			if(rs != null) {
@@ -747,10 +747,10 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		} catch(Exception e) {
 		}
-	
+
 		return data;
 	}
-	
+
 	public static final void saveRecordData() {
 		byte[] data = new byte[10];
 		data[0] = (byte)(language & 0xff);
@@ -765,7 +765,7 @@ public final class Game extends GameCanvas implements Runnable {
 		data[9] = (byte)(vibration ? 1 : 0);
 		writeRecordBytes(data);
 	}
-	
+
 	public static final boolean loadRecordData() {
 		byte[] data = readRecordBytes();
 
@@ -783,7 +783,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void initSoundSystem(int var0) {
 		numSounds = var0;
 		soundActiveStates = new boolean[var0];
@@ -810,7 +810,7 @@ public final class Game extends GameCanvas implements Runnable {
 			soundPlayersMIDI[var2] = null;
 		}
 	}
-	
+
 	public static final int loadSoundToQueue(int var0, String var1, int var2, int var3) {
 		if(isSoundIndexUsed(var0)) {
 			return -2;
@@ -822,16 +822,16 @@ public final class Game extends GameCanvas implements Runnable {
 			if(loadingBarToggle) {
 				renderLoadingBar();
 			}
-	
+
 			soundTypes[var0] = var2;
 			if(!var1.equals(soundFilenames[var0])) {
 				soundFilenames[var0] = var1;
 			}
-	
+
 			return -4;
 		}
 	}
-	
+
 	public static final int loadSoundToIndex(int var0, String var1, int var2, int var3) {
 		if(isSoundIndexUsed(var0)) {
 			return -2;
@@ -843,52 +843,52 @@ public final class Game extends GameCanvas implements Runnable {
 			if(loadingBarToggle) {
 				renderLoadingBar();
 			}
-	
+
 			soundTypes[var0] = var2;
 			if(!var1.equals(soundFilenames[var0])) {
 				soundFilenames[var0] = var1;
 			}
-	
+
 			String var4 = "";
 			Player var5 = null;
-	
+
 			try {
 				if(var2 == 6) {
 					InputStream var9 = var4.getClass().getResourceAsStream("/" + var1 + ".wav");
 					soundPlayers[var0] = Manager.createPlayer(var9, "audio/x-wav");
 					var5 = soundPlayers[var0];
 				}
-	
+
 				if(var2 == 7) {
 					InputStream var10 = var4.getClass().getResourceAsStream("/" + var1 + ".amr");
 					soundPlayers[var0] = Manager.createPlayer(var10, "audio/amr");
 					var5 = soundPlayers[var0];
 				}
-	
+
 				if(var2 == 8) {
 					InputStream var11 = var4.getClass().getResourceAsStream("/" + var1 + ".mp3");
 					soundPlayers[var0] = Manager.createPlayer(var11, "audio/mp3");
 					var5 = soundPlayers[var0];
 				}
-	
+
 				if(var2 == 2) {
 					InputStream var12 = var4.getClass().getResourceAsStream("/" + var1 + ".mid");
 					soundPlayersMIDI[var0] = Manager.createPlayer(var12, "audio/sp-midi");
 					var5 = soundPlayersMIDI[var0];
 				}
-	
+
 				if(var2 == 1) {
 					InputStream var13 = var4.getClass().getResourceAsStream("/" + var1 + ".mid");
 					soundPlayersMIDI[var0] = Manager.createPlayer(var13, "audio/midi");
 					var5 = soundPlayersMIDI[var0];
 				}
-	
+
 				var5.realize();
-	
+
 				while(var5.getState() != 200) {
 					sleep(30L);
 				}
-	
+
 				numActiveSoundsTotal++;
 				soundUsedStates[var0] = true;
 				boolean var7 = false;
@@ -896,7 +896,7 @@ public final class Game extends GameCanvas implements Runnable {
 					if(var2 != 6 && var2 != 7 && var2 != 8) {
 						return -2;
 					}
-	
+
 					if(numActiveSounds < 1) {
 						var5.prefetch();
 						numActiveSounds++;
@@ -907,13 +907,13 @@ public final class Game extends GameCanvas implements Runnable {
 					numActiveSoundsMIDI++;
 					var7 = true;
 				}
-	
+
 				if(var7) {
 					while(var5.getState() != 300) {
 						sleep(30L);
 					}
 				}
-	
+
 				return 0;
 			} catch(Exception e) {
 				if(var5 != null) {
@@ -923,36 +923,36 @@ public final class Game extends GameCanvas implements Runnable {
 					soundTypes[var0] = 999;
 					soundFilenames[var0] = "";
 				}
-	
+
 				return -1;
 			}
 		}
 	}
-	
+
 	public static final void closeSoundAtIndex(int var0) {
 		Player var1 = null;
 		if(soundPlayers[var0] != null) {
 			var1 = soundPlayers[var0];
 			numActiveSounds--;
 		}
-	
+
 		if(soundPlayersMIDI[var0] != null) {
 			var1 = soundPlayersMIDI[var0];
 			numActiveSoundsMIDI--;
 		}
-	
+
 		if(var1 != null) {
 			var1.close();
-	
+
 			while(var1.getState() != 0) {
 				sleep(30L);
 			}
-	
+
 			soundPlayers[var0] = soundPlayersMIDI[var0] = null;
 			numActiveSoundsTotal--;
 		}
 	}
-	
+
 	public static final boolean isSoundIndexUsed(int var0) {
 		if(soundPlayers[var0] != null) {
 			return true;
@@ -960,7 +960,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return soundPlayersMIDI[var0] != null;
 		}
 	}
-	
+
 	public static final boolean isSoundActive(int var0, int var1) {
 		if(!audio) {
 			return false;
@@ -972,16 +972,16 @@ public final class Game extends GameCanvas implements Runnable {
 				if((var1 == 6 || var1 == -1) && soundPlayers[var0] != null) {
 					var2 = soundPlayers[var0].getState() == 400;
 				}
-	
+
 				if((var1 == 1 || var1 == -1) && soundPlayersMIDI[var0] != null) {
 					var2 = soundPlayersMIDI[var0].getState() == 400;
 				}
-	
+
 				return var2;
 			}
 		}
 	}
-	
+
 	public static final boolean playSound(int var0, int var1) {
 		if(!audio) {
 			return true;
@@ -999,19 +999,19 @@ public final class Game extends GameCanvas implements Runnable {
 							var4++;
 						}
 					}
-	
+
 					if(var4 >= 2) {
 						return false;
 					}
 				}
-	
+
 				soundActiveStates[var0] = true;
 				soundLoopCounts[var0] = var1;
 				return true;
 			}
 		}
 	}
-	
+
 	public static final void queueAllSoundsForCleanup() {
 		if(audio) {
 			for(int var0 = 0; var0 < numSounds; var0++) {
@@ -1019,7 +1019,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	private static void stopSoundAtIndex(int var0, boolean var1) {
 		Player var5;
 		if(soundPlayersMIDI[var0] != null) {
@@ -1027,7 +1027,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} else {
 			var5 = soundPlayers[var0];
 		}
-	
+
 		try {
 			if(var5 != null) {
 				try {
@@ -1046,7 +1046,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} catch(MediaException e) {
 		}
 	}
-	
+
 	public static final void queueSoundCleanup() {
 		if(audio && soundActiveStates != null) {
 			for(int var0 = 0; var0 < numSounds; var0++) {
@@ -1056,52 +1056,52 @@ public final class Game extends GameCanvas implements Runnable {
 					if(soundTypes[var0] != 0) {
 						closeSoundAtIndex(var0);
 					}
-	
+
 					if(Field20 == var0) {
 						Field20 = -1;
 					}
 				}
-	
+
 				if(soundActiveStates[var0] && soundTypes[var0] == 1) {
 					boolean var1 = false;
-	
+
 					for(int var5 = 0; var5 < numSounds; var5++) {
 						if(var5 != var0) {
 							stopSoundAtIndex(var5, false);
 							soundActiveStates[var5] = false;
 						}
 					}
-	
+
 					for(boolean var2 = true; var2; sleep(5L)) {
 						for(int var6 = 0; var6 < numSounds; var6++) {
 							if(var6 != var0 && isSoundActive(var6, -1)) {
 								var2 = true;
 								break;
 							}
-	
+
 							var2 = false;
 						}
 					}
 				}
-	
+
 				if(!isSoundIndexUsed(var0)) {
 					if(soundTypes[var0] == 0 || !soundActiveStates[var0]) {
 						continue;
 					}
-	
+
 					boolean var7 = loadingBarToggle;
 					loadingBarToggle = false;
 					loadSoundToIndex(var0, soundFilenames[var0], soundTypes[var0], 0);
 					loadingBarToggle = var7;
 				}
-	
+
 				Player var9;
 				if(soundPlayersMIDI[var0] != null) {
 					var9 = soundPlayersMIDI[var0];
 				} else {
 					var9 = soundPlayers[var0];
 				}
-	
+
 				if(soundUsedStates[var0]) {
 					soundUsedStates[var0] = false;
 					if(var9 != null) {
@@ -1114,10 +1114,10 @@ public final class Game extends GameCanvas implements Runnable {
 						}
 					}
 				}
-	
+
 				if(soundActiveStates[var0]) {
 					soundActiveStates[var0] = false;
-	
+
 					try {
 						if(var9 != null && var9.getState() != 400) {
 							var9.setLoopCount(soundLoopCounts[var0]);
@@ -1130,22 +1130,22 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final int getFileIndex(short fnCrc) {
 		for(int i = 0; i < bfcHeadNumEntries; i++) {
 			if(bfcHeadCrcs[i] == fnCrc) {
 				return i;
 			}
 		}
-	
+
 		return -1;
 	}
-	
+
 	public static final void bfcInitReservedData(int count) {
 		bfcReservedData = new byte[count][];
 		currentReserved = false;
 	}
-	
+
 	public static final void bfcReserve(int index) {
 		try {
 			currentIndex = index;
@@ -1159,23 +1159,23 @@ public final class Game extends GameCanvas implements Runnable {
 				read = currentData.read(bfcReservedData[index], total, rem);
 				rem -= read;
 			}
-	
+
 			for(int i = 0; i < bfcHeadNumEntries; i++) {
 				if(i != index && bfcHeadOffsets[i] == bfcHeadOffsets[index] && bfcHeadLocations[i] == bfcHeadLocations[index]) {
 					bfcReservedData[i] = bfcReservedData[index];
 				}
 			}
-	
+
 			currentOffset += currentSize;
 		} catch(Exception e) {
 		}
 	}
-	
+
 	public static final void bfcLoadHead() {
 		currentLocation = -1;
 		currentOffset = 0;
 		bfcGenCrcTable();
-	
+
 		try {
 			String file = "/head.bfc";
 			currentData = new DataInputStream(file.getClass().getResourceAsStream(file));
@@ -1187,7 +1187,7 @@ public final class Game extends GameCanvas implements Runnable {
 			bfcHeadOffsets = new int[numEntries];
 			bfcHeadLocations = new byte[numEntries];
 			bfcHeadSizes = new int[numEntries];
-	
+
 			for(int i = 0; i < numEntries; i++) {
 				bfcHeadCrcs[i] = (short)currentData.readUnsignedShort();
 				bfcHeadMemStates[i] = currentData.readByte();
@@ -1197,33 +1197,33 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		} catch(Exception e) {
 		}
-	
+
 		bfcInitReservedData(bfcHeadNumEntries);
 	}
-	
+
 	public static final void bfcGenCrcTable() {
 		for(int i = 0; i < 256; ++i) {
 			int val = 0;
 			int x = i << 8;
-	
+
 			for(int k = 0; k < 8; k++) {
 				if(((val ^ x) & 0x8000) != 0) {
 					val = val << 1 ^ bfcCrcPoly;
 				} else {
 					val <<= 1;
 				}
-	
+
 				x <<= 1;
 				val &= 0xffff;
 			}
-	
+
 			bfcCrcTable[i] = val;
 		}
 	}
-	
+
 	public static final short bfcCrcFilename(String file) {
 		int val = 0xffff;
-	
+
 		for(int i = 0; i < file.length(); i++) {
 			char c = file.charAt(i);
 			byte b = (byte)(c >> 8);
@@ -1231,10 +1231,10 @@ public final class Game extends GameCanvas implements Runnable {
 			b = (byte)(c & 0xff);
 			val = (bfcCrcTable[(b ^ val >> 8) & 0xff] ^ val << 8) & 0xffff;
 		}
-	
+
 		return (short)(val & 0xffff);
 	}
-	
+
 	public static final byte[] loadFile8(short fnCrc) {
 		if(!sOpenFile(fnCrc)) {
 			return null;
@@ -1244,7 +1244,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return var1;
 		}
 	}
-	
+
 	public static final byte[] getFile8(short fnCrc) {
 		int index = getFileIndex(fnCrc);
 		if(index < 0) {
@@ -1253,43 +1253,43 @@ public final class Game extends GameCanvas implements Runnable {
 			return bfcReservedData[index] != null ? bfcReservedData[index] : loadFile8(fnCrc);
 		}
 	}
-	
+
 	public static final short[] loadFile16(String file) {
 		return loadFile16(bfcCrcFilename(file));
 	}
-	
+
 	public static final short[] loadFile16(short fnCrc) {
 		if(!sOpenFile(fnCrc)) {
 			return null;
 		} else {
 			short[] arr = new short[currentSize / 2];
-	
+
 			for(int i = 0; i < arr.length; i++) {
 				arr[i] = sRead16();
 			}
-	
+
 			return arr;
 		}
 	}
-	
+
 	public static final int[] loadFile32(String file) {
 		return loadFile32(bfcCrcFilename(file));
 	}
-	
+
 	public static final int[] loadFile32(short fnCrc) {
 		if(!sOpenFile(fnCrc)) {
 			return null;
 		} else {
 			int[] arr = new int[currentSize / 4];
-	
+
 			for(int i = 0; i < arr.length; i++) {
 				arr[i] = sRead32();
 			}
-	
+
 			return arr;
 		}
 	}
-	
+
 	public static final boolean sOpenFile(String file) {
 		if(sOpenFile(bfcCrcFilename(file))) {
 			return true;
@@ -1307,12 +1307,12 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final boolean sOpenFile(short fnCrc) {
 		if(loadingBarToggle) {
 			renderLoadingBar();
 		}
-	
+
 		int index = getFileIndex(fnCrc);
 		currentIndex = index;
 		currentOffsetReserved = 0;
@@ -1329,15 +1329,15 @@ public final class Game extends GameCanvas implements Runnable {
 					if(bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null) {
 						bfcReserve(index);
 					}
-	
+
 					return true;
 				}
-	
+
 				try {
 					if(currentData != null) {
 						closeStream();
 					}
-	
+
 					currentData = new DataInputStream(instance.getClass().getResourceAsStream("/" + bfcHeadLocations[index] + ".bfc"));
 					currentData.skip((long)bfcHeadOffsets[index]);
 					currentLocation = bfcHeadLocations[index];
@@ -1345,22 +1345,22 @@ public final class Game extends GameCanvas implements Runnable {
 					if(bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null) {
 						bfcReserve(index);
 					}
-	
+
 					return true;
 				} catch(Exception e) {
 				}
 			}
-	
+
 			return false;
 		}
 	}
-	
+
 	public static final void sSkipBytes(int n) {
 		if(currentReserved) {
 			currentOffsetReserved += n;
 		} else {
 			currentOffset += n;
-	
+
 			try {
 				while(n > 0) {
 					n = (int)((long)n - currentData.skip((long)n));
@@ -1369,7 +1369,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final byte[] sReadBytes(byte[] b, int off, int len) {
 		if(currentReserved) {
 			System.arraycopy(bfcReservedData[currentIndex], currentOffsetReserved, b, off, len);
@@ -1377,20 +1377,20 @@ public final class Game extends GameCanvas implements Runnable {
 			return b;
 		} else {
 			currentOffset += len;
-	
+
 			try {
 				for(int i = 0; len > 0; off += i) {
 					i = currentData.read(b, off, len);
 					len -= i;
 				}
-	
+
 				return b;
 			} catch(Exception e) {
 				return null;
 			}
 		}
 	}
-	
+
 	public static final int sReadU16() {
 		if(currentReserved) {
 			int var0 = (bfcReservedData[currentIndex][currentOffsetReserved] & 0xff) << 8 | bfcReservedData[currentIndex][currentOffsetReserved + 1] & 0xff;
@@ -1398,7 +1398,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return var0;
 		} else {
 			currentOffset += 2;
-	
+
 			try {
 				return currentData.readUnsignedShort();
 			} catch(Exception e) {
@@ -1406,7 +1406,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final short sRead16() {
 		if(currentReserved) {
 			short var0 = (short)(bfcReservedData[currentIndex][currentOffsetReserved] << 8 | bfcReservedData[currentIndex][currentOffsetReserved + 1] & 0xff);
@@ -1414,7 +1414,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return var0;
 		} else {
 			currentOffset += 2;
-	
+
 			try {
 				return currentData.readShort();
 			} catch(Exception e) {
@@ -1422,7 +1422,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final int sReadU8() {
 		if(currentReserved) {
 			int var0 = bfcReservedData[currentIndex][currentOffsetReserved] & 0xff;
@@ -1430,7 +1430,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return var0;
 		} else {
 			currentOffset++;
-	
+
 			try {
 				return currentData.readUnsignedByte();
 			} catch(Exception e) {
@@ -1438,7 +1438,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final byte sRead8() {
 		if(currentReserved) {
 			byte var0 = bfcReservedData[currentIndex][currentOffsetReserved];
@@ -1446,7 +1446,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return var0;
 		} else {
 			currentOffset++;
-	
+
 			try {
 				return currentData.readByte();
 			} catch(Exception e) {
@@ -1454,7 +1454,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final int sRead32() {
 		if(currentReserved) {
 			int var0 = (bfcReservedData[currentIndex][currentOffsetReserved] & 0xff) << 24 | (bfcReservedData[currentIndex][currentOffsetReserved + 1] & 0xff) << 16 | (bfcReservedData[currentIndex][currentOffsetReserved + 2] & 0xff) << 8 | bfcReservedData[currentIndex][currentOffsetReserved + 3] & 0xff;
@@ -1462,7 +1462,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return var0;
 		} else {
 			currentOffset += 4;
-	
+
 			try {
 				return currentData.readInt();
 			} catch(Exception e) {
@@ -1470,7 +1470,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void closeStream() {
 		try {
 			currentData.close();
@@ -1478,20 +1478,20 @@ public final class Game extends GameCanvas implements Runnable {
 			currentLocation = -1;
 		} catch(Exception e) {
 		}
-	
+
 		currentData = null;
 	}
-	
+
 	public static final void setTextTableCrc(short var0) {
 		clearTextTable();
 		Field52 = var0;
 	}
-	
+
 	public static final void clearTextTable() {
 		Field49 = null;
 		Field51 = -1;
 	}
-	
+
 	public static final String[] loadTextTableFromIndex(int var0, int var1) {
 		if(var1 < 0 && var0 == Field51) {
 			return Field49;
@@ -1502,7 +1502,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field49 = null;
 				Field50 = null;
 			}
-	
+
 			loadingBarToggle = var2;
 			int var3 = sReadU8();
 			int var4 = sReadU8();
@@ -1517,7 +1517,7 @@ public final class Game extends GameCanvas implements Runnable {
 					Field49 = new String[var6];
 					Field50 = new byte[var6];
 					Field51 = var0;
-	
+
 					for(int var8 = 0; var8 < var6; var8++) {
 						var7[var8] = sReadU16();
 						sReadU16();
@@ -1526,61 +1526,61 @@ public final class Game extends GameCanvas implements Runnable {
 					if(var1 >= var6) {
 						return Field49;
 					}
-	
+
 					sSkipBytes(var1 * 4);
 					var7[0] = sReadU16();
 					sSkipBytes(sReadU16() + (var6 - var1 - 1) * 4);
 				}
-	
+
 				for(int var12 = 0; var12 < var6; var12++) {
 					int var10002 = var7[var12]--;
 					int var9 = 0;
 					char[] var10 = new char[var7[var12]];
 					if(var3 == 1) {
 						var9 = sReadU8();
-	
+
 						for(int var11 = 0; var11 < var7[var12]; var11++) {
 							var10[var11] = (char)sReadU8();
 						}
 					} else {
 						var9 = sReadU16();
-	
+
 						for(int var14 = 0; var14 < var7[var12]; var14++) {
 							var10[var14] = (char)sReadU16();
 						}
 					}
-	
+
 					String var15 = String.valueOf(var10);
 					if(var1 >= 0) {
 						break;
 					}
-	
+
 					Field50[var12] = (byte)var9;
 					Field49[var12] = var15;
 				}
-	
+
 				return Field49;
 			}
 		}
 	}
-	
+
 	public static final String getText(int var0) {
 		int var1 = var0 >> 16;
 		if(Field51 != var1) {
 			loadTextTableFromIndex(var1, -1);
 		}
-	
+
 		return Field49[var0 & 0xffff];
 	}
-	
+
 	public static final int lp32Mul(int var0, int var1) {
 		return (int)((long)var0 * (long)var1 >> 16);
 	}
-	
+
 	public static final int lp32Div(int var0, int var1) {
 		return (int)(((long)var0 << 16) / (long)var1);
 	}
-	
+
 	public static final int vectorMagnitude(int var0, int var1, int var2) {
 		long var3 = (long)var0;
 		long var5 = (long)var1;
@@ -1588,7 +1588,7 @@ public final class Game extends GameCanvas implements Runnable {
 		var5 = var5 * var5 >> 16;
 		return (int)sqrtGuess(var3 + var5, (long)var2);
 	}
-	
+
 	public static final long sqrtGuess(long var0, long var2) {
 		if(var2 == 0L) {
 			return sqrt(var0);
@@ -1596,34 +1596,34 @@ public final class Game extends GameCanvas implements Runnable {
 			for(int var4 = 0; var4 < 5; var4++) {
 				var2 -= ((var2 * var2 >> 16) - var0 << 16) / (var2 << 2);
 			}
-	
+
 			return var2;
 		}
 	}
-	
+
 	public static final long sqrt(long var0) {
 		long var2 = var0;
 		long var4 = 0L;
 		long var6 = var0;
-	
+
 		for(long var8 = 1L; var6 > 0L; var6 = var2 / var8) {
 			var4 = var8;
 			var8 *= 100L;
 		}
-	
+
 		long var10 = 0L;
-	
+
 		long var15;
 		for(var15 = 0L; var4 > 0L; var4 /= 100L) {
 			var6 = var2 / var4;
-	
+
 			for(long var12 = var10 = 10L * var15; var12 < var10 + 10L && var12 * var12 <= var6; var15 = var12++) {
 			}
 		}
-	
+
 		return var15 << 8;
 	}
-	
+
 	public static final int softkeyPressed(int l, int r) {
 		leftSoftkey = l;
 		rightSoftkey = r;
@@ -1634,7 +1634,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return (heldKeys & 0x1000) > 0 && (heldPrevKeys & 0x1000) == 0 ? r : -1;
 		}
 	}
-	
+
 	public static final int softkeyPressed(int var0, int var1, boolean var2) {
 		leftSoftkey = var0;
 		rightSoftkey = var1;
@@ -1647,21 +1647,21 @@ public final class Game extends GameCanvas implements Runnable {
 			return var2 && var0 >= 0 && (heldKeys & 1) > 0 && (heldPrevKeys & 1) == 0 ? var0 : -1;
 		}
 	}
-	
+
 	public static final void renderSoftkeyIcons() {
 		if(imgsSoftkey != null) {
 			if(leftSoftkey > -1) {
 				gDrawImage(imgsSoftkey[leftSoftkey], 1, 127 - softkeyHeight[leftSoftkey], 0);
 				leftSoftkey = -1;
 			}
-	
+
 			if(rightSoftkey > -1) {
 				gDrawImage(imgsSoftkey[rightSoftkey], 127 - softkeyWidth[rightSoftkey], 127 - softkeyHeight[rightSoftkey], 0);
 				rightSoftkey = -1;
 			}
 		}
 	}
-	
+
 	public static final void initSoftkeyIcons() {
 		freeSoftkeyIcons();
 		imgsSoftkey = new Image[5];
@@ -1670,7 +1670,7 @@ public final class Game extends GameCanvas implements Runnable {
 		leftSoftkey = -1;
 		rightSoftkey = -1;
 	}
-	
+
 	public static final void setSoftkeyIcon(int var0, Image var1) {
 		if(imgsSoftkey != null) {
 			if(var0 >= 0 && var0 < imgsSoftkey.length) {
@@ -1680,13 +1680,13 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void freeSoftkeyIcons() {
 		imgsSoftkey = null;
 		softkeyWidth = null;
 		softkeyHeight = null;
 	}
-	
+
 	public static final void initFonts(int var0) {
 		fontIndexes = new short[var0][];
 		fontAverageWidths = new int[var0];
@@ -1697,7 +1697,7 @@ public final class Game extends GameCanvas implements Runnable {
 		fontChrOffsets = new short[var0][];
 		fontChrWidths = new byte[var0][];
 	}
-	
+
 	public static final void loadFont(int index, short pimCrc, short pplCrc, short cwtCrc, byte spaceWidth, short chrCrc, int spacePerChar, int lineGap) {
 		fontIndexes[index] = new short[230];
 		fontChrWidths[index] = new byte[230];
@@ -1706,14 +1706,14 @@ public final class Game extends GameCanvas implements Runnable {
 		int charNum = charMap.length;
 		fontImages[index] = loadImage(pimCrc, pplCrc);
 		fontChrOffsets[index] = new short[charNum];
-	
+
 		for(short i = 0; i < 230; i++) {
 			fontIndexes[index][i] = -1;
 			fontChrWidths[index][i] = spaceWidth;
 		}
-	
+
 		short curOff = 0;
-	
+
 		for(short i = 0; i < charNum; i++) {
 			int printable = charMap[i] - 30;
 			fontIndexes[index][printable] = i;
@@ -1721,57 +1721,57 @@ public final class Game extends GameCanvas implements Runnable {
 			fontChrOffsets[index][i] = curOff;
 			curOff = (short)(curOff + charWidth[i]);
 		}
-	
+
 		fontHeights[index] = fontImages[index].getHeight() / 1;
 		fontAverageWidths[index] = fontImages[index].getWidth() / charNum;
 		fontSpacesPerChars[index] = spacePerChar;
 		fontLineGaps[index] = lineGap;
 	}
-	
+
 	public static final int calcTextWidth(String var0, int var1) {
 		if(fontChrWidths[var1] == null) {
 			return var0.length() * (fontAverageWidths[var1] + fontSpacesPerChars[var1]) - fontSpacesPerChars[var1];
 		} else {
 			int var2 = 0;
 			int var3 = var0.length();
-	
+
 			for(int var4 = 0; var4 < var3; var4++) {
 				int var5 = var0.charAt(var4) - 30;
 				var2 += fontChrWidths[var1][var5];
 			}
-	
+
 			return var2 + (var3 - 1) * fontSpacesPerChars[var1];
 		}
 	}
-	
+
 	public static final int calcAverageLengthUntilTerminator(int var0, int var1) {
 		return (var0 + fontSpacesPerChars[var1]) / (fontAverageWidths[var1] + fontSpacesPerChars[var1]);
 	}
-	
+
 	public static final int calcLengthUntilTerminator(int var0, int var1, String var2, int var3) {
 		if(fontChrWidths[var1] == null) {
 			return calcAverageLengthUntilTerminator(var0, var1);
 		} else {
 			int var4 = var2.length();
-	
+
 			int var5;
 			for(var5 = var3; var5 < var4; var5++) {
 				int var6;
 				if((var6 = var2.charAt(var5) - 30) < 0) {
 					return var5 - var3 + 1;
 				}
-	
+
 				if((var0 = var0 - fontChrWidths[var1][var6]) < 0) {
 					break;
 				}
-	
+
 				var0 -= fontSpacesPerChars[var1];
 			}
-	
+
 			return var5 - var3;
 		}
 	}
-	
+
 	public static final int[] getNewLineIndexes(int var0, String var1, int var2) {
 		if(fontImages[var2] == null) {
 			return null;
@@ -1786,19 +1786,19 @@ public final class Game extends GameCanvas implements Runnable {
 			if((var11 = var6 / 8) < 10) {
 				var11 = 10;
 			}
-	
+
 			int[] var12 = new int[var11];
 			boolean var13 = false;
 			boolean var14 = true;
 			int var15 = 0;
-	
+
 			while(var7 < var6) {
 				switch(var1.charAt(var7)) {
 					case '\n':
 						if(!var14 && var15 > 0) {
 							var12[var3++] = var7;
 						}
-	
+
 						var15++;
 						var7++;
 						break;
@@ -1809,7 +1809,7 @@ public final class Game extends GameCanvas implements Runnable {
 						var15 = 0;
 						var13 = true;
 				}
-	
+
 				if(var13) {
 					var14 = false;
 					var13 = false;
@@ -1817,113 +1817,113 @@ public final class Game extends GameCanvas implements Runnable {
 					if((var10 = var7 + calcLengthUntilTerminator(var0, var2, var1, var7)) > var6) {
 						var10 = var6;
 					}
-	
+
 					int var16 = -1;
-	
+
 					int var8;
 					for(var8 = var7; var8 < var10; var8++) {
 						if(var1.charAt(var8) == '\n') {
 							var16 = var8;
 							break;
 						}
-	
+
 						if(var1.charAt(var8) == ' ') {
 							var16 = var8;
 						}
 					}
-	
+
 					if(var8 < var6 && var16 > 0 && var1.charAt(var8) != ' ') {
 						var8 = var16;
 					}
-	
+
 					if(var8 >= var5) {
 						var8 = var5;
 						var6 = 0;
 					}
-	
+
 					if(var7 > var8) {
 						var7 = var8;
 					}
-	
+
 					var12[var3++] = var7;
 					var7 = var8;
 				}
 			}
-	
+
 			int[] var18 = new int[var3];
-	
+
 			for(int var17 = 0; var17 < var3; var17++) {
 				var18[var17] = var12[var17];
 			}
-	
+
 			return var18;
 		}
 	}
-	
+
 	public static final void gSetColor(int var0) {
 		gfx.setColor(var0);
 	}
-	
+
 	public static final void gSetColor(int var0, int var1, int var2) {
 		gfx.setColor(var0, var1, var2);
 	}
-	
+
 	public static final int gGetColor() {
 		return gfx.getColor();
 	}
-	
+
 	public static final void gFillRect(int var0, int var1, int var2, int var3) {
 		gfx.fillRect(var0, var1, var2, var3);
 	}
-	
+
 	public static final void gDrawRect(int var0, int var1, int var2, int var3) {
 		gfx.drawRect(var0, var1, var2, var3);
 	}
-	
+
 	public static final void gDrawImage(Image var0, int var1, int var2, int var3) {
 		gfx.drawImage(var0, var1, var2, var3);
 	}
-	
+
 	public static final void gDrawLine(int var0, int var1, int var2, int var3) {
 		gfx.drawLine(var0, var1, var2, var3);
 	}
-	
+
 	public static final void gFillArc(int var0, int var1, int var2, int var3, int var4, int var5) {
 		gfx.fillArc(var0, var1, var2, var3, var4, var5);
 	}
-	
+
 	public static final void gDrawArc(int var0, int var1, int var2, int var3, int var4, int var5) {
 		gfx.drawArc(var0, var1, var2, var3, var4, var5);
 	}
-	
+
 	public static final void gFillTriangle(int var0, int var1, int var2, int var3, int var4, int var5) {
 		gfx.fillTriangle(var0, var1, var2, var3, var4, var5);
 	}
-	
+
 	public static final void gSetClip(int var0, int var1, int var2, int var3) {
 		gfx.setClip(var0, var1, var2, var3);
 	}
-	
+
 	public static final int gGetClipX() {
 		return gfx.getClipX();
 	}
-	
+
 	public static final int gGetClipY() {
 		return gfx.getClipY();
 	}
-	
+
 	public static final int gGetClipWidth() {
 		return gfx.getClipWidth();
 	}
-	
+
 	public static final int gGetClipHeight() {
 		return gfx.getClipHeight();
 	}
-	
+
 	public static final void gfxFlush() {
 		instance.flushGraphics();
 	}
-	
+
 	public static final int renderTextEx(int var0, int var1, int var2, int var3, String var4, int var5, int var6, int var7, boolean var8) {
 		if(fontImages[var5] == null) {
 			return -2;
@@ -1934,14 +1934,14 @@ public final class Game extends GameCanvas implements Runnable {
 			boolean var14 = false;
 			boolean var15 = true;
 			int var16 = 0;
-	
+
 			while(var10 < var9 && var1 < var12) {
 				switch(var4.charAt(var10)) {
 					case '\n':
 						if(!var15 && var16 > 0 && (var1 += fontHeights[var5] + fontLineGaps[var5]) > var12) {
 							return var10;
 						}
-	
+
 						var16++;
 						var10++;
 						break;
@@ -1952,7 +1952,7 @@ public final class Game extends GameCanvas implements Runnable {
 						var16 = 0;
 						var14 = true;
 				}
-	
+
 				if(var14) {
 					var15 = false;
 					var14 = false;
@@ -1960,50 +1960,50 @@ public final class Game extends GameCanvas implements Runnable {
 					if((var13 = var10 + calcLengthUntilTerminator(var2, var5, var4, var10)) > var9) {
 						var13 = var9;
 					}
-	
+
 					int var17 = -1;
-	
+
 					int var11;
 					for(var11 = var10; var11 < var13; var11++) {
 						if(var4.charAt(var11) == '\n') {
 							var17 = var11;
 							break;
 						}
-	
+
 						if(var4.charAt(var11) == ' ') {
 							var17 = var11;
 						}
 					}
-	
+
 					if(var11 < var9 && var17 > 0 && var4.charAt(var11) != ' ') {
 						var11 = var17;
 					}
-	
+
 					if(var11 >= var7) {
 						var11 = var7;
 						var9 = 0;
 					}
-	
+
 					if(var10 > var11) {
 						var10 = var11;
 					}
-	
+
 					String var18 = var4.substring(var10, var11);
 					if(var8) {
 						renderText(var0 + (var2 - calcTextWidth(var18, var5)) / 2, var1, var18, var5);
 					} else {
 						renderText(var0, var1, var18, var5);
 					}
-	
+
 					var1 += fontHeights[var5] + fontLineGaps[var5];
 					var10 = var11;
 				}
 			}
-	
+
 			return var10 < var9 && var4.charAt(var10) != ' ' ? var10 : var10 + 1;
 		}
 	}
-	
+
 	public static final void renderText(int var0, int var1, String var2, int var3) {
 		if(fontImages[var3] != null) {
 			int var4 = gGetClipHeight();
@@ -2015,20 +2015,20 @@ public final class Game extends GameCanvas implements Runnable {
 				if(var0 == -1000) {
 					var0 = (128 - calcTextWidth(var2, var3)) / 2;
 				}
-	
+
 				int var9 = var1;
 				int var10 = fontHeights[var3];
 				if(var7 > var1) {
 					var10 -= var7 - var1;
 					var9 = var7;
 				}
-	
+
 				if(var1 + var10 > var7 + var4) {
 					var10 = var7 + var4 - var9;
 				}
-	
+
 				int var13 = var0;
-	
+
 				for(int var14 = 0; var14 < var8; var14++) {
 					int var15 = var2.charAt(var14) - 30;
 					if(var13 <= 128 && var15 >= 0) {
@@ -2047,7 +2047,7 @@ public final class Game extends GameCanvas implements Runnable {
 							} else {
 								var12 = fontChrWidths[var3][var15];
 							}
-	
+
 							if(var13 + var12 < 0) {
 								if(fontChrWidths[var3] != null) {
 									var13 += fontChrWidths[var3][var15] + fontSpacesPerChars[var3];
@@ -2059,21 +2059,21 @@ public final class Game extends GameCanvas implements Runnable {
 									if(var13 + var12 < var6) {
 										continue;
 									}
-	
+
 									if(var13 > var6 + var5) {
 										break;
 									}
-	
+
 									if(var13 < var6) {
 										var12 -= var6 - var13;
 										var11 = var6;
 									}
-	
+
 									if(var11 + var12 > var6 + var5) {
 										var12 = var6 + var5 - var11;
 									}
 								}
-	
+
 								gSetClip(var11, var9, var12, var10);
 								if(fontChrWidths[var3] != null) {
 									gDrawImage(fontImages[var3], var13 - fontChrOffsets[var3][var16], var1, 0);
@@ -2086,29 +2086,29 @@ public final class Game extends GameCanvas implements Runnable {
 						}
 					}
 				}
-	
+
 				gSetClip(var6, var7, var5, var4);
 			}
 		}
 	}
-	
+
 	public static final void setRandSeed(int seed) {
 		randSeed = (long)seed;
 	}
-	
+
 	public static final int rand8() {
 		randSeed = randSeed * 0x5deece66dL + 11L & 0xffffffffffffL;
 		return (int)(randSeed >>> 40);
 	}
-	
+
 	public static final int rand16() {
 		randSeed = randSeed * 0x5deece66dL + 11L & 0xffffffffffffL;
 		return (int)(randSeed >>> 32);
 	}
-	
+
 	public static final void start() {
 		loadGeneral();
-	
+
 		do {
 			if(paused) {
 				pauseScreenOnce();
@@ -2128,17 +2128,17 @@ public final class Game extends GameCanvas implements Runnable {
 				execState(curScreenIndex, 1);
 			}
 		} while(curScreenIndex != -1);
-	
+
 		queueAllSoundsForCleanup();
 		queueSoundCleanup();
 	}
-	
+
 	public static final void setNewState(int state, int arg) {
 		newStateIndex = state;
 		stateArg = arg;
 		isNewState = true;
 	}
-	
+
 	// res: 0 - init, 1 - run, 2 - free
 	public static final void execState(int state, int res) {
 		if(state >= 0) {
@@ -2265,21 +2265,21 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void setDisplay(Display dpy) {
 		Game.dpy = dpy;
 	}
-	
+
 	public static final void vibrate(int duration) {
 		if(vibration) {
 			dpy.vibrate(duration);
 		}
 	}
-	
+
 	public static final long millis() {
 		return System.currentTimeMillis();
 	}
-	
+
 	public static final void initConfetti() {
 		confettiColors = new int[40];
 		confettiHeights = new int[40];
@@ -2288,7 +2288,7 @@ public final class Game extends GameCanvas implements Runnable {
 		confettiY = new int[40];
 		confettiWidths = new int[40];
 	}
-	
+
 	public static final void renderConfetti() {
 		for(int var0 = 0; var0 < 40; var0++) {
 			if(confettiColors[var0] == 0 || confettiY[var0] > 128) {
@@ -2299,7 +2299,7 @@ public final class Game extends GameCanvas implements Runnable {
 				confettiWidths[var0] = 8 + rand8() % 7;
 				confettiAngles[var0] = rand8();
 			}
-	
+
 			int[] var10000 = confettiY;
 			var10000[var0] += (1 + rand8() % 5) * 128 / 176;
 			var10000 = confettiX;
@@ -2310,24 +2310,24 @@ public final class Game extends GameCanvas implements Runnable {
 				confettiHeights[var0] = 0;
 				confettiColors[var0] = confettiColorsAll[rand8() % confettiColorsAll.length];
 			}
-	
+
 			var10000 = confettiAngles;
 			var10000[var0] += 3 + var0 % 2;
 			if(confettiAngles[var0] >= 360) {
 				var10000 = confettiAngles;
 				var10000[var0] -= 360;
 			}
-	
+
 			int var1 = confettiHeights[var0] / 4;
 			if(confettiHeights[var0] >= 20) {
 				var1 = (40 - confettiHeights[var0]) / 4;
 			}
-	
+
 			gSetColor(confettiColors[var0]);
 			gFillRect(confettiX[var0], confettiY[var0], confettiWidths[var0] * 128 / 176, var1 * 128 / 176);
 		}
 	}
-	
+
 	public static final void renderCritterShock(int var0, int var1, int var2, int var3, int var4, int var5) {
 		int var11 = (var2 - var0) / 7;
 		int var12 = (var3 - var1) / 7;
@@ -2335,7 +2335,7 @@ public final class Game extends GameCanvas implements Runnable {
 		boolean var14 = false;
 		boolean var15 = false;
 		boolean var16 = false;
-	
+
 		for(int var17 = 0; var17 < 2; var17++) {
 			int var8 = var0;
 			int var9 = var1;
@@ -2345,7 +2345,7 @@ public final class Game extends GameCanvas implements Runnable {
 			} else {
 				gSetColor(var10, var10, 255);
 			}
-	
+
 			for(int var18 = 1; var18 < var4; var18++) {
 				int var6 = var8;
 				int var7 = var9;
@@ -2355,26 +2355,26 @@ public final class Game extends GameCanvas implements Runnable {
 					var8 = var2;
 					var9 = var3;
 				}
-	
+
 				gDrawLine(var6, var7, var8, var9);
 			}
 		}
 	}
-	
+
 	public static final void renderRain() {
 		if(rainX == null) {
 			rainX = new int[8];
 			rainY = new int[8];
 		}
-	
+
 		gSetColor(0xc8c8c8);
-	
+
 		for(int var0 = 0; var0 < 8; var0++) {
 			if(rainY[var0] > 128 || rainX[var0] == 0 && rainY[var0] == 0) {
 				rainX[var0] = rand16() % 149;
 				rainY[var0] = rand16() % 21;
 			}
-	
+
 			gDrawLine(rainX[var0], rainY[var0], rainX[var0] + -3, rainY[var0] + 10);
 			int[] var10000 = rainX;
 			var10000[var0] += -9;
@@ -2382,19 +2382,19 @@ public final class Game extends GameCanvas implements Runnable {
 			var10000[var0] += 30;
 		}
 	}
-	
+
 	public static final void levelRenderVolcanicDust() {
 		if(Field84 == null) {
 			Field84 = new int[10];
 			Field85 = new int[10];
 			Field86 = new int[10];
 		}
-	
+
 		gSetColor(0xffffff);
 		if(levelBackgroundID == 0) {
 			gSetColor(0);
 		}
-	
+
 		for(int var0 = 0; var0 < 10; var0++) {
 			if(Field85[var0] > 128 || Field84[var0] == 0 && Field85[var0] == 0) {
 				if(Field84[var0] == 0 && Field85[var0] == 0) {
@@ -2402,11 +2402,11 @@ public final class Game extends GameCanvas implements Runnable {
 				} else {
 					Field85[var0] = -(rand16() % 10);
 				}
-	
+
 				Field84[var0] = rand16() % 128;
 				Field86[var0] = rand16() % 360;
 			}
-	
+
 			gDrawLine(Field84[var0] - 1, Field85[var0], Field84[var0] + 1, Field85[var0]);
 			gDrawLine(Field84[var0], Field85[var0] - 1, Field84[var0], Field85[var0] + 1);
 			int[] var10000 = Field84;
@@ -2421,7 +2421,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void initSpace(int var0, int var1, int var2, int var3) {
 		if(currentSpaceWidth != var2 || currentSpaceHeight != var3 || spaceStarX == null || spaceStarX.length != var0 || spaceStarX[0].length != var1) {
 			currentSpaceWidth = var2;
@@ -2430,13 +2430,13 @@ public final class Game extends GameCanvas implements Runnable {
 			spaceStarY = new int[var0][];
 			spaceStarXVel = new int[var0][];
 			Field90 = new int[var0][];
-	
+
 			for(int var4 = 0; var4 < var0; var4++) {
 				spaceStarX[var4] = new int[var1];
 				spaceStarY[var4] = new int[var1];
 				spaceStarXVel[var4] = new int[var1];
 				Field90[var4] = new int[var1];
-	
+
 				for(int var5 = 0; var5 < var1; var5++) {
 					spaceStarX[var4][var5] = rand16() % var2 << 4;
 					spaceStarY[var4][var5] = rand16() % var3 << 4;
@@ -2446,15 +2446,15 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void renderSpace(int var0, int var1, int var2) {
 		renderSpace(var0, var1, var2, true);
 	}
-	
+
 	public static final void renderSpace(int var0, int var1, int var2, boolean var3) {
 		if(var0 >= 0 && var0 < spaceStarX.length) {
 			Field90[var0][rand16() % Field90[var0].length] = 9;
-	
+
 			for(int var7 = 0; var7 < spaceStarX[var0].length; var7++) {
 				int var5;
 				int var6;
@@ -2463,12 +2463,12 @@ public final class Game extends GameCanvas implements Runnable {
 					var5 = 0;
 					var4 = 0;
 				}
-	
+
 				if(var7 % 3 == 2) {
 					var6 = 0;
 					var5 = 0;
 				}
-	
+
 				gSetColor(var4, var5, var6);
 				if(Field90[var0][var7] > 0) {
 					int var10002 = Field90[var0][var7]--;
@@ -2478,7 +2478,7 @@ public final class Game extends GameCanvas implements Runnable {
 						gSetColor(0xffffff);
 					}
 				}
-	
+
 				renderStar(var1 + (spaceStarX[var0][var7] >> 4), var2 + (spaceStarY[var0][var7] >> 4));
 				if(var3) {
 					int[] var10000 = spaceStarX[var0];
@@ -2492,7 +2492,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void renderStar(int x, int y) {
 		gDrawLine(x, y, x, y);
 		int col = gGetColor();
@@ -2502,47 +2502,47 @@ public final class Game extends GameCanvas implements Runnable {
 		gDrawLine(x - 1, y, x - 1, y);
 		gDrawLine(x + 1, y, x + 1, y);
 	}
-	
+
 	public static final void sceneHelpRun() {
 		renderHelp();
 		if(softkeyPressed(2, -1) == 2) {
 			setNewState(2, 0);
 		}
-	
+
 		if(isKeyHeld(0x40)) {
 			sceneHelpScrollAccel -= (400 + sceneHelpScrollAccel) / 6;
 			sceneHelpAutoscrollActive = false;
 		}
-	
+
 		if(isKeyHeld(0x20)) {
 			sceneHelpScrollAccel += (400 - sceneHelpScrollAccel) / 6;
 			sceneHelpAutoscrollActive = false;
 		}
-	
+
 		sceneHelpScrollAccel = sceneHelpScrollAccel * 95 / 100;
 		if(sceneHelpAutoscrollActive) {
 			sceneHelpScrollAccel = -0xff;
 		}
-	
+
 		sceneHelpScrollDistance += sceneHelpScrollAccel;
 		if(sceneHelpScrollDistance > 0x8000) {
 			sceneHelpScrollDistance = 0x8000;
 		}
-	
+
 		if(sceneHelpScrollDistance < -(sceneHelpText.length * 14 << 8)) {
 			sceneHelpScrollDistance = -(sceneHelpText.length * 14 << 8);
 		}
-	
+
 		sceneHelpScroll++;
 		refreshGame();
 	}
-	
+
 	public static final void renderHelp() {
 		gSetColor(0);
 		gFillRect(0, 0, 128, 128);
 		renderSpace(0, 0, 0, true);
 		int var0 = sceneHelpScrollDistance >> 8;
-	
+
 		for(int var1 = 0; var1 < sceneHelpText.length; var1++) {
 			if(var0 > -14 && var0 < 128) {
 				int var2 = 0;
@@ -2551,45 +2551,45 @@ public final class Game extends GameCanvas implements Runnable {
 				} else if(var0 > 85) {
 					var2 = 90 - (128 - var0) * 90 * 3 / 128;
 				}
-	
+
 				int var3 = 5 + sin(var2) * 128 / 2600;
 				renderText(var3, var0, sceneHelpText[var1], 2);
 			}
-	
+
 			var0 += 14;
 		}
-	
+
 		gDrawImage(imgSceneHelpScrollbar[0], 120, 43 - (sceneHelpScroll >> 2 & 3), 0);
 		gDrawImage(imgSceneHelpScrollbar[1], 118, 46 - ((sceneHelpScrollDistance >> 8) - 128) * 39 / (sceneHelpText.length * 14), 0);
 		gDrawImage(imgSceneHelpScrollbar[2], 120, 92 + (sceneHelpScroll >> 2 & 3), 0);
 	}
-	
+
 	public static final void sceneHelpInit(int var0) {
 		if(imgSceneHelpScrollbar == null) {
 			imgSceneHelpScrollbar = new Image[3];
-	
+
 			for(int var1 = 0; var1 < 3; var1++) {
 				imgSceneHelpScrollbar[var1] = loadImage("scrollBar" + var1 + ".pim", "scrollBar" + var1 + ".ppl");
 			}
 		}
-	
+
 		initSpace(1, 50, 128, 128);
 		if(sceneHelpText == null) {
 			sceneHelpText = strSplitLines(getText(0x30000), 2);
 		}
-	
+
 		sceneHelpScrollDistance = 0x8000;
 		sceneHelpScrollAccel = 0;
 		sceneHelpAutoscrollActive = true;
 		sceneHelpScroll = 0;
 		playSound(-1);
 	}
-	
+
 	public static final void sceneHelpFree() {
 		playSound(-1);
 		garbageCollector();
 	}
-	
+
 	public static final void scenePreLevelRun() {
 		gSetColor(0);
 		gFillRect(0, 0, 128, 128);
@@ -2598,30 +2598,30 @@ public final class Game extends GameCanvas implements Runnable {
 			gDrawImage(imgShipSmall, scenePreLevelSmallShipX, scenePreLevelSmallShipY, 0);
 			scenePreLevelSmallShipX -= 2;
 		}
-	
+
 		gDrawImage(imgCurrentPlanet, 0, 128 - imgCurrentPlanet.getHeight(), 0);
 		if(scenePreLevelShipX < 128) {
 			gDrawImage(imgOutside, scenePreLevelShipX, scenePreLevelShipY, 0);
 			gDrawImage(imgsFlame[(int)(millis() / 100L % 2L)], scenePreLevelShipX + 7 - 10, scenePreLevelShipY + 16 - 3, 0);
 			scenePreLevelShipX += 5;
 		}
-	
+
 		if(scenePreLevelCurTick > 50) {
 			renderText(-1000, 85, currentPlanetText, 0);
 		}
-	
+
 		if(scenePreLevelCurTick > 120 && (millis() & 512L) > 0L) {
 			renderText(-1000, 114, titleText, 0);
 		}
-	
+
 		if(scenePreLevelCurTick < 120 && softkeyPressed(-1, 3) == 3 || scenePreLevelCurTick > 120 && softkeyPressed(2, -1, true) == 2) {
 			setNewState(4, 0);
 		}
-	
+
 		scenePreLevelCurTick++;
 		refreshGame();
 	}
-	
+
 	public static final void scenePreLevelInit(int var0) {
 		playSound(-1);
 		activateLevel(level);
@@ -2636,7 +2636,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if(scenePreLevelSmallShipY < 32) {
 			scenePreLevelSmallShipY = 32;
 		}
-	
+
 		scenePreLevelShipX = -61;
 		scenePreLevelShipY = 70;
 		if(imgsFlame == null) {
@@ -2644,16 +2644,16 @@ public final class Game extends GameCanvas implements Runnable {
 			imgsFlame[0] = loadImage("flame0.pim", "flame0.ppl");
 			imgsFlame[1] = loadImage("flame1.pim", "flame1.ppl");
 		}
-	
+
 		if(titleText == null) {
 			titleText = getText(0x1000f);
 		}
-	
+
 		initSpace(1, 50, 128, 128);
 		playJingleFlyIn();
 		scenePreLevelCurTick = 0;
 	}
-	
+
 	public static final void scenePreLevelFree() {
 		playSound(-1);
 		clearKeys();
@@ -2662,7 +2662,7 @@ public final class Game extends GameCanvas implements Runnable {
 		imgShipSmall = null;
 		garbageCollector();
 	}
-	
+
 	public static final void sceneLevelRun() {
 		switch(levelCompletionState) {
 			case 0:
@@ -2683,12 +2683,12 @@ public final class Game extends GameCanvas implements Runnable {
 			case 3:
 				setNewState(2, 10);
 		}
-	
+
 		if(Field391) {
 			setNewState(2, 0);
 		}
 	}
-	
+
 	public static final void sceneLevelInit(int var0) {
 		Field427 = false;
 		if(oldScreenIndex != 5 && var0 != 1) {
@@ -2702,26 +2702,26 @@ public final class Game extends GameCanvas implements Runnable {
 			Field391 = false;
 			isLevelComplete = false;
 		}
-	
+
 		gamma = 100;
 		if(oldScreenIndex != 5 && oldScreenIndex != 6) {
 			playCurrentBackgroundMusic();
 		}
 	}
-	
+
 	public static final void sceneLevelFree() {
 		if(isLevelComplete) {
 			level++;
 			saveRecordData();
 			isLevelComplete = false;
 		}
-	
+
 		if(newStateIndex != 5 && newStateIndex != 6) {
 			playSound(-1);
 			garbageCollector();
 		}
 	}
-	
+
 	public static final void sceneSplashRun() {
 		gSetColor(0xffffff);
 		gFillRect(0, 0, 128, 128);
@@ -2756,14 +2756,14 @@ public final class Game extends GameCanvas implements Runnable {
 					ttlScrLogoY -= (ttlScrTick - 20) / 8;
 					gDrawImage(imgCenterLogo, 15, 19, 0);
 				}
-	
+
 				gDrawImage(imgPmRocket, x, y, 0);
 				if(x > 158) {
 					ttlScrDuration = 0L;
 				} else {
 					ttlScrDuration = millis() + 2000L;
 				}
-	
+
 				ttlScrTick++;
 				break;
 
@@ -2772,7 +2772,7 @@ public final class Game extends GameCanvas implements Runnable {
 				int[] var2 = new int[] {0, 0xffffff, 0, 0xffffff, 0x3aaec7};
 				int[] var3 = new int[] {54, 54, 37, 37, 18};
 				int[] var4 = new int[] {0, -10, -5, 2, 0};
-	
+
 				for(int var5 = 0; var5 < 5; var5++) {
 					gSetColor(var2[var5]);
 					int var6 = sin1000[ttlScrTick * 2] * var4[var5] / 1000;
@@ -2783,14 +2783,14 @@ public final class Game extends GameCanvas implements Runnable {
 						gFillArc(64 + var6 - var7 / 2 - 1, 64 - var7 / 2, var7, var7, 80, 200);
 					}
 				}
-	
+
 				gDrawImage(imgPmRocket, ttlScrLogoX, ttlScrLogoY, 0);
 				ttlScrLogoX += 4;
 				ttlScrLogoY -= 4;
 				if(ttlScrTick > 45) {
 					ttlScrDuration = 0L;
 				}
-	
+
 				ttlScrTick++;
 				break;
 
@@ -2798,14 +2798,14 @@ public final class Game extends GameCanvas implements Runnable {
 			case 5:
 				gDrawImage(imgCenterLogo, 19, 18, 0);
 		}
-	
+
 		if(millis() > ttlScrDuration || isKeyReleased(1)) {
 			setNewState(1, ttlScr + 1);
 		}
-	
+
 		refreshGame();
 	}
-	
+
 	public static final void sceneSplashInit(int screen) {
 		ttlScr = screen;
 		switch(screen) {
@@ -2830,11 +2830,11 @@ public final class Game extends GameCanvas implements Runnable {
 				if(imgCenterLogo == null) {
 					imgCenterLogo = loadImage("pmback.pim", "pmback.ppl");
 				}
-	
+
 				if(imgPmRocket == null) {
 					imgPmRocket = loadImage("pmrocket.pim", "pmrocket.ppl");
 				}
-	
+
 				ttlScrLogoX = 42;
 				ttlScrLogoY = 20;
 				ttlScrTick = 0;
@@ -2860,7 +2860,7 @@ public final class Game extends GameCanvas implements Runnable {
 				loadingBarToggle = true;
 		}
 	}
-	
+
 	public static final void sceneSplashFree() {
 		switch(ttlScr) {
 			case 0:
@@ -2883,10 +2883,10 @@ public final class Game extends GameCanvas implements Runnable {
 				imgEidosLegalLine = null;
 				imgPmRocket = null;
 		}
-	
+
 		garbageCollector();
 	}
-	
+
 	public static final void sceneShipRun() {
 		if(Field393) {
 			renderBeamAnimation(Field123);
@@ -2935,19 +2935,19 @@ public final class Game extends GameCanvas implements Runnable {
 					setNewState(4, 0);
 					swapLevelData(1);
 			}
-	
+
 			shipNextOp = 0;
 		} else {
 			if(levelPlayerOnCircle && levelCircleY[0] > 0x960000 && Field120 > 0) {
 				shipNextOp = processMainMenuDialogue(Field120, Field427);
 				Field120 = 0;
 			}
-	
+
 			if(!Field393) {
 				updateLevel();
 				updatePlayerControls();
 			}
-	
+
 			if(levelShipTouchedIconIndex > 0) {
 				if(levelShipTouchedIconIndex == Field119) {
 					levelShipTouchedIconIndex = 0;
@@ -2955,15 +2955,15 @@ public final class Game extends GameCanvas implements Runnable {
 					Field119 = levelShipTouchedIconIndex;
 				}
 			}
-	
+
 			if(levelPlayerOnCircle) {
 				Field119 = 0;
 			}
-	
+
 			if(levelShipTouchedIconIndex > 0) {
 				Field120 = levelShipTouchedIconIndex;
 			}
-	
+
 			levelShipTouchedIconIndex = 0;
 			levelSetCamera(levelCircleX[0], levelHeight / 2, 0);
 			levelSetPlayerPos(levelCircleX[6], levelCircleY[6], 6, 0x140000);
@@ -2971,7 +2971,7 @@ public final class Game extends GameCanvas implements Runnable {
 			refreshGame();
 		}
 	}
-	
+
 	public static final void sceneShipInit(int var0) {
 		loadRecordData();
 		if(level >= 25) {
@@ -2983,12 +2983,12 @@ public final class Game extends GameCanvas implements Runnable {
 			if(activeSwapKey != 0) {
 				initShip();
 			}
-	
+
 			if(showControlsGuide) {
 				showControlsGuide = false;
 				startDialogue("intro0controls.bms", levelCircleX[0], levelCircleY[0]);
 			}
-	
+
 			dialogueIsAwaitingLevelStart = false;
 			if(var0 == 10) {
 				if(Field393) {
@@ -3006,7 +3006,7 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 				}
 			}
-	
+
 			levelShipTouchedIconIndex = 0;
 			Field404 = true;
 			initSpace(2, 12, 92, 46);
@@ -3016,20 +3016,20 @@ public final class Game extends GameCanvas implements Runnable {
 				textTableShip = loadTextTableFromIndex(6, -1);
 				textTableShipPause = loadTextTableFromIndex(7, -1);
 			}
-	
+
 			if(!Field427) {
 				playSound(2);
 			}
 		}
 	}
-	
+
 	public static final void sceneShipFree() {
 		if(newStateIndex != 5) {
 			playSound(-1);
 			garbageCollector();
 		}
 	}
-	
+
 	public static final void sceneDialogueRun() {
 		long var0 = millis();
 		if(!Field136) {
@@ -3045,27 +3045,27 @@ public final class Game extends GameCanvas implements Runnable {
 					dialogueIsCameraMoving = false;
 				}
 			}
-	
+
 			if(Field133 != 0L && Field133 < var0) {
 				Field133 = 0L;
 			}
-	
+
 			if(Field135 && isKeyPressed(1)) {
 				Field135 = false;
 			}
-	
+
 			if(Field134 && Field387) {
 				Field134 = false;
 			}
 		}
-	
+
 		switch(dialogueEnvironment) {
 			case 0:
 				renderShipInside();
 				if(Field143 && !Field427) {
 					renderPlayable(6, 0xc80000, true);
 				}
-	
+
 				renderPlayable(0, 0xff, true);
 				renderShipDecor(decorForeground);
 				break;
@@ -3074,7 +3074,7 @@ public final class Game extends GameCanvas implements Runnable {
 					Field132 += (72000 - Field132) / 10;
 					levelCameraZoom = Field132 / 1000;
 				}
-	
+
 				if(levelPlayerAngle < 180) {
 					levelPlayerAngle = levelPlayerAngle * 90 / 100;
 				} else {
@@ -3082,7 +3082,7 @@ public final class Game extends GameCanvas implements Runnable {
 					levelPlayerAngle = levelPlayerAngle * 90 / 100;
 					levelPlayerAngle += 360;
 				}
-	
+
 				levelRender(true);
 			case 2:
 			default:
@@ -3096,39 +3096,39 @@ public final class Game extends GameCanvas implements Runnable {
 			case 5:
 				renderPingTransmission();
 		}
-	
+
 		if(showBlackBars) {
 			boolean var2 = false;
 			gSetColor(0);
 			gFillRect(0, 0, 128, 12);
 			gFillRect(0, 116, 128, 17);
 		}
-	
+
 		renderDialogueBox();
 		if(Field127) {
 			int var3 = softkeyPressed(2, 4);
 			if(var3 >= 0) {
 				for(mustResetData = var3 == 2; currentDialogueIndex < currentDialogue.length; currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, true)) {
 				}
-	
+
 				Field136 = false;
 			}
 		} else if(Field135 && softkeyPressed(2, 3) == 3 || !Field135 && softkeyPressed(-1, 3) == 3) {
 			while(currentDialogueIndex < currentDialogue.length) {
 				currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, true);
 			}
-	
+
 			Field136 = false;
 			setNewState(6, 100 + stateBeforeDialogue);
 			return;
 		}
-	
+
 		refreshGame();
 		if(currentDialogueIndex >= currentDialogue.length && !Field136) {
 			setNewState(stateBeforeDialogue, 0);
 		}
 	}
-	
+
 	public static final void sceneDialogueInit(int var0) {
 		Field132 = levelCameraZoom * 1000;
 		if(currentDialogue == null) {
@@ -3145,7 +3145,7 @@ public final class Game extends GameCanvas implements Runnable {
 			} else {
 				dialogueEnvironment = 1;
 			}
-	
+
 			resetDialogue();
 			loadEyes();
 			loadFacesIcons();
@@ -3158,7 +3158,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field131 = false;
 		}
 	}
-	
+
 	public static final void sceneDialogueFree() {
 		if(!Field131 || currentDialogueIndex >= currentDialogue.length) {
 			Field131 = false;
@@ -3168,7 +3168,7 @@ public final class Game extends GameCanvas implements Runnable {
 			resetDialogue();
 		}
 	}
-	
+
 	public static final void resetDialogue() {
 		showBlackBars = false;
 		shipAlarmRadius = 0;
@@ -3176,11 +3176,11 @@ public final class Game extends GameCanvas implements Runnable {
 		currentMouthState[0] = 0;
 		currentMouthState[1] = 0;
 	}
-	
+
 	public static final void startDialogue(String var0, int var1, int var2) {
 		startDialogue(var0, var1, var2, false);
 	}
-	
+
 	public static final void startDialogue(String var0, int var1, int var2, boolean var3) {
 		loadingBarToggle = false;
 		int[] var4 = loadFile32(var0);
@@ -3189,7 +3189,7 @@ public final class Game extends GameCanvas implements Runnable {
 			startDialogue(var4, var1, var2, var3);
 		}
 	}
-	
+
 	public static final void levelDisplayDialogue(int var0) {
 		if(levelPlayerHealth > 0) {
 			int var1 = levelCircleType[var0] - 10;
@@ -3197,7 +3197,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelCircleFlags[var0] = 0;
 		}
 	}
-	
+
 	public static final void startDialogue(int[] var0, int var1, int var2, boolean var3) {
 		dialogueOriginX = var1;
 		dialogueOriginY = var2;
@@ -3206,7 +3206,7 @@ public final class Game extends GameCanvas implements Runnable {
 		hideDialogueBox();
 		setNewState(5, 0);
 	}
-	
+
 	public static final int executeDialogScript(int[] var0, int var1, boolean var2) {
 		while(var1 < var0.length) {
 			switch(var0[var1]) {
@@ -3227,15 +3227,15 @@ public final class Game extends GameCanvas implements Runnable {
 						if(var0[var1 + 1] == 6) {
 							spaceMapSetCameraToBeacon();
 						}
-	
+
 						if(var0[var1 + 1] == 5) {
 							spaceMapSetCameraInstant(0, 0);
 						}
-	
+
 						var1 += 2;
 						break;
 					}
-	
+
 					switch(var0[var1 + 1]) {
 						case 0:
 							levelCameraTargetX = levelCircleX[0];
@@ -3250,7 +3250,7 @@ public final class Game extends GameCanvas implements Runnable {
 								levelCameraTargetX = levelCircleX[0];
 								levelCameraTargetY = levelCircleY[0];
 							}
-	
+
 							var1 += 2;
 							break;
 						case 5:
@@ -3263,7 +3263,7 @@ public final class Game extends GameCanvas implements Runnable {
 							levelCameraTargetY = var0[var1 + 2] << 16;
 							var1 += 3;
 					}
-	
+
 					levelSetCamera(levelCameraTargetX, levelCameraTargetY, 0);
 					break;
 				case 4:
@@ -3272,16 +3272,16 @@ public final class Game extends GameCanvas implements Runnable {
 						if(var0[var1 + 1] == 6) {
 							spaceMapSetTargetCameraToBeacon();
 						}
-	
+
 						if(var0[var1 + 1] == 5) {
 							spaceMapSetTargetCamera(0, 0);
 						}
-	
+
 						var1 += 2;
 						Field136 = true;
 						break;
 					}
-	
+
 					switch(var0[var1 + 1]) {
 						case 0:
 							levelCameraTargetX = levelCircleX[0];
@@ -3296,7 +3296,7 @@ public final class Game extends GameCanvas implements Runnable {
 								levelCameraTargetX = levelCircleX[0];
 								levelCameraTargetY = levelCircleY[0];
 							}
-	
+
 							var1 += 2;
 							break;
 						case 5:
@@ -3309,7 +3309,7 @@ public final class Game extends GameCanvas implements Runnable {
 							levelCameraTargetY = var0[var1 + 2] << 16;
 							var1 += 3;
 					}
-	
+
 					Field136 = true;
 					break;
 				case 5:
@@ -3323,7 +3323,7 @@ public final class Game extends GameCanvas implements Runnable {
 					if(dialogueSfx[var0[var1 + 2]] != -1 && !var2) {
 						playSound(dialogueSfx[var0[var1 + 2]], 1);
 					}
-	
+
 					var1 += 3;
 					break;
 				case 7:
@@ -3337,7 +3337,7 @@ public final class Game extends GameCanvas implements Runnable {
 							levelSetPlayerPos(levelAlignToGameMirror(var0[var1 + 2] << 16), var0[var1 + 3] << 16, 6, 0x140000);
 						}
 					}
-	
+
 					var1 += 4;
 					break;
 				case 8:
@@ -3347,7 +3347,7 @@ public final class Game extends GameCanvas implements Runnable {
 						var1 += 2;
 						return var1;
 					}
-	
+
 					var1 += 2;
 					break;
 				case 9:
@@ -3377,7 +3377,7 @@ public final class Game extends GameCanvas implements Runnable {
 						case 4:
 							initSpace(1, 50, 128, 128);
 					}
-	
+
 					var1 += 2;
 					break;
 				case 10:
@@ -3393,11 +3393,11 @@ public final class Game extends GameCanvas implements Runnable {
 					if(dialogueEnvironment == 3) {
 						spaceMapBeaconRadius = var0[var1 + 1] == 1 ? 1 : 0;
 					}
-	
+
 					if(dialogueEnvironment == 0) {
 						shipAlarmRadius = var0[var1 + 1] == 1 ? 1 : 0;
 					}
-	
+
 					var1 += 2;
 					break;
 				case 13:
@@ -3406,7 +3406,7 @@ public final class Game extends GameCanvas implements Runnable {
 					} else {
 						Field439 = var0[var1 + 2] == 1;
 					}
-	
+
 					var1 += 3;
 					break;
 				case 14:
@@ -3432,10 +3432,10 @@ public final class Game extends GameCanvas implements Runnable {
 					var1 += 2;
 			}
 		}
-	
+
 		return var1;
 	}
-	
+
 	public static final void sceneSelectionRun() {
 		int select = getSelectedIndex();
 		if(select >= 0) {
@@ -3446,30 +3446,30 @@ public final class Game extends GameCanvas implements Runnable {
 				setNewState(0, 1);
 				return;
 			}
-	
+
 			audio = select == 1 || select == 3;
 			loadAllSounds();
 			setNewState(1, 0);
 		}
 	}
-	
+
 	public static final void sceneSelectionInit(int var0) {
 		gamma = 100;
 		sceneStartupState = var0;
 		if(sceneStartupState == 0) {
 			loadSelectionOptions(new String[] {"flag_uk", "flag_france", "flag_germany", "flag_spain", "flag_italy"}, language);
 		}
-	
+
 		if(sceneStartupState == 1) {
 			loadSelectionOptions(new String[] {"audio_off", "audio_on", "audio_off", "audio_on"}, 0);
 		}
 	}
-	
+
 	public static final void sceneSelectionFree() {
 		gamma = 100;
 		sceneSelectionCleanup();
 	}
-	
+
 	public static final void sceneMainMenuRun() {
 		gSetColor(0);
 		gFillRect(0, 0, 128, 128);
@@ -3477,23 +3477,23 @@ public final class Game extends GameCanvas implements Runnable {
 		if(imgGamelogoTop != null) {
 			gDrawImage(imgGamelogoTop, 17, 0, 0);
 		}
-	
+
 		if(imgGamelogoBottom != null) {
 			gDrawImage(imgGamelogoBottom, 24, 55, 0);
 		}
-	
+
 		if((millis() & 512L) > 0L) {
 			renderText(-1000, 114, titleText, 0);
 		}
-	
+
 		if(softkeyPressed(2, -1, true) == 2) {
 			isPastSplash = true;
 			setNewState(6, 2);
 		}
-	
+
 		refreshGame();
 	}
-	
+
 	public static final void sceneMainMenuInit(int var0) {
 		if(isPastSplash) {
 			isPastSplash = false;
@@ -3502,7 +3502,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if(titleText == null) {
 				titleText = getText(0x1000f);
 			}
-	
+
 			imgGamelogoTop = loadImage("gamelogo.pim", "gamelogo.ppl");
 			imgGamelogoBottom = loadImage("gamelogo2.pim", "gamelogo2.ppl");
 			initSpace(1, 50, 128, 128);
@@ -3510,31 +3510,31 @@ public final class Game extends GameCanvas implements Runnable {
 			Field393 = false;
 		}
 	}
-	
+
 	public static final void sceneMainMenuFree() {
 		imgGamelogoTop = null;
 		imgGamelogoBottom = null;
 		garbageCollector();
 		playSound(-1);
 	}
-	
+
 	public static final void sceneTransitionRun() {
 		refreshGame();
 	}
-	
+
 	public static final void _updateTransition() {
 		if(!Field154) {
 			if(sceneTransitionStartMs == -1L) {
 				sceneTransitionStartMs = millis();
 			}
-	
+
 			int var0 = (int)(millis() - sceneTransitionStartMs);
 			int var1 = Field155 + var0 * 1000 / Field152;
 			if(Field155 == 0 && var1 > 1000) {
 				var1 = 1000;
 				setNewState(sceneTransitionNextState, 1);
 			}
-	
+
 			if(var1 > 2000) {
 				Field154 = true;
 			} else {
@@ -3549,7 +3549,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void sceneTransitionInit(int var0) {
 		Field155 = 0;
 		Field154 = false;
@@ -3560,23 +3560,23 @@ public final class Game extends GameCanvas implements Runnable {
 			sceneTransitionNextState = var0 - 100;
 			var0 = 2;
 		}
-	
+
 		sceneTransitionType = var0;
 		Field152 = 250;
 		if(var0 == 2) {
 			Field152 = 150;
 		}
-	
+
 		if(sceneTransitionNextState == 6) {
 			sceneTransitionNextState = var1;
 		}
 	}
-	
+
 	public static final void sceneTransitionFree() {
 		Field155 = 1000;
 		sceneTransitionStartMs = -1L;
 	}
-	
+
 	public static final void fillScreenBlack(int var0) {
 		int var1 = gGetColor();
 		gSetColor(0);
@@ -3584,7 +3584,7 @@ public final class Game extends GameCanvas implements Runnable {
 		gFillRect(0, 0, 128, 128);
 		gSetColor(var1);
 	}
-	
+
 	public static final void renderTransition(int var0) {
 		int var1 = var0 * 128 / 1000;
 		int var2 = gGetColor();
@@ -3594,7 +3594,7 @@ public final class Game extends GameCanvas implements Runnable {
 		int var3 = var1 + 1;
 		if(var0 > 1000) {
 			var3 = 129;
-	
+
 			for(int var4 = 6; var4 > 0; var4--) {
 				gFillRect(var1 - var3 - var4, 0, var4, 128);
 				var3 += var4 + (8 - var4);
@@ -3605,42 +3605,42 @@ public final class Game extends GameCanvas implements Runnable {
 				var3 += var6 + (8 - var6);
 			}
 		}
-	
+
 		gSetColor(var2);
 	}
-	
+
 	public static final void loadFaces() {
 		if(imgsEyeLeft == null) {
 			imgsEyeLeft = new Image[2];
 			imgsEyeLeft[0] = loadImage("eyeLWiz.pim", "eyeLWiz.ppl");
 			imgsEyeLeft[1] = loadImage("eyeLWaz.pim", "eyeLWaz.ppl");
 		}
-	
+
 		if(imgsEyeRight == null) {
 			imgsEyeRight = new Image[2];
 			imgsEyeRight[0] = loadImage("eyeRWiz.pim", "eyeRWiz.ppl");
 			imgsEyeRight[1] = loadImage("eyeRWaz.pim", "eyeRWaz.ppl");
 		}
-	
+
 		if(imgsEyeM == null) {
 			imgsEyeM = new Image[2];
 			imgsEyeM[0] = loadImage("eyeMWiz.pim", "eyeMWiz.ppl");
 			imgsEyeM[1] = loadImage("eyeMWaz.pim", "eyeMWaz.ppl");
 		}
-	
+
 		if(imgsEyeC == null) {
 			imgsEyeC = new Image[2];
 			imgsEyeC[0] = loadImage("eyeCWiz.pim", "eyeCWiz.ppl");
 			imgsEyeC[1] = loadImage("eyeCWaz.pim", "eyeCWaz.ppl");
 		}
-	
+
 		if(imgMouth == null) {
 			imgMouth = loadImage("mouth.pim", "mouth.ppl");
 		}
-	
+
 		if(imgsMouths == null) {
 			imgsMouths = new Image[8][];
-	
+
 			for(int var0 = 0; var0 < imgsMouths.length; var0++) {
 				imgsMouths[var0] = new Image[2];
 				imgsMouths[var0][0] = loadImage("mouthWiz_" + var0 + ".pim", "mouthWiz_" + var0 + ".ppl");
@@ -3648,19 +3648,19 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void loadEyes() {
 		if(imgsEyes == null) {
 			imgsEyes = new Image[8][];
-	
+
 			for(int var0 = 1; var0 < imgsEyes.length; var0++) {
 				imgsEyes[var0] = new Image[2];
 				imgsEyes[var0][0] = loadImage("eyesWiz_" + var0 + ".pim", "eyesWiz_" + var0 + ".ppl");
 				imgsEyes[var0][1] = loadImage("eyesWaz_" + var0 + ".pim", "eyesWaz_" + var0 + ".ppl");
 			}
-	
+
 			imgsEyesC = new Image[8][];
-	
+
 			for(int var1 = 1; var1 < imgsEyesC.length; var1++) {
 				imgsEyesC[var1] = new Image[2];
 				imgsEyesC[var1][0] = loadImage("eyesWiz_C" + var1 + ".pim", "eyesWiz_C" + var1 + ".ppl");
@@ -3668,7 +3668,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void initPlayer(boolean var0) {
 		levelPlayerHealth = 500;
 		if(var0) {
@@ -3682,12 +3682,12 @@ public final class Game extends GameCanvas implements Runnable {
 			levelPlayerBlue = 200;
 			Field172 = 18;
 		}
-	
+
 		levelPlayerRotationRate = 0;
 		levelPlayerCurrentGrabberFlags = -1;
 		levelPlayerBlockGrabberID = -1;
 	}
-	
+
 	public static final void levelSetPlayerPos(int var0, int var1, int var2, int var3) {
 		levelCircleX[var2 + 0] = var0;
 		levelCircleY[var2 + 0] = var1;
@@ -3699,13 +3699,13 @@ public final class Game extends GameCanvas implements Runnable {
 		levelCircleY[var2 + 3] = var1;
 		levelCircleX[var2 + 4] = var0 + var3;
 		levelCircleY[var2 + 4] = var1;
-	
+
 		for(int var4 = var2; var4 < var2 + 5; var4++) {
 			levelCirclePrevX[var4] = levelCircleX[var4];
 			levelCirclePrevY[var4] = levelCircleY[var4];
 		}
 	}
-	
+
 	public static final void levelPlayerReleaseGrabber() {
 		levelHookIsActive[16] = false;
 		levelHookIsVisible[16] = false;
@@ -3714,47 +3714,47 @@ public final class Game extends GameCanvas implements Runnable {
 		levelPlayerBlockGrabberID = levelHookID2[16];
 		levelHookID2[16] = -1;
 	}
-	
+
 	public static final void updatePlayerRotation() {
 		if(levelPlayerBlockGrabberID != -1 && (levelCircleX[levelPlayerBlockGrabberID] - levelCircleRadius[levelPlayerBlockGrabberID] > levelCircleX[0] + 0x190000 || levelCircleX[levelPlayerBlockGrabberID] + levelCircleRadius[levelPlayerBlockGrabberID] < levelCircleX[0] - 0x190000 || levelCircleY[levelPlayerBlockGrabberID] - levelCircleRadius[levelPlayerBlockGrabberID] > levelCircleY[0] + 0x190000 || levelCircleY[levelPlayerBlockGrabberID] + levelCircleRadius[levelPlayerBlockGrabberID] < levelCircleY[0] - 0x190000)) {
 			levelPlayerBlockGrabberID = -1;
 		}
-	
+
 		if(Field173 > 0) {
 			int[] var10000 = levelCircleY;
 			var10000[0] -= 550000;
 			Field173--;
 		}
-	
+
 		if(levelPlayerRotationRate > 0) {
 			levelPlayerRotationRate--;
 			if(levelPlayerRotationRate > 25) {
 				levelPlayerRotationRate = 25;
 			}
 		}
-	
+
 		if(levelPlayerRotationRate < 0) {
 			levelPlayerRotationRate++;
 			if(levelPlayerRotationRate < -25) {
 				levelPlayerRotationRate = -25;
 			}
 		}
-	
+
 		levelPlayerAngle += levelPlayerRotationRate;
 		if(levelPlayerAngle >= 360) {
 			levelPlayerAngle -= 360;
 		}
-	
+
 		if(levelPlayerAngle < 0) {
 			levelPlayerAngle += 360;
 		}
-	
+
 		if(levelPlayerRotationRate == 0) {
 			byte var0 = 95;
 			if(!levelPlayerOnCircle) {
 				var0 = 90;
 			}
-	
+
 			if(levelPlayerAngle < 180) {
 				levelPlayerAngle = levelPlayerAngle * var0 / 100;
 			} else {
@@ -3762,17 +3762,17 @@ public final class Game extends GameCanvas implements Runnable {
 				levelPlayerAngle = levelPlayerAngle * var0 / 100;
 				levelPlayerAngle += 360;
 			}
-	
+
 			if(levelPlayerAngle >= 360) {
 				levelPlayerAngle -= 360;
 			}
-	
+
 			if(levelPlayerAngle < 0) {
 				levelPlayerAngle += 360;
 			}
 		}
 	}
-	
+
 	public static final void renderFacePurple(int var0, int var1) {
 		int var2 = levelAlignX(var0, var1);
 		int var3 = levelAlignY(var0, var1);
@@ -3790,25 +3790,25 @@ public final class Game extends GameCanvas implements Runnable {
 			gDrawImage(imgsEyeM[1], var2 + var4, var3 - var5 * 2 / 3, 0);
 		}
 	}
-	
+
 	public static final void levelRenderPlayer() {
 		if(levelPlayerHealth > 0) {
 			levelPlayerRed = 100 + levelPlayerHealth * 100 / 500;
 		}
-	
+
 		if((levelPlayerHitTicks & 1) > 0) {
 			renderPlayable(0, 0, false);
 		} else {
 			renderPlayable(0, (levelPlayerRed << 16) + (levelPlayerGreen << 8) + levelPlayerBlue, false);
 		}
 	}
-	
+
 	public static final void renderPlayable(int var0, int var1, boolean var2) {
 		byte var3 = 0;
 		if(var0 > 0 || var0 == 0 && activeSwapKey == 1) {
 			var3 = 1;
 		}
-	
+
 		if(var3 == 0) {
 			Field172 = 18;
 			var1 = 0xff;
@@ -3818,7 +3818,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} else {
 			Field172 = 13;
 		}
-	
+
 		int var4 = levelAlignX(levelCircleX[var0], levelCircleY[var0]);
 		int var5 = levelAlignY(levelCircleX[var0], levelCircleY[var0]);
 		int[] var6 = new int[4];
@@ -3845,17 +3845,17 @@ public final class Game extends GameCanvas implements Runnable {
 			var6[2] = levelCircleY[var0 + 2] - levelCircleY[var0 + 0] >> 16;
 			var6[3] = levelCircleX[var0 + 0] - levelCircleX[var0 + 3] >> 16;
 		}
-	
+
 		for(int var7 = 0; var7 < 4; var7++) {
 			var6[var7] = levelCameraZoom * var6[var7] / 100;
 		}
-	
+
 		int[] var13 = new int[4];
-	
+
 		for(int var8 = 0; var8 < 4; var8++) {
 			var13[var8] = var6[var8] << 1;
 		}
-	
+
 		setGammaColor(0);
 		gSetClip(var4, 0, 200, var5);
 		gFillArc(var4 - var6[1] - 2, var5 - var6[0] - 2, var13[1] + 4, var13[0] + 4, 0, 360);
@@ -3880,7 +3880,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if(var2) {
 				var14 = 0;
 			}
-	
+
 			if(levelPlayerCurrentGrabberFlags >= 0) {
 				Image var9 = imgMouth;
 				gDrawImage(var9, var4 - var9.getWidth() / 2, var5 - var9.getHeight() / 2, 0);
@@ -3895,14 +3895,14 @@ public final class Game extends GameCanvas implements Runnable {
 					gDrawImage(var15, var11 - var15.getWidth() / 2, var12 - var15.getHeight() / 2, 0);
 				}
 			}
-	
+
 			if(currentMouthState[var3] == 0) {
 				Image var16 = imgsEyeM[var3];
 				if(var0 > 0) {
 					if(levelCircleX[0] + 0x160000 < levelCircleX[var0]) {
 						var16 = imgsEyeLeft[var3];
 					}
-	
+
 					if(levelCircleX[0] - 0x160000 > levelCircleX[var0]) {
 						var16 = imgsEyeRight[var3];
 					}
@@ -3910,16 +3910,16 @@ public final class Game extends GameCanvas implements Runnable {
 					if(levelCircleX[var0] + 0x010000 < levelCirclePrevX[var0]) {
 						var16 = imgsEyeLeft[var3];
 					}
-	
+
 					if(levelCircleX[var0] - 0x010000 > levelCirclePrevX[var0]) {
 						var16 = imgsEyeRight[var3];
 					}
 				}
-	
+
 				if(blobEyeState[var3] > 0) {
 					var16 = imgsEyeC[var3];
 				}
-	
+
 				int var18 = levelCameraZoom * Field172 / 100;
 				int var20 = var4 + cos(var14 - 115) * var18 / 1000;
 				int var22 = var5 + sin(var14 - 115) * var18 / 1000;
@@ -3933,7 +3933,7 @@ public final class Game extends GameCanvas implements Runnable {
 				if(blobEyeState[var3] > 0) {
 					var19 = imgsEyesC[currentMouthState[var3]][var3];
 				}
-	
+
 				gDrawImage(var19, var4 - var19.getWidth() / 2 + Field187[currentMouthState[var3]][var3], var5 - var17 - var19.getHeight() / 2 + Field188[currentMouthState[var3]][var3], 0);
 			}
 
@@ -3942,12 +3942,12 @@ public final class Game extends GameCanvas implements Runnable {
 					int var10002 = blobEyeState[var3]--;
 					return;
 				}
-	
+
 				blobEyeState[var3] = 3;
 			}
 		}
 	}
-	
+
 	public static final void swapLevelPlayerData() {
 		int tmp;
 
@@ -3971,19 +3971,19 @@ public final class Game extends GameCanvas implements Runnable {
 		levelPlayerAngle = swappedLevelPlayerAngle;
 		swappedLevelPlayerAngle = tmp;
 	}
-	
+
 	public static final void initExplosives() {
 		if(imgFuse == null) {
 			imgFuse = loadImage("fuse.pim", "fuse.ppl");
 		}
-	
+
 		if(imgsBomb == null) {
 			imgsBomb = new Image[2];
 			imgsBomb[0] = loadImage("bombbase.pim", "bombbase.ppl");
 			imgsBomb[1] = loadImage("bombbutton.pim", "bombbutton.ppl");
 		}
 	}
-	
+
 	public static final void renderBombDispenser(int var0, int var1) {
 		int var2 = levelAlignX(var0, var1);
 		int var3 = levelAlignY(var0, var1);
@@ -3992,10 +3992,10 @@ public final class Game extends GameCanvas implements Runnable {
 		} else {
 			gDrawImage(imgsBomb[1], var2 - 9, var3 - 11 - 5, 0);
 		}
-	
+
 		gDrawImage(imgsBomb[0], var2 - 14, var3 - 11, 0);
 	}
-	
+
 	public static final void levelInitHooks(int var0) {
 		levelNumHooks = var0;
 		levelHookID1 = new int[var0];
@@ -4007,7 +4007,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelHookIsActive = new boolean[var0];
 		levelHookIsVisible = new boolean[var0];
 	}
-	
+
 	public static final void levelSetHook(int var0, int var1, int var2, int var3, int var4, int var5, boolean var6, boolean var7) {
 		levelHookID1[var0] = var1;
 		levelHookID2[var0] = var2;
@@ -4018,7 +4018,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelHookIsActive[var0] = var7;
 		levelHookIsVisible[var0] = var6;
 	}
-	
+
 	public static final void levelDetachHooks(int var0) {
 		for(int var1 = 0; var1 < levelNumHooks; var1++) {
 			if(levelHookIsActive[var1] && (levelHookID1[var1] == var0 || levelHookID2[var1] == var0)) {
@@ -4029,7 +4029,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void levelUpdateHooks() {
 		for(int var0 = 0; var0 < levelNumHooks; var0++) {
 			if(levelHookIsActive[var0]) {
@@ -4051,7 +4051,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void onCircleTouchCircle(int var0, int var1, int var2, int var3, int var4, boolean var5) {
 		int var6 = levelCircleX[var1] - levelCircleX[var0];
 		int var7 = levelCircleY[var1] - levelCircleY[var0];
@@ -4070,14 +4070,14 @@ public final class Game extends GameCanvas implements Runnable {
 						var10000 = levelCircleY;
 						var10000[var0] += lp32Mul(var13, var9);
 					}
-	
+
 					if(levelCircleHasPhysics[var1]) {
 						int[] var15 = levelCircleX;
 						var15[var1] -= lp32Mul(var12, var10);
 						var15 = levelCircleY;
 						var15[var1] -= lp32Mul(var13, var10);
 					}
-	
+
 					if(var5) {
 						processCircles(var0, var1);
 					}
@@ -4085,7 +4085,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void swapLevelHookData() {
 		int var0 = levelNumHooks;
 		levelNumHooks = swappedLevelNumHooks;
@@ -4180,7 +4180,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 						if(levelCircleX[legID] < levelSpiderLegMovementStartX[i]) {
 							levelSpiderLegTicks[i] = -levelSpiderLegTicksUntilMovement[i];
-	
+
 							/* apply a new direction to all legs owned by a
 							 * specific spider. */
 							for(int k = 0; k < levelSpiderLegIDs.length; k++) {
@@ -4226,7 +4226,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelExpanderMinRadius = new int[var0];
 		levelExpanderTicks = 0;
 	}
-	
+
 	public static final void levelSetExpander(int var0, int var1, boolean var2, int var3, int var4) {
 		levelExpanderIndex[var0] = var1;
 		levelExpanderIsTouchActivated[var0] = var2;
@@ -4237,7 +4237,7 @@ public final class Game extends GameCanvas implements Runnable {
 		int[] var10000 = levelCircleFlags;
 		var10000[var1] |= 0x4000;
 	}
-	
+
 	public static final void setExpanderVacant(int var0) {
 		for(int var1 = 0; var1 < levelExpanderIndex.length; var1++) {
 			if(levelExpanderIndex[var1] == var0 && levelExpanderIsTouchActivated[var1]) {
@@ -4245,38 +4245,38 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void updateExpanders() {
 		levelExpanderTicks++;
-	
+
 		for(int var0 = 0; var0 < levelExpanderIndex.length; var0++) {
 			if(levelCircleRadius[levelExpanderIndex[var0]] > levelExpanderMinRadius[var0]) {
 				int[] var10000 = levelCircleRadius;
 				int var10001 = levelExpanderIndex[var0];
 				var10000[var10001] -= (levelCircleRadius[levelExpanderIndex[var0]] - levelExpanderMinRadius[var0]) / 20;
 			}
-	
+
 			if(levelExpanderIsVacant[var0] || levelExpanderDelay[var0] > 0 && levelExpanderTicks % levelExpanderDelay[var0] == 0) {
 				levelCircleRadius[levelExpanderIndex[var0]] = levelExpanderMinRadius[var0] + levelExpanderExtent[var0];
 				levelExpanderIsVacant[var0] = false;
 			}
 		}
 	}
-	
+
 	public static final void initGrabber() {
 		if(imgGrabber == null && levelGrabberIDs != null && levelGrabberIDs.length > 0) {
 			imgGrabber = loadImage("grabber.pim", "grabber.ppl");
 		}
 	}
-	
+
 	public static final void initGrabberIDs(int var0) {
 		levelGrabberIDs = new int[var0];
 	}
-	
+
 	public static final void setGrabberID(int var0, int var1) {
 		levelGrabberIDs[var0] = var1;
 	}
-	
+
 	public static final void levelRenderGrabbers() {
 		for(int i = 0; i < levelGrabberIDs.length; i++) {
 			int grabberID = levelGrabberIDs[i];
@@ -4288,7 +4288,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void Method178() {
 		int var0 = 0;
 		levelPingShardIDs = new int[3];
@@ -4298,22 +4298,22 @@ public final class Game extends GameCanvas implements Runnable {
 		levelPingEnemyIDs[0] = new int[] {-1, -1, -1, -1, -1, -1};
 		levelPingEnemyIDs[1] = new int[] {-1, -1, -1, -1, -1, -1};
 		levelPingEnemyIDs[2] = new int[] {-1, -1, -1, -1, -1, -1};
-	
+
 		for(int var2 = 0; var2 < levelNumCircles; var2++) {
 			if(levelCircleType[var2] == 13) {
 				levelPingCircleID = var2;
 			}
-	
+
 			if(levelCircleType[var2] == 15) {
 				levelPingShardIDs[var0++] = var2;
 			}
-	
+
 			if((levelCircleFlags[var2] & 0x80) > 0 && levelCircleType[var2] == 7) {
 				int var3 = (levelCircleY[var2] >> 16) / 100 - 1;
 				levelPingEnemyIDs[var3][var1[var3]++] = var2;
 				int[] var10000 = levelCircleFlags;
 				var10000[var2] &= -2;
-	
+
 				for(int var4 = 0; var4 < levelEnemyIndex.length; var4++) {
 					if(levelEnemyIndex[var4] == var2) {
 						levelEnemyIsAlive[var4] = false;
@@ -4321,14 +4321,14 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
+
 		if(var0 == 1) {
 			int[] var5 = new int[1];
 			var5[0] = levelPingShardIDs[0];
 			levelPingShardIDs = var5;
 		}
 	}
-	
+
 	public static final void updatePing() {
 		/* process every Ping's shard, and if the X axis of the shard is within
 		 * Ping's circle radius, we'll reduce the shard radius. */
@@ -4344,7 +4344,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
+
 		/* levelPingHitTimeout = 100 if Ping is hit (levelPingHit()). */
 		if(levelPingHitTimeout > 0) {
 			levelPingHitTimeout--;
@@ -4357,12 +4357,12 @@ public final class Game extends GameCanvas implements Runnable {
 			isLevelComplete = true;
 		}
 	}
-	
+
 	public static final void levelPingSpawnEnemies() {
 		if(levelPingHitTimeout == 0) {
 			startDialogue("ping_inplace.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 2 / 3);
 		}
-	
+
 		/* Ping spawns enemies. */
 		levelPingEnemyCurrentIndex--;
 		if(levelPingEnemyCurrentIndex >= 0) {
@@ -4371,7 +4371,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 				if(enemyID != -1) {
 					levelCircleFlags[enemyID] |= 1;
-	
+
 					for(int k = 0; k < levelEnemyIndex.length; k++) {
 						if(levelEnemyIndex[k] == enemyID) {
 							levelEnemyIsAlive[k] = true;
@@ -4381,20 +4381,20 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void Method181() {
 		setGammaColor(160, 32, 240);
-	
+
 		for(int var0 = 0; var0 < levelPingShardIDs.length; var0++) {
 			levelRenderCircle(levelCircleX[levelPingShardIDs[var0]], levelCircleY[levelPingShardIDs[var0]], levelCircleRadius[levelPingShardIDs[var0]]);
 		}
-	
+
 		levelRenderCircle(levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID], levelCircleRadius[levelPingCircleID]);
 		int var7 = levelCircleRadius[levelPingCircleID] * 2 / 5;
 		int var1 = levelCircleX[levelPingCircleID];
 		int var2 = levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 7 / 10;
 		int var3 = levelCircleRadius[levelPingCircleID] / 5;
-	
+
 		for(int var4 = -1; var4 < 2; var4++) {
 			setGammaColor(0);
 			levelRenderCircle(var1 + var4 * var7, var2, var3);
@@ -4411,20 +4411,20 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final int Method182(int var0, int var1, int var2, int var3) {
 		int var4 = (var0 - (var1 - var2)) * 90 / var2;
 		if(var4 < 0) {
 			var4 = 0;
 		}
-	
+
 		if(var4 >= 180) {
 			var4 = 179;
 		}
-	
+
 		return var3 * cos1000[var4] / 1500;
 	}
-	
+
 	public static final void levelPingHit() {
 		if(levelPingHitTimeout <= 0) {
 			levelPingHitTimeout = 100;
@@ -4434,7 +4434,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void initEnemies(int var0) {
 		levelEnemyIndex = new int[var0];
 		levelEnemyCanJump = new boolean[var0];
@@ -4453,7 +4453,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelEnemyCenterX = new int[var0];
 		levelEnemyTicks = 0;
 	}
-	
+
 	public static final void levelSetEnemy(int var0, int var1, boolean var2, int var3, int var4, boolean var5, int var6, int var7, int var8, boolean var9, int var10) {
 		levelEnemyIndex[var0] = var1;
 		levelEnemyCanJump[var0] = var2;
@@ -4471,10 +4471,10 @@ public final class Game extends GameCanvas implements Runnable {
 		levelEnemyCenterX[var0] = levelCircleX[var1];
 		levelEnemyIsBird[var0] = (levelCircleFlags[var1] & 1) == 0;
 	}
-	
+
 	public static final void updateEnemies() {
 		levelEnemyTicks++;
-	
+
 		for(int var0 = 0; var0 < levelEnemyIndex.length; var0++) {
 			if(levelEnemyIsAlive[var0]) {
 				int var1 = levelEnemyTicks + levelEnemyMovementStartTicks[var0];
@@ -4483,7 +4483,7 @@ public final class Game extends GameCanvas implements Runnable {
 					int var10001 = levelEnemyIndex[var0];
 					var10000[var10001] -= levelEnemyJumpHeight[var0];
 				}
-	
+
 				if(levelEnemyIsMovingInX[var0]) {
 					if(var1 % levelEnemyFramesUntilXMovement[var0] == 0) {
 						int[] var2 = levelCircleX;
@@ -4493,11 +4493,11 @@ public final class Game extends GameCanvas implements Runnable {
 							levelEnemyXMovementDirection[var0] = -levelEnemyXMovementDirection[var0];
 						}
 					}
-	
+
 					if(levelCircleX[levelEnemyIndex[var0]] > levelEnemyCenterX[var0] + levelEnemyXMovementDistance[var0]) {
 						levelEnemyXMovementDirection[var0] = -1;
 					}
-	
+
 					if(levelCircleX[levelEnemyIndex[var0]] < levelEnemyCenterX[var0] - levelEnemyXMovementDistance[var0]) {
 						levelEnemyXMovementDirection[var0] = 1;
 					}
@@ -4505,31 +4505,31 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final boolean isEnemyStatic(int var0) {
 		for(int var1 = 0; var1 < levelEnemyIndex.length; var1++) {
 			if(levelEnemyIndex[var1] == var0) {
 				if(!levelEnemyCanJump[var1] && !levelEnemyIsMovingInX[var1]) {
 					return true;
 				}
-	
+
 				return false;
 			}
 		}
-	
+
 		return false;
 	}
-	
+
 	public static final boolean isEnemyAlive(int var0) {
 		for(int var1 = 0; var1 < levelEnemyIndex.length; var1++) {
 			if(levelEnemyIndex[var1] == var0) {
 				return levelEnemyIsAlive[var1];
 			}
 		}
-	
+
 		return false;
 	}
-	
+
 	public static final void killEnemy(int var0) {
 		for(int var1 = 0; var1 < levelEnemyIndex.length; var1++) {
 			if(levelEnemyIndex[var1] == var0 && levelEnemyIsAlive[var1]) {
@@ -4539,12 +4539,12 @@ public final class Game extends GameCanvas implements Runnable {
 				if(!levelEnemyCanJump[var1] && !levelEnemyIsMovingInX[var1]) {
 					immobilizeSpider(levelEnemyMovementStartTicks[var1]);
 				}
-	
+
 				return;
 			}
 		}
 	}
-	
+
 	public static final void initEnemies() {
 		if(levelEnemyIndex != null && levelEnemyIndex.length != 0) {
 			if(imgsSpider == null) {
@@ -4552,49 +4552,49 @@ public final class Game extends GameCanvas implements Runnable {
 				imgsSpider[0] = loadImage("spiderC.pim", "spiderC.ppl");
 				imgsSpider[1] = loadImage("spiderD.pim", "spiderD.ppl");
 			}
-	
+
 			if(imgsBirdLeft == null) {
 				imgsBirdLeft = new Image[6];
 				imgsBirdRight = new Image[6];
-	
+
 				for(int var0 = 0; var0 <= 5; var0++) {
 					imgsBirdLeft[var0] = loadImage("bird_left" + var0 + ".pim", "bird_left" + var0 + ".ppl");
 					imgsBirdRight[var0] = loadImage("bird_right" + var0 + ".pim", "bird_right" + var0 + ".ppl");
 				}
 			}
-	
+
 			if(imgsPointyRoll == null) {
 				imgsPointyRoll = new Image[3];
-	
+
 				for(int var1 = 0; var1 < 3; var1++) {
 					imgsPointyRoll[var1] = loadImage("pointy_roll_" + var1 + ".pim", "pointy_roll_" + var1 + ".ppl");
 				}
 			}
-	
+
 			if(imgsPointyEyes == null) {
 				imgsPointyEyes = new Image[2];
-	
+
 				for(int var2 = 0; var2 < 2; var2++) {
 					imgsPointyEyes[var2] = loadImage("pointy_eyes_" + var2 + ".pim", "pointy_eyes_" + var2 + ".ppl");
 				}
 			}
-	
+
 			if(imgsPointyMouth == null) {
 				imgsPointyMouth = new Image[2];
-	
+
 				for(int var3 = 0; var3 < 2; var3++) {
 					imgsPointyMouth[var3] = loadImage("pointy_mouth_" + var3 + ".pim", "pointy_mouth_" + var3 + ".ppl");
 				}
 			}
 		}
 	}
-	
+
 	public static final void renderEnemies() {
 		for(int i = 0; i < levelEnemyIndex.length; i++) {
 			renderEnemies(levelEnemyIndex[i], i);
 		}
 	}
-	
+
 	public static final void renderEnemies(int circleID, int enemyIndex) {
 		if(levelCircleRadius[circleID] >= 30000) {
 			int alignX = levelAlignX(levelCircleX[circleID], levelCircleY[circleID]);
@@ -4674,7 +4674,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void levelInitRects(int var0) {
 		levelNumRects = var0;
 		levelRectX = new int[var0];
@@ -4683,7 +4683,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelRectHHeight = new int[var0];
 		levelRectIsAnimated = new boolean[var0];
 	}
-	
+
 	public static final void levelAddRect(int var0, int var1, int var2, int var3, int var4) {
 		levelRectX[var0] = var1;
 		levelRectY[var0] = var2;
@@ -4691,7 +4691,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelRectHHeight[var0] = var4;
 		levelRectIsAnimated[var0] = false;
 	}
-	
+
 	public static final void levelInitAnimatedRects(int var0) {
 		levelAnimRectIndex = new int[var0];
 		levelAnimRectMinHWidth = new int[var0];
@@ -4702,7 +4702,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelAnimRectIterations = new int[var0];
 		levelAnimRectCurrentIteration = new int[var0];
 	}
-	
+
 	public static final void levelSetAnimRect(int var0, int var1, int var2, int var3, int var4, int var5, int var6) {
 		levelRectIsAnimated[var1] = true;
 		levelAnimRectIndex[var0] = var1;
@@ -4714,7 +4714,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelAnimRectIterations[var0] = var5;
 		levelAnimRectCurrentIteration[var0] = var6;
 	}
-	
+
 	public static final void updateAnimRects() {
 		for(int var0 = 0; var0 < levelAnimRectIndex.length; var0++) {
 			int var1 = levelAnimRectIndex[var0];
@@ -4730,11 +4730,11 @@ public final class Game extends GameCanvas implements Runnable {
 				if(levelRectHWidth[var1] > levelAnimRectMaxHWidth[var0]) {
 					levelRectHWidth[var1] = levelAnimRectMaxHWidth[var0];
 				}
-	
+
 				if(levelRectHHeight[var1] > levelAnimRectMaxHHeight[var0]) {
 					levelRectHHeight[var1] = levelAnimRectMaxHHeight[var0];
 				}
-	
+
 				if(levelRectHWidth[var1] == levelAnimRectMaxHWidth[var0] && levelRectHHeight[var1] == levelAnimRectMaxHHeight[var0]) {
 					levelAnimRectCurrentIteration[var0] = -levelAnimRectIterations[var0] - 1;
 				}
@@ -4746,18 +4746,18 @@ public final class Game extends GameCanvas implements Runnable {
 				if(levelRectHWidth[var1] < levelAnimRectMinHWidth[var0]) {
 					levelRectHWidth[var1] = levelAnimRectMinHWidth[var0];
 				}
-	
+
 				if(levelRectHHeight[var1] < levelAnimRectMinHHeight[var0]) {
 					levelRectHHeight[var1] = levelAnimRectMinHHeight[var0];
 				}
-	
+
 				if(levelRectHWidth[var1] == levelAnimRectMinHWidth[var0] && levelRectHHeight[var1] == levelAnimRectMinHHeight[var0]) {
 					levelAnimRectCurrentIteration[var0] = levelAnimRectIterations[var0];
 				}
 			}
 		}
 	}
-	
+
 	public static final void updateCollisionCircleRect() {
 		for(int var0 = 0; var0 < levelNumCircles; var0++) {
 			if(levelCircleHasPhysics[var0]) {
@@ -4769,32 +4769,32 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void onCircleTouchRect(int var0, int var1) {
 		if(var0 == 2) {
 			levelPlayerOnCircle = true;
 		}
-	
+
 		int var2 = levelRectX[var1] + levelRectHWidth[var1] + levelCircleRadius[var0];
 		if(levelCircleX[var0] < levelRectX[var1]) {
 			var2 = levelRectX[var1] - levelRectHWidth[var1] - levelCircleRadius[var0];
 		}
-	
+
 		int var3 = levelRectY[var1] + levelRectHHeight[var1] + levelCircleRadius[var0];
 		if(levelCircleY[var0] < levelRectY[var1]) {
 			var3 = levelRectY[var1] - levelRectHHeight[var1] - levelCircleRadius[var0];
 		}
-	
+
 		int var4 = levelCircleX[var0] - var2;
 		if(var4 < 0) {
 			var4 = -var4;
 		}
-	
+
 		int var5 = levelCircleY[var0] - var3;
 		if(var5 < 0) {
 			var5 = -var5;
 		}
-	
+
 		if(var4 < var5) {
 			int[] var6 = levelCircleX;
 			var6[var0] += (var2 - levelCircleX[var0]) / 2;
@@ -4803,29 +4803,29 @@ public final class Game extends GameCanvas implements Runnable {
 			var10000[var0] += (var3 - levelCircleY[var0]) / 2;
 		}
 	}
-	
+
 	public static final void levelRenderRects() {
 		setGammaColor(0, 0, 0);
-	
+
 		for(int var0 = 0; var0 < levelNumRects; var0++) {
 			levelDrawRect(levelRectX[var0], levelRectY[var0], levelRectHWidth[var0], levelRectHHeight[var0]);
 		}
-	
+
 		setGammaColor(levelColor);
-	
+
 		for(int var1 = 0; var1 < levelNumRects; var1++) {
 			levelDrawRect(levelRectX[var1], levelRectY[var1], levelRectHWidth[var1], levelRectHHeight[var1]);
 		}
 	}
-	
+
 	public static final void levelLoadRects() {
 		levelInitRects(sReadU16());
-	
+
 		for(int var0 = 0; var0 < levelNumRects; var0++) {
 			levelAddRect(var0, levelAlignToGameMirror(sReadU16() << 16), sReadU16() << 16, sReadU16() << 16, sReadU16() << 16);
 		}
 	}
-	
+
 	public static final void swapLevelRectData() {
 		int var0 = levelNumRects;
 		levelNumRects = Field273;
@@ -4843,19 +4843,19 @@ public final class Game extends GameCanvas implements Runnable {
 		levelRectHHeight = Field277;
 		Field277 = var1;
 	}
-	
+
 	public static final void initRocket() {
 		if(imgRocket == null) {
 			imgRocket = loadImage("rocket.pim", "rocket.ppl");
 		}
-	
+
 		if(imgsVertFlame == null) {
 			imgsVertFlame = new Image[2];
 			imgsVertFlame[0] = loadImage("vertFlame0.pim", "vertFlame0.ppl");
 			imgsVertFlame[1] = loadImage("vertFlame1.pim", "vertFlame1.ppl");
 		}
 	}
-	
+
 	public static final void renderRocket(int var0, int var1, int var2) {
 		initRocket();
 		gDrawImage(imgRocket, var0, var1, 0);
@@ -4863,17 +4863,17 @@ public final class Game extends GameCanvas implements Runnable {
 			gDrawImage(imgsVertFlame[var2 & 1], var0 + 36, var1 + 33, 0);
 		}
 	}
-	
+
 	public static final void initSigns() {
 		if(mustLoadSigns && imgsSign == null) {
 			imgsSign = new Image[7];
-	
+
 			for(int var0 = 0; var0 < imgsSign.length; var0++) {
 				imgsSign[var0] = loadImage("sign" + var0 + ".pim", "sign" + var0 + ".ppl");
 			}
 		}
 	}
-	
+
 	public static final void initLevelSigns(int var0) {
 		levelSignX = new int[var0];
 		levelSignY = new int[var0];
@@ -4882,26 +4882,26 @@ public final class Game extends GameCanvas implements Runnable {
 			mustLoadSigns = true;
 		}
 	}
-	
+
 	public static final void levelSetSign(int var0, int var1, int var2, int var3) {
 		if(mirrored && var3 == 2) {
 			var3 = 3;
 		}
-	
+
 		if(mirrored && var3 == 3) {
 			var3 = 2;
 		}
-	
+
 		levelSignX[var0] = var1;
 		levelSignY[var0] = var2;
 		levelSignTypes[var0] = var3;
 	}
-	
+
 	public static final void renderSigns() {
 		if(imgsSign == null) {
 			initSigns();
 		}
-	
+
 		for(int var0 = 0; var0 < levelSignX.length; var0++) {
 			Image var1 = imgsSign[levelSignTypes[var0]];
 			if(var1 != null) {
@@ -4909,7 +4909,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void levelInitSpawners(int var0) {
 		levelSpawnStartX = new int[var0];
 		levelSpawnStartY = new int[var0];
@@ -4924,7 +4924,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelSpawnSpeed = new int[var0];
 		levelSpawnSpeedVar = new int[var0];
 	}
-	
+
 	public static final void levelSetSpawner(int var0, int var1, int var2, int var3, int var4, int var5, int var6, int var7, int var8, int var9) {
 		if(mirrored) {
 			int var10 = var7 - var6;
@@ -4932,10 +4932,10 @@ public final class Game extends GameCanvas implements Runnable {
 			if(var6 > 180) {
 				var11 = 540;
 			}
-	
+
 			var7 = (var6 = var11 - var6 - var10) + var10;
 		}
-	
+
 		levelSpawnStartX[var0] = var1;
 		levelSpawnStartY[var0] = var2;
 		levelSpawnStartIndex[var0] = var3;
@@ -4949,7 +4949,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelSpawnSpeed[var0] = 2 * var8;
 		levelSpawnSpeedVar[var0] = 2 * (var9 - var8);
 	}
-	
+
 	public static final void updateSpawners() {
 		for(int var0 = 0; var0 < levelSpawnStartIndex.length; var0++) {
 			int var10002 = levelSpawnCurrentTick[var0]++;
@@ -4977,14 +4977,14 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void updateLevel() {
 		updatePlayerMovement();
 		levelUpdateHooks();
 		updatePlayerCollision();
 		updateCollisionCircleRect();
 	}
-	
+
 	public static final void levelInitCircles(int var0) {
 		levelNumCircles = var0;
 		levelCircleX = new int[var0];
@@ -4997,12 +4997,12 @@ public final class Game extends GameCanvas implements Runnable {
 		levelCircleType = new byte[var0];
 		levelCircleHasPhysics = new boolean[var0];
 	}
-	
+
 	public static final void levelSetCircle(int var0, int var1, int var2, int var3, int var4, int var5, int var6, boolean var7) {
 		if(var6 == 3 && currentLevelLoaded != -2) {
 			var5 &= -5;
 		}
-	
+
 		levelCircleX[var0] = var1;
 		levelCircleY[var0] = var2;
 		levelCirclePrevX[var0] = var1;
@@ -5013,37 +5013,37 @@ public final class Game extends GameCanvas implements Runnable {
 		levelCircleType[var0] = (byte)var6;
 		levelCircle4ByWeight[var0] = lp32Div(0x10000, var4 << 14);
 	}
-	
+
 	public static final void updatePlayerMovement() {
 		updatePlayerRotation();
 		if(levelCircleX[0] < 0 || levelCircleX[0] > levelWidth || levelCircleY[0] > levelHeight) {
 			levelPlayerHealth = 0;
 		}
-	
+
 		for(int var0 = 0; var0 < 5; var0++) {
 			if(levelCircleX[var0] - levelCirclePrevX[var0] < 0x2000 && levelCircleX[var0] - levelCirclePrevX[var0] > -0x2000) {
 				levelCircleX[var0] = levelCirclePrevX[var0];
 			}
 		}
-	
+
 		for(int var4 = 0; var4 < 5; var4++) {
 			if(levelCircleX[var4] - levelCirclePrevX[var4] > 0x0f0000) {
 				levelCircleX[var4] = levelCirclePrevX[var4] + 0x0f0000;
 			}
-	
+
 			if(levelCircleX[var4] - levelCirclePrevX[var4] < -0x0f0000) {
 				levelCircleX[var4] = levelCirclePrevX[var4] - 0x0f0000;
 			}
-	
+
 			if(levelCircleY[var4] - levelCirclePrevY[var4] > 0x0f0000) {
 				levelCircleY[var4] = levelCirclePrevY[var4] + 0x0f0000;
 			}
-	
+
 			if(levelCircleY[var4] - levelCirclePrevY[var4] < -0x0f0000) {
 				levelCircleY[var4] = levelCirclePrevY[var4] - 0x0f0000;
 			}
 		}
-	
+
 		for(int var5 = 0; var5 < levelNumCircles; var5++) {
 			if(levelCircleHasPhysics[var5]) {
 				int var1 = levelCircleX[var5];
@@ -5052,7 +5052,7 @@ public final class Game extends GameCanvas implements Runnable {
 				if(var5 < 5 && levelPlayerCurrentGrabberFlags >= 0) {
 					var3 = 63000;
 				}
-	
+
 				int[] var10000 = levelCircleX;
 				var10000[var5] += lp32Mul(var3, levelCircleX[var5] - levelCirclePrevX[var5]);
 				var10000 = levelCircleY;
@@ -5061,16 +5061,16 @@ public final class Game extends GameCanvas implements Runnable {
 					var10000 = levelCircleY;
 					var10000[var5] += Field321;
 				}
-	
+
 				levelCirclePrevX[var5] = var1;
 				levelCirclePrevY[var5] = var2;
 			}
 		}
 	}
-	
+
 	public static final void updatePlayerCollision() {
 		levelPlayerOnCircle = false;
-	
+
 		for(int var0 = 0; var0 < 5; var0++) {
 			for(int var1 = var0 + 1; var1 < levelNumCircles; var1++) {
 				if((levelCircleFlags[var1] & 2) > 0 && levelCircleX[var0] - levelCircleRadius[var0] < levelCircleX[var1] + levelCircleRadius[var1] && levelCircleX[var0] + levelCircleRadius[var0] > levelCircleX[var1] - levelCircleRadius[var1] && levelCircleY[var0] - levelCircleRadius[var0] < levelCircleY[var1] + levelCircleRadius[var1] && levelCircleY[var0] + levelCircleRadius[var0] > levelCircleY[var1] - levelCircleRadius[var1]) {
@@ -5082,7 +5082,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
+
 		for(int var2 = 5; var2 < levelNumCircles; var2++) {
 			if(levelCircleHasPhysics[var2]) {
 				for(int var3 = var2 + 1; var3 < levelNumCircles; var3++) {
@@ -5097,7 +5097,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void swapLevelCircleData() {
 		int var0 = levelNumCircles;
 		levelNumCircles = swappedLevelNumCircles;
@@ -5130,77 +5130,77 @@ public final class Game extends GameCanvas implements Runnable {
 		levelCircleHasPhysics = swappedLevelCircleHasPhysics;
 		swappedLevelCircleHasPhysics = var3;
 	}
-	
+
 	public static final void levelObtainIDs() {
 		levelIDExpanders = levelGetCircleIDs(0x4000);
 		levelIDDestructibles = levelGetCircleIDs(0x0100);
 		levelIDFoam = levelGetCircleIDs(0x2000);
 		levelIDGoals = levelGetCircleIDs(0x0010);
 		int var0 = 0;
-	
+
 		for(int var1 = 0; var1 < levelNumCircles; var1++) {
 			if((levelCircleFlags[var1] & 0x80) > 0 && levelCircleType[var1] != 7) {
 				var0++;
 			}
 		}
-	
+
 		levelIDBombDispenser = new short[var0];
 		var0 = 0;
-	
+
 		for(short var5 = 0; var5 < levelNumCircles; var5++) {
 			if((levelCircleFlags[var5] & 0x80) > 0 && levelCircleType[var5] != 7) {
 				levelIDBombDispenser[var0++] = var5;
 			}
 		}
-	
+
 		var0 = 0;
-	
+
 		for(int var6 = 0; var6 < levelNumCircles; var6++) {
 			if((levelCircleFlags[var6] & 0x0004) > 0 && !levelCircleHasPhysics[var6] && (levelCircleFlags[var6] & 0x0008) == 0 && (levelCircleFlags[var6] & 0x2000) == 0 && (levelCircleFlags[var6] & 0x0100) == 0) {
 				var0++;
 			}
 		}
-	
+
 		levelIDPlatforms = new short[var0];
 		var0 = 0;
-	
+
 		for(short var7 = 0; var7 < levelNumCircles; var7++) {
 			if((levelCircleFlags[var7] & 0x0004) > 0 && !levelCircleHasPhysics[var7] && (levelCircleFlags[var7] & 0x0008) == 0 && (levelCircleFlags[var7] & 0x2000) == 0 && (levelCircleFlags[var7] & 0x0100) == 0) {
 				levelIDPlatforms[var0++] = var7;
 			}
 		}
-	
+
 		levelIDRadioactive = levelGetCircleIDs(8);
 	}
-	
+
 	public static final short[] levelGetCircleIDs(int var0) {
 		int var1 = 0;
-	
+
 		for(short var2 = 0; var2 < levelNumCircles; var2++) {
 			if((levelCircleFlags[var2] & var0) == var0) {
 				var1++;
 			}
 		}
-	
+
 		short[] var5 = new short[var1];
 		var1 = 0;
-	
+
 		for(short var3 = 0; var3 < levelNumCircles; var3++) {
 			if((levelCircleFlags[var3] & var0) == var0) {
 				var5[var1++] = var3;
 			}
 		}
-	
+
 		return var5;
 	}
-	
+
 	public static final void loadLevel(int var0) {
 		boolean var1 = true;
 		isLevelComplete = false;
 		if(var0 >= 25) {
 			var0 = 24;
 		}
-	
+
 		if(var0 == -2) {
 			swapLevelData(0);
 			sOpenFile("ship.bin");
@@ -5216,12 +5216,12 @@ public final class Game extends GameCanvas implements Runnable {
 			swapLevelData(1);
 			sOpenFile("level.0" + var0 + ".bin");
 		}
-	
+
 		isFinalLevel = false;
 		if(var0 >= 0) {
 			isFinalLevel = var0 == 24;
 		}
-	
+
 		currentLevelLoaded = var0;
 		levelWidth = sReadU16() << 16;
 		levelHeight = sReadU16() << 16;
@@ -5244,46 +5244,46 @@ public final class Game extends GameCanvas implements Runnable {
 		if(!var1 && var0 != -1) {
 			var6 += 5;
 		}
-	
+
 		levelInitCircles(var6 + var4 + 1);
 		if(var1) {
 			var5 = levelAddHitbox(0, var2, var3, 0x140000);
 		} else {
 			var5 = levelAddHitbox(0, var2, var3, 0x0d0000);
 		}
-	
+
 		levelSetCircle(var5++, 0, 0, 0xa0000, 30, 0, 0, false);
 		if(!var1 && var0 != -1) {
 			var5 = levelAddHitbox(var5, var2 + 0x370000, var3, 0x140000);
 		}
-	
+
 		var6 = var5;
-	
+
 		for(int var7 = 0; var7 < var4; var7++) {
 			levelSetCircle(var5++, levelAlignToGameMirror(sReadU16() << 16), sReadU16() << 16, sReadU16() << 16, sReadU16(), sReadU16(), sRead8(), sRead8() == 1);
 		}
-	
+
 		if(var0 == -2) {
 			initGrabberIDs(0);
 		} else {
 			int var16 = 0;
-	
+
 			for(int var8 = 0; var8 < levelNumCircles; var8++) {
 				if(levelCircleType[var8] == 3) {
 					var16++;
 				}
 			}
-	
+
 			initGrabberIDs(var16);
 			int var18 = 0;
-	
+
 			for(int var9 = 0; var9 < levelNumCircles; var9++) {
 				if(levelCircleType[var9] == 3) {
 					setGrabberID(var18++, var9);
 				}
 			}
 		}
-	
+
 		levelBombObjectID = 5;
 		levelLoadRects();
 		int var17 = sReadU16();
@@ -5291,53 +5291,53 @@ public final class Game extends GameCanvas implements Runnable {
 		if(!var1) {
 			var19 = 0x0c0000;
 		}
-	
+
 		levelInitHooks(17 + var17);
 		int var35 = var5 = levelSetPlayerHook(0, 0, var19);
 		var5++;
 		levelSetHook(var35, 0, 0, 4, 65536, 65500, false, false);
-	
+
 		for(int var20 = 0; var20 < var17; var20++) {
 			levelSetHook(var5++, var6 + sReadU16(), var6 + sReadU16(), sRead8(), sReadU16() << 16, sReadU16(), sRead8() == 1, true);
 		}
-	
+
 		byte var21;
 		levelInitSpawners(var21 = sRead8());
-	
+
 		for(int var10 = 0; var10 < var21; var10++) {
 			levelSetSpawner(var10, levelAlignToGameMirror(sReadU16() << 16), sReadU16() << 16, var6 + sRead8(), sRead8(), sReadU16(), sReadU16(), sReadU16(), sReadU16(), sReadU16());
 		}
-	
+
 		initEnemies(var21 = sRead8());
-	
+
 		for(int var27 = 0; var27 < var21; var27++) {
 			levelSetEnemy(var27, var6 + sReadU8(), sRead8() == 1, sReadU16(), sReadU16() << 14, sRead8() == 1, sReadU16(), sReadU16() << 14, sReadU16() << 16, sRead8() == 1, sReadU16());
 		}
-	
+
 		initSpiderLegs(var21 = sRead8());
-	
+
 		for(int var28 = 0; var28 < var21; var28++) {
 			levelSetSpiderLeg(var28, var6 + sReadU8(), sRead8(), sReadU16() << 16, sReadU16());
 		}
-	
+
 		levelInitExpanders(var21 = sRead8());
-	
+
 		for(int var29 = 0; var29 < var21; var29++) {
 			levelSetExpander(var29, var6 + sReadU8(), sRead8() == 1, sReadU16(), sReadU16() << 16);
 		}
-	
+
 		levelInitAnimatedRects(var21 = sRead8());
-	
+
 		for(int var30 = 0; var30 < var21; var30++) {
 			levelSetAnimRect(var30, var30, sReadU16() << 16, sReadU16() << 16, sReadU16() << 8, sReadU16(), sReadU16());
 		}
-	
+
 		initLevelSigns(var21 = sRead8());
-	
+
 		for(int var31 = 0; var31 < var21; var31++) {
 			levelSetSign(var31, levelAlignToGameMirror(sReadU16() << 16), sReadU16() << 16, sRead8());
 		}
-	
+
 		initPlayer(var1);
 		levelDeathTicks = 70;
 		Field321 = 40000;
@@ -5355,19 +5355,19 @@ public final class Game extends GameCanvas implements Runnable {
 				var37[var32] -= 0x750000;
 			}
 		}
-	
+
 		levelIntroTicks = 0;
 		if(var0 == -2) {
 			levelShipDisablePods();
 		} else {
 			levelObtainIDs();
 		}
-	
+
 		if(isFinalLevel) {
 			Method178();
 		}
 	}
-	
+
 	/* hardcoded ship pods disabling. */
 	public static final void levelShipDisablePods() {
 		for(int var0 = 0; var0 < levelNumCircles; var0++) {
@@ -5384,7 +5384,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final int levelAlignToGameMirror(int var0) {
 		if(mirrored) {
 			return var0 > 0 && var0 < 10000 ? (levelWidth >> 16) - var0 : levelWidth - var0;
@@ -5392,13 +5392,13 @@ public final class Game extends GameCanvas implements Runnable {
 			return var0;
 		}
 	}
-	
+
 	public static final int levelAddHitbox(int var0, int var1, int var2, int var3) {
 		byte var4 = 3;
 		if(var0 > 0) {
 			var4 = 0;
 		}
-	
+
 		levelSetCircle(var0++, var1, var2, 0xa0000, 60, var4, 0, true);
 		levelSetCircle(var0++, var1, var2 - var3, 0x030000, 60, var4, 0, true);
 		levelSetCircle(var0++, var1, var2 + var3, 0x030000, 60, var4, 0, true);
@@ -5406,7 +5406,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelSetCircle(var0++, var1 + var3, var2, 0x030000, 60, var4, 0, true);
 		return var0;
 	}
-	
+
 	public static final int levelSetPlayerHook(int var0, int var1, int var2) {
 		levelSetHook(var0++, var1 + 0, var1 + 1, 0, 0, 0, false, true);
 		levelSetHook(var0++, var1 + 0, var1 + 2, 0, 0, 0, false, true);
@@ -5426,7 +5426,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelSetHook(var0++, var1 + 0, var1 + 4, 3, var2, 15000, false, true);
 		return var0;
 	}
-	
+
 	public static final void swapLevelData(int var0) {
 		if(var0 != activeSwapKey) {
 			activeSwapKey = var0;
@@ -5455,7 +5455,7 @@ public final class Game extends GameCanvas implements Runnable {
 			swapLevelPlayerData();
 		}
 	}
-	
+
 	public static final void loadAllSounds() {
 		initSoundSystem(9);
 		loadSoundToIndex(8, "title", 1, 15804);
@@ -5468,7 +5468,7 @@ public final class Game extends GameCanvas implements Runnable {
 		loadSoundToQueue(0, "jingle_flyIn", 1, 980);
 		loadSoundToQueue(1, "jingle_complete", 1, 815);
 	}
-	
+
 	public static final void playSound(int var0) {
 		if(var0 == currentSoundID && var0 != -1) {
 			if(var0 >= 0) {
@@ -5485,13 +5485,13 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void playCurrentSound() {
 		if(currentSoundID >= 0 && !paused && !isSoundActive(currentSoundID, -1)) {
 			playSound(currentSoundID, -1);
 		}
 	}
-	
+
 	public static final void playCurrentBackgroundMusic() {
 		switch(levelBackgroundID) {
 			case 0:
@@ -5511,44 +5511,44 @@ public final class Game extends GameCanvas implements Runnable {
 			default:
 		}
 	}
-	
+
 	public static final void playJingleFlyIn() {
 		playSound(-1);
 		playSound(0, 1);
 	}
-	
+
 	public static final void playJingleComplete() {
 		playSound(-1);
 		playSound(1, 1);
 	}
-	
+
 	public static final void setWeatherAndBackgroundIDs(int var0, int var1) {
 		boolean var2 = false;
-	
+
 		for(int var3 = 0; var3 < knownBackgrounds.length; var3++) {
 			if(knownBackgrounds[var3] == var1) {
 				var2 = true;
 			}
 		}
-	
+
 		if(!var2) {
 			var1 = knownBackgrounds[level % knownBackgrounds.length];
 			if(var0 > 0) {
 				var0 = fallbackWeathers[var1];
 			}
 		}
-	
+
 		levelWeatherID = var0;
 		levelBackgroundID = var1;
 	}
-	
+
 	public static final void loadBackground(int var0) {
 		imgsBackground = new Image[5];
-	
+
 		for(int var1 = 0; var1 < 5; var1++) {
 			imgsBackground[var1] = loadImage("bg_" + var0 + "_" + var1 + ".pim", "bg_" + var0 + "_" + var1 + ".ppl");
 		}
-	
+
 		currentBackgroundHasObjects = backgroundHasObjects[var0];
 		activeBackgroundPattern = backgroundPatterns[var0];
 		Field358 = Field369[var0];
@@ -5560,13 +5560,13 @@ public final class Game extends GameCanvas implements Runnable {
 		Field363 = 128 - var2;
 		currentLoadedBackgroundID = var0;
 	}
-	
+
 	public static final void renderBackground() {
 		if(currentLevelLoaded >= 0) {
 			if(imgsBackground == null || levelBackgroundID != currentLoadedBackgroundID) {
 				loadBackground(levelBackgroundID);
 			}
-	
+
 			if(!currentBackgroundHasObjects) {
 				int var5 = valOfZero + (Field361 - valOfZero) * (levelCameraY >> 16) / (levelHeight >> 16);
 				int var7 = -((getBackgroundTotalWidth(activeBackgroundPattern) - 128) * (levelCameraX >> 16)) / (levelWidth >> 16);
@@ -5583,179 +5583,179 @@ public final class Game extends GameCanvas implements Runnable {
 			setGammaColor(0xdcc86d);
 			gFillRect(0, 0, 128, 128);
 			setGammaColor(0);
-	
+
 			for(int var0 = 0; var0 < 128; var0 += 40) {
 				gDrawLine(0, var0, 128, var0);
 			}
-	
+
 			for(int var2 = 0; var2 < 128; var2 += 40) {
 				gDrawLine(var2, 0, var2, 128);
 			}
 		}
 	}
-	
+
 	public static final void renderBackground(int[][] var0, int var1, int var2, boolean var3) {
 		int var4 = 0;
 		if(var3) {
 			int var5 = var1;
-	
+
 			for(int var6 = 0; var6 < var0[0].length; var6++) {
 				Image var7 = imgsBackground[var0[0][var6]];
 				if(var5 < 128 && var5 > -var7.getWidth() && var2 > 0 && var2 < 128 + var7.getHeight()) {
 					gDrawImage(var7, var5, var2 - var7.getHeight(), 0);
 				}
-	
+
 				var5 += var7.getWidth();
 			}
-	
+
 			var4++;
 		}
-	
+
 		while(var4 < var0.length) {
 			int var8 = var1;
 			Image var9 = null;
-	
+
 			for(int var10 = 0; var10 < var0[var4].length; var10++) {
 				var9 = imgsBackground[var0[var4][var10]];
 				if(var8 < 128 && var8 > -var9.getWidth() && var2 < 128 && var2 > -var9.getHeight()) {
 					gDrawImage(var9, var8, var2, 0);
 				}
-	
+
 				var8 += var9.getWidth();
 			}
-	
+
 			var2 += var9.getHeight();
 			var4++;
 		}
 	}
-	
+
 	public static final int getBackgroundTotalWidth(int[][] var0) {
 		int var1 = 0;
-	
+
 		for(int var2 = 0; var2 < var0[0].length; var2++) {
 			var1 += imgsBackground[var0[0][var2]].getWidth();
 		}
-	
+
 		return var1;
 	}
-	
+
 	public static final int getBackgroundTotalHeight(int[][] var0) {
 		int var1 = 0;
-	
+
 		for(int var2 = 0; var2 < var0.length; var2++) {
 			var1 += imgsBackground[var0[var2][0]].getHeight();
 		}
-	
+
 		return var1;
 	}
-	
+
 	public static final void levelSetCamera(int var0, int var1, int var2) {
 		if(activeSwapKey == 0) {
 			var1 = levelHeight / 2;
 			if(var0 < 0x578000) {
 				var0 = 0x578000;
 			}
-	
+
 			if(var0 > levelWidth - 0x578000) {
 				var0 = levelWidth - 0x578000;
 			}
 		}
-	
+
 		levelCameraX = var0;
 		levelCameraY = var1;
 		levelCameraIntX = var0 >> 16;
 		levelCameraIntY = var1 >> 16;
-	
+
 		for(levelCameraAngle = var2; levelCameraAngle > 359; levelCameraAngle -= 360) {
 		}
-	
+
 		while(levelCameraAngle < 0) {
 			levelCameraAngle += 360;
 		}
-	
+
 		levelCameraZoom = 72;
 	}
-	
+
 	public static final boolean levelCameraApproach(int var0, int var1, int var2) {
 		return levelCameraApproach(var0, var1, var2, 0x1e0000);
 	}
-	
+
 	public static final boolean levelCameraApproach(int var0, int var1, int var2, int var3) {
 		if(activeSwapKey == 0) {
 			var1 = levelHeight / 2;
 		} else if(var1 > levelHeight - 0x578000) {
 			var1 = levelHeight - 0x578000;
 		}
-	
+
 		if(var0 < 0x578000) {
 			var0 = 0x578000;
 		}
-	
+
 		if(var0 > levelWidth - 0x578000) {
 			var0 = levelWidth - 0x578000;
 		}
-	
+
 		int var4 = var0 - levelCameraX;
 		int var5 = var1 - levelCameraY;
 		if(var4 > var3) {
 			var4 = var3;
 		}
-	
+
 		if(var4 < -var3) {
 			var4 = -var3;
 		}
-	
+
 		if(var5 > var3) {
 			var5 = var3;
 		}
-	
+
 		if(var5 < -var3) {
 			var5 = -var3;
 		}
-	
+
 		int var6 = var4 >> 17;
 		while(var6 > 359) {
 			var6 -= 360;
 		}
-	
+
 		while(var6 < 0) {
 			var6 += 360;
 		}
-	
+
 		if((var6 >= 180 || levelCameraAngle >= 180) && (var6 <= 180 || levelCameraAngle <= 180)) {
 			if(var6 > 180) {
 				var6 -= 360;
 			}
-	
+
 			if(levelCameraAngle > 180) {
 				levelCameraAngle -= 360;
 			}
-	
+
 			levelCameraAngle += (var6 - levelCameraAngle) / 5;
 		} else {
 			levelCameraAngle += (var6 - levelCameraAngle) / 5;
 		}
-	
+
 		while(levelCameraAngle > 359) {
 			levelCameraAngle -= 360;
 		}
-	
+
 		while(levelCameraAngle < 0) {
 			levelCameraAngle += 360;
 		}
-	
+
 		if(activeSwapKey != 0) {
 			int var7 = levelCircleX[0] - levelCirclePrevX[0];
 			if(var7 < 0) {
 				var7 = -var7;
 			}
-	
+
 			var7 >>= 8;
 			int var8 = 82 - var7 * 72 * 45 / 0x32000;
 			if(var8 < 36) {
 				var8 = 36;
 			}
-	
+
 			int var9 = (var8 - levelCameraZoom) / 10;
 			if(var9 <= 10 && var9 >= 10) {
 				if(var9 > 0) {
@@ -5770,7 +5770,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelCameraZoom = 72;
 			levelCameraAngle = 0;
 		}
-	
+
 		if(var4 < 0xa0000 && var4 > -0xa0000 && var5 < 0xa0000 && var5 > -0xa0000) {
 			return true;
 		} else {
@@ -5781,15 +5781,15 @@ public final class Game extends GameCanvas implements Runnable {
 			return false;
 		}
 	}
-	
+
 	public static final int levelAlignX(int var0, int var1) {
 		return levelAlignX(var0 - levelCameraX, var1 - levelCameraY, levelCameraAngle) + 0x400000 >> 16;
 	}
-	
+
 	public static final int levelAlignY(int var0, int var1) {
 		return levelAlignY(var0 - levelCameraX, var1 - levelCameraY, levelCameraAngle) + 0x400000 >> 16;
 	}
-	
+
 	public static final void swapCameraData() {
 		int var0 = levelCameraIntX;
 		levelCameraIntX = swappedLevelCameraIntX;
@@ -5807,42 +5807,42 @@ public final class Game extends GameCanvas implements Runnable {
 		levelCameraAngle = swappedLevelCameraAngle;
 		swappedLevelCameraAngle = var0;
 	}
-	
+
 	public static final void loadFacesIcons() {
 		if(imgsFaces == null) {
 			imgsFaces = new Image[5][];
 			imgsFaces[0] = new Image[2];
-	
+
 			for(int i = 0; i < 2; i++) {
 				imgsFaces[0][i] = loadImage("wiz" + i + ".pim", "wiz" + i + ".ppl");
 			}
-	
+
 			imgsFaces[1] = new Image[2];
-	
+
 			for(int i = 0; i < 2; i++) {
 				imgsFaces[1][i] = loadImage("waz" + i + ".pim", "waz" + i + ".ppl");
 			}
-	
+
 			imgsFaces[2] = new Image[2];
-	
+
 			for(int i = 0; i < 2; i++) {
 				imgsFaces[2][i] = loadImage("purple" + i + ".pim", "purple" + i + ".ppl");
 			}
-	
+
 			imgsFaces[3] = new Image[2];
-	
+
 			for(int i = 0; i < 2; i++) {
 				imgsFaces[3][i] = loadImage("hal" + i + ".pim", "hal" + i + ".ppl");
 			}
-	
+
 			hideDialogueBox();
 		}
 	}
-	
+
 	public static final void hideDialogueBox() {
 		showDialogue = 0;
 	}
-	
+
 	public static final void setCurrentSpeech(String var0, int var1) {
 		int var2 = 12 + currentSpeechNumLines * 13;
 		currentSpeaker = var1;
@@ -5853,13 +5853,13 @@ public final class Game extends GameCanvas implements Runnable {
 			int var3 = 12 + currentSpeechNumLines * 13;
 			currentSpeechStartMs -= (long)(var2 * 400 / var3);
 		}
-	
+
 		showDialogue = 1;
 		currentSpeakerIteration = 0;
 		currentSpeechIteration = 0;
 		Field387 = false;
 	}
-	
+
 	public static final void renderDialogueBox() {
 		if(showDialogue == 1) {
 			long currTime = millis();
@@ -5868,7 +5868,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if(currentSpeechIteration == 0 && var2 < 400) {
 				boxHeight = boxHeight * var2 / 400;
 			}
-	
+
 			gSetColor(0xffffff); // white
 			gFillRect(0, 0, 128, boxHeight);
 			gSetColor(0xece9d8); // light gray
@@ -5891,40 +5891,40 @@ public final class Game extends GameCanvas implements Runnable {
 						gDrawImage(var6, 107 + var7, 6 + (currentSpeechNumLines * 15 - var6.getHeight()) / 2, 0);
 						var4 = 8;
 					}
-	
+
 					renderTextEx(var4, 6, 99, currentSpeechNumLines * 13, currentSpeech, 1, 0, currentSpeechIteration, false);
 				} else {
 					renderTextEx(14, 6, 99, currentSpeechNumLines * 13, currentSpeech, 1, 0, currentSpeechIteration, false);
 				}
-	
+
 				if(currTime > currentSpeechStartMs) {
 					currentSpeechStartMs = currTime + 150L;
 					currentSpeechIteration++;
-	
+
 					char var9;
 					while(currentSpeechIteration < currentSpeech.length() && (var9 = currentSpeech.charAt(currentSpeechIteration)) != ' ' && var9 != '.') {
 						currentSpeechIteration++;
 					}
-	
+
 					if(currentSpeechIteration >= currentSpeech.length()) {
 						Field387 = true;
 						return;
 					}
-	
+
 					currentSpeakerIteration++;
 				}
 			}
 		}
 	}
-	
+
 	public static final int numNewLines(String var0) {
 		return getNewLineIndexes(99, var0, 1).length;
 	}
-	
+
 	public static final String[] strSplitLines(String var0, int var1) {
 		int[] var2 = getNewLineIndexes(99, var0, var1);
 		String[] var3 = new String[var2.length];
-	
+
 		for(int var4 = 0; var4 < var2.length; var4++) {
 			if(var4 == var2.length - 1) {
 				var3[var4] = var0.substring(var2[var4]);
@@ -5932,10 +5932,10 @@ public final class Game extends GameCanvas implements Runnable {
 				var3[var4] = var0.substring(var2[var4], var2[var4 + 1]);
 			}
 		}
-	
+
 		return var3;
 	}
-	
+
 	public static final void _sceneLevelRun() {
 		if(levelDialogueToDisplay > -1) {
 			levelDisplayDialogue(levelDialogueToDisplay);
@@ -5947,25 +5947,25 @@ public final class Game extends GameCanvas implements Runnable {
 				if(currentLevelLoaded < 0) {
 					levelIntroTicks = 120;
 				}
-	
+
 				if(!isDejaVuMessageShown) {
 					if(currentLevelLoaded >= 0) {
 						startDialogue("respawn.bms", levelCircleX[0], levelCircleY[0]);
 					}
-	
+
 					isDejaVuMessageShown = true;
 					Field404 = true;
 					return;
 				}
-	
+
 				Field404 = true;
 			}
-	
+
 			if(levelIntroTicks >= 50) {
 				updateAll();
 				levelTicks++;
 			}
-	
+
 			if(levelPlayerHealth < 1) {
 				if(levelDeathTicks == 70) {
 					vibrate(640);
@@ -5977,7 +5977,7 @@ public final class Game extends GameCanvas implements Runnable {
 					levelCircleFlags[2] = 1;
 					levelCircleX[2] = levelCircleX[0];
 					levelCircleY[2] = levelCircleY[0] + 0xa0000;
-	
+
 					for(int var0 = 0; var0 < 2; var0++) {
 						for(int var1 = 0; var1 < 2; var1++) {
 							levelHookType[8 + 2 * var0 + var1] = 3;
@@ -5985,7 +5985,7 @@ public final class Game extends GameCanvas implements Runnable {
 							levelHookExtent[8 + 2 * var0 + var1] = 0x280000;
 						}
 					}
-	
+
 					if(levelPlayerCurrentGrabberFlags >= 0) {
 						levelHookIsActive[16] = false;
 						levelCircleFlags[levelHookID2[16]] = levelPlayerCurrentGrabberFlags;
@@ -5993,19 +5993,19 @@ public final class Game extends GameCanvas implements Runnable {
 						levelPlayerBlockGrabberID = levelHookID2[16];
 					}
 				}
-	
+
 				levelCameraApproach(levelCircleX[0] + 10 * (levelCircleX[0] - levelCirclePrevX[0]), levelCircleY[0] + 10 * (levelCircleY[0] - levelCirclePrevY[0]), 0, 0x140000);
 				levelPlayerRed -= 3;
 				if(levelPlayerRed < 0) {
 					levelPlayerRed = 0;
 				}
-	
+
 				levelDeathTicks--;
 				if(levelDeathTicks <= 0) {
 					Field389 = currentLevelLoaded;
 				}
 			}
-	
+
 			int var2 = -1;
 			if(levelIntroTicks < 100) {
 				var2 = softkeyPressed(-1, 3);
@@ -6014,15 +6014,15 @@ public final class Game extends GameCanvas implements Runnable {
 			} else if(levelPlayerHealth > 0) {
 				var2 = softkeyPressed(-1, 0);
 			}
-	
+
 			if(var2 == 4) {
 				Field391 = true;
 			}
-	
+
 			if(var2 == 3) {
 				levelIntroTicks = 120;
 			}
-	
+
 			if(var2 == 0) {
 				softkeyPressed(-1, -1);
 				Field427 = true;
@@ -6034,18 +6034,18 @@ public final class Game extends GameCanvas implements Runnable {
 					updatePlayerControls();
 					levelCameraApproach(levelCircleX[0] + 10 * (levelCircleX[0] - levelCirclePrevX[0]), levelCircleY[0] + 10 * (levelCircleY[0] - levelCirclePrevY[0]), 0, 3276800);
 				}
-	
+
 				if(levelCircleHasPhysics[levelBombObjectID]) {
 					if(levelTicks > levelBombStartTicks + 100) {
 						levelSetCamera(levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID], 0);
 					}
-	
+
 					if(levelBombExplodeTicks == 0 && levelTicks > levelBombStartTicks + 130) {
 						levelBombExplodeTicks = 5;
 						vibrate(40);
 					}
 				}
-	
+
 				if(levelBombExplodeTicks > 0) {
 					levelSetCamera(levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID], 0);
 					levelBombExplodeTicks--;
@@ -6059,7 +6059,7 @@ public final class Game extends GameCanvas implements Runnable {
 						levelCircleX[levelBombObjectID] = -0xc80000;
 					}
 				}
-	
+
 				levelRender(true);
 				if(levelIntroTicks < 100) {
 					int var3;
@@ -6068,41 +6068,41 @@ public final class Game extends GameCanvas implements Runnable {
 					} else {
 						var3 = -51 + (100 - levelIntroTicks) * 51 / 20;
 					}
-	
+
 					if(var3 > 0) {
 						var3 = 0;
 					}
-	
+
 					if(levelIntroTicks == 80) {
 						vibrate(140);
 					}
-	
+
 					if(levelIntroTicks < 80) {
 						renderRocket(14, var3, -1);
 					} else {
 						renderRocket(rand8() % 5 - 2 + 64 - 50, var3, levelIntroTicks);
 					}
-	
+
 					renderText(4, 114, currentPlanetText, 0);
 					levelIntroTicks++;
 				}
-	
+
 				refreshGame();
 			}
 		}
 	}
-	
+
 	public static final void updatePlayerControls() {
 		if((isKeyPressed(0x1a0) || isKeyPressed(1) && !isKeyPressed(0x800)) && (levelPlayerOnCircle || levelPlayerCurrentGrabberFlags >= 0)) {
 			if(levelPlayerCurrentGrabberFlags >= 0) {
 				levelPlayerReleaseGrabber();
 			}
-	
+
 			if(levelPlayerOnCircle) {
 				Field173 = 3;
 			}
 		}
-	
+
 		if(isKeyHeld(0x110)) {
 			levelPlayerDirection = 1;
 			if(levelPlayerCurrentGrabberFlags >= 0 && !levelPlayerOnCircle) {
@@ -6123,7 +6123,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
+
 		if(isKeyHeld(0x88)) {
 			levelPlayerDirection = -1;
 			if(levelPlayerCurrentGrabberFlags >= 0 && !levelPlayerOnCircle) {
@@ -6144,7 +6144,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 		}
-	
+
 		if(isKeyReleased(-1)) {
 			if(isKeyReleased(cheatCodeLevelComplete[iterCheatLevelComplete])) {
 				iterCheatLevelComplete++;
@@ -6155,7 +6155,7 @@ public final class Game extends GameCanvas implements Runnable {
 			} else {
 				iterCheatLevelComplete = 0;
 			}
-	
+
 			if(isKeyReleased(cheatCodeInvincibility[iterCheatInvincibility])) {
 				iterCheatInvincibility++;
 				if(iterCheatInvincibility >= cheatCodeInvincibility.length) {
@@ -6174,7 +6174,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void levelRender(boolean var0) {
 		long var1 = millis();
 		if(levelWeatherID == 1 && activeSwapKey == 1) {
@@ -6183,9 +6183,9 @@ public final class Game extends GameCanvas implements Runnable {
 				gamma = 0;
 			}
 		}
-	
+
 		renderBackground();
-	
+
 		for(int var3 = 0; var3 < levelIDGoals.length; var3++) {
 			short var4 = levelIDGoals[var3];
 			setGammaColor(levelColorGoal);
@@ -6196,24 +6196,24 @@ public final class Game extends GameCanvas implements Runnable {
 			} else {
 				int var5 = levelCircleRadius[var4] / 4;
 				int var6 = (int)((long)var5 * (var1 % 700L)) / 700;
-	
+
 				for(int var7 = 0; var7 < 4; var7++) {
 					levelRenderCircleOutline(levelCircleX[var4], levelCircleY[var4], levelCircleRadius[var4] - var6 - var7 * var5);
 				}
 			}
 		}
-	
+
 		renderSigns();
 		if(levelFinishY > 0) {
 			renderFacePurple(levelFinishX, levelFinishY);
 		}
-	
+
 		if(var0) {
 			levelRenderPlayer();
 		}
-	
+
 		renderEnemies();
-	
+
 		for(int var8 = 0; var8 < levelNumCircles; var8++) {
 			if((levelCircleFlags[var8] & 4) > 0 && levelCircleHasPhysics[var8] && (levelCircleFlags[var8] & 0x2000) == 0 && (levelCircleFlags[var8] & 8) == 0 && var8 != levelBombObjectID) {
 				setGammaColor(0, 0, 0);
@@ -6222,7 +6222,7 @@ public final class Game extends GameCanvas implements Runnable {
 				levelRenderCircle(levelCircleX[var8], levelCircleY[var8], levelCircleRadius[var8]);
 			}
 		}
-	
+
 		if(levelCircleHasPhysics[levelBombObjectID]) {
 			setGammaColor(0, 0, 0);
 			levelRenderCircle(levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID], levelCircleRadius[levelBombObjectID]);
@@ -6238,11 +6238,11 @@ public final class Game extends GameCanvas implements Runnable {
 			} else {
 				setGammaColor(200, 0, 0);
 			}
-	
+
 			levelRenderCircle(levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID], levelCircleRadius[levelBombObjectID]);
 			levelRenderImage(imgFuse, levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID] - levelCircleRadius[levelBombObjectID]);
 		}
-	
+
 		levelRenderCircleIDs(levelIDPlatforms, 0);
 		levelRenderRects();
 		levelRenderCircleIDs(levelIDPlatforms, levelColor);
@@ -6254,57 +6254,57 @@ public final class Game extends GameCanvas implements Runnable {
 		if(var9 > 800) {
 			var9 = 1600 - var9;
 		}
-	
+
 		levelRenderCircleIDs(levelIDRadioactive, 0);
 		levelRenderCircleIDs(levelIDRadioactive, (levelRadioactiveMinRed + (levelRadioactiveMaxRed - levelRadioactiveMinRed) * var9 / 800 << 16) + (levelRadioactiveMinGreen + (levelRadioactiveMaxGreen - levelRadioactiveMinGreen) * var9 / 800 << 8) + levelRadioactiveMinBlue + (levelRadioactiveMaxBlue - levelRadioactiveMinBlue) * var9 / 800);
 		levelRenderCircleIDs(levelIDExpanders, 0);
 		levelRenderCircleIDs(levelIDExpanders, levelColorBouncer);
 		setGammaColor(0, 0, 0);
-	
+
 		for(int var10 = 16; var10 < levelNumHooks; var10++) {
 			if(levelHookIsActive[var10] && levelHookIsVisible[var10]) {
 				levelRenderLine(levelCircleX[levelHookID1[var10]], levelCircleY[levelHookID1[var10]], levelCircleX[levelHookID2[var10]], levelCircleY[levelHookID2[var10]]);
 			}
 		}
-	
+
 		if(isFinalLevel) {
 			Method181();
 		}
-	
+
 		levelRenderGrabbers();
-	
+
 		for(int var11 = 0; var11 < levelIDBombDispenser.length; var11++) {
 			renderBombDispenser(levelCircleX[levelIDBombDispenser[var11]], levelCircleY[levelIDBombDispenser[var11]]);
 		}
-	
+
 		if(levelWeatherID != 0 && activeSwapKey == 1) {
 			if(levelWeatherID == 1) {
 				renderRain();
 			}
-	
+
 			if(levelWeatherID == 2) {
 				levelRenderVolcanicDust();
 			}
 		}
 	}
-	
+
 	public static final void levelRenderCircleIDs(short[] var0, int var1) {
 		setGammaColor(var1);
-	
+
 		for(int var2 = 0; var2 < var0.length; var2++) {
 			levelRenderCircle(levelCircleX[var0[var2]], levelCircleY[var0[var2]], levelCircleRadius[var0[var2]]);
 		}
 	}
-	
+
 	public static final void activateLevel(int var0) {
 		loadLevel(var0);
 	}
-	
+
 	public static final void updateAll() {
 		if(levelHookIsActive[16]) {
 			levelHookIsVisible[16] = true;
 		}
-	
+
 		updateSpiders();
 		updateEnemies();
 		updateExpanders();
@@ -6312,14 +6312,14 @@ public final class Game extends GameCanvas implements Runnable {
 		if(levelPlayerHitTicks > 0) {
 			levelPlayerHitTicks--;
 		}
-	
+
 		updateSpawners();
 		updateLevel();
 		if(isFinalLevel) {
 			updatePing();
 		}
 	}
-	
+
 	public static final void processPlayerCircles(int id1, int id2) {
 		if(id1 == 2)
 			levelPlayerOnCircle = true;
@@ -6332,7 +6332,7 @@ public final class Game extends GameCanvas implements Runnable {
 				levelCircleFlags[id2] = 0;
 			}
 		}
-	
+
 		/* radioactive goo. */
 		if((levelCircleFlags[id2] & 8) > 0 &&
 				!isPlayerInvincible) {
@@ -6356,12 +6356,12 @@ public final class Game extends GameCanvas implements Runnable {
 					levelPlayerCurrentGrabberFlags = levelCircleFlags[id2];
 					levelCircleFlags[id2] = 0;
 				}
-	
+
 				/* vacant an expander. */
 				if(circleType == 6) {
 					setExpanderVacant(id2);
 				}
-	
+
 				/* enemy hurts a player. */
 				if(circleType == 7 &&
 						levelPlayerHitTicks == 0 &&
@@ -6375,7 +6375,7 @@ public final class Game extends GameCanvas implements Runnable {
 						if(!isPlayerInvincible) {
 							levelPlayerHealth -= 170;
 						}
-	
+
 						lastAttackingEnemy = id2;
 						if(levelPlayerHealth > 0) {
 							levelPlayerHitTicks = 50;
@@ -6383,7 +6383,7 @@ public final class Game extends GameCanvas implements Runnable {
 						}
 					}
 				}
-	
+
 				/* finish the level. */
 				if(circleType == 8) {
 
@@ -6403,15 +6403,15 @@ public final class Game extends GameCanvas implements Runnable {
 					if(circleType == 10) {
 						dir = -1;
 					}
-	
+
 					if(circleType == 11) {
 						dir = 1;
 					}
-	
+
 					if(mirrored && circleType > 9) {
 						dir *= -1;
 					}
-	
+
 					levelSetCircle(levelBombObjectID, levelCircleX[id2] + dir * 0x140000, levelCircleY[id2], 0xa0000, 15, 71, 0, true);
 					levelCircleX[levelBombObjectID] += dir * 0x30000;
 				}
@@ -6420,7 +6420,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void processCircles(int id1, int id2) {
 		if(levelPlayerHealth > 0) {
 
@@ -6437,7 +6437,7 @@ public final class Game extends GameCanvas implements Runnable {
 						swpID1 = id2;
 						swpID2 = id1;
 					}
-	
+
 					if(levelCircleFlags[swpID2] != 0) {
 						levelCircleX[swpID2] = levelCircleX[swpID1];
 						levelCircleY[swpID2] = levelCircleY[swpID1];
@@ -6452,7 +6452,7 @@ public final class Game extends GameCanvas implements Runnable {
 							levelPortalFilledRadius = levelCircleRadius[swpID1];
 							isLevelComplete = true;
 						}
-	
+
 						if(levelCircleRadius[swpID2] <= 0) {
 							levelCircleFlags[swpID2] = 0;
 							levelCircleHasPhysics[swpID2] = false;
@@ -6511,21 +6511,21 @@ public final class Game extends GameCanvas implements Runnable {
 						}
 
 					}
-	
+
 					/* a circle touches a finish circle. */
 					if((circleType1 == 1 || circleType2 == 1) &&
 							(circleType1 == 2 || circleType2 == 2)) {
 
 						isLevelComplete = true;
 					}
-	
+
 					/* a circle touches a radioactive circle. */
 					if((circleType1 == 1 || circleType2 == 1) &&
 							(circleType1 == 12 || circleType2 == 12)) {
 
 						levelPlayerHealth -= 4000;
 					}
-	
+
 					/* an explosion wave reaches Ping. */
 					if(isFinalLevel) {
 
@@ -6537,10 +6537,10 @@ public final class Game extends GameCanvas implements Runnable {
 							} else {
 								levelCircleFlags[id2] = 0;
 							}
-	
+
 							levelPingSpawnEnemies();
 						}
-	
+
 						if(levelBombExplodeTicks > 0 &&
 								(id1 == levelBombObjectID && circleType2 == 13 ||
 								 id2 == levelBombObjectID && circleType1 == 13)) {
@@ -6554,14 +6554,14 @@ public final class Game extends GameCanvas implements Runnable {
 				if(id1 >= 5) {
 					processPlayerCircles(id2, id1);
 				}
-	
+
 				if(id2 >= 5) {
 					processPlayerCircles(id1, id2);
 				}
 			}
 		}
 	}
-	
+
 	public static final void loadGeneral() {
 		gSetColor(255, 255, 255);
 		gFillRect(0, 0, 128, 128);
@@ -6572,15 +6572,15 @@ public final class Game extends GameCanvas implements Runnable {
 		if(level > 0) {
 			skipPrologue = true;
 		}
-	
+
 		setNewState(0, 0);
 	}
-	
+
 	public static final void updateTransition() {
 		playCurrentSound();
 		_updateTransition();
 	}
-	
+
 	public static final void loadGeneralUI() {
 		setRandSeed(0);
 		bfcLoadHead();
@@ -6599,22 +6599,22 @@ public final class Game extends GameCanvas implements Runnable {
 		setSoftkeyIcon(3, loadImage((short)0x0545, (short)0xc896));
 		setSoftkeyIcon(4, loadImage((short)0x5c21, (short)0x91f2));
 	}
-	
+
 	public static final void setPauseScreenDraw() {
 		pauseScreenDraw = true;
 	}
-	
+
 	public static final void pauseScreenOnce() {
 		if(pauseScreenDraw) {
 			pauseScreenDraw = false;
 			gSetColor(0, 0, 0);
-	
+
 			for(int y = 0; y < 128; y++) {
 				for(int x = y & 1; x < 128; x += 2) {
 					gDrawLine(x, y, x, y);
 				}
 			}
-	
+
 			gFillRect(0, 109, 128, 128);
 			softkeyPressed(2, -1);
 		}
@@ -6628,20 +6628,20 @@ public final class Game extends GameCanvas implements Runnable {
 		if(loadingBarColorIndex < 0) {
 			loadingBarColorIndex = loadingBarColors.length - 1;
 		}
-	
+
 		loadingBarColors[loadingBarColorIndex] = 200;
-	
+
 		for(int i = 0; i < 12; i++) {
 			gSetColor(loadingBarColors[i], 0, 0);
 			loadingBarColors[i] = loadingBarColors[i] * 80 / 100;
 			gFillArc(32, 32, 64, 64, i * 30, 20);
 		}
-	
+
 		gSetColor(0, 0, 0);
 		gFillArc(43, 43, 42, 42, 0, 360);
 		gfxFlush();
 	}
-	
+
 	public static final void levelRenderLine(int var0, int var1, int var2, int var3) {
 		int var4 = levelAlignX(var0, var1);
 		int var5 = levelAlignY(var0, var1);
@@ -6649,17 +6649,17 @@ public final class Game extends GameCanvas implements Runnable {
 		int var7 = levelAlignY(var2, var3);
 		gDrawLine(var4, var5, var6, var7);
 	}
-	
+
 	public static final void setGammaColor(int c) {
 		setGammaColor(c >> 16 & 255, c >> 8 & 255, c & 255);
 	}
-	
+
 	public static final void setGammaColor(int r, int g, int b) {
 		gammaBlackSet = false;
 		if(r + g + b == 0) {
 			gammaBlackSet = true;
 		}
-	
+
 		if(gamma == 100) {
 			gSetColor(r, g, b);
 		} else {
@@ -6675,7 +6675,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void levelDrawRect(int var0, int var1, int var2, int var3) {
 		if(gammaBlackSet) {
 			int var4 = 0x20000;
@@ -6683,7 +6683,7 @@ public final class Game extends GameCanvas implements Runnable {
 			var2 += var4;
 			var3 += var4;
 		}
-	
+
 		int var13 = levelAlignX(var0 - var2, var1 - var3);
 		int var5 = levelAlignY(var0 - var2, var1 - var3);
 		int var6 = levelAlignX(var0 + var2, var1 - var3);
@@ -6703,20 +6703,20 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void levelRenderImage(Image var0, int var1, int var2) {
 		int var3 = levelAlignX(var1, var2);
 		int var4 = levelAlignY(var1, var2);
 		gDrawImage(var0, var3 - var0.getWidth() / 2, var4 - var0.getHeight() / 2, 0);
 	}
-	
+
 	public static final void sceneSelectionRenderCircle(int var0, int var1, int var2, int var3) {
 		setGammaColor(0);
 		levelRenderCircle(var0, var1, var2);
 		setGammaColor(var3);
 		levelRenderCircle(var0, var1, var2);
 	}
-	
+
 	public static final void levelRenderCircle(int var0, int var1, int var2) {
 		if(var2 >= 35000) {
 			int var3 = levelAlignX(var0, var1);
@@ -6726,13 +6726,13 @@ public final class Game extends GameCanvas implements Runnable {
 			if(gammaBlackSet) {
 				var2 += 2;
 			}
-	
+
 			if(var3 > -var2 && var3 < 128 + var2 && var4 > -var2 && var4 < 128 + var2) {
 				gFillArc(var3 - var2, var4 - var2, var2 + var2, var2 + var2, 0, 360);
 			}
 		}
 	}
-	
+
 	public static final void levelRenderCritterShock(int var0, int var1, int var2, int var3) {
 		int var4 = levelAlignX(var0, var1);
 		int var5 = levelAlignY(var0, var1);
@@ -6740,7 +6740,7 @@ public final class Game extends GameCanvas implements Runnable {
 		int var7 = levelAlignY(var2, var3);
 		renderCritterShock(var4, var5, var6, var7, 8, 6);
 	}
-	
+
 	public static final void levelRenderCircleOutline(int var0, int var1, int var2) {
 		int var3 = levelAlignX(var0, var1);
 		int var4 = levelAlignY(var0, var1);
@@ -6749,75 +6749,75 @@ public final class Game extends GameCanvas implements Runnable {
 		if(gammaBlackSet) {
 			var2 += 2;
 		}
-	
+
 		if(var3 > -var2 && var3 < 128 + var2 && var4 > -var2 && var4 < 128 + var2) {
 			gDrawArc(var3 - var2, var4 - var2, var2 + var2, var2 + var2, 0, 360);
 		}
 	}
-	
+
 	public static final boolean isOutOfScreenBounds(int var0, int var1, int var2, int var3) {
 		return var0 > 128 || var2 < 0 || var1 > 128 || var3 < 0;
 	}
-	
+
 	public static final void initInsideShip() {
 		if(imgWindow == null) {
 			imgWindow = loadImage("window.pim", "window.ppl");
 		}
-	
+
 		if(imgArrowLeft == null) {
 			imgArrowLeft = loadImage("arrow_left.pim", "arrow_left.ppl");
 		}
-	
+
 		if(imgArrowRight == null) {
 			imgArrowRight = loadImage("arrow_right.pim", "arrow_right.ppl");
 		}
-	
+
 		if(imgsInside == null) {
 			imgsInside = new Image[3];
-	
+
 			for(int i = 0; i < 3; i++) {
 				imgsInside[i] = loadImage("inside" + i + ".pim", "inside" + i + ".ppl");
 			}
 		}
-	
+
 		if(imgInsideLamp == null) {
 			imgInsideLamp = loadImage("inside_lamp.pim", "inside_lamp.ppl");
 		}
-	
+
 		if(imgsPiston == null) {
 			imgsPiston = new Image[2];
 			imgsPiston[0] = loadImage("piston_top.pim", "piston_top.ppl");
 			imgsPiston[1] = loadImage("piston_bottom.pim", "piston_bottom.ppl");
 		}
-	
+
 		if(imgDecors == null) {
 			imgDecors = new Image[10];
-	
+
 			for(int i = 0; i < imgDecors.length; i++) {
 				imgDecors[i] = loadImage("shipDecor" + i + ".pim", "shipDecor" + i + ".ppl");
 			}
-	
+
 			decorBackground = loadFile16("decor_background.bin");
 			decorForeground = loadFile16("decor_foreground.bin");
 		}
-	
+
 		if(imgsShipIcons == null) {
 			imgsShipIcons = new Image[9];
-	
+
 			for(int i = 0; i < 9; i++) {
 				imgsShipIcons[i] = loadImage("shipicon" + i + ".pim", "shipicon" + i + ".ppl");
 			}
 		}
-	
+
 		if(imgsShipIconsOff == null) {
 			imgsShipIconsOff = new Image[9];
-	
+
 			for(int i = 0; i < 9; i++) {
 				imgsShipIconsOff[i] = loadImage("shipicon" + i + "b.pim", "shipicon" + i + "b.ppl");
 			}
 		}
 	}
-	
+
 	public static final void initShip() {
 		initSpace(2, 12, 92, 46);
 		gamma = 100;
@@ -6826,7 +6826,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field321 = 40000;
 		levelSetCamera(levelCircleX[0], levelHeight / 2, 0);
 	}
-	
+
 	public static final int processMainMenuDialogue(int var0, boolean var1) {
 		byte var2 = 0;
 		switch(var0) {
@@ -6865,7 +6865,7 @@ public final class Game extends GameCanvas implements Runnable {
 				} else {
 					startDialogue("menu_audio_on.bms", levelCircleX[0], levelCircleY[0]);
 				}
-	
+
 				audio = !audio;
 				break;
 			case 6:
@@ -6874,7 +6874,7 @@ public final class Game extends GameCanvas implements Runnable {
 				} else {
 					startDialogue("menu_vibra_on.bms", levelCircleX[0], levelCircleY[0]);
 				}
-	
+
 				vibration = !vibration;
 				saveRecordData();
 				vibrate(640);
@@ -6889,10 +6889,10 @@ public final class Game extends GameCanvas implements Runnable {
 				startDialogue("menu_sure_reset.bms", levelCircleX[0], levelCircleY[0], true);
 				var2 = 5;
 		}
-	
+
 		return var2;
 	}
-	
+
 	public static final void renderShipBlobs(boolean var0) {
 		Field428 = true;
 		renderShipInside();
@@ -6900,27 +6900,27 @@ public final class Game extends GameCanvas implements Runnable {
 		if(!var0) {
 			renderPlayable(6, 0xc80000, true);
 		}
-	
+
 		levelRenderPlayer();
 		renderShipDecor(decorForeground);
 		renderShipArrows();
 	}
-	
+
 	public static final void renderShipArrows() {
 		if(levelCircleX[0] > 0x6e0000) {
 			gDrawImage(imgArrowLeft, 4, 88, 0);
 		}
-	
+
 		if(levelCircleX[0] < 0x41a0000) {
 			gDrawImage(imgArrowRight, 107, 88, 0);
 		}
 	}
-	
+
 	public static final void renderShipDecor(short[] decorData) {
 		if(decorData != null) {
 			boolean b = false;
 			int shiftX = 64 - levelCameraZoom * levelCameraIntX / 100;
-	
+
 			for(int i = 0; i < decorData.length; i += 3) {
 				Image img = imgDecors[decorData[i]];
 				if(img != null) {
@@ -6933,29 +6933,29 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void renderShipInside() {
 		int var1;
 		int var2;
 		if((var2 = var1 = 64 - levelCameraZoom * levelCameraIntX / 100) > 0) {
 			var2 = 0;
 		}
-	
+
 		gDrawImage(imgsInside[0], var2, -16, 0);
 		var2 += 28;
-	
+
 		for(int var3 = 0; var3 < 17; var3++) {
 			if(var2 + 46 > 0 && var2 <= 128) {
 				gDrawImage(imgsInside[1], var2, -16, 0);
 			}
-	
+
 			var2 += 46;
 		}
-	
+
 		if(var2 <= 128) {
 			gDrawImage(imgsInside[2], var2, -16, 0);
 		}
-	
+
 		int var4 = var1 + levelAlignToGameMirror(193) * 72 / 100;
 		gDrawImage(imgInsideLamp, var4 - imgInsideLamp.getWidth() / 2, 2, 0);
 		renderWindow(var1 + 299, 30, 0);
@@ -6970,17 +6970,17 @@ public final class Game extends GameCanvas implements Runnable {
 					for(int var7 = 20; var7 < 360; var7 += 90) {
 						gDrawArc(var4 - var5, var12 - var5, var5 + var5, var5 + var5, var7, 50);
 					}
-	
+
 					var5--;
 				}
 			}
-	
+
 			shipAlarmRadius += 2;
 			if(shipAlarmRadius > 30) {
 				shipAlarmRadius = 5;
 			}
 		}
-	
+
 		for(int var13 = 0; var13 < levelNumCircles; var13++) {
 			if((levelCircleFlags[var13] & 4) > 0 && levelCircleHasPhysics[var13] && levelCircleType[var13] > 0) {
 				int var14 = 72 * (levelCircleX[var13] / 100) >> 16;
@@ -7001,20 +7001,20 @@ public final class Game extends GameCanvas implements Runnable {
 							var8 = imgsShipIconsOff[var9];
 						}
 				}
-	
+
 				gDrawImage(var8, var1 + var14 - var8.getWidth() / 2, -16 + var15 - var8.getHeight() / 2, 0);
 				if(Field428 && var1 + var14 > -100 && var1 + var14 < 228) {
 					String var10 = textTableShip[var9];
 					if(Field427) {
 						var10 = textTableShipPause[var9];
 					}
-	
+
 					renderText(var1 + var14 - calcTextWidth(var10, 3) / 2, 89, var10, 3);
 				}
 			}
 		}
 	}
-	
+
 	public static final void renderWindow(int var0, int var1, int var2) {
 		int var3 = imgWindow.getWidth();
 		int var4 = imgWindow.getHeight();
@@ -7027,28 +7027,28 @@ public final class Game extends GameCanvas implements Runnable {
 		if(var0 >= -var3 && var0 <= 128) {
 			gDrawImage(imgWindow, var0, var1, 0);
 		}
-	
+
 		gSetClip(0, 0, 128, 128);
 	}
-	
+
 	public static final void renderSplash() {
 		if(imgSplashShip == null) {
 			imgSplashShip = loadImage("outside.pim", "outside.ppl");
 		}
-	
+
 		if(imgsFlame == null) {
 			imgsFlame = new Image[2];
 			imgsFlame[0] = loadImage("flame0.pim", "flame0.ppl");
 			imgsFlame[1] = loadImage("flame1.pim", "flame1.ppl");
 		}
-	
+
 		gSetColor(0);
 		gFillRect(0, 0, 128, 128);
 		renderSpace(0, 0, 0, true);
 		gDrawImage(imgSplashShip, 33, 49, 0);
 		gDrawImage(imgsFlame[(int)(millis() / 100L % 2L)], 30, 62, 0);
 	}
-	
+
 	public static final void initSpaceMap(int var0, int var1, int var2) {
 		spaceMapCameraX = 0;
 		spaceMapCameraY = 0;
@@ -7064,48 +7064,48 @@ public final class Game extends GameCanvas implements Runnable {
 			if(imgPlanet == null) {
 				imgPlanet = loadImage("planet.pim", "planet.ppl");
 			}
-	
+
 			Field439 = true;
 		} else {
 			Field439 = false;
 		}
-	
+
 		if(imgShip == null) {
 			imgShip = loadImage("ship.pim", "ship.ppl");
 		}
-	
+
 		if(imgPointer == null) {
 			imgPointer = loadImage("pointer.pim", "pointer.ppl");
 		}
 	}
-	
+
 	public static final void spaceMapSetCameraToBeacon() {
 		spaceMapSetCameraInstant(spaceMapBeaconX, spaceMapBeaconY);
 	}
-	
+
 	public static final void spaceMapSetCameraInstant(int x, int y) {
 		spaceMapCameraX = x << 8;
 		spaceMapCameraY = y << 8;
 		spaceMapTargetCameraX = spaceMapCameraX;
 		spaceMapTargetCameraY = spaceMapCameraY;
 	}
-	
+
 	public static final void spaceMapSetTargetCameraToBeacon() {
 		spaceMapSetTargetCamera(spaceMapBeaconX, spaceMapBeaconY);
 	}
-	
+
 	public static final void spaceMapSetTargetCamera(int x, int y) {
 		spaceMapTargetCameraX = (x << 8) + 128;
 		spaceMapTargetCameraY = (y << 8) + 128;
 	}
-	
+
 	public static final boolean renderSpaceMapNextFrame() {
 		spaceMapCameraX += (spaceMapTargetCameraX - spaceMapCameraX) / 10;
 		spaceMapCameraY += (spaceMapTargetCameraY - spaceMapCameraY) / 10;
 		return (spaceMapCameraX & 0xffff00) == (spaceMapTargetCameraX & 0xffff00) &&
 			(spaceMapCameraY & 0xffff00) == (spaceMapTargetCameraY & 0xffff00);
 	}
-	
+
 	public static final void renderSpaceMap() {
 		gSetColor(0);
 		gFillRect(0, 0, 128, 128);
@@ -7124,7 +7124,7 @@ public final class Game extends GameCanvas implements Runnable {
 			gDrawImage(imgPointer, posX - 16, posY - 58 - 2, 0);
 			gDrawImage(imgShip, posX - imgShip.getWidth() / 2, posY - 58 + (33 - imgShip.getHeight()) / 2 - 2, 0);
 		}
-	
+
 		posX = spaceMapBeaconX + camX + 64;
 		posY = spaceMapBeaconY + camY + 64;
 		renderStar(posX, posY);
@@ -7142,13 +7142,13 @@ public final class Game extends GameCanvas implements Runnable {
 				spaceMapBeaconRadius = 1;
 			}
 		}
-	
+
 		if(Field439) {
 			gDrawImage(imgPointer, posX - 16, posY - 58 - 2, 0);
 			gDrawImage(imgPlanet, posX - imgPlanet.getWidth() / 2, posY - 58 + (33 - imgPlanet.getHeight()) / 2 - 2, 0);
 		}
 	}
-	
+
 	public static final void renderBeamAnimation(int step) {
 		updateAll();
 		renderShipInside();
@@ -7160,31 +7160,31 @@ public final class Game extends GameCanvas implements Runnable {
 			if(levelCameraZoom == 0) {
 				levelCameraZoom = 1;
 			}
-	
+
 			renderPlayable(6, 0xc80000, true);
 			gamma = 100;
 			levelCameraZoom = 72;
 		} else {
 			renderPlayable(6, 0xc80000, true);
 		}
-	
+
 		levelRenderPlayer();
 		renderShipDecor(decorForeground);
 		refreshGame();
 	}
-	
+
 	public static final void initVictory() {
 		Field444 = levelCircleX[0];
 		Field445 = levelCircleY[0];
-	
+
 		for(int var0 = 0; var0 < 5; var0++) {
 			levelCirclePrevY[var0] = levelCircleY[var0];
 		}
-	
+
 		if(levelPlayerCurrentGrabberFlags >= 0) {
 			levelPlayerReleaseGrabber();
 		}
-	
+
 		playJingleComplete();
 		Field446 = levelCameraZoom;
 		levelCompleteTicks = 150;
@@ -7194,7 +7194,7 @@ public final class Game extends GameCanvas implements Runnable {
 			textCompleted = getText(0x50001);
 		}
 	}
-	
+
 	public static final boolean renderMissionComplete() {
 		levelCameraApproach(Field444, Field445, 0);
 		gamma = 100;
@@ -7204,14 +7204,14 @@ public final class Game extends GameCanvas implements Runnable {
 			if(levelCompleteTicks % 4 == 0) {
 				Field446++;
 			}
-	
+
 			gamma = levelCompleteTicks;
 		}
-	
+
 		if(levelCompleteTicks > 0) {
 			if(levelCompleteTicks < 50) {
 				levelCameraZoom = levelCompleteTicks * 72 * 2 / 100;
-	
+
 				for(int var0 = 0; var0 < 5; var0++) {
 					int var1 = (100 - levelCompleteTicks * 2) * (100 - levelCompleteTicks * 2) * (100 - levelCompleteTicks * 2) * (100 - levelCompleteTicks * 2);
 					int[] var10000 = levelCircleY;
@@ -7219,19 +7219,19 @@ public final class Game extends GameCanvas implements Runnable {
 					var10000 = levelCircleX;
 					var10000[var0] += var1 * cos((50 - levelCompleteTicks) * 45) / 2000;
 				}
-	
+
 				levelCompleteTicks++;
 			}
-	
+
 			levelRenderPlayer();
 		}
-	
+
 		renderConfetti();
 		int var2 = 90;
 		if(levelCompleteTicks > 105) {
 			var2 = (150 - levelCompleteTicks) * 2;
 		}
-	
+
 		renderText((128 - calcTextWidth(textMission, 0)) / 2 - cos1000[var2] * 128 / 1000, 32, textMission, 0);
 		renderText((128 - calcTextWidth(textCompleted, 0)) / 2 + cos1000[var2] * 128 / 1000, 43, textCompleted, 0);
 		refreshGame();
@@ -7239,7 +7239,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if(softkeyPressed(2, -1) == 2) {
 			levelCompleteTicks = -38;
 		}
-	
+
 		if(levelCompleteTicks < -40) {
 			setNewState(6, 0);
 			Field393 = true;
@@ -7248,67 +7248,67 @@ public final class Game extends GameCanvas implements Runnable {
 			return false;
 		}
 	}
-	
+
 	public static final int levelAlignX(int var0, int var1, int var2) {
 		var0 /= 100000 / levelCameraZoom;
 		var1 /= 100000 / levelCameraZoom;
 		return cos1000[var2] * var0 - sin1000[var2] * var1;
 	}
-	
+
 	public static final int levelAlignY(int var0, int var1, int var2) {
 		var0 /= 100000 / levelCameraZoom;
 		var1 /= 100000 / levelCameraZoom;
 		return sin1000[var2] * var0 + cos1000[var2] * var1;
 	}
-	
+
 	public static final int sin(int deg) {
 		while(deg < 0) {
 			deg += 360;
 		}
-	
+
 		while(deg >= 360) {
 			deg -= 360;
 		}
-	
+
 		return sin1000[deg];
 	}
-	
+
 	public static final int cos(int deg) {
 		while(deg < 0) {
 			deg += 360;
 		}
-	
+
 		while(deg >= 360) {
 			deg -= 360;
 		}
-	
+
 		return cos1000[deg];
 	}
-	
+
 	public static final void loadTrigonometric() {
 		if(sin1000 == null) {
 			sin1000 = loadFile16("sin1000.bin");
 		}
-	
+
 		if(cos1000 == null) {
 			cos1000 = loadFile16("cos1000.bin");
 		}
 	}
-	
+
 	public static final void loadStatic() {
 		if(imgsStatic == null) {
 			imgsStatic = new Image[4];
-	
+
 			for(int var0 = 0; var0 < 4; var0++) {
 				imgsStatic[var0] = loadImage("static" + var0 + ".pim", "static" + var0 + ".ppl");
 			}
 		}
-	
+
 		if(staticTiles == null) {
 			staticTiles = new int[42];
 		}
 	}
-	
+
 	public static final void renderPingTransmission() {
 		loadStatic();
 		gSetColor(pingBackgroundColor);
@@ -7318,23 +7318,23 @@ public final class Game extends GameCanvas implements Runnable {
 		} else {
 			renderPurple(currentPurpleX, currentPurpleY, currentPurpleSize);
 		}
-	
+
 		if(isTransmodigrafierMissing) {
 			int var0 = 0;
-	
+
 			for(int var1 = 0; var1 <= 128; var1 += 23) {
 				for(int var2 = -rand8() % 30; var2 <= 128; var2 += 23) {
 					int var3;
 					for(var3 = rand8() % 4; var3 == staticTiles[var0]; var3 = rand8() % 4) {
 					}
-	
+
 					staticTiles[var0] = var3;
 					gDrawImage(imgsStatic[var3], var2, var1, 0);
 					var0++;
 				}
 			}
 		}
-	
+
 		if(isShowingShardPicture) {
 			gSetColor(0xffffff);
 			gFillRect(0, 0, 128, 10);
@@ -7348,7 +7348,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void renderPurple(int var0, int var1, int var2) {
 		int var3 = var2 * 40 / 100;
 		int var4 = var2 * 93 / 100;
@@ -7359,7 +7359,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} else {
 			gSetColor(0xa020f0);
 		}
-	
+
 		gFillArc(var0 - var3 / 2, var1 - var4 / 2, var3, var4, 0, 360);
 		gSetColor(0);
 		int var5 = var2 * 23 / 100;
@@ -7369,51 +7369,51 @@ public final class Game extends GameCanvas implements Runnable {
 		} else {
 			gFillArc(var0 - var5 / 2, var1 - var6, var5, var6, 0, 360);
 		}
-	
+
 		gSetColor(0xffffff);
 		int var7 = var2 * 14 / 100;
 		int var8 = var2 * 6 / 100;
-	
+
 		for(int var9 = 0; var9 < 3; var9++) {
 			gFillArc(var0 - var7 * 3 / 2 + var9 * var7, var1 - var4 * 45 / 100, var7, var7, 0, 360);
 		}
-	
+
 		gSetColor(0);
-	
+
 		for(int var10 = 0; var10 < 3; var10++) {
 			gFillArc(var0 - var7 * 3 / 2 + var10 * var7 + var7 / 3, var1 - var4 * 45 / 100 + var7 / 3, var8, var8, 0, 360);
 		}
-	
+
 		if(Field456 || !isShowingShardPicture && rand8() > 240) {
 			if(isTransmodigrafierMissing) {
 				gSetColor(0x696969);
 			} else {
 				gSetColor(0xa020f0);
 			}
-	
+
 			for(int var11 = 0; var11 < 3; var11++) {
 				gFillArc(var0 - var7 * 3 / 2 + var11 * var7, var1 - var4 * 45 / 100, var7, var7, 0, 360);
 			}
-	
+
 			Field456 = !Field456;
 		}
 	}
-	
+
 	public static final void sceneSelectionCleanup() {
 		imgsSelectionMenu = null;
 		imgsSelectionMenuArrows = null;
 	}
-	
+
 	public static final void loadSelectionOptions(String[] imageFiles, int var1) {
 		numSelections = imageFiles.length;
 		selectionAngleBetweenOthers = 360 / numSelections;
 		selectionAngleUntilAdjust = selectionAngleBetweenOthers / 2;
 		imgsSelectionMenu = new Image[numSelections];
-	
+
 		for(int var2 = 0; var2 < numSelections; var2++) {
 			imgsSelectionMenu[var2] = loadImage(imageFiles[(var2 + var1) % numSelections] + ".pim", imageFiles[(var2 + var1) % numSelections] + ".ppl");
 		}
-	
+
 		imgsSelectionMenuArrows = new Image[2];
 		imgsSelectionMenuArrows[0] = loadImage("arrow_left.pim", "arrow_left.ppl");
 		imgsSelectionMenuArrows[1] = loadImage("arrow_right.pim", "arrow_right.ppl");
@@ -7425,7 +7425,7 @@ public final class Game extends GameCanvas implements Runnable {
 		selectionAngle = 0;
 		Field471 = 10 + numSelections * 2;
 		Field472 = var1;
-	
+
 		for(int var5 = 0; var5 < numSelections; var5++) {
 			int var3 = 5242 * cos(90 + var5 * selectionAngleBetweenOthers);
 			int var4 = 5242 * sin(90 + var5 * selectionAngleBetweenOthers);
@@ -7434,24 +7434,24 @@ public final class Game extends GameCanvas implements Runnable {
 			var4 = 6881 * sin(90 + var5 * selectionAngleBetweenOthers);
 			levelSetCircle(var5 + 10 + numSelections, var3, var4, 0x190000, 100, 3, 0, true);
 		}
-	
+
 		levelSetCircle(Field471, 0, 0, 0x500000, 200, 2, 0, false);
-	
+
 		for(int var6 = 0; var6 < numSelections; var6++) {
 			levelSetHook(var6, var6 + 10, var6 + 10 + numSelections, 4, 0x3c0000, 65000, true, true);
 		}
-	
+
 		levelSetCamera(levelCircleX[Field471], levelCircleY[Field471] + 0x640000, 0);
 		Field465 = 0;
 		Field466 = millis();
 	}
-	
+
 	public static final int getSelectedIndex() {
 		if(Field465 == 1 && softkeyPressed(2, -1, true) == 2) {
 			Field465++;
 			Field466 = millis() + 500L;
 		}
-	
+
 		if(isKeyHeld(8)) {
 			selectionAngle += 4;
 		} else if(isKeyHeld(16)) {
@@ -7464,92 +7464,92 @@ public final class Game extends GameCanvas implements Runnable {
 				selectionAngle -= 2;
 			}
 		}
-	
+
 		if(selectionAngle >= 360) {
 			selectionAngle -= 360;
 		}
-	
+
 		if(selectionAngle < 0) {
 			selectionAngle += 360;
 		}
-	
+
 		for(int var3 = 0; var3 < numSelections; var3++) {
 			int var1 = 5242 * cos(selectionAngle + 90 + var3 * selectionAngleBetweenOthers);
 			int var2 = 5242 * sin(selectionAngle + 90 + var3 * selectionAngleBetweenOthers);
 			levelCircleX[var3 + 10] = var1;
 			levelCircleY[var3 + 10] = var2;
 		}
-	
+
 		updateLevel();
 		if(Field465 == 0) {
 			gamma = (int)((millis() - Field466) / 5L);
 		}
-	
+
 		if(Field465 == 2) {
 			gamma = (int)((Field466 - millis()) / 20L);
 		}
-	
+
 		if(gamma < 0) {
 			gamma = 0;
 			Field465++;
 		}
-	
+
 		if(gamma > 100) {
 			gamma = 100;
 			Field465++;
 		}
-	
+
 		setGammaColor(0xdddddd);
 		gFillRect(0, 0, 128, 128);
 		sceneSelectionRenderCircle(levelCircleX[Field471], levelCircleY[Field471], levelCircleRadius[Field471], 0xaaaaaa);
 		sceneSelectionRenderCircle(levelCircleX[Field471], levelCircleY[Field471], levelCircleRadius[Field471] / 2, 0xdddddd);
 		setGammaColor(0);
-	
+
 		for(int var4 = 10; var4 < 10 + numSelections; var4++) {
 			levelRenderLine(levelCircleX[var4], levelCircleY[var4], levelCircleX[var4 + numSelections], levelCircleY[var4 + numSelections]);
 		}
-	
+
 		for(int var5 = 0; var5 < numSelections; var5++) {
 			levelRenderCircle(levelCircleX[var5 + 10 + numSelections], levelCircleY[var5 + 10 + numSelections], levelCircleRadius[var5 + 10 + numSelections]);
 			if(gamma > 20) {
 				levelRenderImage(imgsSelectionMenu[var5], levelCircleX[var5 + 10 + numSelections], levelCircleY[var5 + 10 + numSelections]);
 			}
 		}
-	
+
 		setGammaColor(0x888888);
-	
+
 		for(int var6 = 0; var6 < 5; var6++) {
 			int var9 = 3932 * cos(selectionAngle + 90 - 36 + var6 * 72);
 			int var10 = 3932 * sin(selectionAngle + 90 - 36 + var6 * 72);
 			levelRenderCircle(var9, var10, 0x50000);
 		}
-	
+
 		if(gamma > 50) {
 			Field473 += 12;
 			if(Field473 > 179) {
 				Field473 -= 180;
 			}
-	
+
 			int var7 = 1 + sin1000[Field473] * 6 / 1000;
 			gDrawImage(imgsSelectionMenuArrows[0], var7, 85 - imgsSelectionMenuArrows[0].getHeight() / 2, 0);
 			gDrawImage(imgsSelectionMenuArrows[1], 128 - var7 - imgsSelectionMenuArrows[1].getWidth(), 85 - imgsSelectionMenuArrows[1].getHeight() / 2, 0);
 		}
-	
+
 		refreshGame();
 		if(Field465 == 3) {
 			int var8 = (360 - selectionAngle) / selectionAngleBetweenOthers + Field472;
 			if(selectionAngle % selectionAngleBetweenOthers > selectionAngleUntilAdjust) {
 				var8++;
 			}
-	
+
 			if(var8 >= numSelections) {
 				var8 -= numSelections;
 			}
-	
+
 			if(var8 < 0) {
 				var8 += numSelections;
 			}
-	
+
 			return var8;
 		} else {
 			return -1;
