@@ -4585,9 +4585,9 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method191() {
-		for(int var0 = 0; var0 < levelEnemyIndex.length; var0++) {
-			renderEnemies(levelEnemyIndex[var0], var0);
+	public static final void renderEnemies() {
+		for(int i = 0; i < levelEnemyIndex.length; i++) {
+			renderEnemies(levelEnemyIndex[i], i);
 		}
 	}
 	
@@ -6197,7 +6197,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelRenderPlayer();
 		}
 	
-		Method191();
+		renderEnemies();
 	
 		for(int var8 = 0; var8 < levelNumCircles; var8++) {
 			if((levelCircleFlags[var8] & 4) > 0 && levelCircleHasPhysics[var8] && (levelCircleFlags[var8] & 0x2000) == 0 && (levelCircleFlags[var8] & 8) == 0 && var8 != levelBombObjectID) {
