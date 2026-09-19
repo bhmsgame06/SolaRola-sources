@@ -44,7 +44,7 @@ public final class Game extends GameCanvas implements Runnable {
 	private static Player[] soundPlayersMIDI;
 	public static DataInputStream currentData;
 	public static int currentSize;
-	public static boolean throbberToggle = false;
+	public static boolean loadingBarToggle = false;
 	public static int currentOffset = -1;
 	public static int currentLocation = -1;
 	public static int currentIndex = -1;
@@ -418,8 +418,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean isPlayerInvincible = false;
 	public static boolean Field404 = true;
 	public static boolean pauseScreenDraw = false;
-	public static int[] throbberColors = new int[12];
-	public static int throbberColorIndex = 9;
+	public static int[] loadingBarColors = new int[12];
+	public static int loadingBarColorIndex = 9;
 	public static boolean gammaBlackSet = false;
 	public static int gamma = 100;
 	// decors inside ship: socks, flowers, cubes, etc
@@ -521,8 +521,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	// funny circle
-	public static final void renderThrobber() {
-		renderThrobberNextFrame();
+	public static final void renderLoadingBar() {
+		renderLoadingBarNextFrame();
 	}
 	
 	public static final void updateKeys() {
@@ -818,8 +818,8 @@ public final class Game extends GameCanvas implements Runnable {
 		} else if(var1 == null) {
 			return -1;
 		} else {
-			if(throbberToggle) {
-				renderThrobber();
+			if(loadingBarToggle) {
+				renderLoadingBar();
 			}
 	
 			soundTypes[var0] = var2;
@@ -839,8 +839,8 @@ public final class Game extends GameCanvas implements Runnable {
 		} else if(var1 == null) {
 			return -1;
 		} else {
-			if(throbberToggle) {
-				renderThrobber();
+			if(loadingBarToggle) {
+				renderLoadingBar();
 			}
 	
 			soundTypes[var0] = var2;
@@ -1088,10 +1088,10 @@ public final class Game extends GameCanvas implements Runnable {
 						continue;
 					}
 	
-					boolean var7 = throbberToggle;
-					throbberToggle = false;
+					boolean var7 = loadingBarToggle;
+					loadingBarToggle = false;
 					loadSoundToIndex(var0, soundFilenames[var0], soundTypes[var0], 0);
-					throbberToggle = var7;
+					loadingBarToggle = var7;
 				}
 	
 				Player var9;
@@ -1308,8 +1308,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final boolean sOpenFile(short fnCrc) {
-		if(throbberToggle) {
-			renderThrobber();
+		if(loadingBarToggle) {
+			renderLoadingBar();
 		}
 	
 		int index = getFileIndex(fnCrc);
@@ -1495,14 +1495,14 @@ public final class Game extends GameCanvas implements Runnable {
 		if(var1 < 0 && var0 == Field51) {
 			return Field49;
 		} else {
-			boolean var2 = throbberToggle;
-			throbberToggle = false;
+			boolean var2 = loadingBarToggle;
+			loadingBarToggle = false;
 			if(!sOpenFile(Field52)) {
 				Field49 = null;
 				Field50 = null;
 			}
 	
-			throbberToggle = var2;
+			loadingBarToggle = var2;
 			int var3 = sReadU8();
 			int var4 = sReadU8();
 			if(var0 >= var4) {
@@ -2691,7 +2691,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void sceneLevelInit(int var0) {
 		Field427 = false;
 		if(oldScreenIndex != 5 && var0 != 1) {
-			throbberToggle = true;
+			loadingBarToggle = true;
 			levelCompletionState = 0;
 			loadFaces();
 			initExplosives();
@@ -2856,7 +2856,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			default:
 				setNewState(7, 0);
-				throbberToggle = true;
+				loadingBarToggle = true;
 		}
 	}
 	
@@ -3181,9 +3181,9 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void startDialogue(String var0, int var1, int var2, boolean var3) {
-		throbberToggle = false;
+		loadingBarToggle = false;
 		int[] var4 = loadFile32(var0);
-		throbberToggle = true;
+		loadingBarToggle = true;
 		if(var4 != null) {
 			startDialogue(var4, var1, var2, var3);
 		}
@@ -6615,19 +6615,19 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	// funny circle again	
-	public static final void renderThrobberNextFrame() {
+	public static final void renderLoadingBarNextFrame() {
 		gSetColor(0, 0, 0);
 		gFillRect(0, 0, 128, 128);
-		throbberColorIndex--;
-		if(throbberColorIndex < 0) {
-			throbberColorIndex = throbberColors.length - 1;
+		loadingBarColorIndex--;
+		if(loadingBarColorIndex < 0) {
+			loadingBarColorIndex = loadingBarColors.length - 1;
 		}
 	
-		throbberColors[throbberColorIndex] = 200;
+		loadingBarColors[loadingBarColorIndex] = 200;
 	
 		for(int i = 0; i < 12; i++) {
-			gSetColor(throbberColors[i], 0, 0);
-			throbberColors[i] = throbberColors[i] * 80 / 100;
+			gSetColor(loadingBarColors[i], 0, 0);
+			loadingBarColors[i] = loadingBarColors[i] * 80 / 100;
 			gFillArc(32, 32, 64, 64, i * 30, 20);
 		}
 	
