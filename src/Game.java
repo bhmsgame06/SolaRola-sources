@@ -4276,11 +4276,14 @@ public final class Game extends GameCanvas implements Runnable {
 		levelGrabberIDs[var0] = var1;
 	}
 	
-	public static final void Method177() {
-		for(int var0 = 0; var0 < levelGrabberIDs.length; var0++) {
-			int var1 = levelGrabberIDs[var0];
-			if(var1 != levelHookID2[16] && levelCircleFlags[var1] != 0) {
-				levelRenderImage(imgGrabber, levelCircleX[var1], levelCircleY[var1]);
+	public static final void levelRenderGrabbers() {
+		for(int i = 0; i < levelGrabberIDs.length; i++) {
+			int grabberID = levelGrabberIDs[i];
+
+			if(grabberID != levelHookID2[16] &&
+					levelCircleFlags[grabberID] != 0) {
+
+				levelRenderImage(imgGrabber, levelCircleX[grabberID], levelCircleY[grabberID]);
 			}
 		}
 	}
@@ -6262,7 +6265,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Method181();
 		}
 	
-		Method177();
+		levelRenderGrabbers();
 	
 		for(int var11 = 0; var11 < levelIDBombDispenser.length; var11++) {
 			renderBombDispenser(levelCircleX[levelIDBombDispenser[var11]], levelCircleY[levelIDBombDispenser[var11]]);
