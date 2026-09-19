@@ -933,12 +933,12 @@ public final class Game extends GameCanvas implements Runnable {
 		Player var1 = null;
 		if(soundPlayers[var0] != null) {
 			var1 = soundPlayers[var0];
-			numActiveSounds++;
+			numActiveSounds--;
 		}
 	
 		if(soundPlayersMIDI[var0] != null) {
 			var1 = soundPlayersMIDI[var0];
-			numActiveSoundsMIDI++;
+			numActiveSoundsMIDI--;
 		}
 	
 		if(var1 != null) {
@@ -949,7 +949,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 	
 			soundPlayers[var0] = soundPlayersMIDI[var0] = null;
-			numActiveSoundsTotal++;
+			numActiveSoundsTotal--;
 		}
 	}
 	
