@@ -4108,44 +4108,47 @@ public final class Game extends GameCanvas implements Runnable {
 		levelHookIsActive = Field215;
 		Field215 = var2;
 	}
-	
-	public static final void Method166(int var0) {
-		levelSpiderLegIDs = new int[var0];
-		levelSpiderLegMovementStartX = new int[var0];
-		levelSpiderLegMovementEndX = new int[var0];
-		levelSpiderLegTicks = new int[var0];
-		levelSpiderLegTicksUntilMovement = new int[var0];
-		levelSpiderLegParent = new int[var0];
+
+	public static final void initSpiderLegs(int num) {
+		levelSpiderLegIDs = new int[num];
+		levelSpiderLegMovementStartX = new int[num];
+		levelSpiderLegMovementEndX = new int[num];
+		levelSpiderLegTicks = new int[num];
+		levelSpiderLegTicksUntilMovement = new int[num];
+		levelSpiderLegParent = new int[num];
 	}
-	
-	public static final void Method167(int var0, int var1, int var2, int var3, int var4) {
-		levelSpiderLegIDs[var0] = var1;
-		levelSpiderLegMovementStartX[var0] = levelCircleX[var1] - var3;
-		levelSpiderLegMovementEndX[var0] = levelCircleX[var1] + var3;
-		if(var4 == 0) {
-			var4 = 1;
+
+	public static final void initSpiderLeg(int index, int legID, int parent, int movementAmplitude, int startTicks) {
+		levelSpiderLegIDs[index] = legID;
+		levelSpiderLegMovementStartX[index] = levelCircleX[legID] - movementAmplitude;
+		levelSpiderLegMovementEndX[index] = levelCircleX[legID] + movementAmplitude;
+
+		if(startTicks == 0) {
+			startTicks = 1;
 		}
-	
-		levelSpiderLegTicks[var0] = var4;
-		levelSpiderLegTicksUntilMovement[var0] = var4;
-		levelSpiderLegParent[var0] = var2;
+
+		levelSpiderLegTicks[index] = startTicks;
+		levelSpiderLegTicksUntilMovement[index] = startTicks;
+		levelSpiderLegParent[index] = parent;
 	}
-	
-	public static final void Method168(int var0) {
-		for(int var1 = 0; var1 < levelSpiderLegIDs.length; var1++) {
-			if(levelSpiderLegParent[var1] == var0) {
-				levelSpiderLegTicks[var1] = 400000;
-				levelCircle4ByWeight[levelSpiderLegIDs[var1]] = 52000;
-	
-				for(int var2 = 0; var2 < levelNumHooks; var2++) {
-					if((levelHookID1[var2] == levelSpiderLegIDs[var1] || levelHookID2[var2] == levelSpiderLegIDs[var1]) && !Field205[var2]) {
-						levelHookIsActive[var2] = false;
+
+	public static final void immobilizeSpider(int parent) {
+		for(int i = 0; i < levelSpiderLegIDs.length; i++) {
+			if(levelSpiderLegParent[i] == parent) {
+				levelSpiderLegTicks[i] = 400000;
+				levelCircle4ByWeight[levelSpiderLegIDs[i]] = 52000;
+
+				for(int k = 0; k < levelNumHooks; k++) {
+					if((levelHookID1[k] == levelSpiderLegIDs[i] ||
+								levelHookID2[k] == levelSpiderLegIDs[i]) && !Field205[k]) {
+
+						levelHookIsActive[k] = false;
 					}
 				}
 			}
 		}
 	}
-	
+
 	public static final void updateSpiders() {
 		if(levelSpiderLegIDs.length > 0) {
 			for(int i = 0; i < levelSpiderLegIDs.length; i++) {
@@ -4192,7 +4195,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 						if(levelCircleX[legID] > levelSpiderLegMovementEndX[i]) {
 							levelSpiderLegTicks[i] = levelSpiderLegTicksUntilMovement[i];
-	
+
 							for(int k = 0; k < levelSpiderLegIDs.length; k++) {
 								if(levelSpiderLegParent[i] == levelSpiderLegParent[k]) {
 									levelSpiderLegTicks[k] = levelSpiderLegTicks[i];
@@ -4206,7 +4209,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 	}
-	
+
 	public static final void levelInitExpanders(int var0) {
 		levelExpanderIndex = new int[var0];
 		levelExpanderIsTouchActivated = new boolean[var0];
@@ -4524,7 +4527,7 @@ public final class Game extends GameCanvas implements Runnable {
 				int[] var10000 = levelCircleFlags;
 				var10000[var0] |= 1;
 				if(!levelEnemyCanJump[var1] && !levelEnemyIsMovingInX[var1]) {
-					Method168(levelEnemyMovementStartTicks[var1]);
+					immobilizeSpider(levelEnemyMovementStartTicks[var1]);
 				}
 	
 				return;
@@ -5295,10 +5298,10 @@ public final class Game extends GameCanvas implements Runnable {
 			levelSetEnemy(var27, var6 + sReadU8(), sRead8() == 1, sReadU16(), sReadU16() << 14, sRead8() == 1, sReadU16(), sReadU16() << 14, sReadU16() << 16, sRead8() == 1, sReadU16());
 		}
 	
-		Method166(var21 = sRead8());
+		initSpiderLegs(var21 = sRead8());
 	
 		for(int var28 = 0; var28 < var21; var28++) {
-			Method167(var28, var6 + sReadU8(), sRead8(), sReadU16() << 16, sReadU16());
+			initSpiderLeg(var28, var6 + sReadU8(), sRead8(), sReadU16() << 16, sReadU16());
 		}
 	
 		levelInitExpanders(var21 = sRead8());
