@@ -4420,8 +4420,8 @@ public final class Game extends GameCanvas implements Runnable {
 				levelRenderCircle(centerEyeX + i * eyeDiameter, eyesY, eyeRadius);
 
 				setGammaColor(0);
-				int pupilX = Method182(centerEyeX + i * eyeDiameter, levelCameraX, 0x960000, eyeRadius * 3 / 4);
-				int pupilY = Method182(eyesY, levelCameraY, 0x640000, eyeRadius * 3 / 4);
+				int pupilX = calcCoefficientDelta(centerEyeX + i * eyeDiameter, levelCameraX, 0x960000, eyeRadius * 3 / 4);
+				int pupilY = calcCoefficientDelta(eyesY, levelCameraY, 0x640000, eyeRadius * 3 / 4);
 				levelRenderCircle(centerEyeX + i * eyeDiameter + pupilX, eyesY + pupilY, eyeRadius / 3);
 
 			} else { // closed eye.
@@ -4433,17 +4433,18 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final int Method182(int var0, int var1, int var2, int var3) {
-		int var4 = (var0 - (var1 - var2)) * 90 / var2;
-		if(var4 < 0) {
-			var4 = 0;
+	public static final int calcCoefficientDelta(int base, int pos, int range, int coefficient) {
+		int angle = (base - (pos - range)) * 90 / range;
+
+		if(angle < 0) {
+			angle = 0;
 		}
 
-		if(var4 >= 180) {
-			var4 = 179;
+		if(angle >= 180) {
+			angle = 179;
 		}
 
-		return var3 * cos1000[var4] / 1500;
+		return coefficient * cos1000[angle] / 1500;
 	}
 
 	public static final void levelPingHit() {
