@@ -228,12 +228,12 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] Field213;
 	public static boolean[] Field214;
 	public static boolean[] Field215;
-	public static int[] Field216;
-	public static int[] Field217;
-	public static int[] Field218;
-	public static int[] Field219;
-	public static int[] Field220;
-	public static int[] Field221;
+	public static int[] levelSpiderLegIDs;
+	public static int[] levelSpiderLegMovementStartX;
+	public static int[] levelSpiderLegMovementEndX;
+	public static int[] levelSpiderLegTicks;
+	public static int[] levelSpiderLegTicksUntilMovement;
+	public static int[] levelSpiderLegParent;
 	public static int levelExpanderTicks;
 	public static int[] levelExpanderIndex;
 	public static boolean[] levelExpanderIsTouchActivated;
@@ -4110,35 +4110,35 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void Method166(int var0) {
-		Field216 = new int[var0];
-		Field217 = new int[var0];
-		Field218 = new int[var0];
-		Field219 = new int[var0];
-		Field220 = new int[var0];
-		Field221 = new int[var0];
+		levelSpiderLegIDs = new int[var0];
+		levelSpiderLegMovementStartX = new int[var0];
+		levelSpiderLegMovementEndX = new int[var0];
+		levelSpiderLegTicks = new int[var0];
+		levelSpiderLegTicksUntilMovement = new int[var0];
+		levelSpiderLegParent = new int[var0];
 	}
 	
 	public static final void Method167(int var0, int var1, int var2, int var3, int var4) {
-		Field216[var0] = var1;
-		Field217[var0] = levelCircleX[var1] - var3;
-		Field218[var0] = levelCircleX[var1] + var3;
+		levelSpiderLegIDs[var0] = var1;
+		levelSpiderLegMovementStartX[var0] = levelCircleX[var1] - var3;
+		levelSpiderLegMovementEndX[var0] = levelCircleX[var1] + var3;
 		if(var4 == 0) {
 			var4 = 1;
 		}
 	
-		Field219[var0] = var4;
-		Field220[var0] = var4;
-		Field221[var0] = var2;
+		levelSpiderLegTicks[var0] = var4;
+		levelSpiderLegTicksUntilMovement[var0] = var4;
+		levelSpiderLegParent[var0] = var2;
 	}
 	
 	public static final void Method168(int var0) {
-		for(int var1 = 0; var1 < Field216.length; var1++) {
-			if(Field221[var1] == var0) {
-				Field219[var1] = 400000;
-				levelCircle4ByWeight[Field216[var1]] = 52000;
+		for(int var1 = 0; var1 < levelSpiderLegIDs.length; var1++) {
+			if(levelSpiderLegParent[var1] == var0) {
+				levelSpiderLegTicks[var1] = 400000;
+				levelCircle4ByWeight[levelSpiderLegIDs[var1]] = 52000;
 	
 				for(int var2 = 0; var2 < levelNumHooks; var2++) {
-					if((levelHookID1[var2] == Field216[var1] || levelHookID2[var2] == Field216[var1]) && !Field205[var2]) {
+					if((levelHookID1[var2] == levelSpiderLegIDs[var1] || levelHookID2[var2] == levelSpiderLegIDs[var1]) && !Field205[var2]) {
 						levelHookIsActive[var2] = false;
 					}
 				}
@@ -4146,48 +4146,60 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method169() {
-		if(Field216.length > 0) {
-			for(int var0 = 0; var0 < Field216.length; var0++) {
-				int var1 = Field216[var0];
-				if(Field219[var0] > 0) {
-					int var9 = Field219[var0]--;
-					if(Field219[var0] == 0) {
-						int var4 = rand8() % 17;
-						int[] var7 = levelCircleX;
-						var7[var1] += var4 - 10 << 14;
-						var7 = levelCircleY;
-						var7[var1] += var4 - 8 << 14;
-						if(levelCircleX[var1] < Field217[var0]) {
-							Field219[var0] = -Field220[var0];
+	public static final void updateSpiders() {
+		if(levelSpiderLegIDs.length > 0) {
+			for(int i = 0; i < levelSpiderLegIDs.length; i++) {
+
+				int legID = levelSpiderLegIDs[i];
+
+				/*
+				 * levelSpiderLegTicks[n] sign is a direction to where the
+				 * spider will move.
+				 *
+				 * levelSpiderLegTicks[n] sign is set to its opposite value
+				 * every time when the spider reaches an invisible boundary
+				 * (levelSpiderLegMovement[Start,End]X).
+				 */
+				if(levelSpiderLegTicks[i] > 0) {
+					levelSpiderLegTicks[i]--;
+
+					if(levelSpiderLegTicks[i] == 0) {
+						int inc = rand8() % 17;
+						levelCircleX[legID] += inc - 10 << 14;
+						levelCircleY[legID] += inc - 8 << 14;
+
+						if(levelCircleX[legID] < levelSpiderLegMovementStartX[i]) {
+							levelSpiderLegTicks[i] = -levelSpiderLegTicksUntilMovement[i];
 	
-							for(int var5 = 0; var5 < Field216.length; var5++) {
-								if(Field221[var0] == Field221[var5]) {
-									Field219[var5] = Field219[var0];
+							/* apply a new direction to all legs owned by a
+							 * specific spider. */
+							for(int k = 0; k < levelSpiderLegIDs.length; k++) {
+								if(levelSpiderLegParent[i] == levelSpiderLegParent[k]) {
+									levelSpiderLegTicks[k] = levelSpiderLegTicks[i];
 								}
 							}
 						} else {
-							Field219[var0] = Field220[var0];
+							levelSpiderLegTicks[i] = levelSpiderLegTicksUntilMovement[i];
 						}
 					}
 				} else {
-					int var10002 = Field219[var0]++;
-					if(Field219[var0] >= 0) {
-						int var2 = rand8() % 17;
-						int[] var10000 = levelCircleX;
-						var10000[var1] += var2 - 6 << 14;
-						var10000 = levelCircleY;
-						var10000[var1] += var2 - 8 << 14;
-						if(levelCircleX[var1] > Field218[var0]) {
-							Field219[var0] = Field220[var0];
+					levelSpiderLegTicks[i]++;
+
+					if(levelSpiderLegTicks[i] >= 0) {
+						int inc = rand8() % 17;
+						levelCircleX[legID] += inc - 6 << 14;
+						levelCircleY[legID] += inc - 8 << 14;
+
+						if(levelCircleX[legID] > levelSpiderLegMovementEndX[i]) {
+							levelSpiderLegTicks[i] = levelSpiderLegTicksUntilMovement[i];
 	
-							for(int var3 = 0; var3 < Field216.length; var3++) {
-								if(Field221[var0] == Field221[var3]) {
-									Field219[var3] = Field219[var0];
+							for(int k = 0; k < levelSpiderLegIDs.length; k++) {
+								if(levelSpiderLegParent[i] == levelSpiderLegParent[k]) {
+									levelSpiderLegTicks[k] = levelSpiderLegTicks[i];
 								}
 							}
 						} else {
-							Field219[var0] = -Field220[var0];
+							levelSpiderLegTicks[i] = -levelSpiderLegTicksUntilMovement[i];
 						}
 					}
 				}
@@ -6269,7 +6281,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field205[16] = true;
 		}
 	
-		Method169();
+		updateSpiders();
 		updateEnemies();
 		updateExpanders();
 		updateAnimRects();
