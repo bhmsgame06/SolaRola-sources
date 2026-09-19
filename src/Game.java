@@ -188,7 +188,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field173 = 0;
 	public static int levelPlayerHitTicks = 0;
 	public static int levelPlayerCurrentGrabberFlags = -1;
-	public static int Field176 = -1;
+	public static int levelPlayerBlockGrabberID = -1;
 	public static int[] blobEyeState = new int[2];
 	public static int[] currentMouthState = new int[2];
 	public static Image[] imgsEyeLeft;
@@ -217,7 +217,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelHookExtent;
 	public static int[] levelHookExtentSquare;
 	public static int[] levelHookStretchConstant;
-	public static boolean[] Field205;
+	public static boolean[] levelHookIsVisible;
 	public static boolean[] levelHookIsActive;
 	public static int swappedLevelNumHooks;
 	public static int[] swappedLevelHookID1;
@@ -3684,7 +3684,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		levelPlayerRotationRate = 0;
 		levelPlayerCurrentGrabberFlags = -1;
-		Field176 = -1;
+		levelPlayerBlockGrabberID = -1;
 	}
 	
 	public static final void levelSetPlayerPos(int var0, int var1, int var2, int var3) {
@@ -3705,18 +3705,18 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 	
-	public static final void Method152() {
+	public static final void levelPlayerReleaseGrabber() {
 		levelHookIsActive[16] = false;
-		Field205[16] = false;
+		levelHookIsVisible[16] = false;
 		levelCircleFlags[levelHookID2[16]] = levelPlayerCurrentGrabberFlags;
 		levelPlayerCurrentGrabberFlags = -1;
-		Field176 = levelHookID2[16];
+		levelPlayerBlockGrabberID = levelHookID2[16];
 		levelHookID2[16] = -1;
 	}
 	
 	public static final void updatePlayerRotation() {
-		if(Field176 != -1 && (levelCircleX[Field176] - levelCircleRadius[Field176] > levelCircleX[0] + 0x190000 || levelCircleX[Field176] + levelCircleRadius[Field176] < levelCircleX[0] - 0x190000 || levelCircleY[Field176] - levelCircleRadius[Field176] > levelCircleY[0] + 0x190000 || levelCircleY[Field176] + levelCircleRadius[Field176] < levelCircleY[0] - 0x190000)) {
-			Field176 = -1;
+		if(levelPlayerBlockGrabberID != -1 && (levelCircleX[levelPlayerBlockGrabberID] - levelCircleRadius[levelPlayerBlockGrabberID] > levelCircleX[0] + 0x190000 || levelCircleX[levelPlayerBlockGrabberID] + levelCircleRadius[levelPlayerBlockGrabberID] < levelCircleX[0] - 0x190000 || levelCircleY[levelPlayerBlockGrabberID] - levelCircleRadius[levelPlayerBlockGrabberID] > levelCircleY[0] + 0x190000 || levelCircleY[levelPlayerBlockGrabberID] + levelCircleRadius[levelPlayerBlockGrabberID] < levelCircleY[0] - 0x190000)) {
+			levelPlayerBlockGrabberID = -1;
 		}
 	
 		if(Field173 > 0) {
@@ -4004,7 +4004,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelHookExtentSquare = new int[var0];
 		levelHookStretchConstant = new int[var0];
 		levelHookIsActive = new boolean[var0];
-		Field205 = new boolean[var0];
+		levelHookIsVisible = new boolean[var0];
 	}
 	
 	public static final void levelSetHook(int var0, int var1, int var2, int var3, int var4, int var5, boolean var6, boolean var7) {
@@ -4015,7 +4015,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelHookExtentSquare[var0] = lp32Mul(var4, var4);
 		levelHookStretchConstant[var0] = var5;
 		levelHookIsActive[var0] = var7;
-		Field205[var0] = var6;
+		levelHookIsVisible[var0] = var6;
 	}
 	
 	public static final void levelDetachHooks(int var0) {
@@ -4023,7 +4023,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if(levelHookIsActive[var1] && (levelHookID1[var1] == var0 || levelHookID2[var1] == var0)) {
 				levelHookIsActive[var1] = false;
 				if(levelHookID2[16] == levelHookID1[var1] || levelHookID2[16] == levelHookID2[var1]) {
-					Method152();
+					levelPlayerReleaseGrabber();
 				}
 			}
 		}
@@ -4107,8 +4107,8 @@ public final class Game extends GameCanvas implements Runnable {
 		var1 = levelHookStretchConstant;
 		levelHookStretchConstant = Field213;
 		Field213 = var1;
-		boolean[] var2 = Field205;
-		Field205 = Field214;
+		boolean[] var2 = levelHookIsVisible;
+		levelHookIsVisible = Field214;
 		Field214 = var2;
 		var2 = levelHookIsActive;
 		levelHookIsActive = Field215;
@@ -4146,7 +4146,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 				for(int k = 0; k < levelNumHooks; k++) {
 					if((levelHookID1[k] == levelSpiderLegIDs[i] ||
-								levelHookID2[k] == levelSpiderLegIDs[i]) && !Field205[k]) {
+								levelHookID2[k] == levelSpiderLegIDs[i]) && !levelHookIsVisible[k]) {
 
 						levelHookIsActive[k] = false;
 					}
@@ -5981,7 +5981,7 @@ public final class Game extends GameCanvas implements Runnable {
 						levelHookIsActive[16] = false;
 						levelCircleFlags[levelHookID2[16]] = levelPlayerCurrentGrabberFlags;
 						levelPlayerCurrentGrabberFlags = -1;
-						Field176 = levelHookID2[16];
+						levelPlayerBlockGrabberID = levelHookID2[16];
 					}
 				}
 	
@@ -6086,7 +6086,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void updatePlayerControls() {
 		if((isKeyNewlyHeld(0x1a0) || isKeyNewlyHeld(1) && !isKeyNewlyHeld(0x800)) && (levelPlayerOnCircle || levelPlayerCurrentGrabberFlags >= 0)) {
 			if(levelPlayerCurrentGrabberFlags >= 0) {
-				Method152();
+				levelPlayerReleaseGrabber();
 			}
 	
 			if(levelPlayerOnCircle) {
@@ -6253,7 +6253,7 @@ public final class Game extends GameCanvas implements Runnable {
 		setGammaColor(0, 0, 0);
 	
 		for(int var10 = 16; var10 < levelNumHooks; var10++) {
-			if(levelHookIsActive[var10] && Field205[var10]) {
+			if(levelHookIsActive[var10] && levelHookIsVisible[var10]) {
 				levelRenderLine(levelCircleX[levelHookID1[var10]], levelCircleY[levelHookID1[var10]], levelCircleX[levelHookID2[var10]], levelCircleY[levelHookID2[var10]]);
 			}
 		}
@@ -6293,7 +6293,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 	public static final void updateAll() {
 		if(levelHookIsActive[16]) {
-			Field205[16] = true;
+			levelHookIsVisible[16] = true;
 		}
 	
 		updateSpiders();
@@ -6340,7 +6340,7 @@ public final class Game extends GameCanvas implements Runnable {
 				/* grabber. */
 				if(circleType == 3 &&
 						levelPlayerCurrentGrabberFlags == -1 &&
-						id2 != Field176) {
+						id2 != levelPlayerBlockGrabberID) {
 
 					levelHookIsActive[16] = true;
 					levelHookID2[16] = id2;
@@ -7173,7 +7173,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	
 		if(levelPlayerCurrentGrabberFlags >= 0) {
-			Method152();
+			levelPlayerReleaseGrabber();
 		}
 	
 		playJingleComplete();
