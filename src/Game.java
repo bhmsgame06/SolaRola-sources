@@ -149,7 +149,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean Field134;
 	public static boolean Field135;
 	public static boolean Field136;
-	public static boolean Field137;
+	public static boolean showBlackBars;
 	public static int dialogueEnvironment;
 	public static int levelCameraTargetX;
 	public static int levelCameraTargetY;
@@ -437,7 +437,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image imgSplashShip;
 	public static Image[] imgsFlame;
 	public static int levelShipTouchedIconIndex;
-	public static int Field424 = 0;
+	public static int shipAlarmRadius = 0;
 	public static String[] textTableShip;
 	public static String[] textTableShipPause;
 	public static boolean Field427 = false;
@@ -544,7 +544,7 @@ public final class Game extends GameCanvas implements Runnable {
 	
 		return 0x100000;
 	}
-	
+
 	public final void keyPressed(int keyCode) {
 		_heldKeys |= pressedKeyValue(keyCode);
 		super.keyPressed(keyCode);
@@ -3096,7 +3096,7 @@ public final class Game extends GameCanvas implements Runnable {
 				renderPingTransmission();
 		}
 	
-		if(Field137) {
+		if(showBlackBars) {
 			boolean var2 = false;
 			gSetColor(0);
 			gFillRect(0, 0, 128, 12);
@@ -3145,7 +3145,7 @@ public final class Game extends GameCanvas implements Runnable {
 				dialogueEnvironment = 1;
 			}
 	
-			Method130();
+			resetDialogue();
 			loadEyes();
 			loadFacesIcons();
 			Field136 = false;
@@ -3164,13 +3164,13 @@ public final class Game extends GameCanvas implements Runnable {
 			currentDialogue = null;
 			garbageCollector();
 			swapLevelData(dialogueLastSwapKey);
-			Method130();
+			resetDialogue();
 		}
 	}
 	
-	public static final void Method130() {
-		Field137 = false;
-		Field424 = 0;
+	public static final void resetDialogue() {
+		showBlackBars = false;
+		shipAlarmRadius = 0;
 		spaceMapBeaconRadius = 0;
 		currentMouthState[0] = 0;
 		currentMouthState[1] = 0;
@@ -3385,7 +3385,7 @@ public final class Game extends GameCanvas implements Runnable {
 					var1++;
 					break;
 				case 11:
-					Field137 = var0[var1 + 1] == 1;
+					showBlackBars = var0[var1 + 1] == 1;
 					var1 += 2;
 					break;
 				case 12:
@@ -3394,7 +3394,7 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 	
 					if(dialogueEnvironment == 0) {
-						Field424 = var0[var1 + 1] == 1 ? 1 : 0;
+						shipAlarmRadius = var0[var1 + 1] == 1 ? 1 : 0;
 					}
 	
 					var1 += 2;
@@ -6952,10 +6952,10 @@ public final class Game extends GameCanvas implements Runnable {
 		renderWindow(var1 + 299, 30, 0);
 		renderWindow(var1 + 553, 30, 1);
 		renderShipDecor(decorBackground);
-		if(Field424 > 0) {
+		if(shipAlarmRadius > 0) {
 			int var12 = 2 + imgInsideLamp.getHeight() / 2;
 			gSetColor(0xff0000);
-			int var5 = Field424;
+			int var5 = shipAlarmRadius;
 			if(var4 > -var5 && var4 < 128 + var5 && var12 > -var5 && var12 < 128 + var5) {
 				for(int var6 = 0; var6 < 2; var6++) {
 					for(int var7 = 20; var7 < 360; var7 += 90) {
@@ -6966,9 +6966,9 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 	
-			Field424 += 2;
-			if(Field424 > 30) {
-				Field424 = 5;
+			shipAlarmRadius += 2;
+			if(shipAlarmRadius > 30) {
+				shipAlarmRadius = 5;
 			}
 		}
 	
