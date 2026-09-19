@@ -22,7 +22,7 @@ public class PMMIDlet extends MIDlet {
 	}
 
 	public final void pauseApp() {
-		Game._heldKeys = 0;
+		Game.heldKeys = 0;
 		Game.paused = true;
 		Game.queueAllSoundsForCleanup();
 		Game.queueSoundCleanup();

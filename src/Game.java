@@ -13,8 +13,8 @@ public final class Game extends GameCanvas implements Runnable {
 	// keys
 	public static int heldKeys = 0;
 	public static int heldPrevKeys = 0;
-	public static int _heldKeys = 0;
-	public static int Field5 = 0;
+	public static int tmpHeldKeys = 0;
+	public static int pressOnlyKeys = 0;
 	public static final short[][] KEYMAP = new short[][] {{'5', -6, -5},  {'0'},  {-7},  {'4', -3},  {'6', -4},  {'2', -1},  {'8', -2},  {'1'},  {'3'},  {'7'},  {'9'}};
 	// image decoding
 	private static byte[] pngTemplate; // for getting png from pim/ppl
@@ -496,7 +496,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public final void hideNotify() {
-		_heldKeys = 0;
+		tmpHeldKeys = 0;
 		paused = true;
 		queueAllSoundsForCleanup();
 		queueSoundCleanup();
@@ -528,9 +528,9 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void updateKeys() {
 		sleep(5L);
 		heldPrevKeys = heldKeys;
-		heldKeys = _heldKeys;
-		_heldKeys &= ~Field5;
-		Field5 = 0;
+		heldKeys = tmpHeldKeys;
+		tmpHeldKeys &= ~pressOnlyKeys;
+		pressOnlyKeys = 0;
 	}
 	
 	private static int pressedKeyValue(int keyCode) {
@@ -546,23 +546,24 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public final void keyPressed(int keyCode) {
-		_heldKeys |= pressedKeyValue(keyCode);
+		tmpHeldKeys |= pressedKeyValue(keyCode);
 		super.keyPressed(keyCode);
+
 		if(keyCode == -6) {
-			Field5 |= 1;
-			Field5 |= 0x0800;
-			_heldKeys |= 0x0800;
+			pressOnlyKeys |= 1;
+			pressOnlyKeys |= 0x0800;
+			tmpHeldKeys |= 0x0800;
 		}
 	
 		if(keyCode == -7) {
-			Field5 |= 4;
-			Field5 |= 0x1000;
-			_heldKeys |= 0x1000;
+			pressOnlyKeys |= 4;
+			pressOnlyKeys |= 0x1000;
+			tmpHeldKeys |= 0x1000;
 		}
 	}
 	
 	public final void keyReleased(int keyCode) {
-		_heldKeys &= ~pressedKeyValue(keyCode);
+		tmpHeldKeys &= ~pressedKeyValue(keyCode);
 		super.keyReleased(keyCode);
 	}
 	
@@ -570,7 +571,7 @@ public final class Game extends GameCanvas implements Runnable {
 		return (heldKeys & var0) > 0;
 	}
 	
-	public static final boolean isKeyNewlyHeld(int var0) {
+	public static final boolean isKeyPressed(int var0) {
 		return (heldKeys & var0) > 0 && (heldPrevKeys & var0) == 0;
 	}
 	
@@ -581,8 +582,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void clearKeys() {
 		heldKeys = 0;
 		heldPrevKeys = 0;
-		_heldKeys = 0;
-		Field5 = 0;
+		tmpHeldKeys = 0;
+		pressOnlyKeys = 0;
 	}
 	
 	public static final byte[] makePNG(byte[] pimData, short pplCrc) {
@@ -3049,7 +3050,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field133 = 0L;
 			}
 	
-			if(Field135 && isKeyNewlyHeld(1)) {
+			if(Field135 && isKeyPressed(1)) {
 				Field135 = false;
 			}
 	
@@ -4124,7 +4125,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelSpiderLegParent = new int[num];
 	}
 
-	public static final void initSpiderLeg(int index, int legID, int parent, int movementAmplitude, int startTicks) {
+	public static final void levelSetSpiderLeg(int index, int legID, int parent, int movementAmplitude, int startTicks) {
 		levelSpiderLegIDs[index] = legID;
 		levelSpiderLegMovementStartX[index] = levelCircleX[legID] - movementAmplitude;
 		levelSpiderLegMovementEndX[index] = levelCircleX[legID] + movementAmplitude;
@@ -5316,7 +5317,7 @@ public final class Game extends GameCanvas implements Runnable {
 		initSpiderLegs(var21 = sRead8());
 	
 		for(int var28 = 0; var28 < var21; var28++) {
-			initSpiderLeg(var28, var6 + sReadU8(), sRead8(), sReadU16() << 16, sReadU16());
+			levelSetSpiderLeg(var28, var6 + sReadU8(), sRead8(), sReadU16() << 16, sReadU16());
 		}
 	
 		levelInitExpanders(var21 = sRead8());
@@ -6087,7 +6088,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 	
 	public static final void updatePlayerControls() {
-		if((isKeyNewlyHeld(0x1a0) || isKeyNewlyHeld(1) && !isKeyNewlyHeld(0x800)) && (levelPlayerOnCircle || levelPlayerCurrentGrabberFlags >= 0)) {
+		if((isKeyPressed(0x1a0) || isKeyPressed(1) && !isKeyPressed(0x800)) && (levelPlayerOnCircle || levelPlayerCurrentGrabberFlags >= 0)) {
 			if(levelPlayerCurrentGrabberFlags >= 0) {
 				levelPlayerReleaseGrabber();
 			}
