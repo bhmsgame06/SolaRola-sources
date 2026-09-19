@@ -4395,32 +4395,40 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void Method181() {
+	public static final void renderPing() {
 		setGammaColor(160, 32, 240);
 
-		for(int var0 = 0; var0 < levelPingShardIDs.length; var0++) {
-			levelRenderCircle(levelCircleX[levelPingShardIDs[var0]], levelCircleY[levelPingShardIDs[var0]], levelCircleRadius[levelPingShardIDs[var0]]);
+		for(int i = 0; i < levelPingShardIDs.length; i++) {
+			levelRenderCircle(levelCircleX[levelPingShardIDs[i]], levelCircleY[levelPingShardIDs[i]], levelCircleRadius[levelPingShardIDs[i]]);
 		}
 
 		levelRenderCircle(levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID], levelCircleRadius[levelPingCircleID]);
-		int var7 = levelCircleRadius[levelPingCircleID] * 2 / 5;
-		int var1 = levelCircleX[levelPingCircleID];
-		int var2 = levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 7 / 10;
-		int var3 = levelCircleRadius[levelPingCircleID] / 5;
 
-		for(int var4 = -1; var4 < 2; var4++) {
+		int eyeDiameter = levelCircleRadius[levelPingCircleID] * 2 / 5;
+		int centerEyeX = levelCircleX[levelPingCircleID];
+		int eyesY = levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 7 / 10;
+		int eyeRadius = levelCircleRadius[levelPingCircleID] / 5;
+
+		/* for each eye. */
+		for(int i = -1; i < 2; i++) {
 			setGammaColor(0);
-			levelRenderCircle(var1 + var4 * var7, var2, var3);
-			if(var4 < levelPingHealth) {
+			levelRenderCircle(centerEyeX + i * eyeDiameter, eyesY, eyeRadius);
+
+			if(i < levelPingHealth) { // opened eye.
+
 				setGammaColor(0xffffff);
-				levelRenderCircle(var1 + var4 * var7, var2, var3);
+				levelRenderCircle(centerEyeX + i * eyeDiameter, eyesY, eyeRadius);
+
 				setGammaColor(0);
-				int var5 = Method182(var1 + var4 * var7, levelCameraX, 0x960000, var3 * 3 / 4);
-				int var6 = Method182(var2, levelCameraY, 0x640000, var3 * 3 / 4);
-				levelRenderCircle(var1 + var4 * var7 + var5, var2 + var6, var3 / 3);
-			} else {
+				int pupilX = Method182(centerEyeX + i * eyeDiameter, levelCameraX, 0x960000, eyeRadius * 3 / 4);
+				int pupilY = Method182(eyesY, levelCameraY, 0x640000, eyeRadius * 3 / 4);
+				levelRenderCircle(centerEyeX + i * eyeDiameter + pupilX, eyesY + pupilY, eyeRadius / 3);
+
+			} else { // closed eye.
+
 				setGammaColor(160, 32, 240);
-				levelRenderCircle(var1 + var4 * var7, var2, var3);
+				levelRenderCircle(centerEyeX + i * eyeDiameter, eyesY, eyeRadius);
+
 			}
 		}
 	}
@@ -6281,7 +6289,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		if(isFinalLevel) {
-			Method181();
+			renderPing();
 		}
 
 		levelRenderGrabbers();
