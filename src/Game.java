@@ -102,7 +102,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[][] spaceStarX;
 	public static int[][] spaceStarY;
 	public static int[][] spaceStarXVel;
-	public static int[][] Field90;
+	public static int[][] spaceStarFlashTicks;
 	public static int currentSpaceWidth;
 	public static int currentSpaceHeight;
 	public static String[] sceneHelpText;
@@ -2429,19 +2429,19 @@ public final class Game extends GameCanvas implements Runnable {
 			spaceStarX = new int[var0][];
 			spaceStarY = new int[var0][];
 			spaceStarXVel = new int[var0][];
-			Field90 = new int[var0][];
+			spaceStarFlashTicks = new int[var0][];
 
 			for(int var4 = 0; var4 < var0; var4++) {
 				spaceStarX[var4] = new int[var1];
 				spaceStarY[var4] = new int[var1];
 				spaceStarXVel[var4] = new int[var1];
-				Field90[var4] = new int[var1];
+				spaceStarFlashTicks[var4] = new int[var1];
 
 				for(int var5 = 0; var5 < var1; var5++) {
 					spaceStarX[var4][var5] = rand16() % var2 << 4;
 					spaceStarY[var4][var5] = rand16() % var3 << 4;
 					spaceStarXVel[var4][var5] = -1 - rand8() % 32;
-					Field90[var4][var5] = 0;
+					spaceStarFlashTicks[var4][var5] = 0;
 				}
 			}
 		}
@@ -2453,7 +2453,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void renderSpace(int var0, int var1, int var2, boolean var3) {
 		if(var0 >= 0 && var0 < spaceStarX.length) {
-			Field90[var0][rand16() % Field90[var0].length] = 9;
+			spaceStarFlashTicks[var0][rand16() % spaceStarFlashTicks[var0].length] = 9;
 
 			for(int var7 = 0; var7 < spaceStarX[var0].length; var7++) {
 				int var5;
@@ -2470,9 +2470,9 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				gSetColor(var4, var5, var6);
-				if(Field90[var0][var7] > 0) {
-					int var10002 = Field90[var0][var7]--;
-					if(Field90[var0][var7] > 4) {
+				if(spaceStarFlashTicks[var0][var7] > 0) {
+					int var10002 = spaceStarFlashTicks[var0][var7]--;
+					if(spaceStarFlashTicks[var0][var7] > 4) {
 						gSetColor(0);
 					} else {
 						gSetColor(0xffffff);
