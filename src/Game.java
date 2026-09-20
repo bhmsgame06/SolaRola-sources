@@ -30,13 +30,13 @@ public final class Game extends GameCanvas implements Runnable {
 	private static int numActiveSoundsMIDI;
 	private static int numActiveSounds;
 	private static int numSounds;
-	private static int Field20;
-	private static long Field21;
+	private static int activeSound;
+	private static long soundStartMillis;
 	private static int[] soundLoopCounts;
 	private static boolean[] soundActiveStates;
 	private static boolean[] soundQueueCleanup;
 	private static boolean[] soundUsedStates;
-	private static int[] Field26;
+	private static int[] soundVolume;
 	private static int[] soundTypes;
 	private static String[] soundFilenames;
 	private static int numActiveSoundsTotal;
@@ -789,10 +789,10 @@ public final class Game extends GameCanvas implements Runnable {
 		soundActiveStates = new boolean[var0];
 		soundQueueCleanup = new boolean[var0];
 		soundUsedStates = new boolean[var0];
-		Field26 = new int[var0];
+		soundVolume = new int[var0];
 		soundLoopCounts = new int[var0];
 		soundTypes = new int[var0];
-		Field20 = -1;
+		activeSound = -1;
 		soundPlayers = new Player[var0];
 		soundPlayersMIDI = new Player[var0];
 		numActiveSoundsMIDI = 0;
@@ -803,7 +803,7 @@ public final class Game extends GameCanvas implements Runnable {
 			soundActiveStates[var2] = false;
 			soundQueueCleanup[var2] = false;
 			soundUsedStates[var2] = false;
-			Field26[var2] = 5;
+			soundVolume[var2] = 5;
 			soundLoopCounts[var2] = 1;
 			soundTypes[var2] = 999;
 			soundPlayers[var2] = null;
@@ -985,10 +985,10 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final boolean playSound(int var0, int var1) {
 		if(!audio) {
 			return true;
-		} else if(millis() - Field21 < 100L) {
+		} else if(millis() - soundStartMillis < 100L) {
 			return false;
 		} else {
-			Field21 = millis();
+			soundStartMillis = millis();
 			if(isSoundActive(var0, -1)) {
 				return false;
 			} else {
@@ -1057,8 +1057,8 @@ public final class Game extends GameCanvas implements Runnable {
 						closeSoundAtIndex(var0);
 					}
 
-					if(Field20 == var0) {
-						Field20 = -1;
+					if(activeSound == var0) {
+						activeSound = -1;
 					}
 				}
 
@@ -1108,7 +1108,7 @@ public final class Game extends GameCanvas implements Runnable {
 						try {
 							VolumeControl var10;
 							if((var10 = (VolumeControl)var9.getControl("VolumeControl")) != null) {
-								var10.setLevel(Field26[var0] * 10);
+								var10.setLevel(soundVolume[var0] * 10);
 							}
 						} catch(IllegalStateException e) {
 						}
@@ -1122,7 +1122,7 @@ public final class Game extends GameCanvas implements Runnable {
 						if(var9 != null && var9.getState() != 400) {
 							var9.setLoopCount(soundLoopCounts[var0]);
 							var9.start();
-							Field20 = var0;
+							activeSound = var0;
 						}
 					} catch(MediaException e) {
 					}
