@@ -59,10 +59,10 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int bfcHeadNumEntries;
 	private static int bfcCrcPoly = 0x1021; // used for filename crc table generating
 	private static int[] bfcCrcTable = new int[256]; // filename crc table (we'll turn strings into 16-bit value)
-	public static String[] Field49;
-	public static byte[] Field50;
-	public static int Field51 = -1;
-	public static short Field52;
+	public static String[] textTableGroupStrings;
+	public static byte[] textTableGroupTypes;
+	public static int textTableGroupIndex = -1;
+	public static short textTableCrc;
 	// softkeys
 	private static int leftSoftkey; // current pressed left softkey
 	private static int rightSoftkey; // current pressed right softkey
@@ -1484,39 +1484,39 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void setTextTableCrc(short var0) {
 		clearTextTable();
-		Field52 = var0;
+		textTableCrc = var0;
 	}
 
 	public static final void clearTextTable() {
-		Field49 = null;
-		Field51 = -1;
+		textTableGroupStrings = null;
+		textTableGroupIndex = -1;
 	}
 
 	public static final String[] loadTextTableFromIndex(int var0, int var1) {
-		if(var1 < 0 && var0 == Field51) {
-			return Field49;
+		if(var1 < 0 && var0 == textTableGroupIndex) {
+			return textTableGroupStrings;
 		} else {
 			boolean var2 = loadingBarToggle;
 			loadingBarToggle = false;
-			if(!sOpenFile(Field52)) {
-				Field49 = null;
-				Field50 = null;
+			if(!sOpenFile(textTableCrc)) {
+				textTableGroupStrings = null;
+				textTableGroupTypes = null;
 			}
 
 			loadingBarToggle = var2;
 			int var3 = sReadU8();
 			int var4 = sReadU8();
 			if(var0 >= var4) {
-				return Field49;
+				return textTableGroupStrings;
 			} else {
 				sSkipBytes(var0 * 2);
 				sSkipBytes(sReadU16() + (var4 - var0 - 1) * 2);
 				int var6 = sReadU16();
 				int[] var7 = new int[var6];
 				if(var1 < 0) {
-					Field49 = new String[var6];
-					Field50 = new byte[var6];
-					Field51 = var0;
+					textTableGroupStrings = new String[var6];
+					textTableGroupTypes = new byte[var6];
+					textTableGroupIndex = var0;
 
 					for(int var8 = 0; var8 < var6; var8++) {
 						var7[var8] = sReadU16();
@@ -1524,7 +1524,7 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 				} else {
 					if(var1 >= var6) {
-						return Field49;
+						return textTableGroupStrings;
 					}
 
 					sSkipBytes(var1 * 4);
@@ -1555,22 +1555,22 @@ public final class Game extends GameCanvas implements Runnable {
 						break;
 					}
 
-					Field50[var12] = (byte)var9;
-					Field49[var12] = var15;
+					textTableGroupTypes[var12] = (byte)var9;
+					textTableGroupStrings[var12] = var15;
 				}
 
-				return Field49;
+				return textTableGroupStrings;
 			}
 		}
 	}
 
 	public static final String getText(int var0) {
 		int var1 = var0 >> 16;
-		if(Field51 != var1) {
+		if(textTableGroupIndex != var1) {
 			loadTextTableFromIndex(var1, -1);
 		}
 
-		return Field49[var0 & 0xffff];
+		return textTableGroupStrings[var0 & 0xffff];
 	}
 
 	public static final int lp32Mul(int var0, int var1) {
