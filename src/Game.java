@@ -96,9 +96,9 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] confettiColorsAll = new int[] {0xffffff, 0xff0000, 0xff00, 0xff, 0xffff00, 0xd9d919, 0xe6e8fa, 0x8c7853};
 	public static int[] rainX;
 	public static int[] rainY;
-	public static int[] Field84;
-	public static int[] Field85;
-	public static int[] Field86;
+	public static int[] precipitationX;
+	public static int[] precipitationY;
+	public static int[] precipitationDirectionCos;
 	public static int[][] spaceStarX;
 	public static int[][] spaceStarY;
 	public static int[][] spaceStarXVel;
@@ -2384,10 +2384,10 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void levelRenderPrecipitation() {
-		if(Field84 == null) {
-			Field84 = new int[10];
-			Field85 = new int[10];
-			Field86 = new int[10];
+		if(precipitationX == null) {
+			precipitationX = new int[10];
+			precipitationY = new int[10];
+			precipitationDirectionCos = new int[10];
 		}
 
 		gSetColor(0xffffff);
@@ -2396,27 +2396,27 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		for(int var0 = 0; var0 < 10; var0++) {
-			if(Field85[var0] > 128 || Field84[var0] == 0 && Field85[var0] == 0) {
-				if(Field84[var0] == 0 && Field85[var0] == 0) {
-					Field85[var0] = rand16() % 128;
+			if(precipitationY[var0] > 128 || precipitationX[var0] == 0 && precipitationY[var0] == 0) {
+				if(precipitationX[var0] == 0 && precipitationY[var0] == 0) {
+					precipitationY[var0] = rand16() % 128;
 				} else {
-					Field85[var0] = -(rand16() % 10);
+					precipitationY[var0] = -(rand16() % 10);
 				}
 
-				Field84[var0] = rand16() % 128;
-				Field86[var0] = rand16() % 360;
+				precipitationX[var0] = rand16() % 128;
+				precipitationDirectionCos[var0] = rand16() % 360;
 			}
 
-			gDrawLine(Field84[var0] - 1, Field85[var0], Field84[var0] + 1, Field85[var0]);
-			gDrawLine(Field84[var0], Field85[var0] - 1, Field84[var0], Field85[var0] + 1);
-			int[] var10000 = Field84;
-			var10000[var0] += cos1000[Field86[var0]] * 3 / 1000;
-			var10000 = Field85;
+			gDrawLine(precipitationX[var0] - 1, precipitationY[var0], precipitationX[var0] + 1, precipitationY[var0]);
+			gDrawLine(precipitationX[var0], precipitationY[var0] - 1, precipitationX[var0], precipitationY[var0] + 1);
+			int[] var10000 = precipitationX;
+			var10000[var0] += cos1000[precipitationDirectionCos[var0]] * 3 / 1000;
+			var10000 = precipitationY;
 			var10000[var0] += 2;
-			var10000 = Field86;
+			var10000 = precipitationDirectionCos;
 			var10000[var0] += 5;
-			if(Field86[var0] >= 360) {
-				var10000 = Field86;
+			if(precipitationDirectionCos[var0] >= 360) {
+				var10000 = precipitationDirectionCos;
 				var10000[var0] -= 360;
 			}
 		}
