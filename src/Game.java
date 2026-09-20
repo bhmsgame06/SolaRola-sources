@@ -2383,7 +2383,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void levelRenderVolcanicDust() {
+	public static final void levelRenderPrecipitation() {
 		if(Field84 == null) {
 			Field84 = new int[10];
 			Field85 = new int[10];
@@ -6305,7 +6305,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			if(levelWeatherID == 2) {
-				levelRenderVolcanicDust();
+				levelRenderPrecipitation();
 			}
 		}
 	}
