@@ -400,7 +400,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static long currentSpeechStartMs;
 	public static int currentSpeechIteration;
 	public static String currentSpeech;
-	public static boolean Field387;
+	public static boolean currentSpeechDone;
 	public static Image[][] imgsFaces;
 	public static int Field389 = -2;
 	public static int levelIntroTicks = 0;
@@ -3055,7 +3055,7 @@ public final class Game extends GameCanvas implements Runnable {
 				Field135 = false;
 			}
 
-			if(Field134 && Field387) {
+			if(Field134 && currentSpeechDone) {
 				Field134 = false;
 			}
 		}
@@ -5880,7 +5880,7 @@ public final class Game extends GameCanvas implements Runnable {
 		showDialogue = 1;
 		currentSpeakerIteration = 0;
 		currentSpeechIteration = 0;
-		Field387 = false;
+		currentSpeechDone = false;
 	}
 
 	public static final void renderDialogueBox() {
@@ -5930,7 +5930,7 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 
 					if(currentSpeechIteration >= currentSpeech.length()) {
-						Field387 = true;
+						currentSpeechDone = true;
 						return;
 					}
 
