@@ -404,7 +404,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image[][] imgsFaces;
 	public static int Field389 = -2;
 	public static int levelIntroTicks = 0;
-	public static boolean Field391 = false;
+	public static boolean isExitingPlayground = false;
 	public static boolean isDejaVuMessageShown = false;
 	public static boolean isBeamAnimated = false;
 	public static int levelDeathTicks = 70;
@@ -2685,7 +2685,7 @@ public final class Game extends GameCanvas implements Runnable {
 				setNewState(2, 10);
 		}
 
-		if(Field391) {
+		if(isExitingPlayground) {
 			setNewState(2, 0);
 		}
 	}
@@ -2700,7 +2700,7 @@ public final class Game extends GameCanvas implements Runnable {
 			initEnemies();
 			initSigns();
 			initGrabber();
-			Field391 = false;
+			isExitingPlayground = false;
 			isLevelComplete = false;
 		}
 
@@ -6039,7 +6039,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			if(var2 == 4) {
-				Field391 = true;
+				isExitingPlayground = true;
 			}
 
 			if(var2 == 3) {
