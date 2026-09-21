@@ -406,7 +406,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelIntroTicks = 0;
 	public static boolean Field391 = false;
 	public static boolean isDejaVuMessageShown = false;
-	public static boolean Field393 = false;
+	public static boolean isBeamAnimated = false;
 	public static int levelDeathTicks = 70;
 	public static int levelTicks = 0;
 	public static int levelDialogueToDisplay = -1;
@@ -2889,11 +2889,11 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneShipRun() {
-		if(Field393) {
+		if(isBeamAnimated) {
 			renderBeamAnimation(Field123);
 			Field123 += 4;
 			if(Field123 >= 130) {
-				Field393 = false;
+				isBeamAnimated = false;
 			}
 		} else if(dialogueIsAwaitingLevelStart) {
 			dialogueIsAwaitingLevelStart = false;
@@ -2944,7 +2944,7 @@ public final class Game extends GameCanvas implements Runnable {
 				levelShipSelectedPodIndex = 0;
 			}
 
-			if(!Field393) {
+			if(!isBeamAnimated) {
 				updateLevel();
 				updatePlayerControls();
 			}
@@ -2992,7 +2992,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			dialogueIsAwaitingLevelStart = false;
 			if(var0 == 10) {
-				if(Field393) {
+				if(isBeamAnimated) {
 					dialogueIsAwaitingLevelStart = true;
 					Field123 = 1;
 					levelSetCamera(levelCircleX[6], levelHeight / 2, 0);
@@ -3508,7 +3508,7 @@ public final class Game extends GameCanvas implements Runnable {
 			imgGamelogoBottom = loadImage("gamelogo2.pim", "gamelogo2.ppl");
 			initSpace(1, 50, 128, 128);
 			playSound(8);
-			Field393 = false;
+			isBeamAnimated = false;
 		}
 	}
 
@@ -7265,7 +7265,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		if(levelCompleteTicks < -40) {
 			setNewState(6, 0);
-			Field393 = true;
+			isBeamAnimated = true;
 			return true;
 		} else {
 			return false;
