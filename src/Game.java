@@ -131,8 +131,9 @@ public final class Game extends GameCanvas implements Runnable {
 	public static long splashDuration;
 	public static int splash = 0;
 	public static boolean showControlsGuide;
-	public static int Field119 = 0;
-	public static int Field120 = 0;
+	// temporary field to check if the player is staying on the pod hitbox.
+	public static int levelShipCheckPodIndex = 0;
+	public static int levelShipSelectedPodIndex = 0;
 	public static int shipNextOp = 0;
 	public static boolean dialogueIsAwaitingLevelStart = false;
 	public static int Field123 = 1;
@@ -436,7 +437,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image imgWindow;
 	public static Image imgSplashShip;
 	public static Image[] imgsFlame;
-	public static int levelShipTouchedIconIndex;
+	public static int levelShipTouchedCircleType;
 	public static int shipAlarmRadius = 0;
 	public static String[] textTableShip;
 	public static String[] textTableShipPause;
@@ -2938,9 +2939,9 @@ public final class Game extends GameCanvas implements Runnable {
 
 			shipNextOp = 0;
 		} else {
-			if(levelPlayerOnCircle && levelCircleY[0] > 0x960000 && Field120 > 0) {
-				shipNextOp = processMainMenuDialogue(Field120, Field427);
-				Field120 = 0;
+			if(levelPlayerOnCircle && levelCircleY[0] > 0x960000 && levelShipSelectedPodIndex > 0) {
+				shipNextOp = processMainMenuDialogue(levelShipSelectedPodIndex, Field427);
+				levelShipSelectedPodIndex = 0;
 			}
 
 			if(!Field393) {
@@ -2948,23 +2949,23 @@ public final class Game extends GameCanvas implements Runnable {
 				updatePlayerControls();
 			}
 
-			if(levelShipTouchedIconIndex > 0) {
-				if(levelShipTouchedIconIndex == Field119) {
-					levelShipTouchedIconIndex = 0;
+			if(levelShipTouchedCircleType > 0) {
+				if(levelShipTouchedCircleType == levelShipCheckPodIndex) {
+					levelShipTouchedCircleType = 0;
 				} else {
-					Field119 = levelShipTouchedIconIndex;
+					levelShipCheckPodIndex = levelShipTouchedCircleType;
 				}
 			}
 
 			if(levelPlayerOnCircle) {
-				Field119 = 0;
+				levelShipCheckPodIndex = 0;
 			}
 
-			if(levelShipTouchedIconIndex > 0) {
-				Field120 = levelShipTouchedIconIndex;
+			if(levelShipTouchedCircleType > 0) {
+				levelShipSelectedPodIndex = levelShipTouchedCircleType;
 			}
 
-			levelShipTouchedIconIndex = 0;
+			levelShipTouchedCircleType = 0;
 			levelSetCamera(levelCircleX[0], levelHeight / 2, 0);
 			levelSetPlayerPos(levelCircleX[6], levelCircleY[6], 6, 0x140000);
 			renderShipBlobs(Field427);
@@ -3007,7 +3008,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 
-			levelShipTouchedIconIndex = 0;
+			levelShipTouchedCircleType = 0;
 			Field404 = true;
 			initSpace(2, 12, 92, 46);
 			initInsideShip();
@@ -6438,7 +6439,7 @@ public final class Game extends GameCanvas implements Runnable {
 					levelCircleX[levelBombObjectID] += dir * 0x30000;
 				}
 			} else {
-				levelShipTouchedIconIndex = circleType;
+				levelShipTouchedCircleType = circleType;
 			}
 		}
 	}
