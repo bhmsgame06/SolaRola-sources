@@ -136,7 +136,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelShipSelectedPodIndex = 0;
 	public static int shipNextOp = 0;
 	public static boolean dialogueIsAwaitingLevelStart = false;
-	public static int Field123 = 1;
+	public static int beamAnimationFrame = 1;
 	public static boolean skipPrologue;
 	public static int[] currentDialogue;
 	public static int currentDialogueIndex;
@@ -2890,9 +2890,9 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void sceneShipRun() {
 		if(isBeamAnimated) {
-			renderBeamAnimation(Field123);
-			Field123 += 4;
-			if(Field123 >= 130) {
+			renderBeamAnimation(beamAnimationFrame);
+			beamAnimationFrame += 4;
+			if(beamAnimationFrame >= 130) {
 				isBeamAnimated = false;
 			}
 		} else if(dialogueIsAwaitingLevelStart) {
@@ -2994,7 +2994,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if(var0 == 10) {
 				if(isBeamAnimated) {
 					dialogueIsAwaitingLevelStart = true;
-					Field123 = 1;
+					beamAnimationFrame = 1;
 					levelSetCamera(levelCircleX[6], levelHeight / 2, 0);
 				} else if(skipPrologue) {
 					skipPrologue = false;
@@ -7172,13 +7172,13 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void renderBeamAnimation(int step) {
+	public static final void renderBeamAnimation(int frame) {
 		updateAll();
 		renderShipInside();
 
-		if(step < 100) {
-			gamma = step;
-			levelCameraZoom = step * 72 / 100;
+		if(frame < 100) {
+			gamma = frame;
+			levelCameraZoom = frame * 72 / 100;
 
 			if(levelCameraZoom == 0) {
 				levelCameraZoom = 1;
