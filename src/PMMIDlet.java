@@ -22,8 +22,8 @@ public class PMMIDlet extends MIDlet {
 	}
 
 	public final void pauseApp() {
-		Game.heldKeys = 0;
-		Game.paused = true;
+		Game.tmpHeldKeys = 0;
+		Game.isPaused = true;
 		Game.queueAllSoundsForCleanup();
 		Game.queueSoundCleanup();
 		notifyPaused();
