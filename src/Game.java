@@ -42,15 +42,15 @@ public final class Game extends GameCanvas implements Runnable {
 	private static int numActiveSoundsTotal;
 	private static Player[] soundPlayers;
 	private static Player[] soundPlayersMIDI;
-	public static DataInputStream currentData;
-	public static int currentSize;
+	public static DataInputStream sCurrentData;
+	public static int sCurrentSize;
 	public static boolean isLoadingBarShown = false;
-	public static int currentOffset = -1;
-	public static int currentLocation = -1;
-	public static int currentIndex = -1;
-	public static boolean currentReserved;
+	public static int sCurrentOffset = -1;
+	public static int sCurrentLocation = -1;
+	public static int sCurrentIndex = -1;
+	public static boolean sCurrentReserved;
 	public static byte[][] bfcReservedData; // reserve data to RAM for future use (prevent reloading from bfc)
-	public static int currentOffsetReserved = 0;
+	public static int sCurrentOffsetReserved = 0;
 	public static short[] bfcHeadCrcs; // filenames' checksums
 	public static byte[] bfcHeadMemStates; // preserve or not
 	public static int[] bfcHeadOffsets; // offset from start of N.bfc
@@ -1144,20 +1144,20 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void bfcInitReservedData(int count) {
 		bfcReservedData = new byte[count][];
-		currentReserved = false;
+		sCurrentReserved = false;
 	}
 
 	public static final void bfcReserve(int index) {
 		try {
-			currentIndex = index;
-			currentReserved = true;
-			currentOffsetReserved = 0;
-			bfcReservedData[index] = new byte[currentSize];
+			sCurrentIndex = index;
+			sCurrentReserved = true;
+			sCurrentOffsetReserved = 0;
+			bfcReservedData[index] = new byte[sCurrentSize];
 
 			int read = 0;
 			int total = 0;	
-			for(int rem = currentSize; rem > 0; total += read) {
-				read = currentData.read(bfcReservedData[index], total, rem);
+			for(int rem = sCurrentSize; rem > 0; total += read) {
+				read = sCurrentData.read(bfcReservedData[index], total, rem);
 				rem -= read;
 			}
 
@@ -1167,21 +1167,21 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 
-			currentOffset += currentSize;
+			sCurrentOffset += sCurrentSize;
 		} catch(Exception e) {
 		}
 	}
 
 	public static final void bfcLoadHead() {
-		currentLocation = -1;
-		currentOffset = 0;
+		sCurrentLocation = -1;
+		sCurrentOffset = 0;
 		bfcGenCrcTable();
 
 		try {
 			String file = "/head.bfc";
-			currentData = new DataInputStream(file.getClass().getResourceAsStream(file));
+			sCurrentData = new DataInputStream(file.getClass().getResourceAsStream(file));
 
-			int numEntries = currentData.readUnsignedShort();
+			int numEntries = sCurrentData.readUnsignedShort();
 			bfcHeadNumEntries = numEntries;
 			bfcHeadCrcs = new short[numEntries];
 			bfcHeadMemStates = new byte[numEntries];
@@ -1190,11 +1190,11 @@ public final class Game extends GameCanvas implements Runnable {
 			bfcHeadSizes = new int[numEntries];
 
 			for(int i = 0; i < numEntries; i++) {
-				bfcHeadCrcs[i] = (short)currentData.readUnsignedShort();
-				bfcHeadMemStates[i] = currentData.readByte();
-				bfcHeadOffsets[i] = currentData.readUnsignedByte() << 16 | currentData.readUnsignedByte() << 8 | currentData.readUnsignedByte();
-				bfcHeadLocations[i] = (byte)currentData.readUnsignedByte();
-				bfcHeadSizes[i] = currentSize = currentData.readUnsignedByte() << 16 | currentData.readUnsignedByte() << 8 | currentData.readUnsignedByte();
+				bfcHeadCrcs[i] = (short)sCurrentData.readUnsignedShort();
+				bfcHeadMemStates[i] = sCurrentData.readByte();
+				bfcHeadOffsets[i] = sCurrentData.readUnsignedByte() << 16 | sCurrentData.readUnsignedByte() << 8 | sCurrentData.readUnsignedByte();
+				bfcHeadLocations[i] = (byte)sCurrentData.readUnsignedByte();
+				bfcHeadSizes[i] = sCurrentSize = sCurrentData.readUnsignedByte() << 16 | sCurrentData.readUnsignedByte() << 8 | sCurrentData.readUnsignedByte();
 			}
 		} catch(Exception e) {
 		}
@@ -1240,8 +1240,8 @@ public final class Game extends GameCanvas implements Runnable {
 		if(!sOpenFile(fnCrc)) {
 			return null;
 		} else {
-			byte[] var1 = new byte[currentSize];
-			sReadBytes(var1, 0, currentSize);
+			byte[] var1 = new byte[sCurrentSize];
+			sReadBytes(var1, 0, sCurrentSize);
 			return var1;
 		}
 	}
@@ -1263,7 +1263,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if(!sOpenFile(fnCrc)) {
 			return null;
 		} else {
-			short[] arr = new short[currentSize / 2];
+			short[] arr = new short[sCurrentSize / 2];
 
 			for(int i = 0; i < arr.length; i++) {
 				arr[i] = sRead16();
@@ -1281,7 +1281,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if(!sOpenFile(fnCrc)) {
 			return null;
 		} else {
-			int[] arr = new int[currentSize / 4];
+			int[] arr = new int[sCurrentSize / 4];
 
 			for(int i = 0; i < arr.length; i++) {
 				arr[i] = sRead32();
@@ -1300,7 +1300,7 @@ public final class Game extends GameCanvas implements Runnable {
 				if(is == null) {
 					return false;
 				} else {
-					currentData = new DataInputStream(is);
+					sCurrentData = new DataInputStream(is);
 					return true;
 				}
 			} catch(Exception e) {
@@ -1315,18 +1315,18 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		int index = getFileIndex(fnCrc);
-		currentIndex = index;
-		currentOffsetReserved = 0;
-		currentReserved = false;
+		sCurrentIndex = index;
+		sCurrentOffsetReserved = 0;
+		sCurrentReserved = false;
 		if(index >= 0 && bfcReservedData[index] != null) {
-			currentSize = bfcHeadSizes[index];
-			currentReserved = true;
+			sCurrentSize = bfcHeadSizes[index];
+			sCurrentReserved = true;
 			return true;
 		} else {
 			if(index != -1) {
-				currentSize = bfcHeadSizes[index];
-				if(currentLocation == bfcHeadLocations[index] && currentOffset <= bfcHeadOffsets[index]) {
-					sSkipBytes(bfcHeadOffsets[index] - currentOffset);
+				sCurrentSize = bfcHeadSizes[index];
+				if(sCurrentLocation == bfcHeadLocations[index] && sCurrentOffset <= bfcHeadOffsets[index]) {
+					sSkipBytes(bfcHeadOffsets[index] - sCurrentOffset);
 					if(bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null) {
 						bfcReserve(index);
 					}
@@ -1335,14 +1335,14 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				try {
-					if(currentData != null) {
+					if(sCurrentData != null) {
 						closeStream();
 					}
 
-					currentData = new DataInputStream(instance.getClass().getResourceAsStream("/" + bfcHeadLocations[index] + ".bfc"));
-					currentData.skip((long)bfcHeadOffsets[index]);
-					currentLocation = bfcHeadLocations[index];
-					currentOffset = bfcHeadOffsets[index];
+					sCurrentData = new DataInputStream(instance.getClass().getResourceAsStream("/" + bfcHeadLocations[index] + ".bfc"));
+					sCurrentData.skip((long)bfcHeadOffsets[index]);
+					sCurrentLocation = bfcHeadLocations[index];
+					sCurrentOffset = bfcHeadOffsets[index];
 					if(bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null) {
 						bfcReserve(index);
 					}
@@ -1357,14 +1357,14 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sSkipBytes(int n) {
-		if(currentReserved) {
-			currentOffsetReserved += n;
+		if(sCurrentReserved) {
+			sCurrentOffsetReserved += n;
 		} else {
-			currentOffset += n;
+			sCurrentOffset += n;
 
 			try {
 				while(n > 0) {
-					n = (int)((long)n - currentData.skip((long)n));
+					n = (int)((long)n - sCurrentData.skip((long)n));
 				}
 			} catch(Exception e) {
 			}
@@ -1372,16 +1372,16 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final byte[] sReadBytes(byte[] b, int off, int len) {
-		if(currentReserved) {
-			System.arraycopy(bfcReservedData[currentIndex], currentOffsetReserved, b, off, len);
-			currentOffsetReserved += len;
+		if(sCurrentReserved) {
+			System.arraycopy(bfcReservedData[sCurrentIndex], sCurrentOffsetReserved, b, off, len);
+			sCurrentOffsetReserved += len;
 			return b;
 		} else {
-			currentOffset += len;
+			sCurrentOffset += len;
 
 			try {
 				for(int i = 0; len > 0; off += i) {
-					i = currentData.read(b, off, len);
+					i = sCurrentData.read(b, off, len);
 					len -= i;
 				}
 
@@ -1393,15 +1393,15 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final int sReadU16() {
-		if(currentReserved) {
-			int var0 = (bfcReservedData[currentIndex][currentOffsetReserved] & 0xff) << 8 | bfcReservedData[currentIndex][currentOffsetReserved + 1] & 0xff;
-			currentOffsetReserved += 2;
+		if(sCurrentReserved) {
+			int var0 = (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] & 0xff) << 8 | bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 1] & 0xff;
+			sCurrentOffsetReserved += 2;
 			return var0;
 		} else {
-			currentOffset += 2;
+			sCurrentOffset += 2;
 
 			try {
-				return currentData.readUnsignedShort();
+				return sCurrentData.readUnsignedShort();
 			} catch(Exception e) {
 				return -1;
 			}
@@ -1409,15 +1409,15 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final short sRead16() {
-		if(currentReserved) {
-			short var0 = (short)(bfcReservedData[currentIndex][currentOffsetReserved] << 8 | bfcReservedData[currentIndex][currentOffsetReserved + 1] & 0xff);
-			currentOffsetReserved += 2;
+		if(sCurrentReserved) {
+			short var0 = (short)(bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] << 8 | bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 1] & 0xff);
+			sCurrentOffsetReserved += 2;
 			return var0;
 		} else {
-			currentOffset += 2;
+			sCurrentOffset += 2;
 
 			try {
-				return currentData.readShort();
+				return sCurrentData.readShort();
 			} catch(Exception e) {
 				return -1;
 			}
@@ -1425,15 +1425,15 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final int sReadU8() {
-		if(currentReserved) {
-			int var0 = bfcReservedData[currentIndex][currentOffsetReserved] & 0xff;
-			currentOffsetReserved++;
+		if(sCurrentReserved) {
+			int var0 = bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] & 0xff;
+			sCurrentOffsetReserved++;
 			return var0;
 		} else {
-			currentOffset++;
+			sCurrentOffset++;
 
 			try {
-				return currentData.readUnsignedByte();
+				return sCurrentData.readUnsignedByte();
 			} catch(Exception e) {
 				return -1;
 			}
@@ -1441,15 +1441,15 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final byte sRead8() {
-		if(currentReserved) {
-			byte var0 = bfcReservedData[currentIndex][currentOffsetReserved];
-			currentOffsetReserved++;
+		if(sCurrentReserved) {
+			byte var0 = bfcReservedData[sCurrentIndex][sCurrentOffsetReserved];
+			sCurrentOffsetReserved++;
 			return var0;
 		} else {
-			currentOffset++;
+			sCurrentOffset++;
 
 			try {
-				return currentData.readByte();
+				return sCurrentData.readByte();
 			} catch(Exception e) {
 				return -1;
 			}
@@ -1457,15 +1457,15 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final int sRead32() {
-		if(currentReserved) {
-			int var0 = (bfcReservedData[currentIndex][currentOffsetReserved] & 0xff) << 24 | (bfcReservedData[currentIndex][currentOffsetReserved + 1] & 0xff) << 16 | (bfcReservedData[currentIndex][currentOffsetReserved + 2] & 0xff) << 8 | bfcReservedData[currentIndex][currentOffsetReserved + 3] & 0xff;
-			currentOffsetReserved += 4;
+		if(sCurrentReserved) {
+			int var0 = (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] & 0xff) << 24 | (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 1] & 0xff) << 16 | (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 2] & 0xff) << 8 | bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 3] & 0xff;
+			sCurrentOffsetReserved += 4;
 			return var0;
 		} else {
-			currentOffset += 4;
+			sCurrentOffset += 4;
 
 			try {
-				return currentData.readInt();
+				return sCurrentData.readInt();
 			} catch(Exception e) {
 				return -1;
 			}
@@ -1474,13 +1474,13 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void closeStream() {
 		try {
-			currentData.close();
-			currentIndex = -1;
-			currentLocation = -1;
+			sCurrentData.close();
+			sCurrentIndex = -1;
+			sCurrentLocation = -1;
 		} catch(Exception e) {
 		}
 
-		currentData = null;
+		sCurrentData = null;
 	}
 
 	public static final void setTextTableCrc(short var0) {
