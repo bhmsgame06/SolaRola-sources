@@ -453,7 +453,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int spaceMapPlanetY;
 	public static int spaceMapPlanetBeaconRadius;
 	public static boolean spaceMapShowIcons;
-	public static boolean Field439;
+	public static boolean spaceMapShowPlanet;
 	public static Image imgPointer;
 	public static Image imgShip;
 	public static Image imgPlanet;
@@ -3405,7 +3405,7 @@ public final class Game extends GameCanvas implements Runnable {
 					if(var0[var1 + 1] == 5) {
 						spaceMapShowIcons = var0[var1 + 2] == 1;
 					} else {
-						Field439 = var0[var1 + 2] == 1;
+						spaceMapShowPlanet = var0[var1 + 2] == 1;
 					}
 
 					var1 += 3;
@@ -7088,9 +7088,9 @@ public final class Game extends GameCanvas implements Runnable {
 				imgPlanet = loadImage("planet.pim", "planet.ppl");
 			}
 
-			Field439 = true;
+			spaceMapShowPlanet = true;
 		} else {
-			Field439 = false;
+			spaceMapShowPlanet = false;
 		}
 
 		if(imgShip == null) {
@@ -7166,7 +7166,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 
-		if(Field439) {
+		if(spaceMapShowPlanet) {
 			gDrawImage(imgPointer, posX - 16, posY - 58 - 2, 0);
 			gDrawImage(imgPlanet, posX - imgPlanet.getWidth() / 2, posY - 58 + (33 - imgPlanet.getHeight()) / 2 - 2, 0);
 		}
