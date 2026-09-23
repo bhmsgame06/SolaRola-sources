@@ -441,7 +441,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int shipAlarmRadius = 0;
 	public static String[] textTableShip;
 	public static String[] textTableShipPause;
-	public static boolean isPaused = false;
+	public static boolean isShipPaused = false;
 	public static boolean isTextRendered = false;
 	public static int spaceMapCameraX;
 	public static int spaceMapCameraY;
@@ -2691,7 +2691,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneLevelInit(int var0) {
-		isPaused = false;
+		isShipPaused = false;
 		if(oldScreenIndex != 5 && var0 != 1) {
 			loadingBarToggle = true;
 			levelCompletionState = 0;
@@ -2926,7 +2926,7 @@ public final class Game extends GameCanvas implements Runnable {
 						level = 0;
 						mirrored = false;
 						saveRecordData();
-						isPaused = false;
+						isShipPaused = false;
 						activeSwapKey = -1;
 						setNewState(7, 0);
 						return;
@@ -2940,7 +2940,7 @@ public final class Game extends GameCanvas implements Runnable {
 			shipNextOp = 0;
 		} else {
 			if(levelPlayerOnCircle && levelCircleY[0] > 0x960000 && levelShipSelectedPodIndex > 0) {
-				shipNextOp = processMainMenuDialogue(levelShipSelectedPodIndex, isPaused);
+				shipNextOp = processMainMenuDialogue(levelShipSelectedPodIndex, isShipPaused);
 				levelShipSelectedPodIndex = 0;
 			}
 
@@ -2968,7 +2968,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelShipTouchedCircleType = 0;
 			levelSetCamera(levelCircleX[0], levelHeight / 2, 0);
 			levelSetPlayerPos(levelCircleX[6], levelCircleY[6], 6, 0x140000);
-			renderShipBlobs(isPaused);
+			renderShipBlobs(isShipPaused);
 			refreshGame();
 		}
 	}
@@ -3018,7 +3018,7 @@ public final class Game extends GameCanvas implements Runnable {
 				textTableShipPause = loadTextTableFromIndex(7, -1);
 			}
 
-			if(!isPaused) {
+			if(!isShipPaused) {
 				playSound(2);
 			}
 		}
@@ -3063,7 +3063,7 @@ public final class Game extends GameCanvas implements Runnable {
 		switch(dialogueEnvironment) {
 			case 0:
 				renderShipInside();
-				if(Field143 && !isPaused) {
+				if(Field143 && !isShipPaused) {
 					renderPlayable(6, 0xc80000, true);
 				}
 
@@ -6048,7 +6048,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			if(var2 == 0) {
 				softkeyPressed(-1, -1);
-				isPaused = true;
+				isShipPaused = true;
 				gamma = 100;
 				swapLevelData(0);
 				setNewState(2, 0);
@@ -7028,7 +7028,7 @@ public final class Game extends GameCanvas implements Runnable {
 				gDrawImage(var8, var1 + var14 - var8.getWidth() / 2, -16 + var15 - var8.getHeight() / 2, 0);
 				if(isTextRendered && var1 + var14 > -100 && var1 + var14 < 228) {
 					String var10 = textTableShip[var9];
-					if(isPaused) {
+					if(isShipPaused) {
 						var10 = textTableShipPause[var9];
 					}
 
