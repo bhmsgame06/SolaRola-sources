@@ -469,7 +469,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image[] imgsStatic;
 	public static int[] staticTiles;
 	public static boolean isTransmodigrafierMissing = true;
-	public static boolean isPurpleTransmissionShaky = true;
+	public static boolean isTransmissionShaky = true;
 	public static boolean isShowingShardPicture = false;
 	public static boolean isTransmissionBlinked = false;
 	public static int currentPurpleX = 59;
@@ -3415,7 +3415,7 @@ public final class Game extends GameCanvas implements Runnable {
 					var1 += 2;
 					break;
 				case 15:
-					isPurpleTransmissionShaky = var0[var1 + 1] == 1;
+					isTransmissionShaky = var0[var1 + 1] == 1;
 					var1 += 2;
 					break;
 				case 16:
@@ -7336,7 +7336,7 @@ public final class Game extends GameCanvas implements Runnable {
 		loadStatic();
 		gSetColor(pingBackgroundColor);
 		gFillRect(0, 0, 128, 128);
-		if(isPurpleTransmissionShaky) {
+		if(isTransmissionShaky) {
 			renderPurple(currentPurpleX + sin1000[(int)(millis() / 5L % 360L)] * 12 / 1000, currentPurpleY + sin1000[(int)(millis() / 3L % 360L)] * 12 / 1000, currentPurpleSize + 40 + sin1000[(int)(millis() / 14L % 360L)] * 20 / 1000);
 		} else {
 			renderPurple(currentPurpleX, currentPurpleY, currentPurpleSize);
