@@ -458,9 +458,9 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image imgShip;
 	public static Image imgPlanet;
 	public static int levelCompleteTicks;
-	public static int Field444;
-	public static int Field445;
-	public static int Field446;
+	public static int victoryCameraX;
+	public static int victoryCameraY;
+	public static int victoryCameraZoom;
 	public static String textMission;
 	public static String textCompleted;
 	// trigonometric
@@ -7197,8 +7197,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void initVictory() {
-		Field444 = levelCircleX[0];
-		Field445 = levelCircleY[0];
+		victoryCameraX = levelCircleX[0];
+		victoryCameraY = levelCircleY[0];
 
 		for(int var0 = 0; var0 < 5; var0++) {
 			levelCirclePrevY[var0] = levelCircleY[var0];
@@ -7209,7 +7209,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		playJingleComplete();
-		Field446 = levelCameraZoom;
+		victoryCameraZoom = levelCameraZoom;
 		levelCompleteTicks = 150;
 		initConfetti();
 		if(textMission == null) {
@@ -7219,13 +7219,13 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final boolean renderMissionComplete() {
-		levelCameraApproach(Field444, Field445, 0);
+		levelCameraApproach(victoryCameraX, victoryCameraY, 0);
 		gamma = 100;
-		levelCameraZoom = Field446;
+		levelCameraZoom = victoryCameraZoom;
 		levelRender(false);
 		if(levelCompleteTicks < 100) {
 			if(levelCompleteTicks % 4 == 0) {
-				Field446++;
+				victoryCameraZoom++;
 			}
 
 			gamma = levelCompleteTicks;
