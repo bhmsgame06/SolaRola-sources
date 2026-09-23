@@ -452,7 +452,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int spaceMapPlanetX;
 	public static int spaceMapPlanetY;
 	public static int spaceMapPlanetBeaconRadius;
-	public static boolean spaceMapShowIcons;
+	public static boolean spaceMapShowShip;
 	public static boolean spaceMapShowPlanet;
 	public static Image imgPointer;
 	public static Image imgShip;
@@ -3403,7 +3403,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				case 13:
 					if(var0[var1 + 1] == 5) {
-						spaceMapShowIcons = var0[var1 + 2] == 1;
+						spaceMapShowShip = var0[var1 + 2] == 1;
 					} else {
 						spaceMapShowPlanet = var0[var1 + 2] == 1;
 					}
@@ -7079,7 +7079,7 @@ public final class Game extends GameCanvas implements Runnable {
 		spaceMapTargetCameraY = 0;
 		spaceMapShipX = 0;
 		spaceMapShipY = 0;
-		spaceMapShowIcons = true;
+		spaceMapShowShip = true;
 		spaceMapPlanetX = var0;
 		spaceMapPlanetY = var1;
 		spaceMapPlanetBeaconRadius = 1;
@@ -7143,7 +7143,7 @@ public final class Game extends GameCanvas implements Runnable {
 		gSetColor(0xffffff);
 		renderStar(posX, posY);
 
-		if(spaceMapShowIcons) {
+		if(spaceMapShowShip) {
 			gDrawImage(imgPointer, posX - 16, posY - 58 - 2, 0);
 			gDrawImage(imgShip, posX - imgShip.getWidth() / 2, posY - 58 + (33 - imgShip.getHeight()) / 2 - 2, 0);
 		}
