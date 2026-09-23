@@ -147,7 +147,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean Field131;
 	public static int Field132;
 	public static long Field133;
-	public static boolean Field134;
+	public static boolean isSpeakingAnimationPlaying;
 	public static boolean Field135;
 	public static boolean Field136;
 	public static boolean showBlackBars;
@@ -471,7 +471,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean isTransmodigrafierMissing = true;
 	public static boolean isPurpleTransmissionShaky = true;
 	public static boolean isShowingShardPicture = false;
-	public static boolean Field456 = false;
+	public static boolean isTransmissionBlinked = false;
 	public static int currentPurpleX = 59;
 	public static int currentPurpleY = 108;
 	public static int currentPurpleSize = 100;
@@ -3036,7 +3036,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if(!Field136) {
 			currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, false);
 		} else {
-			if(!Field134 && !Field135 && Field133 == 0L) {
+			if(!isSpeakingAnimationPlaying && !Field135 && Field133 == 0L) {
 				if(dialogueEnvironment == 3) {
 					if(renderSpaceMapNextFrame()) {
 						Field136 = false;
@@ -3055,8 +3055,8 @@ public final class Game extends GameCanvas implements Runnable {
 				Field135 = false;
 			}
 
-			if(Field134 && currentSpeechDone) {
-				Field134 = false;
+			if(isSpeakingAnimationPlaying && currentSpeechDone) {
+				isSpeakingAnimationPlaying = false;
 			}
 		}
 
@@ -3153,7 +3153,7 @@ public final class Game extends GameCanvas implements Runnable {
 			Field136 = false;
 			Field133 = 0L;
 			dialogueIsCameraMoving = false;
-			Field134 = false;
+			isSpeakingAnimationPlaying = false;
 			Field135 = false;
 		} else {
 			Field131 = false;
@@ -3315,7 +3315,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				case 5:
 					setCurrentSpeech(getText(var0[var1 + 1]), var0[var1 + 2]);
-					Field134 = true;
+					isSpeakingAnimationPlaying = true;
 					Field136 = true;
 					var1 += 3;
 					break;
@@ -3383,7 +3383,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				case 10:
 					hideDialogueBox();
-					Field134 = false;
+					isSpeakingAnimationPlaying = false;
 					var1++;
 					break;
 				case 11:
@@ -7387,7 +7387,7 @@ public final class Game extends GameCanvas implements Runnable {
 		gSetColor(0);
 		int var5 = var2 * 23 / 100;
 		int var6 = var2 * 5 / 100;
-		if(Field134 && !isShowingShardPicture && (millis() / 150L & 1L) > 0L) {
+		if(isSpeakingAnimationPlaying && !isShowingShardPicture && (millis() / 150L & 1L) > 0L) {
 			gFillArc(var0 - var5 / 2, var1 - var6 * 2, var5, var6 * 2, 0, 360);
 		} else {
 			gFillArc(var0 - var5 / 2, var1 - var6, var5, var6, 0, 360);
@@ -7407,7 +7407,7 @@ public final class Game extends GameCanvas implements Runnable {
 			gFillArc(var0 - var7 * 3 / 2 + var10 * var7 + var7 / 3, var1 - var4 * 45 / 100 + var7 / 3, var8, var8, 0, 360);
 		}
 
-		if(Field456 || !isShowingShardPicture && rand8() > 240) {
+		if(isTransmissionBlinked || !isShowingShardPicture && rand8() > 240) {
 			if(isTransmodigrafierMissing) {
 				gSetColor(0x696969);
 			} else {
@@ -7418,7 +7418,7 @@ public final class Game extends GameCanvas implements Runnable {
 				gFillArc(var0 - var7 * 3 / 2 + var11 * var7, var1 - var4 * 45 / 100, var7, var7, 0, 360);
 			}
 
-			Field456 = !Field456;
+			isTransmissionBlinked = !isTransmissionBlinked;
 		}
 	}
 
