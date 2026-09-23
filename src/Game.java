@@ -442,7 +442,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static String[] textTableShip;
 	public static String[] textTableShipPause;
 	public static boolean isPaused = false;
-	public static boolean Field428 = false;
+	public static boolean isTextRendered = false;
 	public static int spaceMapCameraX;
 	public static int spaceMapCameraY;
 	public static int spaceMapTargetCameraX;
@@ -6917,9 +6917,9 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void renderShipBlobs(boolean var0) {
-		Field428 = true;
+		isTextRendered = true;
 		renderShipInside();
-		Field428 = false;
+		isTextRendered = false;
 		if(!var0) {
 			renderPlayable(6, 0xc80000, true);
 		}
@@ -7026,7 +7026,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				gDrawImage(var8, var1 + var14 - var8.getWidth() / 2, -16 + var15 - var8.getHeight() / 2, 0);
-				if(Field428 && var1 + var14 > -100 && var1 + var14 < 228) {
+				if(isTextRendered && var1 + var14 > -100 && var1 + var14 < 228) {
 					String var10 = textTableShip[var9];
 					if(isPaused) {
 						var10 = textTableShipPause[var9];
