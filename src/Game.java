@@ -145,18 +145,18 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int dialogueLastSwapKey;
 	public static int stateBeforeDialogue;
 	public static boolean Field131;
-	public static int Field132;
-	public static long Field133;
+	public static int dialogueCameraZoomApproach;
+	public static long dialogueWaitEndMs;
 	public static boolean isSpeakingAnimationPlaying;
-	public static boolean Field135;
-	public static boolean Field136;
+	public static boolean dialogueIsOkKeyEnabled;
+	public static boolean dialogueIsWaiting;
 	public static boolean showBlackBars;
 	public static int dialogueEnvironment;
 	public static int levelCameraTargetX;
 	public static int levelCameraTargetY;
 	public static int dialogueOriginX;
 	public static int dialogueOriginY;
-	public static boolean Field143;
+	public static boolean dialogueIsWazActive;
 	public static boolean dialogueIsCameraMoving;
 	public static int[] dialogueSfx = new int[] {-1, -1, -1, -1, -1, -1, -1, -1};
 	public static int sceneStartupState = 0;
@@ -3033,26 +3033,26 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void sceneDialogueRun() {
 		long var0 = millis();
-		if(!Field136) {
+		if(!dialogueIsWaiting) {
 			currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, false);
 		} else {
-			if(!isSpeakingAnimationPlaying && !Field135 && Field133 == 0L) {
+			if(!isSpeakingAnimationPlaying && !dialogueIsOkKeyEnabled && dialogueWaitEndMs == 0L) {
 				if(dialogueEnvironment == 3) {
 					if(renderSpaceMapNextFrame()) {
-						Field136 = false;
+						dialogueIsWaiting = false;
 					}
 				} else if(!dialogueIsCameraMoving || levelCameraApproach(levelCameraTargetX, levelCameraTargetY, 0, 0x320000)) {
-					Field136 = false;
+					dialogueIsWaiting = false;
 					dialogueIsCameraMoving = false;
 				}
 			}
 
-			if(Field133 != 0L && Field133 < var0) {
-				Field133 = 0L;
+			if(dialogueWaitEndMs != 0L && dialogueWaitEndMs < var0) {
+				dialogueWaitEndMs = 0L;
 			}
 
-			if(Field135 && isKeyPressed(1)) {
-				Field135 = false;
+			if(dialogueIsOkKeyEnabled && isKeyPressed(1)) {
+				dialogueIsOkKeyEnabled = false;
 			}
 
 			if(isSpeakingAnimationPlaying && currentSpeechDone) {
@@ -3063,7 +3063,7 @@ public final class Game extends GameCanvas implements Runnable {
 		switch(dialogueEnvironment) {
 			case 0:
 				renderShipInside();
-				if(Field143 && !isShipPaused) {
+				if(dialogueIsWazActive && !isShipPaused) {
 					renderPlayable(6, 0xc80000, true);
 				}
 
@@ -3072,8 +3072,8 @@ public final class Game extends GameCanvas implements Runnable {
 				break;
 			case 1:
 				if(levelCameraZoom != 72) {
-					Field132 += (72000 - Field132) / 10;
-					levelCameraZoom = Field132 / 1000;
+					dialogueCameraZoomApproach += (72000 - dialogueCameraZoomApproach) / 10;
+					levelCameraZoom = dialogueCameraZoomApproach / 1000;
 				}
 
 				if(levelPlayerAngle < 180) {
@@ -3112,26 +3112,26 @@ public final class Game extends GameCanvas implements Runnable {
 				for(mustResetData = var3 == 2; currentDialogueIndex < currentDialogue.length; currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, true)) {
 				}
 
-				Field136 = false;
+				dialogueIsWaiting = false;
 			}
-		} else if(Field135 && softkeyPressed(2, 3) == 3 || !Field135 && softkeyPressed(-1, 3) == 3) {
+		} else if(dialogueIsOkKeyEnabled && softkeyPressed(2, 3) == 3 || !dialogueIsOkKeyEnabled && softkeyPressed(-1, 3) == 3) {
 			while(currentDialogueIndex < currentDialogue.length) {
 				currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, true);
 			}
 
-			Field136 = false;
+			dialogueIsWaiting = false;
 			setNewState(6, 100 + stateBeforeDialogue);
 			return;
 		}
 
 		refreshGame();
-		if(currentDialogueIndex >= currentDialogue.length && !Field136) {
+		if(currentDialogueIndex >= currentDialogue.length && !dialogueIsWaiting) {
 			setNewState(stateBeforeDialogue, 0);
 		}
 	}
 
 	public static final void sceneDialogueInit(int var0) {
-		Field132 = levelCameraZoom * 1000;
+		dialogueCameraZoomApproach = levelCameraZoom * 1000;
 		if(currentDialogue == null) {
 			setNewState(stateBeforeDialogue, 0);
 		} else if(!Field131) {
@@ -3140,8 +3140,8 @@ public final class Game extends GameCanvas implements Runnable {
 			stateBeforeDialogue = oldScreenIndex;
 			activePurpleShardNameID = 0;
 			dialogueLastSwapKey = activeSwapKey;
-			Field143 = dialogueLastSwapKey == 0;
-			if(Field143) {
+			dialogueIsWazActive = dialogueLastSwapKey == 0;
+			if(dialogueIsWazActive) {
 				dialogueEnvironment = 0;
 			} else {
 				dialogueEnvironment = 1;
@@ -3150,11 +3150,11 @@ public final class Game extends GameCanvas implements Runnable {
 			resetDialogue();
 			loadEyes();
 			loadFacesIcons();
-			Field136 = false;
-			Field133 = 0L;
+			dialogueIsWaiting = false;
+			dialogueWaitEndMs = 0L;
 			dialogueIsCameraMoving = false;
 			isSpeakingAnimationPlaying = false;
-			Field135 = false;
+			dialogueIsOkKeyEnabled = false;
 		} else {
 			Field131 = false;
 		}
@@ -3214,13 +3214,13 @@ public final class Game extends GameCanvas implements Runnable {
 				case 0:
 					return var1 + 1;
 				case 1:
-					Field136 = true;
-					Field133 = millis() + (long)(var0[var1 + 1] * 10);
+					dialogueIsWaiting = true;
+					dialogueWaitEndMs = millis() + (long)(var0[var1 + 1] * 10);
 					var1 += 2;
 					break;
 				case 2:
-					Field136 = true;
-					Field135 = true;
+					dialogueIsWaiting = true;
+					dialogueIsOkKeyEnabled = true;
 					var1++;
 					break;
 				case 3:
@@ -3244,7 +3244,7 @@ public final class Game extends GameCanvas implements Runnable {
 							var1 += 2;
 							break;
 						case 1:
-							if(Field143) {
+							if(dialogueIsWazActive) {
 								levelCameraTargetX = levelCircleX[6];
 								levelCameraTargetY = levelCircleY[6];
 							} else {
@@ -3279,7 +3279,7 @@ public final class Game extends GameCanvas implements Runnable {
 						}
 
 						var1 += 2;
-						Field136 = true;
+						dialogueIsWaiting = true;
 						break;
 					}
 
@@ -3290,7 +3290,7 @@ public final class Game extends GameCanvas implements Runnable {
 							var1 += 2;
 							break;
 						case 1:
-							if(Field143) {
+							if(dialogueIsWazActive) {
 								levelCameraTargetX = levelCircleX[6];
 								levelCameraTargetY = levelCircleY[6];
 							} else {
@@ -3311,12 +3311,12 @@ public final class Game extends GameCanvas implements Runnable {
 							var1 += 3;
 					}
 
-					Field136 = true;
+					dialogueIsWaiting = true;
 					break;
 				case 5:
 					setCurrentSpeech(getText(var0[var1 + 1]), var0[var1 + 2]);
 					isSpeakingAnimationPlaying = true;
-					Field136 = true;
+					dialogueIsWaiting = true;
 					var1 += 3;
 					break;
 				case 6:
@@ -3363,7 +3363,7 @@ public final class Game extends GameCanvas implements Runnable {
 							levelCameraZoom = 72;
 							break;
 						case 1:
-							if(!Field143) {
+							if(!dialogueIsWazActive) {
 								swapLevelData(1);
 							}
 						case 2:
