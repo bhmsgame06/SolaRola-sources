@@ -186,7 +186,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelBombExplodeTicks = 0;
 	public static int levelBombObjectID;
 	public static int Field172;
-	public static int Field173 = 0;
+	public static int levelPlayerJumpTimes = 0;
 	public static int levelPlayerHitTicks = 0;
 	public static int levelPlayerCurrentGrabberFlags = -1;
 	public static int levelPlayerBlockGrabberID = -1;
@@ -3721,10 +3721,10 @@ public final class Game extends GameCanvas implements Runnable {
 			levelPlayerBlockGrabberID = -1;
 		}
 
-		if(Field173 > 0) {
+		if(levelPlayerJumpTimes > 0) {
 			int[] var10000 = levelCircleY;
 			var10000[0] -= 550000;
-			Field173--;
+			levelPlayerJumpTimes--;
 		}
 
 		if(levelPlayerRotationRate > 0) {
@@ -6122,7 +6122,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			if(levelIsPlayerOnSurface) {
-				Field173 = 3;
+				levelPlayerJumpTimes = 3;
 			}
 		}
 
