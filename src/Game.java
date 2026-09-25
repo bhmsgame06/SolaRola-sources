@@ -334,7 +334,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelBackgroundID = 0;
 	public static int levelWidth;
 	public static int levelHeight;
-	public static int Field321;
+	public static int movableGravity;
 	public static int xLossRate;
 	public static boolean levelIsPlayerOnSurface;
 	public static boolean isLevelComplete;
@@ -365,9 +365,9 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int swappedLevelWidth;
 	public static int swappedLevelHeight;
 	public static int Field351;
-	public static int Field352;
-	public static boolean Field353;
-	public static boolean Field354;
+	public static int swappedXLossRate;
+	public static boolean swappedLevelIsPlayerOnSurface;
+	public static boolean swappedIsLevelComplete;
 	public static int currentSoundID = -1;
 	public static Image[] imgsBackground;
 	public static int[][] activeBackgroundPattern;
@@ -5082,7 +5082,7 @@ public final class Game extends GameCanvas implements Runnable {
 				var10000[var5] += lp32Mul(var3, levelCircleY[var5] - levelCirclePrevY[var5]);
 				if((levelCircleFlags[var5] & 1) > 0) {
 					var10000 = levelCircleY;
-					var10000[var5] += Field321;
+					var10000[var5] += movableGravity;
 				}
 
 				levelCirclePrevX[var5] = var1;
@@ -5363,7 +5363,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		initPlayer(var1);
 		levelDeathTicks = 70;
-		Field321 = 40000;
+		movableGravity = 40000;
 		levelBombExplodeTicks = 0;
 		levelBombStartTicks = -10000;
 		levelPlayerHitTicks = 0;
@@ -5459,18 +5459,18 @@ public final class Game extends GameCanvas implements Runnable {
 			var1 = levelHeight;
 			levelHeight = swappedLevelHeight;
 			swappedLevelHeight = var1;
-			var1 = Field321;
-			Field321 = Field351;
+			var1 = movableGravity;
+			movableGravity = Field351;
 			Field351 = var1;
 			var1 = xLossRate;
-			xLossRate = Field352;
-			Field352 = var1;
+			xLossRate = swappedXLossRate;
+			swappedXLossRate = var1;
 			boolean var2 = levelIsPlayerOnSurface;
-			levelIsPlayerOnSurface = Field353;
-			Field353 = var2;
+			levelIsPlayerOnSurface = swappedLevelIsPlayerOnSurface;
+			swappedLevelIsPlayerOnSurface = var2;
 			var2 = isLevelComplete;
-			isLevelComplete = Field354;
-			Field354 = var2;
+			isLevelComplete = swappedIsLevelComplete;
+			swappedIsLevelComplete = var2;
 			swapLevelCircleData();
 			swapLevelRectData();
 			swapLevelHookData();
@@ -6846,7 +6846,7 @@ public final class Game extends GameCanvas implements Runnable {
 		gamma = 100;
 		loadLevel(-2);
 		initInsideShip();
-		Field321 = 40000;
+		movableGravity = 40000;
 		levelSetCamera(levelCircleX[0], levelHeight / 2, 0);
 	}
 
@@ -7443,7 +7443,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelInitCircles(10 + numSelections * 2 + 1);
 		levelInitHooks(numSelections);
 		activeSwapKey = -10;
-		Field321 = 30000;
+		movableGravity = 30000;
 		xLossRate = 64000;
 		selectionAngle = 0;
 		Field471 = 10 + numSelections * 2;
