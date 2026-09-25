@@ -417,7 +417,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int iterCheatLevelComplete = 0;
 	public static int iterCheatInvincibility = 0;
 	public static boolean isPlayerInvincible = false;
-	public static boolean Field404 = true;
+	public static boolean isPlayerAlive = true;
 	public static boolean pauseScreenDraw = false;
 	public static int[] loadingBarColors = new int[12];
 	public static int loadingBarColorIndex = 9;
@@ -3009,7 +3009,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			levelShipTouchedCircleType = 0;
-			Field404 = true;
+			isPlayerAlive = true;
 			initSpace(2, 12, 92, 46);
 			initInsideShip();
 			loadFaces();
@@ -5977,11 +5977,11 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 
 					isDejaVuMessageShown = true;
-					Field404 = true;
+					isPlayerAlive = true;
 					return;
 				}
 
-				Field404 = true;
+				isPlayerAlive = true;
 			}
 
 			if(levelIntroTicks >= 50) {
@@ -5992,7 +5992,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if(levelPlayerHealth < 1) {
 				if(levelDeathTicks == 70) {
 					vibrate(640);
-					Field404 = false;
+					isPlayerAlive = false;
 					levelCircleRadius[0] = 0x20000;
 					levelCircleRadius[2] = 0x10000;
 					levelCircleRadius[3] = 0x10000;
@@ -6053,7 +6053,7 @@ public final class Game extends GameCanvas implements Runnable {
 				swapLevelData(0);
 				setNewState(2, 0);
 			} else {
-				if(Field404 && levelIntroTicks >= 100) {
+				if(isPlayerAlive && levelIntroTicks >= 100) {
 					updatePlayerControls();
 					levelCameraApproach(levelCircleX[0] + 10 * (levelCircleX[0] - levelCirclePrevX[0]), levelCircleY[0] + 10 * (levelCircleY[0] - levelCirclePrevY[0]), 0, 3276800);
 				}
