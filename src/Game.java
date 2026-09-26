@@ -373,7 +373,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[][] activeBackgroundPattern;
 	public static int[][] Field358;
 	public static int currentLoadedBackgroundID;
-	public static int valOfZero;
+	public static int backgroundOffset;
 	public static int Field361;
 	public static int Field362;
 	public static int Field363;
@@ -5577,7 +5577,7 @@ public final class Game extends GameCanvas implements Runnable {
 		Field358 = Field369[var0];
 		int var3 = getBackgroundTotalHeight(activeBackgroundPattern);
 		int var2 = getBackgroundTotalHeight(Field358) - imgsBackground[Field358[0][0]].getHeight();
-		valOfZero = 0;
+		backgroundOffset = 0;
 		Field361 = -(var3 - (128 - var2));
 		Field362 = var3;
 		Field363 = 128 - var2;
@@ -5591,11 +5591,11 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			if(!currentBackgroundHasObjects) {
-				int var5 = valOfZero + (Field361 - valOfZero) * (levelCameraY >> 16) / (levelHeight >> 16);
+				int var5 = backgroundOffset + (Field361 - backgroundOffset) * (levelCameraY >> 16) / (levelHeight >> 16);
 				int var7 = -((getBackgroundTotalWidth(activeBackgroundPattern) - 128) * (levelCameraX >> 16)) / (levelWidth >> 16);
 				renderBackground(activeBackgroundPattern, var7, var5, false);
 			} else {
-				int var3 = valOfZero + (Field361 - valOfZero) * (levelCameraY >> 16) / (levelHeight >> 16);
+				int var3 = backgroundOffset + (Field361 - backgroundOffset) * (levelCameraY >> 16) / (levelHeight >> 16);
 				int var1 = -((getBackgroundTotalWidth(activeBackgroundPattern) - 128) * (levelCameraX >> 16)) / (levelWidth >> 16);
 				renderBackground(activeBackgroundPattern, var1, var3, false);
 				var3 = Field362 + (Field363 - Field362) * (levelCameraY >> 16) / (levelHeight >> 16);
