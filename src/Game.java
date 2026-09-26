@@ -402,7 +402,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static String currentSpeech;
 	public static boolean currentSpeechDone;
 	public static Image[][] imgsFaces;
-	public static int Field389 = -2;
+	public static int nextLevelToLoad = -2;
 	public static int levelIntroTicks = 0;
 	public static boolean mustExitPlayground = false;
 	public static boolean isDejaVuMessageShown = false;
@@ -2910,7 +2910,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				case 3:
 					if(mustResetData) {
-						Field389 = currentLevelLoaded;
+						nextLevelToLoad = currentLevelLoaded;
 						setNewState(4, 0);
 						swapLevelData(1);
 					}
@@ -5964,9 +5964,9 @@ public final class Game extends GameCanvas implements Runnable {
 			levelDisplayDialogue(levelDialogueToDisplay);
 			levelDialogueToDisplay = -1;
 		} else {
-			if(Field389 >= -1) {
-				loadLevel(Field389);
-				Field389 = -2;
+			if(nextLevelToLoad >= -1) {
+				loadLevel(nextLevelToLoad);
+				nextLevelToLoad = -2;
 				if(currentLevelLoaded < 0) {
 					levelIntroTicks = 120;
 				}
@@ -6025,7 +6025,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 				levelDeathTicks--;
 				if(levelDeathTicks <= 0) {
-					Field389 = currentLevelLoaded;
+					nextLevelToLoad = currentLevelLoaded;
 				}
 			}
 
