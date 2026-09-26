@@ -184,12 +184,12 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelBombNextFlashTick = -1;
 	public static boolean levelBombFlashed = false;
 	public static int levelBombExplodeTicks = 0;
-	public static int levelBombObjectID;
+	public static int levelBombObjectId;
 	public static int levelPlayerEyeVectorMagnitude;
 	public static int levelPlayerJumpTimes = 0;
 	public static int levelPlayerHitTicks = 0;
 	public static int levelPlayerCurrentGrabberFlags = -1;
-	public static int levelPlayerBlockGrabberID = -1;
+	public static int levelPlayerBlockGrabberId = -1;
 	public static int[] currentEyeBlinkTicks = new int[2];
 	public static int[] currentEmotion = new int[2];
 	public static Image[] imgsEyeLeft;
@@ -212,8 +212,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image imgFuse;
 	public static Image[] imgsBomb;
 	public static int levelNumHooks;
-	public static int[] levelHookID1;
-	public static int[] levelHookID2;
+	public static int[] levelHookId1;
+	public static int[] levelHookId2;
 	public static int[] levelHookType;
 	public static int[] levelHookExtent;
 	public static int[] levelHookExtentSquare;
@@ -221,15 +221,15 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean[] levelHookIsVisible;
 	public static boolean[] levelHookIsActive;
 	public static int swappedLevelNumHooks;
-	public static int[] swappedLevelHookID1;
-	public static int[] swappedLevelHookID2;
+	public static int[] swappedLevelHookId1;
+	public static int[] swappedLevelHookId2;
 	public static int[] swappedLevelHookType;
 	public static int[] swappedLevelHookExtent;
 	public static int[] swappedLevelHookExtentSquare;
 	public static int[] swappedLevelHookStretchConstant;
 	public static boolean[] swappedLevelHookIsVisible;
 	public static boolean[] swappedLevelHookIsActive;
-	public static int[] levelSpiderLegIDs;
+	public static int[] levelSpiderLegIds;
 	public static int[] levelSpiderLegMovementStartX;
 	public static int[] levelSpiderLegMovementEndX;
 	public static int[] levelSpiderLegTicks;
@@ -242,11 +242,11 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelExpanderDelay;
 	public static int[] levelExpanderExtent;
 	public static int[] levelExpanderMinRadius;
-	public static int[] levelGrabberIDs;
+	public static int[] levelGrabberIds;
 	public static Image imgGrabber;
-	public static int levelPingCircleID;
-	public static int[] levelPingShardIDs;
-	public static int[][] levelPingEnemyIDs;
+	public static int levelPingCircleId;
+	public static int[] levelPingShardIds;
+	public static int[][] levelPingEnemyIds;
 	public static int levelPingHealth;
 	public static int levelPingHitTimeout;
 	public static Image[] imgsPointyRoll;
@@ -330,8 +330,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] swappedLevelCircle4ByWeight;
 	public static byte[] swappedLevelCircleType;
 	public static boolean[] swappedLevelCircleHasPhysics;
-	public static int levelWeatherID = 0;
-	public static int levelBackgroundID = 0;
+	public static int levelWeatherId = 0;
+	public static int levelBackgroundId = 0;
 	public static int levelWidth;
 	public static int levelHeight;
 	public static int levelMovableGravity;
@@ -354,13 +354,13 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelRadioactiveMinBlue = 16;
 	public static int levelRadioactiveMaxBlue = 33;
 	public static int levelPortalFilledRadius = 0;
-	public static short[] levelIDExpanders;
-	public static short[] levelIDFoam;
-	public static short[] levelIDDestructibles;
-	public static short[] levelIDGoals;
-	public static short[] levelIDRadioactive;
-	public static short[] levelIDBombDispenser;
-	public static short[] levelIDPlatforms;
+	public static short[] levelIdExpanders;
+	public static short[] levelIdFoam;
+	public static short[] levelIdDestructibles;
+	public static short[] levelIdGoals;
+	public static short[] levelIdRadioactive;
+	public static short[] levelIdBombDispenser;
+	public static short[] levelIdPlatforms;
 	public static int activeSwapKey = -1;
 	public static int swappedLevelWidth;
 	public static int swappedLevelHeight;
@@ -368,11 +368,11 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int swappedXLossRate;
 	public static boolean swappedLevelIsPlayerOnSurface;
 	public static boolean swappedIsLevelComplete;
-	public static int currentSoundID = -1;
+	public static int currentSoundId = -1;
 	public static Image[] imgsBackground;
 	public static int[][] activeBackgroundPattern;
 	public static int[][] Field358;
-	public static int currentLoadedBackgroundID;
+	public static int currentLoadedBackgroundId;
 	public static int backgroundOffset;
 	public static int Field361;
 	public static int Field362;
@@ -476,7 +476,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int currentPurpleY = 108;
 	public static int currentPurpleSize = 100;
 	public static int pingBackgroundColor = 0;
-	public static int activePurpleShardNameID = 0;
+	public static int activePurpleShardNameId = 0;
 	public static String[] purpleShardNames = new String[] {"Kachoo", "NikSak", "Rara", "Corakllquar", "Brad", "NotPing"};
 	public static Image[] imgsSelectionMenu;
 	public static Image[] imgsSelectionMenuArrows;
@@ -486,7 +486,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int selectionAngleBetweenOthers;
 	public static int selectionAngleUntilAdjust;
 	public static int numSelections;
-	public static int selectionMainCircleID;
+	public static int selectionMainCircleId;
 	public static int selectionDefaultIndex;
 	public static int selectionArrowsAnimTicks;
 
@@ -2392,7 +2392,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		gSetColor(0xffffff);
-		if(levelBackgroundID == 0) {
+		if(levelBackgroundId == 0) {
 			gSetColor(0);
 		}
 
@@ -2628,7 +2628,7 @@ public final class Game extends GameCanvas implements Runnable {
 		activateLevel(level);
 		currentPlanetText = loadTextTableFromIndex(86, -1)[level];
 		String var2 = "planet";
-		var2 = var2 + level % 2 + "_" + levelBackgroundID % 5;
+		var2 = var2 + level % 2 + "_" + levelBackgroundId % 5;
 		imgCurrentPlanet = loadImage(var2 + ".pim", var2 + ".ppl");
 		imgOutside = loadImage("outside.pim", "outside.ppl");
 		imgShipSmall = loadImage("shipSmall.pim", "shipSmall.ppl");
@@ -3138,7 +3138,7 @@ public final class Game extends GameCanvas implements Runnable {
 			currentDialogueIndex = 0;
 			dialogueIsActionConfirmed = false;
 			stateBeforeDialogue = oldScreenIndex;
-			activePurpleShardNameID = 0;
+			activePurpleShardNameId = 0;
 			dialogueLastSwapKey = activeSwapKey;
 			dialogueIsWazActive = dialogueLastSwapKey == 0;
 			if(dialogueIsWazActive) {
@@ -3429,7 +3429,7 @@ public final class Game extends GameCanvas implements Runnable {
 				default:
 					break;
 				case 19:
-					activePurpleShardNameID = var0[var1 + 1];
+					activePurpleShardNameId = var0[var1 + 1];
 					var1 += 2;
 			}
 		}
@@ -3686,7 +3686,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		levelPlayerRotationRate = 0;
 		levelPlayerCurrentGrabberFlags = -1;
-		levelPlayerBlockGrabberID = -1;
+		levelPlayerBlockGrabberId = -1;
 	}
 
 	public static final void levelSetPlayerPos(int var0, int var1, int var2, int var3) {
@@ -3710,15 +3710,15 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void levelPlayerReleaseGrabber() {
 		levelHookIsActive[16] = false;
 		levelHookIsVisible[16] = false;
-		levelCircleFlags[levelHookID2[16]] = levelPlayerCurrentGrabberFlags;
+		levelCircleFlags[levelHookId2[16]] = levelPlayerCurrentGrabberFlags;
 		levelPlayerCurrentGrabberFlags = -1;
-		levelPlayerBlockGrabberID = levelHookID2[16];
-		levelHookID2[16] = -1;
+		levelPlayerBlockGrabberId = levelHookId2[16];
+		levelHookId2[16] = -1;
 	}
 
 	public static final void updatePlayerRotation() {
-		if(levelPlayerBlockGrabberID != -1 && (levelCircleX[levelPlayerBlockGrabberID] - levelCircleRadius[levelPlayerBlockGrabberID] > levelCircleX[0] + 0x190000 || levelCircleX[levelPlayerBlockGrabberID] + levelCircleRadius[levelPlayerBlockGrabberID] < levelCircleX[0] - 0x190000 || levelCircleY[levelPlayerBlockGrabberID] - levelCircleRadius[levelPlayerBlockGrabberID] > levelCircleY[0] + 0x190000 || levelCircleY[levelPlayerBlockGrabberID] + levelCircleRadius[levelPlayerBlockGrabberID] < levelCircleY[0] - 0x190000)) {
-			levelPlayerBlockGrabberID = -1;
+		if(levelPlayerBlockGrabberId != -1 && (levelCircleX[levelPlayerBlockGrabberId] - levelCircleRadius[levelPlayerBlockGrabberId] > levelCircleX[0] + 0x190000 || levelCircleX[levelPlayerBlockGrabberId] + levelCircleRadius[levelPlayerBlockGrabberId] < levelCircleX[0] - 0x190000 || levelCircleY[levelPlayerBlockGrabberId] - levelCircleRadius[levelPlayerBlockGrabberId] > levelCircleY[0] + 0x190000 || levelCircleY[levelPlayerBlockGrabberId] + levelCircleRadius[levelPlayerBlockGrabberId] < levelCircleY[0] - 0x190000)) {
+			levelPlayerBlockGrabberId = -1;
 		}
 
 		if(levelPlayerJumpTimes > 0) {
@@ -3999,8 +3999,8 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void levelInitHooks(int var0) {
 		levelNumHooks = var0;
-		levelHookID1 = new int[var0];
-		levelHookID2 = new int[var0];
+		levelHookId1 = new int[var0];
+		levelHookId2 = new int[var0];
 		levelHookType = new int[var0];
 		levelHookExtent = new int[var0];
 		levelHookExtentSquare = new int[var0];
@@ -4010,8 +4010,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void levelSetHook(int var0, int var1, int var2, int var3, int var4, int var5, boolean var6, boolean var7) {
-		levelHookID1[var0] = var1;
-		levelHookID2[var0] = var2;
+		levelHookId1[var0] = var1;
+		levelHookId2[var0] = var2;
 		levelHookType[var0] = var3;
 		levelHookExtent[var0] = var4;
 		levelHookExtentSquare[var0] = lp32Mul(var4, var4);
@@ -4022,9 +4022,9 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void levelDetachHooks(int var0) {
 		for(int var1 = 0; var1 < levelNumHooks; var1++) {
-			if(levelHookIsActive[var1] && (levelHookID1[var1] == var0 || levelHookID2[var1] == var0)) {
+			if(levelHookIsActive[var1] && (levelHookId1[var1] == var0 || levelHookId2[var1] == var0)) {
 				levelHookIsActive[var1] = false;
-				if(levelHookID2[16] == levelHookID1[var1] || levelHookID2[16] == levelHookID2[var1]) {
+				if(levelHookId2[16] == levelHookId1[var1] || levelHookId2[16] == levelHookId2[var1]) {
 					levelPlayerReleaseGrabber();
 				}
 			}
@@ -4035,19 +4035,19 @@ public final class Game extends GameCanvas implements Runnable {
 		for(int var0 = 0; var0 < levelNumHooks; var0++) {
 			if(levelHookIsActive[var0]) {
 				if(levelHookType[var0] == 0) {
-					levelCircleX[levelHookID2[var0]] = levelCircleX[levelHookID1[var0]];
+					levelCircleX[levelHookId2[var0]] = levelCircleX[levelHookId1[var0]];
 				} else if(levelHookType[var0] == 1) {
-					levelCircleY[levelHookID2[var0]] = levelCircleY[levelHookID1[var0]];
+					levelCircleY[levelHookId2[var0]] = levelCircleY[levelHookId1[var0]];
 				} else if(levelHookType[var0] == 6) {
-					if(levelCircleY[levelHookID1[var0]] > levelCircleY[levelHookID2[var0]] - levelHookExtent[var0]) {
-						levelCircleY[levelHookID1[var0]] = levelCircleY[levelHookID2[var0]] - levelHookExtent[var0];
+					if(levelCircleY[levelHookId1[var0]] > levelCircleY[levelHookId2[var0]] - levelHookExtent[var0]) {
+						levelCircleY[levelHookId1[var0]] = levelCircleY[levelHookId2[var0]] - levelHookExtent[var0];
 					}
 				} else if(levelHookType[var0] == 5) {
-					if(levelCircleX[levelHookID1[var0]] > levelCircleX[levelHookID2[var0]] - levelHookExtent[var0]) {
-						levelCircleX[levelHookID1[var0]] = levelCircleX[levelHookID2[var0]] - levelHookExtent[var0];
+					if(levelCircleX[levelHookId1[var0]] > levelCircleX[levelHookId2[var0]] - levelHookExtent[var0]) {
+						levelCircleX[levelHookId1[var0]] = levelCircleX[levelHookId2[var0]] - levelHookExtent[var0];
 					}
 				} else {
-					onCircleTouchCircle(levelHookID1[var0], levelHookID2[var0], levelHookExtent[var0], levelHookStretchConstant[var0], levelHookType[var0], false);
+					onCircleTouchCircle(levelHookId1[var0], levelHookId2[var0], levelHookExtent[var0], levelHookStretchConstant[var0], levelHookType[var0], false);
 				}
 			}
 		}
@@ -4091,12 +4091,12 @@ public final class Game extends GameCanvas implements Runnable {
 		int var0 = levelNumHooks;
 		levelNumHooks = swappedLevelNumHooks;
 		swappedLevelNumHooks = var0;
-		int[] var1 = levelHookID1;
-		levelHookID1 = swappedLevelHookID1;
-		swappedLevelHookID1 = var1;
-		var1 = levelHookID2;
-		levelHookID2 = swappedLevelHookID2;
-		swappedLevelHookID2 = var1;
+		int[] var1 = levelHookId1;
+		levelHookId1 = swappedLevelHookId1;
+		swappedLevelHookId1 = var1;
+		var1 = levelHookId2;
+		levelHookId2 = swappedLevelHookId2;
+		swappedLevelHookId2 = var1;
 		var1 = levelHookType;
 		levelHookType = swappedLevelHookType;
 		swappedLevelHookType = var1;
@@ -4118,7 +4118,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void initSpiderLegs(int num) {
-		levelSpiderLegIDs = new int[num];
+		levelSpiderLegIds = new int[num];
 		levelSpiderLegMovementStartX = new int[num];
 		levelSpiderLegMovementEndX = new int[num];
 		levelSpiderLegTicks = new int[num];
@@ -4126,10 +4126,10 @@ public final class Game extends GameCanvas implements Runnable {
 		levelSpiderLegParent = new int[num];
 	}
 
-	public static final void levelSetSpiderLeg(int index, int legID, int parent, int movementAmplitude, int startTicks) {
-		levelSpiderLegIDs[index] = legID;
-		levelSpiderLegMovementStartX[index] = levelCircleX[legID] - movementAmplitude;
-		levelSpiderLegMovementEndX[index] = levelCircleX[legID] + movementAmplitude;
+	public static final void levelSetSpiderLeg(int index, int legId, int parent, int movementAmplitude, int startTicks) {
+		levelSpiderLegIds[index] = legId;
+		levelSpiderLegMovementStartX[index] = levelCircleX[legId] - movementAmplitude;
+		levelSpiderLegMovementEndX[index] = levelCircleX[legId] + movementAmplitude;
 
 		if(startTicks == 0) {
 			startTicks = 1;
@@ -4141,14 +4141,14 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void immobilizeSpider(int parent) {
-		for(int i = 0; i < levelSpiderLegIDs.length; i++) {
+		for(int i = 0; i < levelSpiderLegIds.length; i++) {
 			if(levelSpiderLegParent[i] == parent) {
 				levelSpiderLegTicks[i] = 400000;
-				levelCircle4ByWeight[levelSpiderLegIDs[i]] = 52000;
+				levelCircle4ByWeight[levelSpiderLegIds[i]] = 52000;
 
 				for(int k = 0; k < levelNumHooks; k++) {
-					if((levelHookID1[k] == levelSpiderLegIDs[i] ||
-								levelHookID2[k] == levelSpiderLegIDs[i]) && !levelHookIsVisible[k]) {
+					if((levelHookId1[k] == levelSpiderLegIds[i] ||
+								levelHookId2[k] == levelSpiderLegIds[i]) && !levelHookIsVisible[k]) {
 
 						levelHookIsActive[k] = false;
 					}
@@ -4158,10 +4158,10 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void updateSpiders() {
-		if(levelSpiderLegIDs.length > 0) {
-			for(int i = 0; i < levelSpiderLegIDs.length; i++) {
+		if(levelSpiderLegIds.length > 0) {
+			for(int i = 0; i < levelSpiderLegIds.length; i++) {
 
-				int legID = levelSpiderLegIDs[i];
+				int legId = levelSpiderLegIds[i];
 
 				/*
 				 * levelSpiderLegTicks[n] sign is a direction to where the
@@ -4176,15 +4176,15 @@ public final class Game extends GameCanvas implements Runnable {
 
 					if(levelSpiderLegTicks[i] == 0) {
 						int inc = rand8() % 17;
-						levelCircleX[legID] += inc - 10 << 14;
-						levelCircleY[legID] += inc - 8 << 14;
+						levelCircleX[legId] += inc - 10 << 14;
+						levelCircleY[legId] += inc - 8 << 14;
 
-						if(levelCircleX[legID] < levelSpiderLegMovementStartX[i]) {
+						if(levelCircleX[legId] < levelSpiderLegMovementStartX[i]) {
 							levelSpiderLegTicks[i] = -levelSpiderLegTicksUntilMovement[i];
 
 							/* apply a new direction to all legs owned by a
 							 * specific spider. */
-							for(int k = 0; k < levelSpiderLegIDs.length; k++) {
+							for(int k = 0; k < levelSpiderLegIds.length; k++) {
 								if(levelSpiderLegParent[i] == levelSpiderLegParent[k]) {
 									levelSpiderLegTicks[k] = levelSpiderLegTicks[i];
 								}
@@ -4198,13 +4198,13 @@ public final class Game extends GameCanvas implements Runnable {
 
 					if(levelSpiderLegTicks[i] >= 0) {
 						int inc = rand8() % 17;
-						levelCircleX[legID] += inc - 6 << 14;
-						levelCircleY[legID] += inc - 8 << 14;
+						levelCircleX[legId] += inc - 6 << 14;
+						levelCircleY[legId] += inc - 8 << 14;
 
-						if(levelCircleX[legID] > levelSpiderLegMovementEndX[i]) {
+						if(levelCircleX[legId] > levelSpiderLegMovementEndX[i]) {
 							levelSpiderLegTicks[i] = levelSpiderLegTicksUntilMovement[i];
 
-							for(int k = 0; k < levelSpiderLegIDs.length; k++) {
+							for(int k = 0; k < levelSpiderLegIds.length; k++) {
 								if(levelSpiderLegParent[i] == levelSpiderLegParent[k]) {
 									levelSpiderLegTicks[k] = levelSpiderLegTicks[i];
 								}
@@ -4265,27 +4265,27 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void initGrabber() {
-		if(imgGrabber == null && levelGrabberIDs != null && levelGrabberIDs.length > 0) {
+		if(imgGrabber == null && levelGrabberIds != null && levelGrabberIds.length > 0) {
 			imgGrabber = loadImage("grabber.pim", "grabber.ppl");
 		}
 	}
 
-	public static final void initGrabberIDs(int var0) {
-		levelGrabberIDs = new int[var0];
+	public static final void initGrabberIds(int var0) {
+		levelGrabberIds = new int[var0];
 	}
 
-	public static final void setGrabberID(int var0, int var1) {
-		levelGrabberIDs[var0] = var1;
+	public static final void setGrabberId(int var0, int var1) {
+		levelGrabberIds[var0] = var1;
 	}
 
 	public static final void levelRenderGrabbers() {
-		for(int i = 0; i < levelGrabberIDs.length; i++) {
-			int grabberID = levelGrabberIDs[i];
+		for(int i = 0; i < levelGrabberIds.length; i++) {
+			int grabberId = levelGrabberIds[i];
 
-			if(grabberID != levelHookID2[16] &&
-					levelCircleFlags[grabberID] != 0) {
+			if(grabberId != levelHookId2[16] &&
+					levelCircleFlags[grabberId] != 0) {
 
-				levelRenderImage(imgGrabber, levelCircleX[grabberID], levelCircleY[grabberID]);
+				levelRenderImage(imgGrabber, levelCircleX[grabberId], levelCircleY[grabberId]);
 			}
 		}
 	}
@@ -4293,25 +4293,25 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void initPing() {
 		int shardIndex = 0;
 
-		levelPingShardIDs = new int[3];
+		levelPingShardIds = new int[3];
 		levelPingHealth = 3;
 
 		int[] partIndexes = new int[3];
 
-		levelPingEnemyIDs = new int[3][];
-		levelPingEnemyIDs[0] = new int[] {-1, -1, -1, -1, -1, -1};
-		levelPingEnemyIDs[1] = new int[] {-1, -1, -1, -1, -1, -1};
-		levelPingEnemyIDs[2] = new int[] {-1, -1, -1, -1, -1, -1};
+		levelPingEnemyIds = new int[3][];
+		levelPingEnemyIds[0] = new int[] {-1, -1, -1, -1, -1, -1};
+		levelPingEnemyIds[1] = new int[] {-1, -1, -1, -1, -1, -1};
+		levelPingEnemyIds[2] = new int[] {-1, -1, -1, -1, -1, -1};
 
 		for(int i = 0; i < levelNumCircles; i++) {
 			/* Ping itself. */
 			if(levelCircleType[i] == 13) {
-				levelPingCircleID = i;
+				levelPingCircleId = i;
 			}
 
 			/* Ping's shards. */
 			if(levelCircleType[i] == 15) {
-				levelPingShardIDs[shardIndex++] = i;
+				levelPingShardIds[shardIndex++] = i;
 			}
 
 			/* enemies. */
@@ -4324,7 +4324,7 @@ public final class Game extends GameCanvas implements Runnable {
 				 *
 				 * Generally all the enemies are at the top of the 25th level. */
 				int enemyGroup = (levelCircleY[i] >> 16) / 100 - 1;
-				levelPingEnemyIDs[enemyGroup][partIndexes[enemyGroup]++] = i;
+				levelPingEnemyIds[enemyGroup][partIndexes[enemyGroup]++] = i;
 				levelCircleFlags[i] &= -2;
 
 				for(int k = 0; k < levelEnemyIndex.length; k++) {
@@ -4337,24 +4337,24 @@ public final class Game extends GameCanvas implements Runnable {
 
 		/* Wha?... */
 		if(shardIndex == 1) {
-			int[] shardIDs = new int[1];
-			shardIDs[0] = levelPingShardIDs[0];
-			levelPingShardIDs = shardIDs;
+			int[] shardIds = new int[1];
+			shardIds[0] = levelPingShardIds[0];
+			levelPingShardIds = shardIds;
 		}
 	}
 
 	public static final void updatePing() {
 		/* process every Ping's shard, and if the X axis of the shard is within
 		 * Ping's circle radius, we'll reduce the shard radius. */
-		for(int i = 0; i < levelPingShardIDs.length; i++) {
-			if(levelCircleRadius[levelPingShardIDs[i]] > 0 &&
-					levelCircleX[levelPingShardIDs[i]] > levelCircleX[levelPingCircleID] - levelCircleRadius[levelPingCircleID] &&
-					levelCircleX[levelPingShardIDs[i]] < levelCircleX[levelPingCircleID] + levelCircleRadius[levelPingCircleID]) {
+		for(int i = 0; i < levelPingShardIds.length; i++) {
+			if(levelCircleRadius[levelPingShardIds[i]] > 0 &&
+					levelCircleX[levelPingShardIds[i]] > levelCircleX[levelPingCircleId] - levelCircleRadius[levelPingCircleId] &&
+					levelCircleX[levelPingShardIds[i]] < levelCircleX[levelPingCircleId] + levelCircleRadius[levelPingCircleId]) {
 
-				levelCircleRadius[levelPingShardIDs[i]] -= 0x4000;
-				if(levelCircleRadius[levelPingShardIDs[i]] <= 0) {
-					levelCircleFlags[levelPingShardIDs[i]] = 0;
-					levelDetachHooks(levelPingShardIDs[i]);
+				levelCircleRadius[levelPingShardIds[i]] -= 0x4000;
+				if(levelCircleRadius[levelPingShardIds[i]] <= 0) {
+					levelCircleFlags[levelPingShardIds[i]] = 0;
+					levelDetachHooks(levelPingShardIds[i]);
 				}
 			}
 		}
@@ -4364,7 +4364,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelPingHitTimeout--;
 			if(levelPingHitTimeout == 85) {
 				levelPingSpawnEnemies();
-				startDialogue("ping_hit.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 2 / 3);
+				startDialogue("ping_hit.bms", levelCircleX[levelPingCircleId], levelCircleY[levelPingCircleId] - levelCircleRadius[levelPingCircleId] * 2 / 3);
 				return;
 			}
 		} else if(levelPingHealth < 0) {
@@ -4374,20 +4374,20 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void levelPingSpawnEnemies() {
 		if(levelPingHitTimeout == 0) {
-			startDialogue("ping_inplace.bms", levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 2 / 3);
+			startDialogue("ping_inplace.bms", levelCircleX[levelPingCircleId], levelCircleY[levelPingCircleId] - levelCircleRadius[levelPingCircleId] * 2 / 3);
 		}
 
 		/* Ping spawns enemies. */
 		levelPingHealth--;
 		if(levelPingHealth >= 0) {
-			for(int i = 0; i < levelPingEnemyIDs[levelPingHealth].length; i++) {
-				int enemyID = levelPingEnemyIDs[levelPingHealth][i];
+			for(int i = 0; i < levelPingEnemyIds[levelPingHealth].length; i++) {
+				int enemyId = levelPingEnemyIds[levelPingHealth][i];
 
-				if(enemyID != -1) {
-					levelCircleFlags[enemyID] |= 1;
+				if(enemyId != -1) {
+					levelCircleFlags[enemyId] |= 1;
 
 					for(int k = 0; k < levelEnemyIndex.length; k++) {
-						if(levelEnemyIndex[k] == enemyID) {
+						if(levelEnemyIndex[k] == enemyId) {
 							levelEnemyIsAlive[k] = true;
 						}
 					}
@@ -4399,16 +4399,16 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void renderPing() {
 		setGammaColor(160, 32, 240);
 
-		for(int i = 0; i < levelPingShardIDs.length; i++) {
-			levelRenderCircle(levelCircleX[levelPingShardIDs[i]], levelCircleY[levelPingShardIDs[i]], levelCircleRadius[levelPingShardIDs[i]]);
+		for(int i = 0; i < levelPingShardIds.length; i++) {
+			levelRenderCircle(levelCircleX[levelPingShardIds[i]], levelCircleY[levelPingShardIds[i]], levelCircleRadius[levelPingShardIds[i]]);
 		}
 
-		levelRenderCircle(levelCircleX[levelPingCircleID], levelCircleY[levelPingCircleID], levelCircleRadius[levelPingCircleID]);
+		levelRenderCircle(levelCircleX[levelPingCircleId], levelCircleY[levelPingCircleId], levelCircleRadius[levelPingCircleId]);
 
-		int eyeDiameter = levelCircleRadius[levelPingCircleID] * 2 / 5;
-		int centerEyeX = levelCircleX[levelPingCircleID];
-		int eyesY = levelCircleY[levelPingCircleID] - levelCircleRadius[levelPingCircleID] * 7 / 10;
-		int eyeRadius = levelCircleRadius[levelPingCircleID] / 5;
+		int eyeDiameter = levelCircleRadius[levelPingCircleId] * 2 / 5;
+		int centerEyeX = levelCircleX[levelPingCircleId];
+		int eyesY = levelCircleY[levelPingCircleId] - levelCircleRadius[levelPingCircleId] * 7 / 10;
+		int eyeRadius = levelCircleRadius[levelPingCircleId] / 5;
 
 		/* for each eye. */
 		for(int i = -1; i < 2; i++) {
@@ -4618,14 +4618,14 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void renderEnemies(int circleID, int enemyIndex) {
-		if(levelCircleRadius[circleID] >= 30000) {
-			int alignX = levelAlignX(levelCircleX[circleID], levelCircleY[circleID]);
-			int alignY = levelAlignY(levelCircleX[circleID], levelCircleY[circleID]);
+	public static final void renderEnemies(int circleId, int enemyIndex) {
+		if(levelCircleRadius[circleId] >= 30000) {
+			int alignX = levelAlignX(levelCircleX[circleId], levelCircleY[circleId]);
+			int alignY = levelAlignY(levelCircleX[circleId], levelCircleY[circleId]);
 
 			if(levelEnemyIsBird[enemyIndex]) {
 
-				levelEnemyFrame[enemyIndex] += (levelCircleX[circleID] - levelCirclePrevX[circleID]) / 7000;
+				levelEnemyFrame[enemyIndex] += (levelCircleX[circleId] - levelCirclePrevX[circleId]) / 7000;
 
 				while(levelEnemyFrame[enemyIndex] >= 500) {
 					levelEnemyFrame[enemyIndex] -= 500;
@@ -4640,7 +4640,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				Image bird;
-				if(levelCirclePrevX[circleID] > levelCircleX[circleID]) {
+				if(levelCirclePrevX[circleId] > levelCircleX[circleId]) {
 					bird = imgsBirdLeft[levelEnemyFrame[enemyIndex] / 100];
 				} else {
 					bird = imgsBirdRight[levelEnemyFrame[enemyIndex] / 100];
@@ -4659,7 +4659,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			} else {
 
-				levelEnemyFrame[enemyIndex] += (levelCircleX[circleID] - levelCirclePrevX[circleID]) / 3000;
+				levelEnemyFrame[enemyIndex] += (levelCircleX[circleId] - levelCirclePrevX[circleId]) / 3000;
 
 				while(levelEnemyFrame[enemyIndex] >= 300) {
 					levelEnemyFrame[enemyIndex] -= 300;
@@ -4676,16 +4676,16 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				Image pointyEyes;
-				if(levelCircleY[circleID] < levelCircleY[0]) {
+				if(levelCircleY[circleId] < levelCircleY[0]) {
 					pointyEyes = imgsPointyEyes[0];
 				} else {
 					pointyEyes = imgsPointyEyes[1];
 				}
 
 				Image pointyMouth = imgsPointyMouth[0];
-				if(circleID == lastAttackingEnemy && levelPlayerHitTicks > 0) {
+				if(circleId == lastAttackingEnemy && levelPlayerHitTicks > 0) {
 					pointyMouth = imgsPointyMouth[1];
-					levelRenderCritterShock(levelCircleX[1 + levelPlayerHitTicks % 4], levelCircleY[1 + levelPlayerHitTicks % 4], levelCircleX[circleID], levelCircleY[circleID]);
+					levelRenderCritterShock(levelCircleX[1 + levelPlayerHitTicks % 4], levelCircleY[1 + levelPlayerHitTicks % 4], levelCircleX[circleId], levelCircleY[circleId]);
 				}
 
 				gDrawImage(pointyRoll, alignX - pointyRoll.getWidth() / 2, alignY - pointyRoll.getHeight() / 2, 0);
@@ -5154,11 +5154,11 @@ public final class Game extends GameCanvas implements Runnable {
 		swappedLevelCircleHasPhysics = var3;
 	}
 
-	public static final void levelObtainIDs() {
-		levelIDExpanders = levelGetCircleIDs(0x4000);
-		levelIDDestructibles = levelGetCircleIDs(0x0100);
-		levelIDFoam = levelGetCircleIDs(0x2000);
-		levelIDGoals = levelGetCircleIDs(0x0010);
+	public static final void levelObtainIds() {
+		levelIdExpanders = levelGetCircleIds(0x4000);
+		levelIdDestructibles = levelGetCircleIds(0x0100);
+		levelIdFoam = levelGetCircleIds(0x2000);
+		levelIdGoals = levelGetCircleIds(0x0010);
 		int var0 = 0;
 
 		for(int var1 = 0; var1 < levelNumCircles; var1++) {
@@ -5167,12 +5167,12 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 
-		levelIDBombDispenser = new short[var0];
+		levelIdBombDispenser = new short[var0];
 		var0 = 0;
 
 		for(short var5 = 0; var5 < levelNumCircles; var5++) {
 			if((levelCircleFlags[var5] & 0x80) > 0 && levelCircleType[var5] != 7) {
-				levelIDBombDispenser[var0++] = var5;
+				levelIdBombDispenser[var0++] = var5;
 			}
 		}
 
@@ -5184,19 +5184,19 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 
-		levelIDPlatforms = new short[var0];
+		levelIdPlatforms = new short[var0];
 		var0 = 0;
 
 		for(short var7 = 0; var7 < levelNumCircles; var7++) {
 			if((levelCircleFlags[var7] & 0x0004) > 0 && !levelCircleHasPhysics[var7] && (levelCircleFlags[var7] & 0x0008) == 0 && (levelCircleFlags[var7] & 0x2000) == 0 && (levelCircleFlags[var7] & 0x0100) == 0) {
-				levelIDPlatforms[var0++] = var7;
+				levelIdPlatforms[var0++] = var7;
 			}
 		}
 
-		levelIDRadioactive = levelGetCircleIDs(8);
+		levelIdRadioactive = levelGetCircleIds(8);
 	}
 
-	public static final short[] levelGetCircleIDs(int var0) {
+	public static final short[] levelGetCircleIds(int var0) {
 		int var1 = 0;
 
 		for(short var2 = 0; var2 < levelNumCircles; var2++) {
@@ -5248,7 +5248,7 @@ public final class Game extends GameCanvas implements Runnable {
 		currentLevelLoaded = var0;
 		levelWidth = sReadU16() << 16;
 		levelHeight = sReadU16() << 16;
-		setWeatherAndBackgroundIDs(sRead8(), sRead8());
+		setWeatherAndBackgroundIds(sRead8(), sRead8());
 		sRead8();
 		sRead32();
 		levelColor = sRead32();
@@ -5287,7 +5287,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		if(var0 == -2) {
-			initGrabberIDs(0);
+			initGrabberIds(0);
 		} else {
 			int var16 = 0;
 
@@ -5297,17 +5297,17 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 
-			initGrabberIDs(var16);
+			initGrabberIds(var16);
 			int var18 = 0;
 
 			for(int var9 = 0; var9 < levelNumCircles; var9++) {
 				if(levelCircleType[var9] == 3) {
-					setGrabberID(var18++, var9);
+					setGrabberId(var18++, var9);
 				}
 			}
 		}
 
-		levelBombObjectID = 5;
+		levelBombObjectId = 5;
 		levelLoadRects();
 		int var17 = sReadU16();
 		int var19 = 0x140000;
@@ -5383,7 +5383,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if(var0 == -2) {
 			levelShipDisablePods();
 		} else {
-			levelObtainIDs();
+			levelObtainIds();
 		}
 
 		if(isFinalLevel) {
@@ -5493,30 +5493,30 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void playSound(int var0) {
-		if(var0 == currentSoundID && var0 != -1) {
+		if(var0 == currentSoundId && var0 != -1) {
 			if(var0 >= 0) {
-				if(!isSoundActive(currentSoundID, -1)) {
-					playSound(currentSoundID, -1);
+				if(!isSoundActive(currentSoundId, -1)) {
+					playSound(currentSoundId, -1);
 				}
 			}
 		} else {
 			queueAllSoundsForCleanup();
 			queueSoundCleanup();
-			currentSoundID = var0;
+			currentSoundId = var0;
 			if(var0 >= 0) {
-				playSound(currentSoundID, -1);
+				playSound(currentSoundId, -1);
 			}
 		}
 	}
 
 	public static final void playCurrentSound() {
-		if(currentSoundID >= 0 && !isPaused && !isSoundActive(currentSoundID, -1)) {
-			playSound(currentSoundID, -1);
+		if(currentSoundId >= 0 && !isPaused && !isSoundActive(currentSoundId, -1)) {
+			playSound(currentSoundId, -1);
 		}
 	}
 
 	public static final void playCurrentBackgroundMusic() {
-		switch(levelBackgroundID) {
+		switch(levelBackgroundId) {
 			case 0:
 				playSound(7);
 				return;
@@ -5545,7 +5545,7 @@ public final class Game extends GameCanvas implements Runnable {
 		playSound(1, 1);
 	}
 
-	public static final void setWeatherAndBackgroundIDs(int var0, int var1) {
+	public static final void setWeatherAndBackgroundIds(int var0, int var1) {
 		boolean var2 = false;
 
 		for(int var3 = 0; var3 < knownBackgrounds.length; var3++) {
@@ -5561,8 +5561,8 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 
-		levelWeatherID = var0;
-		levelBackgroundID = var1;
+		levelWeatherId = var0;
+		levelBackgroundId = var1;
 	}
 
 	public static final void loadBackground(int var0) {
@@ -5581,13 +5581,13 @@ public final class Game extends GameCanvas implements Runnable {
 		Field361 = -(var3 - (128 - var2));
 		Field362 = var3;
 		Field363 = 128 - var2;
-		currentLoadedBackgroundID = var0;
+		currentLoadedBackgroundId = var0;
 	}
 
 	public static final void renderBackground() {
 		if(currentLevelLoaded >= 0) {
-			if(imgsBackground == null || levelBackgroundID != currentLoadedBackgroundID) {
-				loadBackground(levelBackgroundID);
+			if(imgsBackground == null || levelBackgroundId != currentLoadedBackgroundId) {
+				loadBackground(levelBackgroundId);
 			}
 
 			if(!currentBackgroundHasObjects) {
@@ -6011,9 +6011,9 @@ public final class Game extends GameCanvas implements Runnable {
 
 					if(levelPlayerCurrentGrabberFlags >= 0) {
 						levelHookIsActive[16] = false;
-						levelCircleFlags[levelHookID2[16]] = levelPlayerCurrentGrabberFlags;
+						levelCircleFlags[levelHookId2[16]] = levelPlayerCurrentGrabberFlags;
 						levelPlayerCurrentGrabberFlags = -1;
-						levelPlayerBlockGrabberID = levelHookID2[16];
+						levelPlayerBlockGrabberId = levelHookId2[16];
 					}
 				}
 
@@ -6058,9 +6058,9 @@ public final class Game extends GameCanvas implements Runnable {
 					levelCameraApproach(levelCircleX[0] + 10 * (levelCircleX[0] - levelCirclePrevX[0]), levelCircleY[0] + 10 * (levelCircleY[0] - levelCirclePrevY[0]), 0, 3276800);
 				}
 
-				if(levelCircleHasPhysics[levelBombObjectID]) {
+				if(levelCircleHasPhysics[levelBombObjectId]) {
 					if(levelTicks > levelBombStartTicks + 100) {
-						levelSetCamera(levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID], 0);
+						levelSetCamera(levelCircleX[levelBombObjectId], levelCircleY[levelBombObjectId], 0);
 					}
 
 					if(levelBombExplodeTicks == 0 && levelTicks > levelBombStartTicks + 130) {
@@ -6070,16 +6070,16 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				if(levelBombExplodeTicks > 0) {
-					levelSetCamera(levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID], 0);
+					levelSetCamera(levelCircleX[levelBombObjectId], levelCircleY[levelBombObjectId], 0);
 					levelBombExplodeTicks--;
-					levelCircle4ByWeight[levelBombObjectID] = 0;
+					levelCircle4ByWeight[levelBombObjectId] = 0;
 					if(levelBombExplodeTicks > 0) {
 						int[] var10000 = levelCircleRadius;
-						int var10001 = levelBombObjectID;
+						int var10001 = levelBombObjectId;
 						var10000[var10001] += 0x0f0000;
 					} else {
-						levelCircleHasPhysics[levelBombObjectID] = false;
-						levelCircleX[levelBombObjectID] = -0xc80000;
+						levelCircleHasPhysics[levelBombObjectId] = false;
+						levelCircleX[levelBombObjectId] = -0xc80000;
 					}
 				}
 
@@ -6200,7 +6200,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void levelRender(boolean var0) {
 		long var1 = millis();
-		if(levelWeatherID == 1 && activeSwapKey == 1) {
+		if(levelWeatherId == 1 && activeSwapKey == 1) {
 			gamma = 100;
 			if(rand16() % 100 == 50) {
 				gamma = 0;
@@ -6209,8 +6209,8 @@ public final class Game extends GameCanvas implements Runnable {
 
 		renderBackground();
 
-		for(int var3 = 0; var3 < levelIDGoals.length; var3++) {
-			short var4 = levelIDGoals[var3];
+		for(int var3 = 0; var3 < levelIdGoals.length; var3++) {
+			short var4 = levelIdGoals[var3];
 			setGammaColor(levelColorGoal);
 			levelRenderCircle(levelCircleX[var4], levelCircleY[var4], levelCircleRadius[var4]);
 			setGammaColor(255, 255, 255);
@@ -6238,7 +6238,7 @@ public final class Game extends GameCanvas implements Runnable {
 		renderEnemies();
 
 		for(int var8 = 0; var8 < levelNumCircles; var8++) {
-			if((levelCircleFlags[var8] & 4) > 0 && levelCircleHasPhysics[var8] && (levelCircleFlags[var8] & 0x2000) == 0 && (levelCircleFlags[var8] & 8) == 0 && var8 != levelBombObjectID) {
+			if((levelCircleFlags[var8] & 4) > 0 && levelCircleHasPhysics[var8] && (levelCircleFlags[var8] & 0x2000) == 0 && (levelCircleFlags[var8] & 8) == 0 && var8 != levelBombObjectId) {
 				setGammaColor(0, 0, 0);
 				levelRenderCircle(levelCircleX[var8], levelCircleY[var8], levelCircleRadius[var8]);
 				setGammaColor(levelColorMovable);
@@ -6246,9 +6246,9 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 
-		if(levelCircleHasPhysics[levelBombObjectID]) {
+		if(levelCircleHasPhysics[levelBombObjectId]) {
 			setGammaColor(0, 0, 0);
-			levelRenderCircle(levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID], levelCircleRadius[levelBombObjectID]);
+			levelRenderCircle(levelCircleX[levelBombObjectId], levelCircleY[levelBombObjectId], levelCircleRadius[levelBombObjectId]);
 			if(levelBombStartTicks != -1 && levelTicks > levelBombNextFlashTick) {
 				if(levelBombFlashed) {
 					setGammaColor(255, 255, 255);
@@ -6262,31 +6262,31 @@ public final class Game extends GameCanvas implements Runnable {
 				setGammaColor(200, 0, 0);
 			}
 
-			levelRenderCircle(levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID], levelCircleRadius[levelBombObjectID]);
-			levelRenderImage(imgFuse, levelCircleX[levelBombObjectID], levelCircleY[levelBombObjectID] - levelCircleRadius[levelBombObjectID]);
+			levelRenderCircle(levelCircleX[levelBombObjectId], levelCircleY[levelBombObjectId], levelCircleRadius[levelBombObjectId]);
+			levelRenderImage(imgFuse, levelCircleX[levelBombObjectId], levelCircleY[levelBombObjectId] - levelCircleRadius[levelBombObjectId]);
 		}
 
-		levelRenderCircleIDs(levelIDPlatforms, 0);
+		levelRenderCircleIds(levelIdPlatforms, 0);
 		levelRenderRects();
-		levelRenderCircleIDs(levelIDPlatforms, levelColor);
-		levelRenderCircleIDs(levelIDFoam, 0);
-		levelRenderCircleIDs(levelIDFoam, 0xffffff);
-		levelRenderCircleIDs(levelIDDestructibles, 0);
-		levelRenderCircleIDs(levelIDDestructibles, levelColorDestructible);
+		levelRenderCircleIds(levelIdPlatforms, levelColor);
+		levelRenderCircleIds(levelIdFoam, 0);
+		levelRenderCircleIds(levelIdFoam, 0xffffff);
+		levelRenderCircleIds(levelIdDestructibles, 0);
+		levelRenderCircleIds(levelIdDestructibles, levelColorDestructible);
 		int var9 = (int)(var1 % 1600L);
 		if(var9 > 800) {
 			var9 = 1600 - var9;
 		}
 
-		levelRenderCircleIDs(levelIDRadioactive, 0);
-		levelRenderCircleIDs(levelIDRadioactive, (levelRadioactiveMinRed + (levelRadioactiveMaxRed - levelRadioactiveMinRed) * var9 / 800 << 16) + (levelRadioactiveMinGreen + (levelRadioactiveMaxGreen - levelRadioactiveMinGreen) * var9 / 800 << 8) + levelRadioactiveMinBlue + (levelRadioactiveMaxBlue - levelRadioactiveMinBlue) * var9 / 800);
-		levelRenderCircleIDs(levelIDExpanders, 0);
-		levelRenderCircleIDs(levelIDExpanders, levelColorBouncer);
+		levelRenderCircleIds(levelIdRadioactive, 0);
+		levelRenderCircleIds(levelIdRadioactive, (levelRadioactiveMinRed + (levelRadioactiveMaxRed - levelRadioactiveMinRed) * var9 / 800 << 16) + (levelRadioactiveMinGreen + (levelRadioactiveMaxGreen - levelRadioactiveMinGreen) * var9 / 800 << 8) + levelRadioactiveMinBlue + (levelRadioactiveMaxBlue - levelRadioactiveMinBlue) * var9 / 800);
+		levelRenderCircleIds(levelIdExpanders, 0);
+		levelRenderCircleIds(levelIdExpanders, levelColorBouncer);
 		setGammaColor(0, 0, 0);
 
 		for(int var10 = 16; var10 < levelNumHooks; var10++) {
 			if(levelHookIsActive[var10] && levelHookIsVisible[var10]) {
-				levelRenderLine(levelCircleX[levelHookID1[var10]], levelCircleY[levelHookID1[var10]], levelCircleX[levelHookID2[var10]], levelCircleY[levelHookID2[var10]]);
+				levelRenderLine(levelCircleX[levelHookId1[var10]], levelCircleY[levelHookId1[var10]], levelCircleX[levelHookId2[var10]], levelCircleY[levelHookId2[var10]]);
 			}
 		}
 
@@ -6296,22 +6296,22 @@ public final class Game extends GameCanvas implements Runnable {
 
 		levelRenderGrabbers();
 
-		for(int var11 = 0; var11 < levelIDBombDispenser.length; var11++) {
-			renderBombDispenser(levelCircleX[levelIDBombDispenser[var11]], levelCircleY[levelIDBombDispenser[var11]]);
+		for(int var11 = 0; var11 < levelIdBombDispenser.length; var11++) {
+			renderBombDispenser(levelCircleX[levelIdBombDispenser[var11]], levelCircleY[levelIdBombDispenser[var11]]);
 		}
 
-		if(levelWeatherID != 0 && activeSwapKey == 1) {
-			if(levelWeatherID == 1) {
+		if(levelWeatherId != 0 && activeSwapKey == 1) {
+			if(levelWeatherId == 1) {
 				renderRain();
 			}
 
-			if(levelWeatherID == 2) {
+			if(levelWeatherId == 2) {
 				levelRenderPrecipitation();
 			}
 		}
 	}
 
-	public static final void levelRenderCircleIDs(short[] var0, int var1) {
+	public static final void levelRenderCircleIds(short[] var0, int var1) {
 		setGammaColor(var1);
 
 		for(int var2 = 0; var2 < var0.length; var2++) {
@@ -6372,10 +6372,10 @@ public final class Game extends GameCanvas implements Runnable {
 				/* grabber. */
 				if(circleType == 3 &&
 						levelPlayerCurrentGrabberFlags == -1 &&
-						id2 != levelPlayerBlockGrabberID) {
+						id2 != levelPlayerBlockGrabberId) {
 
 					levelHookIsActive[16] = true;
-					levelHookID2[16] = id2;
+					levelHookId2[16] = id2;
 					levelPlayerCurrentGrabberFlags = levelCircleFlags[id2];
 					levelCircleFlags[id2] = 0;
 				}
@@ -6435,8 +6435,8 @@ public final class Game extends GameCanvas implements Runnable {
 						dir *= -1;
 					}
 
-					levelSetCircle(levelBombObjectID, levelCircleX[id2] + dir * 0x140000, levelCircleY[id2], 0xa0000, 15, 71, 0, true);
-					levelCircleX[levelBombObjectID] += dir * 0x30000;
+					levelSetCircle(levelBombObjectId, levelCircleX[id2] + dir * 0x140000, levelCircleY[id2], 0xa0000, 15, 71, 0, true);
+					levelCircleX[levelBombObjectId] += dir * 0x30000;
 				}
 			} else {
 				levelShipTouchedCircleType = circleType;
@@ -6453,54 +6453,54 @@ public final class Game extends GameCanvas implements Runnable {
 
 					/* check if a ball touches portal's circle hitbox, if so,
 					 * fill the portal's radius with the ball's radius. */
-					int swpID1 = id1;
-					int swpID2 = id2;
+					int swpId1 = id1;
+					int swpId2 = id2;
 
 					if((levelCircleFlags[id2] & 16) > 0) {
-						swpID1 = id2;
-						swpID2 = id1;
+						swpId1 = id2;
+						swpId2 = id1;
 					}
 
-					if(levelCircleFlags[swpID2] != 0) {
-						levelCircleX[swpID2] = levelCircleX[swpID1];
-						levelCircleY[swpID2] = levelCircleY[swpID1];
-						levelCirclePrevX[swpID2] = levelCirclePrevX[swpID1];
-						levelCirclePrevY[swpID2] = levelCirclePrevY[swpID1];
-						levelDetachHooks(swpID2);
+					if(levelCircleFlags[swpId2] != 0) {
+						levelCircleX[swpId2] = levelCircleX[swpId1];
+						levelCircleY[swpId2] = levelCircleY[swpId1];
+						levelCirclePrevX[swpId2] = levelCirclePrevX[swpId1];
+						levelCirclePrevY[swpId2] = levelCirclePrevY[swpId1];
+						levelDetachHooks(swpId2);
 
-						levelCircleRadius[swpID2] -= 0x8000;
+						levelCircleRadius[swpId2] -= 0x8000;
 						levelPortalFilledRadius += 0x8000;
 
-						if(levelPortalFilledRadius >= levelCircleRadius[swpID1]) {
-							levelPortalFilledRadius = levelCircleRadius[swpID1];
+						if(levelPortalFilledRadius >= levelCircleRadius[swpId1]) {
+							levelPortalFilledRadius = levelCircleRadius[swpId1];
 							isLevelComplete = true;
 						}
 
-						if(levelCircleRadius[swpID2] <= 0) {
-							levelCircleFlags[swpID2] = 0;
-							levelCircleHasPhysics[swpID2] = false;
+						if(levelCircleRadius[swpId2] <= 0) {
+							levelCircleFlags[swpId2] = 0;
+							levelCircleHasPhysics[swpId2] = false;
 						}
 					}
 				}
 
 				/* bomb destroys destructible objects. */
 				if(levelBombExplodeTicks > 0 &&
-						(id1 == levelBombObjectID &&
+						(id1 == levelBombObjectId &&
 						 (levelCircleFlags[id2] & 0x100) > 0 ||
-						 id2 == levelBombObjectID && (levelCircleFlags[id1] & 0x100) > 0)) {
+						 id2 == levelBombObjectId && (levelCircleFlags[id1] & 0x100) > 0)) {
 
-					int circleID = id1;
-					if(id1 == levelBombObjectID) {
-						circleID = id2;
+					int circleId = id1;
+					if(id1 == levelBombObjectId) {
+						circleId = id2;
 					}
 
 					/* reduce 30% of the first circle radius when the explosion
 					 * wave (the second circle) reaches the first circle. */
-					levelCircleRadius[circleID] = levelCircleRadius[circleID] * 7 / 10;
+					levelCircleRadius[circleId] = levelCircleRadius[circleId] * 7 / 10;
 
-					if(levelCircleRadius[circleID] < 0xa0000) {
-						levelCircleRadius[circleID] = 0;
-						levelCircleFlags[circleID] = 0;
+					if(levelCircleRadius[circleId] < 0xa0000) {
+						levelCircleRadius[circleId] = 0;
+						levelCircleFlags[circleId] = 0;
 					}
 				}
 
@@ -6525,7 +6525,7 @@ public final class Game extends GameCanvas implements Runnable {
 							((levelCircleFlags[id1] & 8) > 0 ||
 							 (levelCircleFlags[id2] & 8) > 0 ||
 							 levelBombExplodeTicks > 0 &&
-							 (id1 == levelBombObjectID || id2 == levelBombObjectID))) {
+							 (id1 == levelBombObjectId || id2 == levelBombObjectId))) {
 
 						if(circleType1 == 7) {
 							killEnemy(id1);
@@ -6565,8 +6565,8 @@ public final class Game extends GameCanvas implements Runnable {
 						}
 
 						if(levelBombExplodeTicks > 0 &&
-								(id1 == levelBombObjectID && circleType2 == 13 ||
-								 id2 == levelBombObjectID && circleType1 == 13)) {
+								(id1 == levelBombObjectId && circleType2 == 13 ||
+								 id2 == levelBombObjectId && circleType1 == 13)) {
 
 							levelPingHit();
 						}
@@ -7366,8 +7366,8 @@ public final class Game extends GameCanvas implements Runnable {
 			gFillRect(0, 98, 128, 30);
 			gSetColor(0);
 			gDrawRect(10, 10, 107, 87);
-			if(activePurpleShardNameID >= 0) {
-				renderText(-1000, 106, purpleShardNames[activePurpleShardNameID], 1);
+			if(activePurpleShardNameId >= 0) {
+				renderText(-1000, 106, purpleShardNames[activePurpleShardNameId], 1);
 			}
 		}
 	}
@@ -7446,7 +7446,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelMovableGravity = 30000;
 		xLossRate = 64000;
 		selectionAngle = 0;
-		selectionMainCircleID = 10 + numSelections * 2;
+		selectionMainCircleId = 10 + numSelections * 2;
 		selectionDefaultIndex = var1;
 
 		for(int var5 = 0; var5 < numSelections; var5++) {
@@ -7458,13 +7458,13 @@ public final class Game extends GameCanvas implements Runnable {
 			levelSetCircle(var5 + 10 + numSelections, var3, var4, 0x190000, 100, 3, 0, true);
 		}
 
-		levelSetCircle(selectionMainCircleID, 0, 0, 0x500000, 200, 2, 0, false);
+		levelSetCircle(selectionMainCircleId, 0, 0, 0x500000, 200, 2, 0, false);
 
 		for(int var6 = 0; var6 < numSelections; var6++) {
 			levelSetHook(var6, var6 + 10, var6 + 10 + numSelections, 4, 0x3c0000, 65000, true, true);
 		}
 
-		levelSetCamera(levelCircleX[selectionMainCircleID], levelCircleY[selectionMainCircleID] + 0x640000, 0);
+		levelSetCamera(levelCircleX[selectionMainCircleId], levelCircleY[selectionMainCircleId] + 0x640000, 0);
 		selectionState = 0;
 		selectionStateStartMs = millis();
 	}
@@ -7524,8 +7524,8 @@ public final class Game extends GameCanvas implements Runnable {
 
 		setGammaColor(0xdddddd);
 		gFillRect(0, 0, 128, 128);
-		sceneSelectionRenderCircle(levelCircleX[selectionMainCircleID], levelCircleY[selectionMainCircleID], levelCircleRadius[selectionMainCircleID], 0xaaaaaa);
-		sceneSelectionRenderCircle(levelCircleX[selectionMainCircleID], levelCircleY[selectionMainCircleID], levelCircleRadius[selectionMainCircleID] / 2, 0xdddddd);
+		sceneSelectionRenderCircle(levelCircleX[selectionMainCircleId], levelCircleY[selectionMainCircleId], levelCircleRadius[selectionMainCircleId], 0xaaaaaa);
+		sceneSelectionRenderCircle(levelCircleX[selectionMainCircleId], levelCircleY[selectionMainCircleId], levelCircleRadius[selectionMainCircleId] / 2, 0xdddddd);
 		setGammaColor(0);
 
 		for(int var4 = 10; var4 < 10 + numSelections; var4++) {
