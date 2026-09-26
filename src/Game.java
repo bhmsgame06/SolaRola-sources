@@ -190,8 +190,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelPlayerHitTicks = 0;
 	public static int levelPlayerCurrentGrabberFlags = -1;
 	public static int levelPlayerBlockGrabberID = -1;
-	public static int[] blobEyeState = new int[2];
-	public static int[] currentMouthState = new int[2];
+	public static int[] currentEyeBlinkTicks = new int[2];
+	public static int[] currentEmotion = new int[2];
 	public static Image[] imgsEyeLeft;
 	public static Image[] imgsEyeM;
 	public static Image[] imgsEyeRight;
@@ -3174,8 +3174,8 @@ public final class Game extends GameCanvas implements Runnable {
 		showBlackBars = false;
 		shipAlarmRadius = 0;
 		spaceMapPlanetBeaconRadius = 0;
-		currentMouthState[0] = 0;
-		currentMouthState[1] = 0;
+		currentEmotion[0] = 0;
+		currentEmotion[1] = 0;
 	}
 
 	public static final void startDialogue(String var0, int var1, int var2) {
@@ -3320,7 +3320,7 @@ public final class Game extends GameCanvas implements Runnable {
 					var1 += 3;
 					break;
 				case 6:
-					currentMouthState[var0[var1 + 1]] = var0[var1 + 2];
+					currentEmotion[var0[var1 + 1]] = var0[var1 + 2];
 					if(dialogueSfx[var0[var1 + 2]] != -1 && !var2) {
 						playSound(dialogueSfx[var0[var1 + 2]], 1);
 					}
@@ -3886,9 +3886,9 @@ public final class Game extends GameCanvas implements Runnable {
 				Image var9 = imgMouth;
 				gDrawImage(var9, var4 - var9.getWidth() / 2, var5 - var9.getHeight() / 2, 0);
 			} else {
-				Image var15 = imgsMouths[currentMouthState[var3]][var3];
-				if(currentMouthState[var3] > 0) {
-					gDrawImage(var15, var4 - var15.getWidth() / 2 + mouthX[currentMouthState[var3]][var3], var5 - var15.getHeight() / 2 + mouthY[currentMouthState[var3]][var3], 0);
+				Image var15 = imgsMouths[currentEmotion[var3]][var3];
+				if(currentEmotion[var3] > 0) {
+					gDrawImage(var15, var4 - var15.getWidth() / 2 + mouthX[currentEmotion[var3]][var3], var5 - var15.getHeight() / 2 + mouthY[currentEmotion[var3]][var3], 0);
 				} else {
 					int var10 = levelCameraZoom * 6 / 100;
 					int var11 = var4 + cos(var14 + 90) * var10 / 1000;
@@ -3897,7 +3897,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 
-			if(currentMouthState[var3] == 0) {
+			if(currentEmotion[var3] == 0) {
 				Image var16 = imgsEyeM[var3];
 				if(var0 > 0) {
 					if(levelCircleX[0] + 0x160000 < levelCircleX[var0]) {
@@ -3917,7 +3917,7 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 				}
 
-				if(blobEyeState[var3] > 0) {
+				if(currentEyeBlinkTicks[var3] > 0) {
 					var16 = imgsEyeC[var3];
 				}
 
@@ -3930,21 +3930,21 @@ public final class Game extends GameCanvas implements Runnable {
 				gDrawImage(var16, var20 - var16.getWidth() / 2, var22 - var16.getHeight() / 2, 0);
 			} else {
 				int var17 = levelCameraZoom * Field172 / 100;
-				Image var19 = imgsEyes[currentMouthState[var3]][var3];
-				if(blobEyeState[var3] > 0) {
-					var19 = imgsEyesC[currentMouthState[var3]][var3];
+				Image var19 = imgsEyes[currentEmotion[var3]][var3];
+				if(currentEyeBlinkTicks[var3] > 0) {
+					var19 = imgsEyesC[currentEmotion[var3]][var3];
 				}
 
-				gDrawImage(var19, var4 - var19.getWidth() / 2 + eyesX[currentMouthState[var3]][var3], var5 - var17 - var19.getHeight() / 2 + eyesY[currentMouthState[var3]][var3], 0);
+				gDrawImage(var19, var4 - var19.getWidth() / 2 + eyesX[currentEmotion[var3]][var3], var5 - var17 - var19.getHeight() / 2 + eyesY[currentEmotion[var3]][var3], 0);
 			}
 
-			if(blobEyeState[var3] > 0 || rand8() % 50 == var3) {
-				if(blobEyeState[var3] > 0) {
-					int var10002 = blobEyeState[var3]--;
+			if(currentEyeBlinkTicks[var3] > 0 || rand8() % 50 == var3) {
+				if(currentEyeBlinkTicks[var3] > 0) {
+					int var10002 = currentEyeBlinkTicks[var3]--;
 					return;
 				}
 
-				blobEyeState[var3] = 3;
+				currentEyeBlinkTicks[var3] = 3;
 			}
 		}
 	}
