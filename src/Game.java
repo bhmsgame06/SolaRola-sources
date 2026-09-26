@@ -200,8 +200,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image[][] imgsEyes;
 	public static Image[][] imgsEyesC;
 	public static Image imgMouth;
-	public static int[][] Field187 = new int[][] {{0, 0}, {0, 0}, {0, 0}, {6, 8}, {0, -2}, {0, 0}, {0, 0}, {0, 0}};
-	public static int[][] Field188 = new int[][] {{0, -3}, {3, 0}, {3, 0}, {10, 4}, {0, -5}, {4, 4}, {4, 1}, {6, 4}};
+	public static int[][] eyesX = new int[][] {{0, 0}, {0, 0}, {0, 0}, {6, 8}, {0, -2}, {0, 0}, {0, 0}, {0, 0}};
+	public static int[][] eyesY = new int[][] {{0, -3}, {3, 0}, {3, 0}, {10, 4}, {0, -5}, {4, 4}, {4, 1}, {6, 4}};
 	public static int[][] mouthX = new int[][] {{0, 0}, {2, 6}, {0, 0}, {-4, -8}, {4, 2}, {4, 4}, {0, 0}, {2, 6}};
 	public static int[][] mouthY = new int[][] {{0, 0}, {5, 2}, {3, 6}, {5, 9}, {4, 9}, {2, 4}, {3, 7}, {3, 6}};
 	public static int Field191;
@@ -3935,7 +3935,7 @@ public final class Game extends GameCanvas implements Runnable {
 					var19 = imgsEyesC[currentMouthState[var3]][var3];
 				}
 
-				gDrawImage(var19, var4 - var19.getWidth() / 2 + Field187[currentMouthState[var3]][var3], var5 - var17 - var19.getHeight() / 2 + Field188[currentMouthState[var3]][var3], 0);
+				gDrawImage(var19, var4 - var19.getWidth() / 2 + eyesX[currentMouthState[var3]][var3], var5 - var17 - var19.getHeight() / 2 + eyesY[currentMouthState[var3]][var3], 0);
 			}
 
 			if(blobEyeState[var3] > 0 || rand8() % 50 == var3) {
