@@ -140,11 +140,11 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean skipPrologue;
 	public static int[] currentDialogue;
 	public static int currentDialogueIndex;
-	public static boolean Field127;
-	public static boolean mustResetData;
+	public static boolean dialogueSelectionEnabled;
+	public static boolean dialogueIsActionConfirmed;
 	public static int dialogueLastSwapKey;
 	public static int stateBeforeDialogue;
-	public static boolean Field131;
+	public static boolean dialogueIsContinued;
 	public static int dialogueCameraZoomApproach;
 	public static long dialogueWaitEndMs;
 	public static boolean isSpeakingAnimationPlaying;
@@ -2904,12 +2904,12 @@ public final class Game extends GameCanvas implements Runnable {
 					setNewState(3, 0);
 					break;
 				case 2:
-					if(mustResetData) {
+					if(dialogueIsActionConfirmed) {
 						setNewState(-1, 0);
 					}
 					break;
 				case 3:
-					if(mustResetData) {
+					if(dialogueIsActionConfirmed) {
 						nextLevelToLoad = currentLevelLoaded;
 						setNewState(4, 0);
 						swapLevelData(1);
@@ -2922,7 +2922,7 @@ public final class Game extends GameCanvas implements Runnable {
 					setNewState(4, 0);
 					break;
 				case 5:
-					if(mustResetData) {
+					if(dialogueIsActionConfirmed) {
 						level = 0;
 						isMirrored = false;
 						saveRecordData();
@@ -3106,10 +3106,10 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		renderDialogueBox();
-		if(Field127) {
+		if(dialogueSelectionEnabled) {
 			int var3 = softkeyPressed(2, 4);
 			if(var3 >= 0) {
-				for(mustResetData = var3 == 2; currentDialogueIndex < currentDialogue.length; currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, true)) {
+				for(dialogueIsActionConfirmed = var3 == 2; currentDialogueIndex < currentDialogue.length; currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, true)) {
 				}
 
 				dialogueIsWaiting = false;
@@ -3134,9 +3134,9 @@ public final class Game extends GameCanvas implements Runnable {
 		dialogueCameraZoomApproach = levelCameraZoom * 1000;
 		if(currentDialogue == null) {
 			setNewState(stateBeforeDialogue, 0);
-		} else if(!Field131) {
+		} else if(!dialogueIsContinued) {
 			currentDialogueIndex = 0;
-			mustResetData = false;
+			dialogueIsActionConfirmed = false;
 			stateBeforeDialogue = oldScreenIndex;
 			activePurpleShardNameID = 0;
 			dialogueLastSwapKey = activeSwapKey;
@@ -3156,13 +3156,13 @@ public final class Game extends GameCanvas implements Runnable {
 			isSpeakingAnimationPlaying = false;
 			dialogueIsOkKeyEnabled = false;
 		} else {
-			Field131 = false;
+			dialogueIsContinued = false;
 		}
 	}
 
 	public static final void sceneDialogueFree() {
-		if(!Field131 || currentDialogueIndex >= currentDialogue.length) {
-			Field131 = false;
+		if(!dialogueIsContinued || currentDialogueIndex >= currentDialogue.length) {
+			dialogueIsContinued = false;
 			currentDialogue = null;
 			garbageCollector();
 			swapLevelData(dialogueLastSwapKey);
@@ -3202,7 +3202,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void startDialogue(int[] var0, int var1, int var2, boolean var3) {
 		dialogueOriginX = var1;
 		dialogueOriginY = var2;
-		Field127 = var3;
+		dialogueSelectionEnabled = var3;
 		currentDialogue = var0;
 		hideDialogueBox();
 		setNewState(5, 0);
@@ -3343,7 +3343,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 				case 8:
 					if(!var2) {
-						Field131 = true;
+						dialogueIsContinued = true;
 						setNewState(6, var0[var1 + 1]);
 						var1 += 2;
 						return var1;
