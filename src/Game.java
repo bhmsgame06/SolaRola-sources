@@ -223,12 +223,12 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int swappedLevelNumHooks;
 	public static int[] swappedLevelHookID1;
 	public static int[] swappedLevelHookID2;
-	public static int[] Field210;
-	public static int[] Field211;
+	public static int[] swappedLevelHookType;
+	public static int[] swappedLevelHookExtent;
 	public static int[] swappedLevelHookExtentSquare;
-	public static int[] Field213;
-	public static boolean[] Field214;
-	public static boolean[] Field215;
+	public static int[] swappedLevelHookStretchConstant;
+	public static boolean[] swappedLevelHookIsVisible;
+	public static boolean[] swappedLevelHookIsActive;
 	public static int[] levelSpiderLegIDs;
 	public static int[] levelSpiderLegMovementStartX;
 	public static int[] levelSpiderLegMovementEndX;
@@ -4098,23 +4098,23 @@ public final class Game extends GameCanvas implements Runnable {
 		levelHookID2 = swappedLevelHookID2;
 		swappedLevelHookID2 = var1;
 		var1 = levelHookType;
-		levelHookType = Field210;
-		Field210 = var1;
+		levelHookType = swappedLevelHookType;
+		swappedLevelHookType = var1;
 		var1 = levelHookExtent;
-		levelHookExtent = Field211;
-		Field211 = var1;
+		levelHookExtent = swappedLevelHookExtent;
+		swappedLevelHookExtent = var1;
 		var1 = levelHookExtentSquare;
 		levelHookExtentSquare = swappedLevelHookExtentSquare;
 		swappedLevelHookExtentSquare = var1;
 		var1 = levelHookStretchConstant;
-		levelHookStretchConstant = Field213;
-		Field213 = var1;
+		levelHookStretchConstant = swappedLevelHookStretchConstant;
+		swappedLevelHookStretchConstant = var1;
 		boolean[] var2 = levelHookIsVisible;
-		levelHookIsVisible = Field214;
-		Field214 = var2;
+		levelHookIsVisible = swappedLevelHookIsVisible;
+		swappedLevelHookIsVisible = var2;
 		var2 = levelHookIsActive;
-		levelHookIsActive = Field215;
-		Field215 = var2;
+		levelHookIsActive = swappedLevelHookIsActive;
+		swappedLevelHookIsActive = var2;
 	}
 
 	public static final void initSpiderLegs(int num) {
