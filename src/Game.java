@@ -165,10 +165,10 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean isPastSplash = false;
 	public static int sceneTransitionNextState;
 	public static long sceneTransitionStartMs;
-	public static int Field152;
+	public static int sceneTransitionInvCoeff;
 	public static int sceneTransitionType;
-	public static boolean Field154 = true;
-	public static int Field155;
+	public static boolean sceneTransitionDisabled = true;
+	public static int sceneTransitionOffset;
 	public static int levelFinishX;
 	public static int levelFinishY;
 	public static int levelReservedField0;
@@ -3524,20 +3524,20 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void _updateTransition() {
-		if(!Field154) {
+		if(!sceneTransitionDisabled) {
 			if(sceneTransitionStartMs == -1L) {
 				sceneTransitionStartMs = millis();
 			}
 
 			int var0 = (int)(millis() - sceneTransitionStartMs);
-			int var1 = Field155 + var0 * 1000 / Field152;
-			if(Field155 == 0 && var1 > 1000) {
+			int var1 = sceneTransitionOffset + var0 * 1000 / sceneTransitionInvCoeff;
+			if(sceneTransitionOffset == 0 && var1 > 1000) {
 				var1 = 1000;
 				setNewState(sceneTransitionNextState, 1);
 			}
 
 			if(var1 > 2000) {
-				Field154 = true;
+				sceneTransitionDisabled = true;
 			} else {
 				switch(sceneTransitionType) {
 					case 0:
@@ -3552,8 +3552,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneTransitionInit(int var0) {
-		Field155 = 0;
-		Field154 = false;
+		sceneTransitionOffset = 0;
+		sceneTransitionDisabled = false;
 		sceneTransitionStartMs = millis();
 		int var1 = sceneTransitionNextState;
 		sceneTransitionNextState = oldScreenIndex;
@@ -3563,9 +3563,9 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		sceneTransitionType = var0;
-		Field152 = 250;
+		sceneTransitionInvCoeff = 250;
 		if(var0 == 2) {
-			Field152 = 150;
+			sceneTransitionInvCoeff = 150;
 		}
 
 		if(sceneTransitionNextState == 6) {
@@ -3574,7 +3574,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneTransitionFree() {
-		Field155 = 1000;
+		sceneTransitionOffset = 1000;
 		sceneTransitionStartMs = -1L;
 	}
 
