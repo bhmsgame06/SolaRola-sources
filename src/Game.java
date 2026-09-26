@@ -480,15 +480,15 @@ public final class Game extends GameCanvas implements Runnable {
 	public static String[] purpleShardNames = new String[] {"Kachoo", "NikSak", "Rara", "Corakllquar", "Brad", "NotPing"};
 	public static Image[] imgsSelectionMenu;
 	public static Image[] imgsSelectionMenuArrows;
-	public static int Field465;
-	public static long Field466;
+	public static int selectionState;
+	public static long selectionStateStartMs;
 	public static int selectionAngle;
 	public static int selectionAngleBetweenOthers;
 	public static int selectionAngleUntilAdjust;
 	public static int numSelections;
-	public static int Field471;
-	public static int Field472;
-	public static int Field473;
+	public static int selectionMainCircleID;
+	public static int selectionDefaultIndex;
+	public static int selectionArrowsAnimTicks;
 
 	public Game() throws IOException {
 		super(false);
@@ -7446,8 +7446,8 @@ public final class Game extends GameCanvas implements Runnable {
 		movableGravity = 30000;
 		xLossRate = 64000;
 		selectionAngle = 0;
-		Field471 = 10 + numSelections * 2;
-		Field472 = var1;
+		selectionMainCircleID = 10 + numSelections * 2;
+		selectionDefaultIndex = var1;
 
 		for(int var5 = 0; var5 < numSelections; var5++) {
 			int var3 = 5242 * cos(90 + var5 * selectionAngleBetweenOthers);
@@ -7458,21 +7458,21 @@ public final class Game extends GameCanvas implements Runnable {
 			levelSetCircle(var5 + 10 + numSelections, var3, var4, 0x190000, 100, 3, 0, true);
 		}
 
-		levelSetCircle(Field471, 0, 0, 0x500000, 200, 2, 0, false);
+		levelSetCircle(selectionMainCircleID, 0, 0, 0x500000, 200, 2, 0, false);
 
 		for(int var6 = 0; var6 < numSelections; var6++) {
 			levelSetHook(var6, var6 + 10, var6 + 10 + numSelections, 4, 0x3c0000, 65000, true, true);
 		}
 
-		levelSetCamera(levelCircleX[Field471], levelCircleY[Field471] + 0x640000, 0);
-		Field465 = 0;
-		Field466 = millis();
+		levelSetCamera(levelCircleX[selectionMainCircleID], levelCircleY[selectionMainCircleID] + 0x640000, 0);
+		selectionState = 0;
+		selectionStateStartMs = millis();
 	}
 
 	public static final int getSelectedIndex() {
-		if(Field465 == 1 && softkeyPressed(2, -1, true) == 2) {
-			Field465++;
-			Field466 = millis() + 500L;
+		if(selectionState == 1 && softkeyPressed(2, -1, true) == 2) {
+			selectionState++;
+			selectionStateStartMs = millis() + 500L;
 		}
 
 		if(isKeyHeld(8)) {
@@ -7504,28 +7504,28 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		updateLevel();
-		if(Field465 == 0) {
-			gamma = (int)((millis() - Field466) / 5L);
+		if(selectionState == 0) {
+			gamma = (int)((millis() - selectionStateStartMs) / 5L);
 		}
 
-		if(Field465 == 2) {
-			gamma = (int)((Field466 - millis()) / 20L);
+		if(selectionState == 2) {
+			gamma = (int)((selectionStateStartMs - millis()) / 20L);
 		}
 
 		if(gamma < 0) {
 			gamma = 0;
-			Field465++;
+			selectionState++;
 		}
 
 		if(gamma > 100) {
 			gamma = 100;
-			Field465++;
+			selectionState++;
 		}
 
 		setGammaColor(0xdddddd);
 		gFillRect(0, 0, 128, 128);
-		sceneSelectionRenderCircle(levelCircleX[Field471], levelCircleY[Field471], levelCircleRadius[Field471], 0xaaaaaa);
-		sceneSelectionRenderCircle(levelCircleX[Field471], levelCircleY[Field471], levelCircleRadius[Field471] / 2, 0xdddddd);
+		sceneSelectionRenderCircle(levelCircleX[selectionMainCircleID], levelCircleY[selectionMainCircleID], levelCircleRadius[selectionMainCircleID], 0xaaaaaa);
+		sceneSelectionRenderCircle(levelCircleX[selectionMainCircleID], levelCircleY[selectionMainCircleID], levelCircleRadius[selectionMainCircleID] / 2, 0xdddddd);
 		setGammaColor(0);
 
 		for(int var4 = 10; var4 < 10 + numSelections; var4++) {
@@ -7548,19 +7548,19 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		if(gamma > 50) {
-			Field473 += 12;
-			if(Field473 > 179) {
-				Field473 -= 180;
+			selectionArrowsAnimTicks += 12;
+			if(selectionArrowsAnimTicks > 179) {
+				selectionArrowsAnimTicks -= 180;
 			}
 
-			int var7 = 1 + sin1000[Field473] * 6 / 1000;
+			int var7 = 1 + sin1000[selectionArrowsAnimTicks] * 6 / 1000;
 			gDrawImage(imgsSelectionMenuArrows[0], var7, 85 - imgsSelectionMenuArrows[0].getHeight() / 2, 0);
 			gDrawImage(imgsSelectionMenuArrows[1], 128 - var7 - imgsSelectionMenuArrows[1].getWidth(), 85 - imgsSelectionMenuArrows[1].getHeight() / 2, 0);
 		}
 
 		refreshGame();
-		if(Field465 == 3) {
-			int var8 = (360 - selectionAngle) / selectionAngleBetweenOthers + Field472;
+		if(selectionState == 3) {
+			int var8 = (360 - selectionAngle) / selectionAngleBetweenOthers + selectionDefaultIndex;
 			if(selectionAngle % selectionAngleBetweenOthers > selectionAngleUntilAdjust) {
 				var8++;
 			}
