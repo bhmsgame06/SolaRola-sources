@@ -185,7 +185,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean levelBombFlashed = false;
 	public static int levelBombExplodeTicks = 0;
 	public static int levelBombObjectID;
-	public static int Field172;
+	public static int levelPlayerEyeVectorMagnitude;
 	public static int levelPlayerJumpTimes = 0;
 	public static int levelPlayerHitTicks = 0;
 	public static int levelPlayerCurrentGrabberFlags = -1;
@@ -286,11 +286,11 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelAnimRectSpeed;
 	public static int[] levelAnimRectIterations;
 	public static int[] levelAnimRectCurrentIteration;
-	public static int Field273;
-	public static int[] Field274;
-	public static int[] Field275;
-	public static int[] Field276;
-	public static int[] Field277;
+	public static int swappedLevelNumRects;
+	public static int[] swappedLevelRectX;
+	public static int[] swappedLevelRectY;
+	public static int[] swappedLevelRectHWidth;
+	public static int[] swappedLevelRectHHeight;
 	public static Image imgRocket;
 	public static Image[] imgsVertFlame;
 	public static int[] levelSignX;
@@ -334,7 +334,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelBackgroundID = 0;
 	public static int levelWidth;
 	public static int levelHeight;
-	public static int movableGravity;
+	public static int levelMovableGravity;
 	public static int xLossRate;
 	public static boolean levelIsPlayerOnSurface;
 	public static boolean isLevelComplete;
@@ -364,7 +364,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int activeSwapKey = -1;
 	public static int swappedLevelWidth;
 	public static int swappedLevelHeight;
-	public static int Field351;
+	public static int swappedLevelMovableGravity;
 	public static int swappedXLossRate;
 	public static boolean swappedLevelIsPlayerOnSurface;
 	public static boolean swappedIsLevelComplete;
@@ -3676,12 +3676,12 @@ public final class Game extends GameCanvas implements Runnable {
 			levelPlayerRed = 200;
 			levelPlayerGreen = 0;
 			levelPlayerBlue = 0;
-			Field172 = 13;
+			levelPlayerEyeVectorMagnitude = 13;
 		} else {
 			levelPlayerRed = 0;
 			levelPlayerGreen = 0;
 			levelPlayerBlue = 200;
-			Field172 = 18;
+			levelPlayerEyeVectorMagnitude = 18;
 		}
 
 		levelPlayerRotationRate = 0;
@@ -3811,13 +3811,13 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		if(var3 == 0) {
-			Field172 = 18;
+			levelPlayerEyeVectorMagnitude = 18;
 			var1 = 0xff;
 			if(currentLevelLoaded == -1) {
 				var1 = 100 + levelPlayerHealth * 155 / 500 & 255;
 			}
 		} else {
-			Field172 = 13;
+			levelPlayerEyeVectorMagnitude = 13;
 		}
 
 		int var4 = levelAlignX(levelCircleX[var0], levelCircleY[var0]);
@@ -3921,7 +3921,7 @@ public final class Game extends GameCanvas implements Runnable {
 					var16 = imgsEyeC[var3];
 				}
 
-				int var18 = levelCameraZoom * Field172 / 100;
+				int var18 = levelCameraZoom * levelPlayerEyeVectorMagnitude / 100;
 				int var20 = var4 + cos(var14 - 115) * var18 / 1000;
 				int var22 = var5 + sin(var14 - 115) * var18 / 1000;
 				gDrawImage(var16, var20 - var16.getWidth() / 2, var22 - var16.getHeight() / 2, 0);
@@ -3929,7 +3929,7 @@ public final class Game extends GameCanvas implements Runnable {
 				var22 = var5 + sin(var14 - 65) * var18 / 1000;
 				gDrawImage(var16, var20 - var16.getWidth() / 2, var22 - var16.getHeight() / 2, 0);
 			} else {
-				int var17 = levelCameraZoom * Field172 / 100;
+				int var17 = levelCameraZoom * levelPlayerEyeVectorMagnitude / 100;
 				Image var19 = imgsEyes[currentEmotion[var3]][var3];
 				if(currentEyeBlinkTicks[var3] > 0) {
 					var19 = imgsEyesC[currentEmotion[var3]][var3];
@@ -4851,20 +4851,20 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void swapLevelRectData() {
 		int var0 = levelNumRects;
-		levelNumRects = Field273;
-		Field273 = var0;
+		levelNumRects = swappedLevelNumRects;
+		swappedLevelNumRects = var0;
 		int[] var1 = levelRectX;
-		levelRectX = Field274;
-		Field274 = var1;
+		levelRectX = swappedLevelRectX;
+		swappedLevelRectX = var1;
 		var1 = levelRectY;
-		levelRectY = Field275;
-		Field275 = var1;
+		levelRectY = swappedLevelRectY;
+		swappedLevelRectY = var1;
 		var1 = levelRectHWidth;
-		levelRectHWidth = Field276;
-		Field276 = var1;
+		levelRectHWidth = swappedLevelRectHWidth;
+		swappedLevelRectHWidth = var1;
 		var1 = levelRectHHeight;
-		levelRectHHeight = Field277;
-		Field277 = var1;
+		levelRectHHeight = swappedLevelRectHHeight;
+		swappedLevelRectHHeight = var1;
 	}
 
 	public static final void initRocket() {
@@ -5082,7 +5082,7 @@ public final class Game extends GameCanvas implements Runnable {
 				var10000[var5] += lp32Mul(var3, levelCircleY[var5] - levelCirclePrevY[var5]);
 				if((levelCircleFlags[var5] & 1) > 0) {
 					var10000 = levelCircleY;
-					var10000[var5] += movableGravity;
+					var10000[var5] += levelMovableGravity;
 				}
 
 				levelCirclePrevX[var5] = var1;
@@ -5363,7 +5363,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		initPlayer(var1);
 		levelDeathTicks = 70;
-		movableGravity = 40000;
+		levelMovableGravity = 40000;
 		levelBombExplodeTicks = 0;
 		levelBombStartTicks = -10000;
 		levelPlayerHitTicks = 0;
@@ -5459,9 +5459,9 @@ public final class Game extends GameCanvas implements Runnable {
 			var1 = levelHeight;
 			levelHeight = swappedLevelHeight;
 			swappedLevelHeight = var1;
-			var1 = movableGravity;
-			movableGravity = Field351;
-			Field351 = var1;
+			var1 = levelMovableGravity;
+			levelMovableGravity = swappedLevelMovableGravity;
+			swappedLevelMovableGravity = var1;
 			var1 = xLossRate;
 			xLossRate = swappedXLossRate;
 			swappedXLossRate = var1;
@@ -6846,7 +6846,7 @@ public final class Game extends GameCanvas implements Runnable {
 		gamma = 100;
 		loadLevel(-2);
 		initInsideShip();
-		movableGravity = 40000;
+		levelMovableGravity = 40000;
 		levelSetCamera(levelCircleX[0], levelHeight / 2, 0);
 	}
 
@@ -7443,7 +7443,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelInitCircles(10 + numSelections * 2 + 1);
 		levelInitHooks(numSelections);
 		activeSwapKey = -10;
-		movableGravity = 30000;
+		levelMovableGravity = 30000;
 		xLossRate = 64000;
 		selectionAngle = 0;
 		selectionMainCircleID = 10 + numSelections * 2;
