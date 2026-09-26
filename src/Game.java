@@ -171,8 +171,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int Field155;
 	public static int levelFinishX;
 	public static int levelFinishY;
-	public static int Field158;
-	public static int Field159;
+	public static int levelReservedField0;
+	public static int levelReservedField1;
 	public static int levelPlayerRotationRate;
 	public static int levelPlayerAngle;
 	public static int levelPlayerRed = 200;
@@ -204,8 +204,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[][] eyesY = new int[][] {{0, -3}, {3, 0}, {3, 0}, {10, 4}, {0, -5}, {4, 4}, {4, 1}, {6, 4}};
 	public static int[][] mouthX = new int[][] {{0, 0}, {2, 6}, {0, 0}, {-4, -8}, {4, 2}, {4, 4}, {0, 0}, {2, 6}};
 	public static int[][] mouthY = new int[][] {{0, 0}, {5, 2}, {3, 6}, {5, 9}, {4, 9}, {2, 4}, {3, 7}, {3, 6}};
-	public static int Field191;
-	public static int Field192;
+	public static int swappedLevelReservedField0;
+	public static int swappedLevelReservedField1;
 	public static int swappedLevelCurrentGrabberFlags;
 	public static int swappedLevelPlayerRotationRate;
 	public static int swappedLevelPlayerAngle;
@@ -3952,17 +3952,17 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void swapLevelPlayerData() {
 		int tmp;
 
-		tmp = Field158;
-		Field158 = Field191;
-		Field191 = tmp;
+		tmp = levelReservedField0;
+		levelReservedField0 = swappedLevelReservedField0;
+		swappedLevelReservedField0 = tmp;
 
 		tmp = levelPlayerCurrentGrabberFlags;
 		levelPlayerCurrentGrabberFlags = swappedLevelCurrentGrabberFlags;
 		swappedLevelCurrentGrabberFlags = tmp;
 
-		tmp = Field159;
-		Field159 = Field192;
-		Field192 = tmp;
+		tmp = levelReservedField1;
+		levelReservedField1 = swappedLevelReservedField1;
+		swappedLevelReservedField1 = tmp;
 
 		tmp = levelPlayerRotationRate;
 		levelPlayerRotationRate = swappedLevelPlayerRotationRate;
