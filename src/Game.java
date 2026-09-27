@@ -511,7 +511,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public final void init(PMMIDlet midlet) {
 		Game.midlet = midlet;
 		Thread th = new Thread(this);
-		th.setPriority(5);
+		th.setPriority(Thread.NORM_PRIORITY);
 		th.start();
 	}
 
