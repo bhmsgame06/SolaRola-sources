@@ -1311,8 +1311,6 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				if (soundActiveStates[i] && soundTypes[i] == 1) {
-					boolean var1 = false;
-
 					for (int j = 0; j < numSounds; j++) {
 						if (j != i) {
 							stopSoundAtIndex(j, false);
@@ -1487,9 +1485,9 @@ public final class Game extends GameCanvas implements Runnable {
 		if (!sOpenFile(fnCrc)) {
 			return null;
 		} else {
-			byte[] var1 = new byte[sCurrentSize];
-			sReadBytes(var1, 0, sCurrentSize);
-			return var1;
+			byte[] arr = new byte[sCurrentSize];
+			sReadBytes(arr, 0, sCurrentSize);
+			return arr;
 		}
 	}
 
