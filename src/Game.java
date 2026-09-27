@@ -371,18 +371,19 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int currentSoundId = -1;
 	public static Image[] imgsBackground;
 	public static int[][] activeBackgroundPattern;
-	public static int[][] Field358;
+	public static int[][] activeBackgroundObjectsPattern;
 	public static int currentLoadedBackgroundId;
+	// NOTE: this field is always zero.
 	public static int backgroundOffset;
-	public static int Field361;
-	public static int Field362;
-	public static int Field363;
+	public static int backgroundPosY;
+	public static int currentBackgroundTotalHeight;
+	public static int backgroundObjectsPosY;
 	public static boolean currentBackgroundHasObjects = true;
 	public static boolean[] backgroundHasObjects = new boolean[] {true, true, true, true, false};
 	public static int[] fallbackWeathers = new int[] {2, 1, 1, 2, 0};
 	public static int[] knownBackgrounds = new int[] {0, 1, 2, 3, 4};
 	public static int[][][] backgroundPatterns = new int[][][] {{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {{0, 0}, {0, 0}, {1, 1}}, {{0, 0}, {0, 0}, {0, 0}}, {{0, 0}, {0, 0}, {0, 0}}, {{3, 0, 1, 2}, {0, 1, 2, 0}, {1, 2, 0, 3}, {2, 0, 0, 0}}};
-	public static int[][][] Field369 = new int[][][] {{{1, 2, 1, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}}, {{2, 2, 2}, {3, 3, 3}, {3, 3, 3}}, {{1, 2, 1}, {3, 3, 3}, {3, 3, 3}}, {{1, 1, 1}, {2, 2, 2}, {2, 2, 2}}, {{0}}};
+	public static int[][][] backgroundObjectsPattern = new int[][][] {{{1, 2, 1, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}}, {{2, 2, 2}, {3, 3, 3}, {3, 3, 3}}, {{1, 2, 1}, {3, 3, 3}, {3, 3, 3}}, {{1, 1, 1}, {2, 2, 2}, {2, 2, 2}}, {{0}}};
 	public static int levelCameraIntX;
 	public static int levelCameraIntY;
 	public static int levelCameraX;
@@ -5574,13 +5575,13 @@ public final class Game extends GameCanvas implements Runnable {
 
 		currentBackgroundHasObjects = backgroundHasObjects[var0];
 		activeBackgroundPattern = backgroundPatterns[var0];
-		Field358 = Field369[var0];
+		activeBackgroundObjectsPattern = backgroundObjectsPattern[var0];
 		int var3 = getBackgroundTotalHeight(activeBackgroundPattern);
-		int var2 = getBackgroundTotalHeight(Field358) - imgsBackground[Field358[0][0]].getHeight();
+		int var2 = getBackgroundTotalHeight(activeBackgroundObjectsPattern) - imgsBackground[activeBackgroundObjectsPattern[0][0]].getHeight();
 		backgroundOffset = 0;
-		Field361 = -(var3 - (128 - var2));
-		Field362 = var3;
-		Field363 = 128 - var2;
+		backgroundPosY = -(var3 - (128 - var2));
+		currentBackgroundTotalHeight = var3;
+		backgroundObjectsPosY = 128 - var2;
 		currentLoadedBackgroundId = var0;
 	}
 
@@ -5591,16 +5592,16 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			if(!currentBackgroundHasObjects) {
-				int var5 = backgroundOffset + (Field361 - backgroundOffset) * (levelCameraY >> 16) / (levelHeight >> 16);
+				int var5 = backgroundOffset + (backgroundPosY - backgroundOffset) * (levelCameraY >> 16) / (levelHeight >> 16);
 				int var7 = -((getBackgroundTotalWidth(activeBackgroundPattern) - 128) * (levelCameraX >> 16)) / (levelWidth >> 16);
 				renderBackground(activeBackgroundPattern, var7, var5, false);
 			} else {
-				int var3 = backgroundOffset + (Field361 - backgroundOffset) * (levelCameraY >> 16) / (levelHeight >> 16);
+				int var3 = backgroundOffset + (backgroundPosY - backgroundOffset) * (levelCameraY >> 16) / (levelHeight >> 16);
 				int var1 = -((getBackgroundTotalWidth(activeBackgroundPattern) - 128) * (levelCameraX >> 16)) / (levelWidth >> 16);
 				renderBackground(activeBackgroundPattern, var1, var3, false);
-				var3 = Field362 + (Field363 - Field362) * (levelCameraY >> 16) / (levelHeight >> 16);
-				var1 = -((getBackgroundTotalWidth(Field358) - 128) * (levelCameraX >> 16)) / (levelWidth >> 16);
-				renderBackground(Field358, var1, var3, true);
+				var3 = currentBackgroundTotalHeight + (backgroundObjectsPosY - currentBackgroundTotalHeight) * (levelCameraY >> 16) / (levelHeight >> 16);
+				var1 = -((getBackgroundTotalWidth(activeBackgroundObjectsPattern) - 128) * (levelCameraX >> 16)) / (levelWidth >> 16);
+				renderBackground(activeBackgroundObjectsPattern, var1, var3, true);
 			}
 		} else {
 			setGammaColor(0xdcc86d);
