@@ -10,22 +10,39 @@ import javax.microedition.rms.*;
 public final class Game extends GameCanvas implements Runnable {
 	public static Game instance;
 	public static PMMIDlet midlet;
-	// keys
+
+	// Keys.
 	public static int heldKeys = 0;
 	public static int heldPrevKeys = 0;
 	public static int tmpHeldKeys = 0;
 	public static int pressOnlyKeys = 0;
-	public static final short[][] KEYMAP = new short[][] {{'5', -6, -5},  {'0'},  {-7},  {'4', -3},  {'6', -4},  {'2', -1},  {'8', -2},  {'1'},  {'3'},  {'7'},  {'9'}};
-	// image decoding
-	private static byte[] pngTemplate; // for getting png from pim/ppl
+	public static final short[][] KEYMAP = new short[][] {
+		{'5', -6, -5},
+		{'0'},
+		{-7},
+		{'4', -3},
+		{'6', -4},
+		{'2', -1},
+		{'8', -2},
+		{'1'},
+		{'3'},
+		{'7'},
+		{'9'}
+	};
+
+	// Image decoding.
+	private static byte[] pngTemplate;
 	private static int pplOptions;
 	private static int pplColorCount;
 	private static int pplCRC;
 	private static byte[] pplData;
+
 	public static boolean isPaused;
 	public static long prevTime;
 	public static long currTime;
 	public static String recordStoreName = "PMDATA";
+
+	// Audio engine.
 	public static boolean isAudioEnabled = true;
 	private static int numActiveSoundsMIDI;
 	private static int numActiveSounds;
@@ -42,6 +59,8 @@ public final class Game extends GameCanvas implements Runnable {
 	private static int numActiveSoundsTotal;
 	private static Player[] soundPlayers;
 	private static Player[] soundPlayersMIDI;
+	
+	// BFC streams.
 	public static DataInputStream sCurrentData;
 	public static int sCurrentSize;
 	public static boolean isLoadingBarShown = false;
@@ -49,68 +68,106 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int sCurrentLocation = -1;
 	public static int sCurrentIndex = -1;
 	public static boolean sCurrentReserved;
-	public static byte[][] bfcReservedData; // reserve data to RAM for future use (prevent reloading from bfc)
+	
+	// BFC head.
+	// Reserve data to RAM for future use (prevent reloading from bfc)
+	public static byte[][] bfcReservedData;
 	public static int sCurrentOffsetReserved = 0;
-	public static short[] bfcHeadCrcs; // filenames' checksums
-	public static byte[] bfcHeadMemStates; // preserve or not
-	public static int[] bfcHeadOffsets; // offset from start of N.bfc
-	public static byte[] bfcHeadLocations; // N.bfc
-	public static int[] bfcHeadSizes; // size of file contents
+	// Filenames' checksums.
+	public static short[] bfcHeadCrcs;
+	// If >= 0, copy file data to bfcReservedData after sOpenFile().
+	public static byte[] bfcHeadMemStates;
+	// Offset to the contained file from the start of N.bfc.
+	public static int[] bfcHeadOffsets;
+	// N.bfc
+	public static byte[] bfcHeadLocations;
+	// Size of file contents.
+	public static int[] bfcHeadSizes;
 	public static int bfcHeadNumEntries;
-	private static int bfcCrcPoly = 0x1021; // used for filename crc table generating
-	private static int[] bfcCrcTable = new int[256]; // filename crc table (we'll turn strings into 16-bit value)
+	// Used for filename crc table generating.
+	private static int bfcCrcPoly = 0x1021;
+	// Filename crc table (we'll turn strings into 16-bit values).
+	private static int[] bfcCrcTable = new int[256];
+	
+	// Text tables.
 	public static String[] textTableGroupStrings;
 	public static byte[] textTableGroupTypes;
 	public static int textTableGroupIndex = -1;
 	public static short textTableCrc;
-	// softkeys
-	private static int leftSoftkey; // current pressed left softkey
-	private static int rightSoftkey; // current pressed right softkey
+
+	// Softkeys.
+	// Current pressed left softkey.
+	private static int leftSoftkey;
+	// Current pressed right softkey.
+	private static int rightSoftkey;
 	public static int[] softkeyWidth;
 	public static int[] softkeyHeight;
 	public static Image[] imgsSoftkey;
-	// fonts
-	public static Image[] fontImages; // sprite
+
+	// Fonts.
+	public static Image[] fontImages;
 	public static int[] fontAverageWidths;
 	public static int[] fontSpacesPerChars;
 	public static int[] fontHeights;
 	public static int[] fontLineGaps;
-	public static short[][] fontChrOffsets;
-	public static byte[][] fontChrWidths;
-	public static short[][] fontIndexes;
+	public static short[][] fontCharOffsets;
+	public static byte[][] fontCharWidths;
+	public static short[][] fontCharMap;
+
 	public static Graphics gfx;
 	private static long randSeed;
+
+	// States.
 	public static boolean isNewState = true;
-	public static int oldScreenIndex;
-	public static int curScreenIndex = -1;
+	public static int oldState;
+	public static int curState = -1;
 	public static int newStateIndex;
 	public static int stateArg;
 	private static Display dpy;
 	public static boolean isVibraEnabled = true;
+
+	// Confetti.
 	public static int[] confettiColors;
 	public static int[] confettiHeights;
 	public static int[] confettiAngles;
 	public static int[] confettiX;
 	public static int[] confettiY;
 	public static int[] confettiWidths;
-	public static int[] confettiColorsAll = new int[] {0xffffff, 0xff0000, 0xff00, 0xff, 0xffff00, 0xd9d919, 0xe6e8fa, 0x8c7853};
+	public static int[] confettiColorsAll = new int[] {
+		0xffffff,
+		0xff0000,
+		0x00ff00,
+		0x0000ff,
+		0xffff00,
+		0xd9d919,
+		0xe6e8fa,
+		0x8c7853
+	};
+
+	// Precipitations.
 	public static int[] rainX;
 	public static int[] rainY;
 	public static int[] precipitationX;
 	public static int[] precipitationY;
 	public static int[] precipitationDirectionCos;
+
+	// Space.
 	public static int[][] spaceStarX;
 	public static int[][] spaceStarY;
 	public static int[][] spaceStarXVel;
 	public static int[][] spaceStarFlashTicks;
 	public static int currentSpaceWidth;
 	public static int currentSpaceHeight;
+	
+	// Help scene.
 	public static String[] sceneHelpText;
 	public static int sceneHelpScrollDistance;
 	public static int sceneHelpScrollAccel;
 	public static boolean sceneHelpAutoscrollActive;
-	public static Image[] imgSceneHelpScrollbar;
+	public static Image[] imgsScrollbar;
 	public static int sceneHelpScroll;
+
+	// Pre level scene.
 	public static Image imgCurrentPlanet;
 	public static Image imgOutside;
 	public static Image imgShipSmall;
@@ -121,7 +178,10 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int scenePreLevelShipX;
 	public static int scenePreLevelShipY;
 	public static int scenePreLevelCurTick;
+
 	public static int levelCompletionState = 0;
+
+	// Splash scene.
 	public static Image imgCenterLogo;
 	public static Image imgEidosLegalLine;
 	public static Image imgPmRocket;
@@ -130,11 +190,16 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int splashTick;
 	public static long splashDuration;
 	public static int splash = 0;
+
 	public static boolean showControlsGuide;
-	// temporary field to check if the player is staying on the pod hitbox.
+
+	// Ship scene.
+	// Temporary field to check if the player is staying on the pod hitbox.
 	public static int levelShipCheckPodIndex = 0;
 	public static int levelShipSelectedPodIndex = 0;
 	public static int shipNextOp = 0;
+	
+	// Dialogue scene.
 	public static boolean dialogueIsAwaitingLevelStart = false;
 	public static int beamAnimationFrame = 1;
 	public static boolean skipPrologue;
@@ -152,23 +217,31 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean dialogueIsWaiting;
 	public static boolean showBlackBars;
 	public static int dialogueEnvironment;
-	public static int levelCameraTargetX;
-	public static int levelCameraTargetY;
+	public static int dialogueCameraTargetX;
+	public static int dialogueCameraTargetY;
 	public static int dialogueOriginX;
 	public static int dialogueOriginY;
 	public static boolean dialogueIsWazActive;
 	public static boolean dialogueIsCameraMoving;
 	public static int[] dialogueSfx = new int[] {-1, -1, -1, -1, -1, -1, -1, -1};
-	public static int sceneStartupState = 0;
+
+	// Selection scene.
+	public static int sceneSelectionState = 0;
+
+	// Main menu scene.
 	public static Image imgGamelogoTop;
 	public static Image imgGamelogoBottom;
 	public static boolean isPastSplash = false;
+
+	// Transition scene.
 	public static int sceneTransitionNextState;
 	public static long sceneTransitionStartMs;
 	public static int sceneTransitionInvCoeff;
 	public static int sceneTransitionType;
 	public static boolean sceneTransitionDisabled = true;
 	public static int sceneTransitionOffset;
+
+	// Level scene.
 	public static int levelFinishX;
 	public static int levelFinishY;
 	public static int levelReservedField0;
@@ -190,6 +263,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelPlayerHitTicks = 0;
 	public static int levelPlayerCurrentGrabberFlags = -1;
 	public static int levelPlayerBlockGrabberId = -1;
+
+	// Facial proportions.
 	public static int[] currentEyeBlinkTicks = new int[2];
 	public static int[] currentEmotion = new int[2];
 	public static Image[] imgsEyeLeft;
@@ -200,17 +275,56 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image[][] imgsEyes;
 	public static Image[][] imgsEyesC;
 	public static Image imgMouth;
-	public static int[][] eyesX = new int[][] {{0, 0}, {0, 0}, {0, 0}, {6, 8}, {0, -2}, {0, 0}, {0, 0}, {0, 0}};
-	public static int[][] eyesY = new int[][] {{0, -3}, {3, 0}, {3, 0}, {10, 4}, {0, -5}, {4, 4}, {4, 1}, {6, 4}};
-	public static int[][] mouthX = new int[][] {{0, 0}, {2, 6}, {0, 0}, {-4, -8}, {4, 2}, {4, 4}, {0, 0}, {2, 6}};
-	public static int[][] mouthY = new int[][] {{0, 0}, {5, 2}, {3, 6}, {5, 9}, {4, 9}, {2, 4}, {3, 7}, {3, 6}};
+	public static int[][] eyesX = new int[][] {
+		{0, 0},
+		{0, 0},
+		{0, 0},
+		{6, 8},
+		{0, -2},
+		{0, 0},
+		{0, 0},
+		{0, 0}
+	};
+	public static int[][] eyesY = new int[][] {
+		{0, -3},
+		{3, 0},
+		{3, 0},
+		{10, 4},
+		{0, -5},
+		{4, 4},
+		{4, 1},
+		{6, 4}
+	};
+	public static int[][] mouthX = new int[][] {
+		{0, 0},
+		{2, 6},
+		{0, 0},
+		{-4, -8},
+		{4, 2},
+		{4, 4},
+		{0, 0},
+		{2, 6}
+	};
+	public static int[][] mouthY = new int[][] {
+		{0, 0},
+		{5, 2},
+		{3, 6},
+		{5, 9},
+		{4, 9},
+		{2, 4},
+		{3, 7},
+		{3, 6}
+	};
+
 	public static int swappedLevelReservedField0;
 	public static int swappedLevelReservedField1;
 	public static int swappedLevelCurrentGrabberFlags;
 	public static int swappedLevelPlayerRotationRate;
 	public static int swappedLevelPlayerAngle;
+
 	public static Image imgFuse;
 	public static Image[] imgsBomb;
+
 	public static int levelNumHooks;
 	public static int[] levelHookId1;
 	public static int[] levelHookId2;
@@ -220,6 +334,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelHookStretchConstant;
 	public static boolean[] levelHookIsVisible;
 	public static boolean[] levelHookIsActive;
+
 	public static int swappedLevelNumHooks;
 	public static int[] swappedLevelHookId1;
 	public static int[] swappedLevelHookId2;
@@ -229,12 +344,14 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] swappedLevelHookStretchConstant;
 	public static boolean[] swappedLevelHookIsVisible;
 	public static boolean[] swappedLevelHookIsActive;
+
 	public static int[] levelSpiderLegIds;
 	public static int[] levelSpiderLegMovementStartX;
 	public static int[] levelSpiderLegMovementEndX;
 	public static int[] levelSpiderLegTicks;
 	public static int[] levelSpiderLegTicksUntilMovement;
 	public static int[] levelSpiderLegParent;
+
 	public static int levelExpanderTicks;
 	public static int[] levelExpanderIndex;
 	public static boolean[] levelExpanderIsTouchActivated;
@@ -242,19 +359,23 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelExpanderDelay;
 	public static int[] levelExpanderExtent;
 	public static int[] levelExpanderMinRadius;
+
 	public static int[] levelGrabberIds;
+
 	public static Image imgGrabber;
 	public static int levelPingCircleId;
 	public static int[] levelPingShardIds;
 	public static int[][] levelPingEnemyIds;
 	public static int levelPingHealth;
 	public static int levelPingHitTimeout;
+
 	public static Image[] imgsPointyRoll;
 	public static Image[] imgsPointyEyes;
 	public static Image[] imgsPointyMouth;
 	public static Image[] imgsBirdLeft;
 	public static Image[] imgsBirdRight;
 	public static Image[] imgsSpider;
+
 	public static int[] levelEnemyFrame;
 	public static int lastAttackingEnemy = -1;
 	public static int levelEnemyTicks;
@@ -272,6 +393,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean[] levelEnemyIsJitteringX;
 	public static boolean[] levelEnemyIsAlive;
 	public static boolean[] levelEnemyIsBird;
+
 	public static int levelNumRects;
 	public static int[] levelRectX;
 	public static int[] levelRectY;
@@ -286,18 +408,22 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelAnimRectSpeed;
 	public static int[] levelAnimRectIterations;
 	public static int[] levelAnimRectCurrentIteration;
+
 	public static int swappedLevelNumRects;
 	public static int[] swappedLevelRectX;
 	public static int[] swappedLevelRectY;
 	public static int[] swappedLevelRectHWidth;
 	public static int[] swappedLevelRectHHeight;
+
 	public static Image imgRocket;
 	public static Image[] imgsVertFlame;
+
 	public static int[] levelSignX;
 	public static int[] levelSignY;
 	public static int[] levelSignTypes;
 	public static Image[] imgsSign;
 	public static boolean mustLoadSigns = false;
+
 	public static int[] levelSpawnStartX;
 	public static int[] levelSpawnStartY;
 	public static int[] levelSpawnStartIndex;
@@ -310,6 +436,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelSpawnAngleVar;
 	public static int[] levelSpawnSpeed;
 	public static int[] levelSpawnSpeedVar;
+
 	public static int levelNumCircles;
 	public static int[] levelCircleX;
 	public static int[] levelCircleY;
@@ -320,6 +447,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelCircle4ByWeight;
 	public static byte[] levelCircleType;
 	public static boolean[] levelCircleHasPhysics;
+
 	public static int swappedLevelNumCircles;
 	public static int[] swappedLevelCircleX;
 	public static int[] swappedLevelCircleY;
@@ -330,16 +458,18 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] swappedLevelCircle4ByWeight;
 	public static byte[] swappedLevelCircleType;
 	public static boolean[] swappedLevelCircleHasPhysics;
+
 	public static int levelWeatherId = 0;
 	public static int levelBackgroundId = 0;
 	public static int levelWidth;
 	public static int levelHeight;
 	public static int levelMovableGravity;
-	public static int xLossRate;
+	public static int levelXLossRate;
 	public static boolean levelIsPlayerOnSurface;
 	public static boolean isLevelComplete;
 	public static boolean isMirrored = false;
 	public static boolean isFinalLevel;
+
 	public static int currentLevelLoaded = 0;
 	public static int level = 0;
 	public static int levelColor = 0xffffff;
@@ -347,13 +477,15 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelColorGoal = 0xffffff;
 	public static int levelColorDestructible = 0xffffff;
 	public static int levelColorBouncer = 0xff4500;
-	public static int levelRadioactiveMinRed = 152;
-	public static int levelRadioactiveMaxRed = 255;
-	public static int levelRadioactiveMinGreen = 36;
-	public static int levelRadioactiveMaxGreen = 182;
-	public static int levelRadioactiveMinBlue = 16;
-	public static int levelRadioactiveMaxBlue = 33;
+	public static int levelRadioactiveMinRed = 0x98;
+	public static int levelRadioactiveMaxRed = 0xff;
+	public static int levelRadioactiveMinGreen = 0x24;
+	public static int levelRadioactiveMaxGreen = 0xb6;
+	public static int levelRadioactiveMinBlue = 0x10;
+	public static int levelRadioactiveMaxBlue = 0x21;
+
 	public static int levelPortalFilledRadius = 0;
+
 	public static short[] levelIdExpanders;
 	public static short[] levelIdFoam;
 	public static short[] levelIdDestructibles;
@@ -361,11 +493,12 @@ public final class Game extends GameCanvas implements Runnable {
 	public static short[] levelIdRadioactive;
 	public static short[] levelIdBombDispenser;
 	public static short[] levelIdPlatforms;
+
 	public static int activeSwapKey = -1;
 	public static int swappedLevelWidth;
 	public static int swappedLevelHeight;
 	public static int swappedLevelMovableGravity;
-	public static int swappedXLossRate;
+	public static int swappedLevelXLossRate;
 	public static boolean swappedLevelIsPlayerOnSurface;
 	public static boolean swappedIsLevelComplete;
 	public static int currentSoundId = -1;
@@ -373,27 +506,110 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[][] activeBackgroundPattern;
 	public static int[][] activeBackgroundObjectsPattern;
 	public static int currentLoadedBackgroundId;
+
 	// NOTE: this field is always zero.
 	public static int backgroundOffset;
 	public static int backgroundPosY;
 	public static int currentBackgroundTotalHeight;
 	public static int backgroundObjectsPosY;
 	public static boolean currentBackgroundHasObjects = true;
-	public static boolean[] backgroundHasObjects = new boolean[] {true, true, true, true, false};
-	public static int[] fallbackWeathers = new int[] {2, 1, 1, 2, 0};
-	public static int[] knownBackgrounds = new int[] {0, 1, 2, 3, 4};
-	public static int[][][] backgroundPatterns = new int[][][] {{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {{0, 0}, {0, 0}, {1, 1}}, {{0, 0}, {0, 0}, {0, 0}}, {{0, 0}, {0, 0}, {0, 0}}, {{3, 0, 1, 2}, {0, 1, 2, 0}, {1, 2, 0, 3}, {2, 0, 0, 0}}};
-	public static int[][][] backgroundObjectsPattern = new int[][][] {{{1, 2, 1, 2}, {3, 3, 3, 3}, {4, 4, 4, 4}}, {{2, 2, 2}, {3, 3, 3}, {3, 3, 3}}, {{1, 2, 1}, {3, 3, 3}, {3, 3, 3}}, {{1, 1, 1}, {2, 2, 2}, {2, 2, 2}}, {{0}}};
+	public static boolean[] backgroundHasObjects = new boolean[] {
+		true,
+		true,
+		true,
+		true,
+		false
+	};
+	// Fallback weather IDs.
+	public static int[] fallbackWeathers = new int[] {
+		2,
+		1,
+		1,
+		2,
+		0
+	};
+	// Background IDs.
+	public static int[] knownBackgrounds = new int[] {
+		0,
+		1,
+		2,
+		3,
+		4
+	};
+
+	/* 2D matrices consisting of complete images.
+	 *
+	 * Assume M is a current level background ID (see knownBackgrounds), and N
+	 * is each value in this matrix, then the image filename for a single tile
+	 * on the pattern will be bg_M_N.pim. */
+	public static int[][][] backgroundPatterns = new int[][][] {
+		{
+			{0, 0, 0},
+			{0, 0, 0},
+			{0, 0, 0}
+		},
+		{
+			{0, 0},
+			{0, 0},
+			{1, 1}
+		},
+		{
+			{0, 0},
+			{0, 0},
+			{0, 0}
+		},
+		{
+			{0, 0},
+			{0, 0},
+			{0, 0}
+		},
+		{
+			{3, 0, 1, 2},
+			{0, 1, 2, 0},
+			{1, 2, 0, 3},
+			{2, 0, 0, 0}
+		}
+	};
+
+	// The same as backgroundPatterns, but a bit closer to the camera.
+	public static int[][][] backgroundObjectsPattern = new int[][][] {
+		{
+			{1, 2, 1, 2},
+			{3, 3, 3, 3},
+			{4, 4, 4, 4}
+		},
+		{
+			{2, 2, 2},
+			{3, 3, 3},
+			{3, 3, 3}
+		},
+		{
+			{1, 2, 1},
+			{3, 3, 3},
+			{3, 3, 3}
+		},
+		{
+			{1, 1, 1},
+			{2, 2, 2},
+			{2, 2, 2}
+		},
+		{
+			{0}
+		}
+	};
+
 	public static int levelCameraIntX;
 	public static int levelCameraIntY;
 	public static int levelCameraX;
 	public static int levelCameraY;
 	public static int levelCameraAngle;
+
 	public static int swappedLevelCameraIntX;
 	public static int swappedLevelCameraIntY;
 	public static int swappedLevelCameraX;
 	public static int swappedLevelCameraY;
 	public static int swappedLevelCameraAngle;
+
 	public static int showDialogue;
 	public static int currentSpeaker;
 	public static int currentSpeechNumLines;
@@ -402,6 +618,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int currentSpeechIteration;
 	public static String currentSpeech;
 	public static boolean currentSpeechDone;
+
 	public static Image[][] imgsFaces;
 	public static int nextLevelToLoad = -2;
 	public static int levelIntroTicks = 0;
@@ -413,10 +630,14 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelDialogueToDisplay = -1;
 	public static int language = 0;
 	public static int levelCameraZoom = 72;
+	
+	// Cheat codes.
 	public static int[] cheatCodeLevelComplete = new int[] {8, 16, 8, 16, 2};
 	public static int[] cheatCodeInvincibility = new int[] {64, 16, 64, 8, 64, 2};
+
 	public static int iterCheatLevelComplete = 0;
 	public static int iterCheatInvincibility = 0;
+
 	public static boolean isPlayerInvincible = false;
 	public static boolean isPlayerAlive = true;
 	public static boolean pauseScreenDraw = false;
@@ -424,10 +645,12 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int loadingBarColorIndex = 9;
 	public static boolean isGammaColorBlack = false;
 	public static int gamma = 100;
-	// decors inside ship: socks, flowers, cubes, etc
+
+	// Decors inside ship: socks, flowers, cubes, etc.
 	public static short[] decorForeground;
 	public static short[] decorBackground;
-	public static Image[] imgDecors;
+	public static Image[] imgsDecor;
+
 	public static Image imgArrowLeft;
 	public static Image imgArrowRight;
 	public static Image[] imgsShipIcons;
@@ -438,6 +661,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image imgWindow;
 	public static Image imgSplashShip;
 	public static Image[] imgsFlame;
+
 	public static int levelShipTouchedCircleType;
 	public static int shipAlarmRadius = 0;
 	public static String[] textTableShip;
@@ -464,21 +688,35 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int victoryCameraZoom;
 	public static String textMission;
 	public static String textCompleted;
-	// trigonometric
+
+	// Trigonometric.
 	public static short[] sin1000;
 	public static short[] cos1000;
+
 	public static Image[] imgsStatic;
 	public static int[] staticTiles;
+
 	public static boolean isTransmodigrafierMissing = true;
 	public static boolean isTransmissionShaky = true;
 	public static boolean isShowingShardPicture = false;
 	public static boolean isTransmissionBlinked = false;
+
 	public static int currentPurpleX = 59;
 	public static int currentPurpleY = 108;
 	public static int currentPurpleSize = 100;
 	public static int pingBackgroundColor = 0;
 	public static int activePurpleShardNameId = 0;
-	public static String[] purpleShardNames = new String[] {"Kachoo", "NikSak", "Rara", "Corakllquar", "Brad", "NotPing"};
+
+	public static String[] purpleShardNames = new String[] {
+		"Kachoo",
+		"NikSak",
+		"Rara",
+		"Corakllquar",
+		"Brad",
+		"NotPing"
+	};
+
+	// Selection menu.
 	public static Image[] imgsSelectionMenu;
 	public static Image[] imgsSelectionMenuArrows;
 	public static int selectionState;
@@ -522,7 +760,7 @@ public final class Game extends GameCanvas implements Runnable {
 		midlet.exit();
 	}
 
-	// funny circle
+	// Funny circle.
 	public static final void renderLoadingBar() {
 		renderLoadingBarNextFrame();
 	}
@@ -605,7 +843,7 @@ public final class Game extends GameCanvas implements Runnable {
 			// PNG sig with IHDR
 			System.arraycopy(pngTemplate, 0x00, pngData, 0x00, 0x1d);
 
-			// width height
+			// Width and height.
 			System.arraycopy(pimData, 0x02, pngData, 0x12, 0x02);
 			System.arraycopy(pimData, 0x04, pngData, 0x16, 0x02);
 
@@ -1337,7 +1575,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 				try {
 					if (sCurrentData != null) {
-						closeStream();
+						sCloseFile();
 					}
 
 					sCurrentData = new DataInputStream(instance.getClass().getResourceAsStream("/" + bfcHeadLocations[index] + ".bfc"));
@@ -1473,7 +1711,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void closeStream() {
+	public static final void sCloseFile() {
 		try {
 			sCurrentData.close();
 			sCurrentIndex = -1;
@@ -1690,37 +1928,37 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void initFonts(int var0) {
-		fontIndexes = new short[var0][];
+		fontCharMap = new short[var0][];
 		fontAverageWidths = new int[var0];
 		fontHeights = new int[var0];
 		fontSpacesPerChars = new int[var0];
 		fontImages = new Image[var0];
 		fontLineGaps = new int[var0];
-		fontChrOffsets = new short[var0][];
-		fontChrWidths = new byte[var0][];
+		fontCharOffsets = new short[var0][];
+		fontCharWidths = new byte[var0][];
 	}
 
 	public static final void loadFont(int index, short pimCrc, short pplCrc, short cwtCrc, byte spaceWidth, short chrCrc, int spacePerChar, int lineGap) {
-		fontIndexes[index] = new short[230];
-		fontChrWidths[index] = new byte[230];
+		fontCharMap[index] = new short[230];
+		fontCharWidths[index] = new byte[230];
 		byte[] charWidth = loadFile8(cwtCrc);
 		short[] charMap = loadFile16(chrCrc);
 		int charNum = charMap.length;
 		fontImages[index] = loadImage(pimCrc, pplCrc);
-		fontChrOffsets[index] = new short[charNum];
+		fontCharOffsets[index] = new short[charNum];
 
 		for (short i = 0; i < 230; i++) {
-			fontIndexes[index][i] = -1;
-			fontChrWidths[index][i] = spaceWidth;
+			fontCharMap[index][i] = -1;
+			fontCharWidths[index][i] = spaceWidth;
 		}
 
 		short curOff = 0;
 
 		for (short i = 0; i < charNum; i++) {
 			int printable = charMap[i] - 30;
-			fontIndexes[index][printable] = i;
-			fontChrWidths[index][printable] = charWidth[i];
-			fontChrOffsets[index][i] = curOff;
+			fontCharMap[index][printable] = i;
+			fontCharWidths[index][printable] = charWidth[i];
+			fontCharOffsets[index][i] = curOff;
 			curOff = (short)(curOff + charWidth[i]);
 		}
 
@@ -1731,7 +1969,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final int calcTextWidth(String var0, int var1) {
-		if (fontChrWidths[var1] == null) {
+		if (fontCharWidths[var1] == null) {
 			return var0.length() * (fontAverageWidths[var1] + fontSpacesPerChars[var1]) - fontSpacesPerChars[var1];
 		} else {
 			int var2 = 0;
@@ -1739,7 +1977,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			for (int var4 = 0; var4 < var3; var4++) {
 				int var5 = var0.charAt(var4) - 30;
-				var2 += fontChrWidths[var1][var5];
+				var2 += fontCharWidths[var1][var5];
 			}
 
 			return var2 + (var3 - 1) * fontSpacesPerChars[var1];
@@ -1751,7 +1989,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final int calcLengthUntilTerminator(int var0, int var1, String var2, int var3) {
-		if (fontChrWidths[var1] == null) {
+		if (fontCharWidths[var1] == null) {
 			return calcAverageLengthUntilTerminator(var0, var1);
 		} else {
 			int var4 = var2.length();
@@ -1763,7 +2001,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return var5 - var3 + 1;
 				}
 
-				if ((var0 = var0 - fontChrWidths[var1][var6]) < 0) {
+				if ((var0 = var0 - fontCharWidths[var1][var6]) < 0) {
 					break;
 				}
 
@@ -2035,24 +2273,24 @@ public final class Game extends GameCanvas implements Runnable {
 					int var15 = var2.charAt(var14) - 30;
 					if (var13 <= 128 && var15 >= 0) {
 						short var16;
-						if ((var16 = fontIndexes[var3][var15]) == -1) {
-							if (fontChrWidths[var3] == null) {
+						if ((var16 = fontCharMap[var3][var15]) == -1) {
+							if (fontCharWidths[var3] == null) {
 								var13 += fontAverageWidths[var3] + fontSpacesPerChars[var3];
 							} else {
-								var13 += fontChrWidths[var3][0] + fontSpacesPerChars[var3];
+								var13 += fontCharWidths[var3][0] + fontSpacesPerChars[var3];
 							}
 						} else {
 							int var11 = var13;
 							int var12;
-							if (fontChrWidths[var3] == null) {
+							if (fontCharWidths[var3] == null) {
 								var12 = fontAverageWidths[var3];
 							} else {
-								var12 = fontChrWidths[var3][var15];
+								var12 = fontCharWidths[var3][var15];
 							}
 
 							if (var13 + var12 < 0) {
-								if (fontChrWidths[var3] != null) {
-									var13 += fontChrWidths[var3][var15] + fontSpacesPerChars[var3];
+								if (fontCharWidths[var3] != null) {
+									var13 += fontCharWidths[var3][var15] + fontSpacesPerChars[var3];
 								} else {
 									var13 += fontAverageWidths[var3] + fontSpacesPerChars[var3];
 								}
@@ -2077,9 +2315,9 @@ public final class Game extends GameCanvas implements Runnable {
 								}
 
 								gSetClip(var11, var9, var12, var10);
-								if (fontChrWidths[var3] != null) {
-									gDrawImage(fontImages[var3], var13 - fontChrOffsets[var3][var16], var1, 0);
-									var13 += fontChrWidths[var3][var15] + fontSpacesPerChars[var3];
+								if (fontCharWidths[var3] != null) {
+									gDrawImage(fontImages[var3], var13 - fontCharOffsets[var3][var16], var1, 0);
+									var13 += fontCharWidths[var3][var15] + fontSpacesPerChars[var3];
 								} else {
 									gDrawImage(fontImages[var3], var13 - fontAverageWidths[var3] * var16, var1, 0);
 									var13 += fontAverageWidths[var3] + fontSpacesPerChars[var3];
@@ -2122,14 +2360,14 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			} else if (isNewState) {
 				isNewState = false;
-				execState(curScreenIndex, 2);
-				oldScreenIndex = curScreenIndex;
-				curScreenIndex = newStateIndex;
-				execState(curScreenIndex, 0);
+				execState(curState, 2);
+				oldState = curState;
+				curState = newStateIndex;
+				execState(curState, 0);
 			} else {
-				execState(curScreenIndex, 1);
+				execState(curState, 1);
 			}
-		} while (curScreenIndex != -1);
+		} while (curState != -1);
 
 		queueAllSoundsForCleanup();
 		queueSoundCleanup();
@@ -2145,7 +2383,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void execState(int state, int res) {
 		if (state >= 0) {
 			switch(state) {
-				// selection menu
+
 				case 0:
 					switch(res) {
 						case 0:
@@ -2159,7 +2397,6 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 					return;
 
-				// game developers
 				case 1:
 					switch(res) {
 						case 0:
@@ -2498,7 +2735,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void renderStar(int x, int y) {
 		gDrawLine(x, y, x, y);
 		int col = gGetColor();
-		gSetColor((col & 0xff0000) >> 17, (col & 0x00ff00) >> 9, (col & 0x0000ff) >> 1); // divide each RGB channel by 2
+		// Divide each RGB channel by 2.
+		gSetColor((col & 0xff0000) >> 17, (col & 0x00ff00) >> 9, (col & 0x0000ff) >> 1);
 		gDrawLine(x, y - 1, x, y - 1);
 		gDrawLine(x, y + 1, x, y + 1);
 		gDrawLine(x - 1, y, x - 1, y);
@@ -2561,17 +2799,17 @@ public final class Game extends GameCanvas implements Runnable {
 			var0 += 14;
 		}
 
-		gDrawImage(imgSceneHelpScrollbar[0], 120, 43 - (sceneHelpScroll >> 2 & 3), 0);
-		gDrawImage(imgSceneHelpScrollbar[1], 118, 46 - ((sceneHelpScrollDistance >> 8) - 128) * 39 / (sceneHelpText.length * 14), 0);
-		gDrawImage(imgSceneHelpScrollbar[2], 120, 92 + (sceneHelpScroll >> 2 & 3), 0);
+		gDrawImage(imgsScrollbar[0], 120, 43 - (sceneHelpScroll >> 2 & 3), 0);
+		gDrawImage(imgsScrollbar[1], 118, 46 - ((sceneHelpScrollDistance >> 8) - 128) * 39 / (sceneHelpText.length * 14), 0);
+		gDrawImage(imgsScrollbar[2], 120, 92 + (sceneHelpScroll >> 2 & 3), 0);
 	}
 
 	public static final void sceneHelpInit(int var0) {
-		if (imgSceneHelpScrollbar == null) {
-			imgSceneHelpScrollbar = new Image[3];
+		if (imgsScrollbar == null) {
+			imgsScrollbar = new Image[3];
 
 			for (int var1 = 0; var1 < 3; var1++) {
-				imgSceneHelpScrollbar[var1] = loadImage("scrollBar" + var1 + ".pim", "scrollBar" + var1 + ".ppl");
+				imgsScrollbar[var1] = loadImage("scrollBar" + var1 + ".pim", "scrollBar" + var1 + ".ppl");
 			}
 		}
 
@@ -2693,7 +2931,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void sceneLevelInit(int var0) {
 		isShipPaused = false;
-		if (oldScreenIndex != 5 && var0 != 1) {
+		if (oldState != 5 && var0 != 1) {
 			isLoadingBarShown = true;
 			levelCompletionState = 0;
 			loadFaces();
@@ -2706,7 +2944,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		gamma = 100;
-		if (oldScreenIndex != 5 && oldScreenIndex != 6) {
+		if (oldState != 5 && oldState != 6) {
 			playCurrentBackgroundMusic();
 		}
 	}
@@ -2729,23 +2967,23 @@ public final class Game extends GameCanvas implements Runnable {
 		gFillRect(0, 0, 128, 128);
 		switch(splash) {
 
-			// Eidos image
+			// Eidos image.
 			case 0:
 				gDrawImage(imgCenterLogo, (128 - imgCenterLogo.getWidth()) / 2, (128 - imgCenterLogo.getHeight()) / 2, 0);
 				break;
 
-			// Eidos legal line
+			// Eidos legal line.
 			case 1:
 				gDrawImage(imgEidosLegalLine, (128 - imgEidosLegalLine.getWidth()) / 2, 128 - imgEidosLegalLine.getHeight() - 4, 0);
 				break;
 
-			// PM RocketFuel image
+			// PM RocketFuel image.
 			case 2:
 				gDrawImage(imgCenterLogo, splashLogoX - 27, splashLogoY - 1, 0);
 				gDrawImage(imgPmRocket, splashLogoX, splashLogoY, 0);
 				break;
 
-			// PM RocketFuel anim
+			// PM RocketFuel animation.
 			case 3:
 				int x = splashLogoX;
 				int y = splashLogoY;
@@ -2769,7 +3007,7 @@ public final class Game extends GameCanvas implements Runnable {
 				splashTick++;
 				break;
 
-			// Maniacs of Noice scaling up
+			// Maniacs of Noice scaling up.
 			case 4:
 				int[] var2 = new int[] {0, 0xffffff, 0, 0xffffff, 0x3aaec7};
 				int[] var3 = new int[] {54, 54, 37, 37, 18};
@@ -2796,7 +3034,7 @@ public final class Game extends GameCanvas implements Runnable {
 				splashTick++;
 				break;
 
-			// Maniacs of Noise image
+			// Maniacs of Noise image.
 			case 5:
 				gDrawImage(imgCenterLogo, 19, 18, 0);
 		}
@@ -2812,22 +3050,22 @@ public final class Game extends GameCanvas implements Runnable {
 		splash = screen;
 		switch(screen) {
 
-			// Eidos image
+			// Eidos image.
 			case 0:
 				imgCenterLogo = loadImage("eidos.pim", "eidos.ppl");
 				splashDuration = millis() + 2500L;
 				return;
 
-			// Eidos legal line
+			// Eidos legal line.
 			case 1:
 				imgEidosLegalLine = loadImage("eidos_legal_line.pim", "eidos_legal_line.ppl");
 				splashDuration = millis() + 2500L;
 				return;
 
-			// PM RocketFuel image
+			// PM RocketFuel image.
 			case 2:
 
-			// PM RocketFuel anim
+			// PM RocketFuel animation.
 			case 3:
 				if (imgCenterLogo == null) {
 					imgCenterLogo = loadImage("pmback.pim", "pmback.ppl");
@@ -2843,7 +3081,7 @@ public final class Game extends GameCanvas implements Runnable {
 				splashDuration = millis() + 2000L;
 				return;
 
-			// Maniacs of Noice scaling up
+			// Maniacs of Noice scaling up.
 			case 4:
 				splashLogoX = -49;
 				splashLogoY = 128;
@@ -2851,7 +3089,7 @@ public final class Game extends GameCanvas implements Runnable {
 				splashDuration = millis() + 10000L;
 				return;
 
-			// Maniacs of Noise image
+			// Maniacs of Noise image.
 			case 5:
 				imgCenterLogo = loadImage("mon.pim", "mon.ppl");
 				splashDuration = millis() + 2000L;
@@ -3035,14 +3273,14 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void sceneDialogueRun() {
 		long var0 = millis();
 		if (!dialogueIsWaiting) {
-			currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, false);
+			currentDialogueIndex = executeDialogueScript(currentDialogue, currentDialogueIndex, false);
 		} else {
 			if (!isSpeakingAnimationPlaying && !dialogueIsOkKeyEnabled && dialogueWaitEndMs == 0L) {
 				if (dialogueEnvironment == 3) {
 					if (renderSpaceMapNextFrame()) {
 						dialogueIsWaiting = false;
 					}
-				} else if (!dialogueIsCameraMoving || levelCameraApproach(levelCameraTargetX, levelCameraTargetY, 0, 0x320000)) {
+				} else if (!dialogueIsCameraMoving || levelCameraApproach(dialogueCameraTargetX, dialogueCameraTargetY, 0, 0x320000)) {
 					dialogueIsWaiting = false;
 					dialogueIsCameraMoving = false;
 				}
@@ -3096,7 +3334,7 @@ public final class Game extends GameCanvas implements Runnable {
 				renderSplash();
 				break;
 			case 5:
-				renderPingTransmission();
+				renderTransmission();
 		}
 
 		if (showBlackBars) {
@@ -3110,14 +3348,14 @@ public final class Game extends GameCanvas implements Runnable {
 		if (dialogueSelectionEnabled) {
 			int var3 = softkeyPressed(2, 4);
 			if (var3 >= 0) {
-				for (dialogueIsActionConfirmed = var3 == 2; currentDialogueIndex < currentDialogue.length; currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, true)) {
+				for (dialogueIsActionConfirmed = var3 == 2; currentDialogueIndex < currentDialogue.length; currentDialogueIndex = executeDialogueScript(currentDialogue, currentDialogueIndex, true)) {
 				}
 
 				dialogueIsWaiting = false;
 			}
 		} else if (dialogueIsOkKeyEnabled && softkeyPressed(2, 3) == 3 || !dialogueIsOkKeyEnabled && softkeyPressed(-1, 3) == 3) {
 			while (currentDialogueIndex < currentDialogue.length) {
-				currentDialogueIndex = executeDialogScript(currentDialogue, currentDialogueIndex, true);
+				currentDialogueIndex = executeDialogueScript(currentDialogue, currentDialogueIndex, true);
 			}
 
 			dialogueIsWaiting = false;
@@ -3138,7 +3376,7 @@ public final class Game extends GameCanvas implements Runnable {
 		} else if (!dialogueIsContinued) {
 			currentDialogueIndex = 0;
 			dialogueIsActionConfirmed = false;
-			stateBeforeDialogue = oldScreenIndex;
+			stateBeforeDialogue = oldState;
 			activePurpleShardNameId = 0;
 			dialogueLastSwapKey = activeSwapKey;
 			dialogueIsWazActive = dialogueLastSwapKey == 0;
@@ -3209,7 +3447,7 @@ public final class Game extends GameCanvas implements Runnable {
 		setNewState(5, 0);
 	}
 
-	public static final int executeDialogScript(int[] var0, int var1, boolean var2) {
+	public static final int executeDialogueScript(int[] var0, int var1, boolean var2) {
 		while (var1 < var0.length) {
 			switch(var0[var1]) {
 				case 0:
@@ -3240,33 +3478,33 @@ public final class Game extends GameCanvas implements Runnable {
 
 					switch(var0[var1 + 1]) {
 						case 0:
-							levelCameraTargetX = levelCircleX[0];
-							levelCameraTargetY = levelCircleY[0];
+							dialogueCameraTargetX = levelCircleX[0];
+							dialogueCameraTargetY = levelCircleY[0];
 							var1 += 2;
 							break;
 						case 1:
 							if (dialogueIsWazActive) {
-								levelCameraTargetX = levelCircleX[6];
-								levelCameraTargetY = levelCircleY[6];
+								dialogueCameraTargetX = levelCircleX[6];
+								dialogueCameraTargetY = levelCircleY[6];
 							} else {
-								levelCameraTargetX = levelCircleX[0];
-								levelCameraTargetY = levelCircleY[0];
+								dialogueCameraTargetX = levelCircleX[0];
+								dialogueCameraTargetY = levelCircleY[0];
 							}
 
 							var1 += 2;
 							break;
 						case 5:
-							levelCameraTargetX = dialogueOriginX;
-							levelCameraTargetY = dialogueOriginY;
+							dialogueCameraTargetX = dialogueOriginX;
+							dialogueCameraTargetY = dialogueOriginY;
 							var1 += 2;
 							break;
 						default:
-							levelCameraTargetX = levelAlignToGameMirror(var0[var1 + 1] << 16);
-							levelCameraTargetY = var0[var1 + 2] << 16;
+							dialogueCameraTargetX = levelAlignToGameMirror(var0[var1 + 1] << 16);
+							dialogueCameraTargetY = var0[var1 + 2] << 16;
 							var1 += 3;
 					}
 
-					levelSetCamera(levelCameraTargetX, levelCameraTargetY, 0);
+					levelSetCamera(dialogueCameraTargetX, dialogueCameraTargetY, 0);
 					break;
 				case 4:
 					dialogueIsCameraMoving = true;
@@ -3286,29 +3524,29 @@ public final class Game extends GameCanvas implements Runnable {
 
 					switch(var0[var1 + 1]) {
 						case 0:
-							levelCameraTargetX = levelCircleX[0];
-							levelCameraTargetY = levelCircleY[0];
+							dialogueCameraTargetX = levelCircleX[0];
+							dialogueCameraTargetY = levelCircleY[0];
 							var1 += 2;
 							break;
 						case 1:
 							if (dialogueIsWazActive) {
-								levelCameraTargetX = levelCircleX[6];
-								levelCameraTargetY = levelCircleY[6];
+								dialogueCameraTargetX = levelCircleX[6];
+								dialogueCameraTargetY = levelCircleY[6];
 							} else {
-								levelCameraTargetX = levelCircleX[0];
-								levelCameraTargetY = levelCircleY[0];
+								dialogueCameraTargetX = levelCircleX[0];
+								dialogueCameraTargetY = levelCircleY[0];
 							}
 
 							var1 += 2;
 							break;
 						case 5:
-							levelCameraTargetX = dialogueOriginX;
-							levelCameraTargetY = dialogueOriginY;
+							dialogueCameraTargetX = dialogueOriginX;
+							dialogueCameraTargetY = dialogueOriginY;
 							var1 += 2;
 							break;
 						default:
-							levelCameraTargetX = levelAlignToGameMirror(var0[var1 + 1] << 16);
-							levelCameraTargetY = var0[var1 + 2] << 16;
+							dialogueCameraTargetX = levelAlignToGameMirror(var0[var1 + 1] << 16);
+							dialogueCameraTargetY = var0[var1 + 2] << 16;
 							var1 += 3;
 					}
 
@@ -3441,7 +3679,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void sceneSelectionRun() {
 		int select = getSelectedIndex();
 		if (select >= 0) {
-			if (sceneStartupState == 0) {
+			if (sceneSelectionState == 0) {
 				language = select;
 				saveRecordData();
 				setTextTableCrc((new short[] {(short)0x0085, (short)0x9e91, (short)0xdc77, (short)0x0d48, (short)0x4f2a})[language]);
@@ -3457,12 +3695,12 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void sceneSelectionInit(int var0) {
 		gamma = 100;
-		sceneStartupState = var0;
-		if (sceneStartupState == 0) {
+		sceneSelectionState = var0;
+		if (sceneSelectionState == 0) {
 			loadSelectionOptions(new String[] {"flag_uk", "flag_france", "flag_germany", "flag_spain", "flag_italy"}, language);
 		}
 
-		if (sceneStartupState == 1) {
+		if (sceneSelectionState == 1) {
 			loadSelectionOptions(new String[] {"audio_off", "audio_on", "audio_off", "audio_on"}, 0);
 		}
 	}
@@ -3557,7 +3795,7 @@ public final class Game extends GameCanvas implements Runnable {
 		sceneTransitionDisabled = false;
 		sceneTransitionStartMs = millis();
 		int var1 = sceneTransitionNextState;
-		sceneTransitionNextState = oldScreenIndex;
+		sceneTransitionNextState = oldState;
 		if (var0 >= 100) {
 			sceneTransitionNextState = var0 - 100;
 			var0 = 2;
@@ -4411,12 +4649,12 @@ public final class Game extends GameCanvas implements Runnable {
 		int eyesY = levelCircleY[levelPingCircleId] - levelCircleRadius[levelPingCircleId] * 7 / 10;
 		int eyeRadius = levelCircleRadius[levelPingCircleId] / 5;
 
-		/* for each eye. */
+		/* For each eye. */
 		for (int i = -1; i < 2; i++) {
 			setGammaColor(0);
 			levelRenderCircle(centerEyeX + i * eyeDiameter, eyesY, eyeRadius);
 
-			if (i < levelPingHealth) { // opened eye.
+			if (i < levelPingHealth) { // Opened eye.
 
 				setGammaColor(0xffffff);
 				levelRenderCircle(centerEyeX + i * eyeDiameter, eyesY, eyeRadius);
@@ -4426,7 +4664,7 @@ public final class Game extends GameCanvas implements Runnable {
 				int pupilY = calcCoefficientDelta(eyesY, levelCameraY, 0x640000, eyeRadius * 3 / 4);
 				levelRenderCircle(centerEyeX + i * eyeDiameter + pupilX, eyesY + pupilY, eyeRadius / 3);
 
-			} else { // closed eye.
+			} else { // Closed eye.
 
 				setGammaColor(160, 32, 240);
 				levelRenderCircle(centerEyeX + i * eyeDiameter, eyesY, eyeRadius);
@@ -5072,7 +5310,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if (levelCircleHasPhysics[var5]) {
 				int var1 = levelCircleX[var5];
 				int var2 = levelCircleY[var5];
-				int var3 = xLossRate;
+				int var3 = levelXLossRate;
 				if (var5 < 5 && levelPlayerCurrentGrabberFlags >= 0) {
 					var3 = 63000;
 				}
@@ -5369,7 +5607,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelBombStartTicks = -10000;
 		levelPlayerHitTicks = 0;
 		levelCameraZoom = 72;
-		xLossRate = 62000;
+		levelXLossRate = 62000;
 		levelSetCamera(levelCircleX[0], levelCircleY[0], 0);
 		if (var0 >= 0) {
 			for (int var32 = 0; var32 < 5; var32++) {
@@ -5463,9 +5701,9 @@ public final class Game extends GameCanvas implements Runnable {
 			var1 = levelMovableGravity;
 			levelMovableGravity = swappedLevelMovableGravity;
 			swappedLevelMovableGravity = var1;
-			var1 = xLossRate;
-			xLossRate = swappedXLossRate;
-			swappedXLossRate = var1;
+			var1 = levelXLossRate;
+			levelXLossRate = swappedLevelXLossRate;
+			swappedLevelXLossRate = var1;
 			boolean var2 = levelIsPlayerOnSurface;
 			levelIsPlayerOnSurface = swappedLevelIsPlayerOnSurface;
 			swappedLevelIsPlayerOnSurface = var2;
@@ -5893,13 +6131,13 @@ public final class Game extends GameCanvas implements Runnable {
 				boxHeight = boxHeight * var2 / 400;
 			}
 
-			gSetColor(0xffffff); // white
+			gSetColor(0xffffff); // White.
 			gFillRect(0, 0, 128, boxHeight);
-			gSetColor(0xece9d8); // light gray
+			gSetColor(0xece9d8); // Light gray.
 			gDrawLine(0, boxHeight, 128, boxHeight);
-			gSetColor(0xaca899); // darker gray
+			gSetColor(0xaca899); // Darker gray.
 			gDrawLine(0, boxHeight + 1, 128, boxHeight + 1);
-			gSetColor(0);
+			gSetColor(0); // Black.
 			gDrawLine(0, boxHeight + 2, 128, boxHeight + 2);
 
 			if (currentSpeechIteration != 0 || var2 >= 400) {
@@ -6448,11 +6686,11 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void processCircles(int id1, int id2) {
 		if (levelPlayerHealth > 0) {
 
-			if (id1 >= 5 && id2 >= 5) { // level circles.
+			if (id1 >= 5 && id2 >= 5) { // Level circles.
 
 				if ((levelCircleFlags[id1] & 16) > 0 || (levelCircleFlags[id2] & 16) > 0) {
 
-					/* check if a ball touches portal's circle hitbox, if so,
+					/* Check if a ball touches portal's circle hitbox, if so,
 					 * fill the portal's radius with the ball's radius. */
 					int swpId1 = id1;
 					int swpId2 = id2;
@@ -6573,7 +6811,7 @@ public final class Game extends GameCanvas implements Runnable {
 						}
 					}
 				}
-			} else { // player circles.
+			} else { // Player circles.
 
 				if (id1 >= 5) {
 					processPlayerCircles(id2, id1);
@@ -6589,7 +6827,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void loadGeneral() {
 		gSetColor(255, 255, 255);
 		gFillRect(0, 0, 128, 128);
-		gfxFlush(); // white screen at the start
+		gfxFlush(); // White screen at the start.
 		loadGeneralUI();
 		loadTrigonometric();
 		loadRecordData();
@@ -6644,7 +6882,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	// funny circle again	
+	// Funny circle again...
 	public static final void renderLoadingBarNextFrame() {
 		gSetColor(0, 0, 0);
 		gFillRect(0, 0, 128, 128);
@@ -6814,11 +7052,11 @@ public final class Game extends GameCanvas implements Runnable {
 			imgsPiston[1] = loadImage("piston_bottom.pim", "piston_bottom.ppl");
 		}
 
-		if (imgDecors == null) {
-			imgDecors = new Image[10];
+		if (imgsDecor == null) {
+			imgsDecor = new Image[10];
 
-			for (int i = 0; i < imgDecors.length; i++) {
-				imgDecors[i] = loadImage("shipDecor" + i + ".pim", "shipDecor" + i + ".ppl");
+			for (int i = 0; i < imgsDecor.length; i++) {
+				imgsDecor[i] = loadImage("shipDecor" + i + ".pim", "shipDecor" + i + ".ppl");
 			}
 
 			decorBackground = loadFile16("decor_background.bin");
@@ -6946,7 +7184,7 @@ public final class Game extends GameCanvas implements Runnable {
 			int shiftX = 64 - levelCameraZoom * levelCameraIntX / 100;
 
 			for (int i = 0; i < decorData.length; i += 3) {
-				Image img = imgDecors[decorData[i]];
+				Image img = imgsDecor[decorData[i]];
 				if (img != null) {
 					int x = shiftX + levelAlignToGameMirror(decorData[i + 1]) - img.getWidth() / 2;
 					int y = img.getWidth();
@@ -7333,7 +7571,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void renderPingTransmission() {
+	public static final void renderTransmission() {
 		loadStatic();
 		gSetColor(pingBackgroundColor);
 		gFillRect(0, 0, 128, 128);
@@ -7445,7 +7683,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelInitHooks(numSelections);
 		activeSwapKey = -10;
 		levelMovableGravity = 30000;
-		xLossRate = 64000;
+		levelXLossRate = 64000;
 		selectionAngle = 0;
 		selectionMainCircleId = 10 + numSelections * 2;
 		selectionDefaultIndex = var1;
