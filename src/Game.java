@@ -1024,144 +1024,146 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void initSoundSystem(int var0) {
-		numSounds = var0;
-		soundActiveStates = new boolean[var0];
-		soundQueueCleanup = new boolean[var0];
-		soundUsedStates = new boolean[var0];
-		soundVolume = new int[var0];
-		soundLoopCounts = new int[var0];
-		soundTypes = new int[var0];
+	public static final void initSoundSystem(int num) {
+		numSounds = num;
+
+		soundActiveStates = new boolean[num];
+		soundQueueCleanup = new boolean[num];
+		soundUsedStates = new boolean[num];
+		soundVolume = new int[num];
+		soundLoopCounts = new int[num];
+		soundTypes = new int[num];
 		activeSound = -1;
-		soundPlayers = new Player[var0];
-		soundPlayersMIDI = new Player[var0];
+		soundPlayers = new Player[num];
+		soundPlayersMIDI = new Player[num];
 		numActiveSoundsMIDI = 0;
 		numActiveSounds = 0;
-		soundFilenames = new String[var0];
+		soundFilenames = new String[num];
 
-		for (int var2 = 0; var2 < numSounds; var2++) {
-			soundActiveStates[var2] = false;
-			soundQueueCleanup[var2] = false;
-			soundUsedStates[var2] = false;
-			soundVolume[var2] = 5;
-			soundLoopCounts[var2] = 1;
-			soundTypes[var2] = 999;
-			soundPlayers[var2] = null;
-			soundPlayersMIDI[var2] = null;
+		for (int i = 0; i < numSounds; i++) {
+			soundActiveStates[i] = false;
+			soundQueueCleanup[i] = false;
+			soundUsedStates[i] = false;
+			soundVolume[i] = 5;
+			soundLoopCounts[i] = 1;
+			soundTypes[i] = 999;
+			soundPlayers[i] = null;
+			soundPlayersMIDI[i] = null;
 		}
 	}
 
-	public static final int loadSoundToQueue(int var0, String var1, int var2, int var3) {
-		if (isSoundIndexUsed(var0)) {
+	public static final int loadSoundToQueue(int index, String filename, int soundType, int reserved) {
+		if (isSoundIndexUsed(index)) {
 			return -2;
-		} else if (var0 >= numSounds) {
+		} else if (index >= numSounds) {
 			return -3;
-		} else if (var1 == null) {
+		} else if (filename == null) {
 			return -1;
 		} else {
 			if (isLoadingBarShown) {
 				renderLoadingBar();
 			}
 
-			soundTypes[var0] = var2;
-			if (!var1.equals(soundFilenames[var0])) {
-				soundFilenames[var0] = var1;
+			soundTypes[index] = soundType;
+			if (!filename.equals(soundFilenames[index])) {
+				soundFilenames[index] = filename;
 			}
 
 			return -4;
 		}
 	}
 
-	public static final int loadSoundToIndex(int var0, String var1, int var2, int var3) {
-		if (isSoundIndexUsed(var0)) {
+	public static final int loadSoundToIndex(int index, String filename, int soundType, int reserved) {
+		if (isSoundIndexUsed(index)) {
 			return -2;
-		} else if (var0 >= numSounds) {
+		} else if (index >= numSounds) {
 			return -3;
-		} else if (var1 == null) {
+		} else if (filename == null) {
 			return -1;
 		} else {
 			if (isLoadingBarShown) {
 				renderLoadingBar();
 			}
 
-			soundTypes[var0] = var2;
-			if (!var1.equals(soundFilenames[var0])) {
-				soundFilenames[var0] = var1;
+			soundTypes[index] = soundType;
+			if (!filename.equals(soundFilenames[index])) {
+				soundFilenames[index] = filename;
 			}
 
-			String var4 = "";
-			Player var5 = null;
+			String obj = "";
+			Player pl = null;
 
 			try {
-				if (var2 == 6) {
-					InputStream var9 = var4.getClass().getResourceAsStream("/" + var1 + ".wav");
-					soundPlayers[var0] = Manager.createPlayer(var9, "audio/x-wav");
-					var5 = soundPlayers[var0];
+				if (soundType == 6) {
+					InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".wav");
+					soundPlayers[index] = Manager.createPlayer(is, "audio/x-wav");
+					pl = soundPlayers[index];
 				}
 
-				if (var2 == 7) {
-					InputStream var10 = var4.getClass().getResourceAsStream("/" + var1 + ".amr");
-					soundPlayers[var0] = Manager.createPlayer(var10, "audio/amr");
-					var5 = soundPlayers[var0];
+				if (soundType == 7) {
+					InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".amr");
+					soundPlayers[index] = Manager.createPlayer(is, "audio/amr");
+					pl = soundPlayers[index];
 				}
 
-				if (var2 == 8) {
-					InputStream var11 = var4.getClass().getResourceAsStream("/" + var1 + ".mp3");
-					soundPlayers[var0] = Manager.createPlayer(var11, "audio/mp3");
-					var5 = soundPlayers[var0];
+				if (soundType == 8) {
+					InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".mp3");
+					soundPlayers[index] = Manager.createPlayer(is, "audio/mp3");
+					pl = soundPlayers[index];
 				}
 
-				if (var2 == 2) {
-					InputStream var12 = var4.getClass().getResourceAsStream("/" + var1 + ".mid");
-					soundPlayersMIDI[var0] = Manager.createPlayer(var12, "audio/sp-midi");
-					var5 = soundPlayersMIDI[var0];
+				if (soundType == 2) {
+					InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".mid");
+					soundPlayersMIDI[index] = Manager.createPlayer(is, "audio/sp-midi");
+					pl = soundPlayersMIDI[index];
 				}
 
-				if (var2 == 1) {
-					InputStream var13 = var4.getClass().getResourceAsStream("/" + var1 + ".mid");
-					soundPlayersMIDI[var0] = Manager.createPlayer(var13, "audio/midi");
-					var5 = soundPlayersMIDI[var0];
+				if (soundType == 1) {
+					InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".mid");
+					soundPlayersMIDI[index] = Manager.createPlayer(is, "audio/midi");
+					pl = soundPlayersMIDI[index];
 				}
 
-				var5.realize();
+				pl.realize();
 
-				while (var5.getState() != 200) {
+				while (pl.getState() != Player.REALIZED) {
 					sleep(30L);
 				}
 
 				numActiveSoundsTotal++;
-				soundUsedStates[var0] = true;
-				boolean var7 = false;
-				if (var2 != 1 && var2 != 2) {
-					if (var2 != 6 && var2 != 7 && var2 != 8) {
+				soundUsedStates[index] = true;
+
+				boolean prefetched = false;
+				if (soundType != 1 && soundType != 2) {
+					if (soundType != 6 && soundType != 7 && soundType != 8) {
 						return -2;
 					}
 
 					if (numActiveSounds < 1) {
-						var5.prefetch();
+						pl.prefetch();
 						numActiveSounds++;
-						var7 = true;
+						prefetched = true;
 					}
 				} else if (numActiveSoundsMIDI < 1) {
-					var5.prefetch();
+					pl.prefetch();
 					numActiveSoundsMIDI++;
-					var7 = true;
+					prefetched = true;
 				}
 
-				if (var7) {
-					while (var5.getState() != 300) {
+				if (prefetched) {
+					while (pl.getState() != Player.PREFETCHED) {
 						sleep(30L);
 					}
 				}
 
 				return 0;
 			} catch(Exception e) {
-				if (var5 != null) {
-					var5.close();
-					soundPlayers[var0] = null;
-					soundPlayersMIDI[var0] = null;
-					soundTypes[var0] = 999;
-					soundFilenames[var0] = "";
+				if (pl != null) {
+					pl.close();
+					soundPlayers[index] = null;
+					soundPlayersMIDI[index] = null;
+					soundTypes[index] = 999;
+					soundFilenames[index] = "";
 				}
 
 				return -1;
@@ -1169,84 +1171,89 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void closeSoundAtIndex(int var0) {
-		Player var1 = null;
-		if (soundPlayers[var0] != null) {
-			var1 = soundPlayers[var0];
+	public static final void closeSoundAtIndex(int index) {
+		Player pl = null;
+
+		if (soundPlayers[index] != null) {
+			pl = soundPlayers[index];
 			numActiveSounds--;
 		}
 
-		if (soundPlayersMIDI[var0] != null) {
-			var1 = soundPlayersMIDI[var0];
+		if (soundPlayersMIDI[index] != null) {
+			pl = soundPlayersMIDI[index];
 			numActiveSoundsMIDI--;
 		}
 
-		if (var1 != null) {
-			var1.close();
+		if (pl != null) {
+			pl.close();
 
-			while (var1.getState() != 0) {
+			while (pl.getState() != Player.CLOSED) {
 				sleep(30L);
 			}
 
-			soundPlayers[var0] = soundPlayersMIDI[var0] = null;
+			soundPlayers[index] = soundPlayersMIDI[index] = null;
 			numActiveSoundsTotal--;
 		}
 	}
 
-	public static final boolean isSoundIndexUsed(int var0) {
-		if (soundPlayers[var0] != null) {
+	public static final boolean isSoundIndexUsed(int index) {
+		if (soundPlayers[index] != null) {
 			return true;
 		} else {
-			return soundPlayersMIDI[var0] != null;
+			return soundPlayersMIDI[index] != null;
 		}
 	}
 
-	public static final boolean isSoundActive(int var0, int var1) {
+	public static final boolean isSoundActive(int index, int soundType) {
 		if (!isAudioEnabled) {
 			return false;
 		} else {
-			boolean var2 = false;
-			if ((var1 == soundTypes[var0] || var1 == -1) && soundActiveStates[var0]) {
+			boolean started = false;
+
+			if ((soundType == soundTypes[index] || soundType == -1) && soundActiveStates[index]) {
 				return true;
 			} else {
-				if ((var1 == 6 || var1 == -1) && soundPlayers[var0] != null) {
-					var2 = soundPlayers[var0].getState() == 400;
+				if ((soundType == 6 || soundType == -1) && soundPlayers[index] != null) {
+					started = soundPlayers[index].getState() == Player.STARTED;
 				}
 
-				if ((var1 == 1 || var1 == -1) && soundPlayersMIDI[var0] != null) {
-					var2 = soundPlayersMIDI[var0].getState() == 400;
+				if ((soundType == 1 || soundType == -1) && soundPlayersMIDI[index] != null) {
+					started = soundPlayersMIDI[index].getState() == Player.STARTED;
 				}
 
-				return var2;
+				return started;
 			}
 		}
 	}
 
-	public static final boolean playSound(int var0, int var1) {
+	public static final boolean playSound(int index, int loopCount) {
 		if (!isAudioEnabled) {
 			return true;
 		} else if (millis() - soundStartMillis < 100L) {
 			return false;
 		} else {
 			soundStartMillis = millis();
-			if (isSoundActive(var0, -1)) {
+
+			if (isSoundActive(index, -1)) {
 				return false;
 			} else {
-				int var4 = 0;
-				if (soundTypes[var0] == 6 || soundTypes[var0] == 7 || soundTypes[var0] == 8) {
-					for (int var5 = 0; var5 < numSounds; var5++) {
-						if (isSoundActive(var5, soundTypes[var5])) {
-							var4++;
+				int activeSounds = 0;
+
+				if (soundTypes[index] == 6 || soundTypes[index] == 7 || soundTypes[index] == 8) {
+					for (int i = 0; i < numSounds; i++) {
+						if (isSoundActive(i, soundTypes[i])) {
+							activeSounds++;
 						}
 					}
 
-					if (var4 >= 2) {
+					if (activeSounds >= 2) {
 						return false;
 					}
 				}
 
-				soundActiveStates[var0] = true;
-				soundLoopCounts[var0] = var1;
+				soundActiveStates[index] = true;
+				soundLoopCounts[index] = loopCount;
+
 				return true;
 			}
 		}
@@ -1254,31 +1261,31 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void queueAllSoundsForCleanup() {
 		if (isAudioEnabled) {
-			for (int var0 = 0; var0 < numSounds; var0++) {
-				soundQueueCleanup[var0] = true;
+			for (int i = 0; i < numSounds; i++) {
+				soundQueueCleanup[i] = true;
 			}
 		}
 	}
 
-	private static void stopSoundAtIndex(int var0, boolean var1) {
-		Player var5;
-		if (soundPlayersMIDI[var0] != null) {
-			var5 = soundPlayersMIDI[var0];
+	private static void stopSoundAtIndex(int index, boolean checkStarted) {
+		Player pl;
+		if (soundPlayersMIDI[index] != null) {
+			pl = soundPlayersMIDI[index];
 		} else {
-			var5 = soundPlayers[var0];
+			pl = soundPlayers[index];
 		}
 
 		try {
-			if (var5 != null) {
+			if (pl != null) {
 				try {
-					if (var1) {
-						if (var5.getState() == 400) {
-							var5.stop();
-							var5.setMediaTime(0L);
+					if (checkStarted) {
+						if (pl.getState() == Player.STARTED) {
+							pl.stop();
+							pl.setMediaTime(0L);
 						}
 					} else {
-						var5.stop();
-						var5.setMediaTime(0L);
+						pl.stop();
+						pl.setMediaTime(0L);
 					}
 				} catch(IllegalStateException e) {
 				}
@@ -1289,80 +1296,81 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void queueSoundCleanup() {
 		if (isAudioEnabled && soundActiveStates != null) {
-			for (int var0 = 0; var0 < numSounds; var0++) {
-				if (soundQueueCleanup[var0]) {
-					soundQueueCleanup[var0] = false;
-					stopSoundAtIndex(var0, false);
-					if (soundTypes[var0] != 0) {
-						closeSoundAtIndex(var0);
+			for (int i = 0; i < numSounds; i++) {
+				if (soundQueueCleanup[i]) {
+					soundQueueCleanup[i] = false;
+					stopSoundAtIndex(i, false);
+
+					if (soundTypes[i] != 0) {
+						closeSoundAtIndex(i);
 					}
 
-					if (activeSound == var0) {
+					if (activeSound == i) {
 						activeSound = -1;
 					}
 				}
 
-				if (soundActiveStates[var0] && soundTypes[var0] == 1) {
+				if (soundActiveStates[i] && soundTypes[i] == 1) {
 					boolean var1 = false;
 
-					for (int var5 = 0; var5 < numSounds; var5++) {
-						if (var5 != var0) {
-							stopSoundAtIndex(var5, false);
-							soundActiveStates[var5] = false;
+					for (int j = 0; j < numSounds; j++) {
+						if (j != i) {
+							stopSoundAtIndex(j, false);
+							soundActiveStates[j] = false;
 						}
 					}
 
-					for (boolean var2 = true; var2; sleep(5L)) {
-						for (int var6 = 0; var6 < numSounds; var6++) {
-							if (var6 != var0 && isSoundActive(var6, -1)) {
-								var2 = true;
+					for (boolean b = true; b; sleep(5L)) {
+						for (int j = 0; j < numSounds; j++) {
+							if (j != i && isSoundActive(j, -1)) {
+								b = true;
 								break;
 							}
 
-							var2 = false;
+							b = false;
 						}
 					}
 				}
 
-				if (!isSoundIndexUsed(var0)) {
-					if (soundTypes[var0] == 0 || !soundActiveStates[var0]) {
+				if (!isSoundIndexUsed(i)) {
+					if (soundTypes[i] == 0 || !soundActiveStates[i]) {
 						continue;
 					}
 
-					boolean var7 = isLoadingBarShown;
+					boolean tmp = isLoadingBarShown;
 					isLoadingBarShown = false;
-					loadSoundToIndex(var0, soundFilenames[var0], soundTypes[var0], 0);
-					isLoadingBarShown = var7;
+					loadSoundToIndex(i, soundFilenames[i], soundTypes[i], 0);
+					isLoadingBarShown = tmp;
 				}
 
-				Player var9;
-				if (soundPlayersMIDI[var0] != null) {
-					var9 = soundPlayersMIDI[var0];
+				Player pl;
+				if (soundPlayersMIDI[i] != null) {
+					pl = soundPlayersMIDI[i];
 				} else {
-					var9 = soundPlayers[var0];
+					pl = soundPlayers[i];
 				}
 
-				if (soundUsedStates[var0]) {
-					soundUsedStates[var0] = false;
-					if (var9 != null) {
+				if (soundUsedStates[i]) {
+					soundUsedStates[i] = false;
+					if (pl != null) {
 						try {
-							VolumeControl var10;
-							if ((var10 = (VolumeControl)var9.getControl("VolumeControl")) != null) {
-								var10.setLevel(soundVolume[var0] * 10);
+							VolumeControl control;
+							if ((control = (VolumeControl)pl.getControl("VolumeControl")) != null) {
+								control.setLevel(soundVolume[i] * 10);
 							}
 						} catch(IllegalStateException e) {
 						}
 					}
 				}
 
-				if (soundActiveStates[var0]) {
-					soundActiveStates[var0] = false;
+				if (soundActiveStates[i]) {
+					soundActiveStates[i] = false;
 
 					try {
-						if (var9 != null && var9.getState() != 400) {
-							var9.setLoopCount(soundLoopCounts[var0]);
-							var9.start();
-							activeSound = var0;
+						if (pl != null && pl.getState() != Player.STARTED) {
+							pl.setLoopCount(soundLoopCounts[i]);
+							pl.start();
+							activeSound = i;
 						}
 					} catch(MediaException e) {
 					}
