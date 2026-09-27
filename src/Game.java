@@ -90,9 +90,9 @@ public final class Game extends GameCanvas implements Runnable {
 	private static int[] bfcCrcTable = new int[256];
 	
 	// Text tables.
-	public static String[] textTableGroupStrings;
-	public static byte[] textTableGroupTypes;
-	public static int textTableGroupIndex = -1;
+	public static String[] textTableStrings;
+	public static byte[] textTableStringTypes;
+	public static int textTableIndex = -1;
 	public static short textTableCrc;
 
 	// Softkeys.
@@ -1735,95 +1735,101 @@ public final class Game extends GameCanvas implements Runnable {
 		sCurrentData = null;
 	}
 
-	public static final void setTextTableCrc(short var0) {
+	public static final void setTextTableCrc(short crc) {
 		clearTextTable();
-		textTableCrc = var0;
+		textTableCrc = crc;
 	}
 
 	public static final void clearTextTable() {
-		textTableGroupStrings = null;
-		textTableGroupIndex = -1;
+		textTableStrings = null;
+		textTableIndex = -1;
 	}
 
-	public static final String[] loadTextTableFromIndex(int var0, int var1) {
-		if (var1 < 0 && var0 == textTableGroupIndex) {
-			return textTableGroupStrings;
+	public static final String[] loadTextTableFromIndex(int index, int stringIndex) {
+		if (stringIndex < 0 && index == textTableIndex) {
+			return textTableStrings;
 		} else {
-			boolean var2 = isLoadingBarShown;
+			boolean tmp = isLoadingBarShown;
 			isLoadingBarShown = false;
 			if (!sOpenFile(textTableCrc)) {
-				textTableGroupStrings = null;
-				textTableGroupTypes = null;
+				textTableStrings = null;
+				textTableStringTypes = null;
 			}
+			isLoadingBarShown = tmp;
 
-			isLoadingBarShown = var2;
-			int var3 = sReadU8();
-			int var4 = sReadU8();
-			if (var0 >= var4) {
-				return textTableGroupStrings;
+			// Text table file header.
+			int bitness = sReadU8(); // 0 = 16-bit for each char, 1 = 8-bit for each char.
+			int numTables = sReadU8();
+
+			if (index >= numTables) {
+				return textTableStrings;
 			} else {
-				sSkipBytes(var0 * 2);
-				sSkipBytes(sReadU16() + (var4 - var0 - 1) * 2);
-				int var6 = sReadU16();
-				int[] var7 = new int[var6];
-				if (var1 < 0) {
-					textTableGroupStrings = new String[var6];
-					textTableGroupTypes = new byte[var6];
-					textTableGroupIndex = var0;
+				sSkipBytes(index * 2);
+				sSkipBytes(sReadU16() + (numTables - index - 1) * 2);
 
-					for (int var8 = 0; var8 < var6; var8++) {
-						var7[var8] = sReadU16();
+				int numStrings = sReadU16();
+				int[] stringLens = new int[numStrings];
+
+				if (stringIndex < 0) {
+					textTableStrings = new String[numStrings];
+					textTableStringTypes = new byte[numStrings];
+					textTableIndex = index;
+
+					for (int i = 0; i < numStrings; i++) {
+						stringLens[i] = sReadU16();
 						sReadU16();
 					}
 				} else {
-					if (var1 >= var6) {
-						return textTableGroupStrings;
+					if (stringIndex >= numStrings) {
+						return textTableStrings;
 					}
 
-					sSkipBytes(var1 * 4);
-					var7[0] = sReadU16();
-					sSkipBytes(sReadU16() + (var6 - var1 - 1) * 4);
+					sSkipBytes(stringIndex * 4);
+					stringLens[0] = sReadU16();
+					sSkipBytes(sReadU16() + (numStrings - stringIndex - 1) * 4);
 				}
 
-				for (int var12 = 0; var12 < var6; var12++) {
-					int var10002 = var7[var12]--;
-					int var9 = 0;
-					char[] var10 = new char[var7[var12]];
-					if (var3 == 1) {
-						var9 = sReadU8();
+				for (int i = 0; i < numStrings; i++) {
+					stringLens[i]--;
 
-						for (int var11 = 0; var11 < var7[var12]; var11++) {
-							var10[var11] = (char)sReadU8();
+					int type = 0;
+					char[] charArr = new char[stringLens[i]];
+
+					if (bitness == 1) {
+						type = sReadU8();
+
+						for (int j = 0; j < stringLens[i]; j++) {
+							charArr[j] = (char)sReadU8();
 						}
 					} else {
-						var9 = sReadU16();
+						type = sReadU16();
 
-						for (int var14 = 0; var14 < var7[var12]; var14++) {
-							var10[var14] = (char)sReadU16();
+						for (int j = 0; j < stringLens[i]; j++) {
+							charArr[j] = (char)sReadU16();
 						}
 					}
 
-					String var15 = String.valueOf(var10);
-					if (var1 >= 0) {
+					String string = String.valueOf(charArr);
+					if (stringIndex >= 0) {
 						break;
 					}
 
-					textTableGroupTypes[var12] = (byte)var9;
-					textTableGroupStrings[var12] = var15;
+					textTableStringTypes[i] = (byte)type;
+					textTableStrings[i] = string;
 				}
 
-				return textTableGroupStrings;
+				return textTableStrings;
 			}
 		}
 	}
 
-	public static final String getText(int var0) {
-		int var1 = var0 >> 16;
-		if (textTableGroupIndex != var1) {
-			loadTextTableFromIndex(var1, -1);
+	public static final String getText(int stringAddr) {
+		int index = stringAddr >> 16;
+		if (textTableIndex != index) {
+			loadTextTableFromIndex(index, -1);
 		}
 
-		return textTableGroupStrings[var0 & 0xffff];
+		return textTableStrings[stringAddr & 0xffff];
 	}
 
 	public static final int lp32Mul(int var0, int var1) {
