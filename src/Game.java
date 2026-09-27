@@ -1641,9 +1641,10 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final int sReadU16() {
 		if (sCurrentReserved) {
-			int var0 = (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] & 0xff) << 8 | bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 1] & 0xff;
+			int val = (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] & 0xff) << 8 | bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 1] & 0xff;
 			sCurrentOffsetReserved += 2;
-			return var0;
+
+			return val;
 		} else {
 			sCurrentOffset += 2;
 
@@ -1657,9 +1658,10 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final short sRead16() {
 		if (sCurrentReserved) {
-			short var0 = (short)(bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] << 8 | bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 1] & 0xff);
+			short val = (short)(bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] << 8 | bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 1] & 0xff);
 			sCurrentOffsetReserved += 2;
-			return var0;
+
+			return val;
 		} else {
 			sCurrentOffset += 2;
 
@@ -1673,9 +1675,10 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final int sReadU8() {
 		if (sCurrentReserved) {
-			int var0 = bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] & 0xff;
+			int val = bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] & 0xff;
 			sCurrentOffsetReserved++;
-			return var0;
+
+			return val;
 		} else {
 			sCurrentOffset++;
 
@@ -1689,9 +1692,10 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final byte sRead8() {
 		if (sCurrentReserved) {
-			byte var0 = bfcReservedData[sCurrentIndex][sCurrentOffsetReserved];
+			byte val = bfcReservedData[sCurrentIndex][sCurrentOffsetReserved];
 			sCurrentOffsetReserved++;
-			return var0;
+
+			return val;
 		} else {
 			sCurrentOffset++;
 
@@ -1705,9 +1709,10 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final int sRead32() {
 		if (sCurrentReserved) {
-			int var0 = (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] & 0xff) << 24 | (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 1] & 0xff) << 16 | (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 2] & 0xff) << 8 | bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 3] & 0xff;
+			int val = (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved] & 0xff) << 24 | (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 1] & 0xff) << 16 | (bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 2] & 0xff) << 8 | bfcReservedData[sCurrentIndex][sCurrentOffsetReserved + 3] & 0xff;
 			sCurrentOffsetReserved += 4;
-			return var0;
+
+			return val;
 		} else {
 			sCurrentOffset += 4;
 
