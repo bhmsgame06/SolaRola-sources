@@ -807,16 +807,16 @@ public final class Game extends GameCanvas implements Runnable {
 		super.keyReleased(keyCode);
 	}
 
-	public static final boolean isKeyHeld(int var0) {
-		return (heldKeys & var0) > 0;
+	public static final boolean isKeyHeld(int mask) {
+		return (heldKeys & mask) > 0;
 	}
 
-	public static final boolean isKeyPressed(int var0) {
-		return (heldKeys & var0) > 0 && (heldPrevKeys & var0) == 0;
+	public static final boolean isKeyPressed(int mask) {
+		return (heldKeys & mask) > 0 && (heldPrevKeys & mask) == 0;
 	}
 
-	public static final boolean isKeyReleased(int var0) {
-		return (heldPrevKeys & var0) > 0 && (heldKeys & var0) == 0;
+	public static final boolean isKeyReleased(int mask) {
+		return (heldPrevKeys & mask) > 0 && (heldKeys & mask) == 0;
 	}
 
 	public static final void clearKeys() {
