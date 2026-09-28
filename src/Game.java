@@ -1830,55 +1830,63 @@ public final class Game extends GameCanvas implements Runnable {
 		return textTableStrings[stringAddr & 0xffff];
 	}
 
-	public static final int lp32Mul(int var0, int var1) {
-		return (int)((long)var0 * (long)var1 >> 16);
+	// Fixed-point multiplication operation.
+	public static final int lp32Mul(int x, int y) {
+		return (int)((long)x * (long)y >> 16);
 	}
 
-	public static final int lp32Div(int var0, int var1) {
-		return (int)(((long)var0 << 16) / (long)var1);
+	// Fixed-point division operation.
+	public static final int lp32Div(int x, int y) {
+		return (int)(((long)x << 16) / (long)y);
 	}
 
-	public static final int vectorMagnitude(int var0, int var1, int var2) {
-		long var3 = (long)var0;
-		long var5 = (long)var1;
-		var3 = var3 * var3 >> 16;
-		var5 = var5 * var5 >> 16;
-		return (int)sqrtGuess(var3 + var5, (long)var2);
+	// Find the length (magnitude) of the vector using the Pythagorean theorem.
+	public static final int vectorMagnitude(int x, int y, int assume) {
+		long sqrX = (long)x;
+		long sqrY = (long)y;
+		sqrX = sqrX * sqrX >> 16;
+		sqrY = sqrY * sqrY >> 16;
+		return (int)sqrtGuess(sqrX + sqrY, (long)assume);
 	}
 
-	public static final long sqrtGuess(long var0, long var2) {
-		if (var2 == 0L) {
-			return sqrt(var0);
+	// Newton's method for calculating the square root.
+	public static final long sqrtGuess(long arg, long assume) {
+		if (assume == 0L) {
+			return sqrt(arg);
 		} else {
-			for (int var4 = 0; var4 < 5; var4++) {
-				var2 -= ((var2 * var2 >> 16) - var0 << 16) / (var2 << 2);
+			for (int i = 0; i < 5; i++) {
+				assume -= ((assume * assume >> 16) - arg << 16) / (assume << 2);
 			}
 
-			return var2;
+			return assume;
 		}
 	}
 
-	public static final long sqrt(long var0) {
-		long var2 = var0;
-		long var4 = 0L;
-		long var6 = var0;
+	// Long-division method for calculating the square root.
+	public static final long sqrt(long arg) {
+		long val = arg;
 
-		for (long var8 = 1L; var6 > 0L; var6 = var2 / var8) {
-			var4 = var8;
-			var8 *= 100L;
+		long place = 0L;
+		long numberInCurPlace = arg;
+
+		for (long tmpPlace = 1L; numberInCurPlace > 0L; numberInCurPlace = val / tmpPlace) {
+			place = tmpPlace;
+			tmpPlace *= 100L;
 		}
 
-		long var10 = 0L;
+		long result;
+		for (result = 0L; place > 0L; place /= 100L) {
+			numberInCurPlace = val / place;
 
-		long var15;
-		for (var15 = 0L; var4 > 0L; var4 /= 100L) {
-			var6 = var2 / var4;
+			long tryResultBase = 10L * result;
+			long tryResult = tryResultBase;
 
-			for (long var12 = var10 = 10L * var15; var12 < var10 + 10L && var12 * var12 <= var6; var15 = var12++) {
+			while (tryResult < tryResultBase + 10L && tryResult * tryResult <= numberInCurPlace) {
+				result = tryResult++;
 			}
 		}
 
-		return var15 << 8;
+		return result << 8;
 	}
 
 	public static final int softkeyPressed(int l, int r) {
