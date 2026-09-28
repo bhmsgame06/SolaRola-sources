@@ -105,6 +105,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image[] imgsSoftkey;
 
 	// Fonts.
+	public static final int FONT_MAX_CHARS = 230;
 	public static Image[] fontImages;
 	public static int[] fontAverageWidths;
 	public static int[] fontSpacesPerChars;
@@ -1954,177 +1955,184 @@ public final class Game extends GameCanvas implements Runnable {
 		softkeyHeight = null;
 	}
 
-	public static final void initFonts(int var0) {
-		fontCharMap = new short[var0][];
-		fontAverageWidths = new int[var0];
-		fontHeights = new int[var0];
-		fontSpacesPerChars = new int[var0];
-		fontImages = new Image[var0];
-		fontLineGaps = new int[var0];
-		fontCharOffsets = new short[var0][];
-		fontCharWidths = new byte[var0][];
+	public static final void initFonts(int num) {
+		fontCharMap = new short[num][];
+		fontAverageWidths = new int[num];
+		fontHeights = new int[num];
+		fontSpacesPerChars = new int[num];
+		fontImages = new Image[num];
+		fontLineGaps = new int[num];
+		fontCharOffsets = new short[num][];
+		fontCharWidths = new byte[num][];
 	}
 
 	public static final void loadFont(int index, short pimCrc, short pplCrc, short cwtCrc, byte spaceWidth, short chrCrc, int spacePerChar, int lineGap) {
-		fontCharMap[index] = new short[230];
-		fontCharWidths[index] = new byte[230];
+		fontCharMap[index] = new short[FONT_MAX_CHARS];
+		fontCharWidths[index] = new byte[FONT_MAX_CHARS];
+
 		byte[] charWidth = loadFile8(cwtCrc);
 		short[] charMap = loadFile16(chrCrc);
-		int charNum = charMap.length;
-		fontImages[index] = loadImage(pimCrc, pplCrc);
-		fontCharOffsets[index] = new short[charNum];
 
-		for (short i = 0; i < 230; i++) {
+		int numChars = charMap.length;
+
+		fontImages[index] = loadImage(pimCrc, pplCrc);
+		fontCharOffsets[index] = new short[numChars];
+
+		for (short i = 0; i < FONT_MAX_CHARS; i++) {
 			fontCharMap[index][i] = -1;
 			fontCharWidths[index][i] = spaceWidth;
 		}
 
 		short curOff = 0;
 
-		for (short i = 0; i < charNum; i++) {
-			int printable = charMap[i] - 30;
-			fontCharMap[index][printable] = i;
-			fontCharWidths[index][printable] = charWidth[i];
+		for (short i = 0; i < numChars; i++) {
+			int ch = charMap[i] - 30;
+
+			fontCharMap[index][ch] = i;
+			fontCharWidths[index][ch] = charWidth[i];
 			fontCharOffsets[index][i] = curOff;
+
 			curOff = (short)(curOff + charWidth[i]);
 		}
 
 		fontHeights[index] = fontImages[index].getHeight() / 1;
-		fontAverageWidths[index] = fontImages[index].getWidth() / charNum;
+		fontAverageWidths[index] = fontImages[index].getWidth() / numChars;
 		fontSpacesPerChars[index] = spacePerChar;
 		fontLineGaps[index] = lineGap;
 	}
 
-	public static final int calcTextWidth(String var0, int var1) {
-		if (fontCharWidths[var1] == null) {
-			return var0.length() * (fontAverageWidths[var1] + fontSpacesPerChars[var1]) - fontSpacesPerChars[var1];
-		} else {
-			int var2 = 0;
-			int var3 = var0.length();
+	public static final int getStringWidth(String string, int fontId) {
+		if (fontCharWidths[fontId] == null) {
+			return string.length() * (fontAverageWidths[fontId] + fontSpacesPerChars[fontId]) - fontSpacesPerChars[fontId];
+		}
 
-			for (int var4 = 0; var4 < var3; var4++) {
-				int var5 = var0.charAt(var4) - 30;
-				var2 += fontCharWidths[var1][var5];
+		int width = 0;
+		int strLen = string.length();
+
+		for (int i = 0; i < strLen; i++) {
+			int ch = string.charAt(i) - 30;
+			width += fontCharWidths[fontId][ch];
+		}
+
+		return width + (strLen - 1) * fontSpacesPerChars[fontId];
+	}
+
+	public static final int getAverageLengthUntilTerminator(int maxStringWidth, int fontId) {
+		return (maxStringWidth + fontSpacesPerChars[fontId]) / (fontAverageWidths[fontId] + fontSpacesPerChars[fontId]);
+	}
+
+	public static final int getLengthUntilTerminator(int maxStringWidth, int fontId, String string, int startIndex) {
+		if (fontCharWidths[fontId] == null) {
+			return getAverageLengthUntilTerminator(maxStringWidth, fontId);
+		}
+
+		int strLen = string.length();
+
+		int i;
+		for (i = startIndex; i < strLen; i++) {
+			int ch;
+			if ((ch = string.charAt(i) - 30) < 0) {
+				return i - startIndex + 1;
 			}
 
-			return var2 + (var3 - 1) * fontSpacesPerChars[var1];
+			if ((maxStringWidth = maxStringWidth - fontCharWidths[fontId][ch]) < 0) {
+				break;
+			}
+
+			maxStringWidth -= fontSpacesPerChars[fontId];
 		}
+
+		return i - startIndex;
 	}
 
-	public static final int calcAverageLengthUntilTerminator(int var0, int var1) {
-		return (var0 + fontSpacesPerChars[var1]) / (fontAverageWidths[var1] + fontSpacesPerChars[var1]);
-	}
+	// Split a string into lines.
+	public static final int[] getNewLineIndexes(int maxStringLength, String string, int fontId) {
+		if (fontImages[fontId] == null) {
+			return null;
+		}
 
-	public static final int calcLengthUntilTerminator(int var0, int var1, String var2, int var3) {
-		if (fontCharWidths[var1] == null) {
-			return calcAverageLengthUntilTerminator(var0, var1);
-		} else {
-			int var4 = var2.length();
+		int numNewLines = 0;
+		int maxLineLength = 99999;
+		int strLen = string.length();
+		int curIndex = 0;
 
-			int var5;
-			for (var5 = var3; var5 < var4; var5++) {
-				int var6;
-				if ((var6 = var2.charAt(var5) - 30) < 0) {
-					return var5 - var3 + 1;
-				}
+		int approxNewLines = strLen / 8;
+		if (approxNewLines < 10) {
+			approxNewLines = 10;
+		}
 
-				if ((var0 = var0 - fontCharWidths[var1][var6]) < 0) {
+		int[] approxLineIndexes = new int[approxNewLines];
+		boolean isNotWhitespace = false;
+		boolean ignoreFirstNewLines = true;
+		int newLineStreakCount = 0;
+
+		while (curIndex < strLen) {
+			switch(string.charAt(curIndex)) {
+				case '\n':
+					if (!ignoreFirstNewLines && newLineStreakCount > 0)
+						approxLineIndexes[numNewLines++] = curIndex;
+
+					newLineStreakCount++;
+					curIndex++;
+					break;
+
+				case ' ':
+					curIndex++;
+					break;
+
+				default:
+					newLineStreakCount = 0;
+					isNotWhitespace = true;
+			}
+
+			if (!isNotWhitespace) continue;
+
+			ignoreFirstNewLines = false;
+			isNotWhitespace = false;
+
+			int curLineLen;
+			if ((curLineLen = curIndex + getLengthUntilTerminator(maxStringLength, fontId, string, curIndex)) > strLen) {
+				curLineLen = strLen;
+			}
+
+			int nextSpace = -1;
+
+			int eolIndex;
+			for (eolIndex = curIndex; eolIndex < curLineLen; eolIndex++) {
+				if (string.charAt(eolIndex) == '\n') {
+					nextSpace = eolIndex;
 					break;
 				}
 
-				var0 -= fontSpacesPerChars[var1];
-			}
-
-			return var5 - var3;
-		}
-	}
-
-	public static final int[] getNewLineIndexes(int var0, String var1, int var2) {
-		if (fontImages[var2] == null) {
-			return null;
-		} else {
-			int var3 = 0;
-			boolean var4 = false;
-			int var5 = 99999;
-			int var6 = var1.length();
-			int var7 = 0;
-			boolean var9 = false;
-			int var11;
-			if ((var11 = var6 / 8) < 10) {
-				var11 = 10;
-			}
-
-			int[] var12 = new int[var11];
-			boolean var13 = false;
-			boolean var14 = true;
-			int var15 = 0;
-
-			while (var7 < var6) {
-				switch(var1.charAt(var7)) {
-					case '\n':
-						if (!var14 && var15 > 0) {
-							var12[var3++] = var7;
-						}
-
-						var15++;
-						var7++;
-						break;
-					case ' ':
-						var7++;
-						break;
-					default:
-						var15 = 0;
-						var13 = true;
-				}
-
-				if (var13) {
-					var14 = false;
-					var13 = false;
-					int var10;
-					if ((var10 = var7 + calcLengthUntilTerminator(var0, var2, var1, var7)) > var6) {
-						var10 = var6;
-					}
-
-					int var16 = -1;
-
-					int var8;
-					for (var8 = var7; var8 < var10; var8++) {
-						if (var1.charAt(var8) == '\n') {
-							var16 = var8;
-							break;
-						}
-
-						if (var1.charAt(var8) == ' ') {
-							var16 = var8;
-						}
-					}
-
-					if (var8 < var6 && var16 > 0 && var1.charAt(var8) != ' ') {
-						var8 = var16;
-					}
-
-					if (var8 >= var5) {
-						var8 = var5;
-						var6 = 0;
-					}
-
-					if (var7 > var8) {
-						var7 = var8;
-					}
-
-					var12[var3++] = var7;
-					var7 = var8;
+				if (string.charAt(eolIndex) == ' ') {
+					nextSpace = eolIndex;
 				}
 			}
 
-			int[] var18 = new int[var3];
-
-			for (int var17 = 0; var17 < var3; var17++) {
-				var18[var17] = var12[var17];
+			if (eolIndex < strLen && nextSpace > 0 && string.charAt(eolIndex) != ' ') {
+				eolIndex = nextSpace;
 			}
 
-			return var18;
+			if (eolIndex >= maxLineLength) {
+				eolIndex = maxLineLength;
+				strLen = 0;
+			}
+
+			if (curIndex > eolIndex) {
+				curIndex = eolIndex;
+			}
+
+			approxLineIndexes[numNewLines++] = curIndex;
+			curIndex = eolIndex;
 		}
+
+		int[] result = new int[numNewLines];
+
+		for (int i = 0; i < numNewLines; i++) {
+			result[i] = approxLineIndexes[i];
+		}
+
+		return result;
 	}
 
 	public static final void gSetColor(int var0) {
@@ -2224,7 +2232,7 @@ public final class Game extends GameCanvas implements Runnable {
 					var15 = false;
 					var14 = false;
 					int var13;
-					if ((var13 = var10 + calcLengthUntilTerminator(var2, var5, var4, var10)) > var9) {
+					if ((var13 = var10 + getLengthUntilTerminator(var2, var5, var4, var10)) > var9) {
 						var13 = var9;
 					}
 
@@ -2257,7 +2265,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 					String var18 = var4.substring(var10, var11);
 					if (var8) {
-						renderText(var0 + (var2 - calcTextWidth(var18, var5)) / 2, var1, var18, var5);
+						renderText(var0 + (var2 - getStringWidth(var18, var5)) / 2, var1, var18, var5);
 					} else {
 						renderText(var0, var1, var18, var5);
 					}
@@ -2280,7 +2288,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if (var1 + fontHeights[var3] >= var7 && var7 + var4 >= var1) {
 				int var8 = var2.length();
 				if (var0 == -1000) {
-					var0 = (128 - calcTextWidth(var2, var3)) / 2;
+					var0 = (128 - getStringWidth(var2, var3)) / 2;
 				}
 
 				int var9 = var1;
@@ -7298,7 +7306,7 @@ public final class Game extends GameCanvas implements Runnable {
 						var10 = textTableShipPause[var9];
 					}
 
-					renderText(var1 + var14 - calcTextWidth(var10, 3) / 2, 89, var10, 3);
+					renderText(var1 + var14 - getStringWidth(var10, 3) / 2, 89, var10, 3);
 				}
 			}
 		}
@@ -7521,8 +7529,8 @@ public final class Game extends GameCanvas implements Runnable {
 			var2 = (150 - levelCompleteTicks) * 2;
 		}
 
-		renderText((128 - calcTextWidth(textMission, 0)) / 2 - cos1000[var2] * 128 / 1000, 32, textMission, 0);
-		renderText((128 - calcTextWidth(textCompleted, 0)) / 2 + cos1000[var2] * 128 / 1000, 43, textCompleted, 0);
+		renderText((128 - getStringWidth(textMission, 0)) / 2 - cos1000[var2] * 128 / 1000, 32, textMission, 0);
+		renderText((128 - getStringWidth(textCompleted, 0)) / 2 + cos1000[var2] * 128 / 1000, 43, textCompleted, 0);
 		refreshGame();
 		levelCompleteTicks -= 2;
 		if (softkeyPressed(2, -1) == 2) {
