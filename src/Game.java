@@ -1889,27 +1889,29 @@ public final class Game extends GameCanvas implements Runnable {
 		return result << 8;
 	}
 
-	public static final int softkeyPressed(int l, int r) {
-		leftSoftkey = l;
-		rightSoftkey = r;
+	// Check softkeys if pressed.
+	public static final int softkeyPressed(int left, int right) {
+		leftSoftkey = left;
+		rightSoftkey = right;
 
 		if ((heldKeys & 0x800) > 0 && (heldPrevKeys & 0x800) == 0) {
-			return l;
+			return left;
 		} else {
-			return (heldKeys & 0x1000) > 0 && (heldPrevKeys & 0x1000) == 0 ? r : -1;
+			return (heldKeys & 0x1000) > 0 && (heldPrevKeys & 0x1000) == 0 ? right : -1;
 		}
 	}
 
-	public static final int softkeyPressed(int var0, int var1, boolean var2) {
-		leftSoftkey = var0;
-		rightSoftkey = var1;
+	// Check softkeys and the OK key as the left softkey (if okKeyEnabled = true).
+	public static final int softkeyPressed(int left, int right, boolean okKeyEnabled) {
+		leftSoftkey = left;
+		rightSoftkey = right;
 
 		if ((heldKeys & 0x800) > 0 && (heldPrevKeys & 0x800) == 0) {
-			return var0;
+			return left;
 		} else if ((heldKeys & 0x1000) > 0 && (heldPrevKeys & 0x1000) == 0) {
-			return var1;
+			return right;
 		} else {
-			return var2 && var0 >= 0 && (heldKeys & 1) > 0 && (heldPrevKeys & 1) == 0 ? var0 : -1;
+			return okKeyEnabled && left >= 0 && (heldKeys & 1) > 0 && (heldPrevKeys & 1) == 0 ? left : -1;
 		}
 	}
 
@@ -1936,12 +1938,12 @@ public final class Game extends GameCanvas implements Runnable {
 		rightSoftkey = -1;
 	}
 
-	public static final void setSoftkeyIcon(int var0, Image var1) {
+	public static final void setSoftkeyIcon(int index, Image img) {
 		if (imgsSoftkey != null) {
-			if (var0 >= 0 && var0 < imgsSoftkey.length) {
-				imgsSoftkey[var0] = var1;
-				softkeyWidth[var0] = var1.getWidth();
-				softkeyHeight[var0] = var1.getHeight();
+			if (index >= 0 && index < imgsSoftkey.length) {
+				imgsSoftkey[index] = img;
+				softkeyWidth[index] = img.getWidth();
+				softkeyHeight[index] = img.getHeight();
 			}
 		}
 	}
