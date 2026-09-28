@@ -2046,7 +2046,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	// Split a string into lines.
-	public static final int[] getNewLineIndexes(int maxStringLength, String string, int fontId) {
+	public static final int[] getNewLineIndices(int maxStringLength, String string, int fontId) {
 		if (fontImages[fontId] == null) {
 			return null;
 		}
@@ -2061,7 +2061,7 @@ public final class Game extends GameCanvas implements Runnable {
 			approxNewLines = 10;
 		}
 
-		int[] approxLineIndexes = new int[approxNewLines];
+		int[] approxLineIndices = new int[approxNewLines];
 		boolean isNotWhitespace = false;
 		boolean ignoreFirstNewLines = true;
 		int newLineStreakCount = 0;
@@ -2070,7 +2070,7 @@ public final class Game extends GameCanvas implements Runnable {
 			switch(string.charAt(curIndex)) {
 				case '\n':
 					if (!ignoreFirstNewLines && newLineStreakCount > 0)
-						approxLineIndexes[numNewLines++] = curIndex;
+						approxLineIndices[numNewLines++] = curIndex;
 
 					newLineStreakCount++;
 					curIndex++;
@@ -2122,14 +2122,14 @@ public final class Game extends GameCanvas implements Runnable {
 				curIndex = eolIndex;
 			}
 
-			approxLineIndexes[numNewLines++] = curIndex;
+			approxLineIndices[numNewLines++] = curIndex;
 			curIndex = eolIndex;
 		}
 
 		int[] result = new int[numNewLines];
 
 		for (int i = 0; i < numNewLines; i++) {
-			result[i] = approxLineIndexes[i];
+			result[i] = approxLineIndices[i];
 		}
 
 		return result;
@@ -4570,7 +4570,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelPingShardIds = new int[3];
 		levelPingHealth = 3;
 
-		int[] partIndexes = new int[3];
+		int[] partIndices = new int[3];
 
 		levelPingEnemyIds = new int[3][];
 		levelPingEnemyIds[0] = new int[] {-1, -1, -1, -1, -1, -1};
@@ -4598,7 +4598,7 @@ public final class Game extends GameCanvas implements Runnable {
 				 *
 				 * Generally all the enemies are at the top of the 25th level. */
 				int enemyGroup = (levelCircleY[i] >> 16) / 100 - 1;
-				levelPingEnemyIds[enemyGroup][partIndexes[enemyGroup]++] = i;
+				levelPingEnemyIds[enemyGroup][partIndices[enemyGroup]++] = i;
 				levelCircleFlags[i] &= -2;
 
 				for (int k = 0; k < levelEnemyIndex.length; k++) {
@@ -6215,11 +6215,11 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final int numNewLines(String var0) {
-		return getNewLineIndexes(99, var0, 1).length;
+		return getNewLineIndices(99, var0, 1).length;
 	}
 
 	public static final String[] strSplitLines(String var0, int var1) {
-		int[] var2 = getNewLineIndexes(99, var0, var1);
+		int[] var2 = getNewLineIndices(99, var0, var1);
 		String[] var3 = new String[var2.length];
 
 		for (int var4 = 0; var4 < var2.length; var4++) {
