@@ -2199,172 +2199,178 @@ public final class Game extends GameCanvas implements Runnable {
 		instance.flushGraphics();
 	}
 
-	public static final int renderTextEx(int var0, int var1, int var2, int var3, String var4, int var5, int var6, int var7, boolean var8) {
-		if (fontImages[var5] == null) {
+	public static final int renderTextEx(int x, int y, int width, int height, String string, int fontId, int startIndex, int endIndex, boolean centered) {
+		if (fontImages[fontId] == null)
 			return -2;
-		} else {
-			int var9 = var4.length();
-			int var10 = var6;
-			int var12 = var1 + var3 - (fontHeights[var5] + fontLineGaps[var5] - 1);
-			boolean var14 = false;
-			boolean var15 = true;
-			int var16 = 0;
 
-			while (var10 < var9 && var1 < var12) {
-				switch(var4.charAt(var10)) {
-					case '\n':
-						if (!var15 && var16 > 0 && (var1 += fontHeights[var5] + fontLineGaps[var5]) > var12) {
-							return var10;
-						}
+		int strLen = string.length();
+		int index = startIndex;
+		int bottom = y + height - (fontHeights[fontId] + fontLineGaps[fontId] - 1);
+		boolean isNotWhitespace = false;
+		boolean ignoreFirstNewLines = true;
+		int newLineStreakCount = 0;
 
-						var16++;
-						var10++;
-						break;
-					case ' ':
-						var10++;
-						break;
-					default:
-						var16 = 0;
-						var14 = true;
+		while (index < strLen && y < bottom) {
+			switch(string.charAt(index)) {
+				case '\n':
+					if (!ignoreFirstNewLines && newLineStreakCount > 0 && (y += fontHeights[fontId] + fontLineGaps[fontId]) > bottom) {
+						return index;
+					}
+
+					newLineStreakCount++;
+					index++;
+					break;
+
+				case ' ':
+					index++;
+					break;
+
+				default:
+					newLineStreakCount = 0;
+					isNotWhitespace = true;
+			}
+
+			if (!isNotWhitespace) continue;
+
+			ignoreFirstNewLines = false;
+			isNotWhitespace = false;
+
+			int curLineLen;
+			if ((curLineLen = index + getLengthUntilTerminator(width, fontId, string, index)) > strLen) {
+				curLineLen = strLen;
+			}
+
+			int nextSpace = -1;
+
+			int eolIndex;
+			for (eolIndex = index; eolIndex < curLineLen; eolIndex++) {
+				if (string.charAt(eolIndex) == '\n') {
+					nextSpace = eolIndex;
+					break;
 				}
 
-				if (var14) {
-					var15 = false;
-					var14 = false;
-					int var13;
-					if ((var13 = var10 + getLengthUntilTerminator(var2, var5, var4, var10)) > var9) {
-						var13 = var9;
-					}
-
-					int var17 = -1;
-
-					int var11;
-					for (var11 = var10; var11 < var13; var11++) {
-						if (var4.charAt(var11) == '\n') {
-							var17 = var11;
-							break;
-						}
-
-						if (var4.charAt(var11) == ' ') {
-							var17 = var11;
-						}
-					}
-
-					if (var11 < var9 && var17 > 0 && var4.charAt(var11) != ' ') {
-						var11 = var17;
-					}
-
-					if (var11 >= var7) {
-						var11 = var7;
-						var9 = 0;
-					}
-
-					if (var10 > var11) {
-						var10 = var11;
-					}
-
-					String var18 = var4.substring(var10, var11);
-					if (var8) {
-						renderText(var0 + (var2 - getStringWidth(var18, var5)) / 2, var1, var18, var5);
-					} else {
-						renderText(var0, var1, var18, var5);
-					}
-
-					var1 += fontHeights[var5] + fontLineGaps[var5];
-					var10 = var11;
+				if (string.charAt(eolIndex) == ' ') {
+					nextSpace = eolIndex;
 				}
 			}
 
-			return var10 < var9 && var4.charAt(var10) != ' ' ? var10 : var10 + 1;
+			if (eolIndex < strLen && nextSpace > 0 && string.charAt(eolIndex) != ' ') {
+				eolIndex = nextSpace;
+			}
+
+			if (eolIndex >= endIndex) {
+				eolIndex = endIndex;
+				strLen = 0;
+			}
+
+			if (index > eolIndex) {
+				index = eolIndex;
+			}
+
+			String currentLine = string.substring(index, eolIndex);
+			if (centered) {
+				renderText(x + (width - getStringWidth(currentLine, fontId)) / 2, y, currentLine, fontId);
+			} else {
+				renderText(x, y, currentLine, fontId);
+			}
+
+			y += fontHeights[fontId] + fontLineGaps[fontId];
+			index = eolIndex;
 		}
+
+		return index < strLen && string.charAt(index) != ' ' ? index : index + 1;
 	}
 
-	public static final void renderText(int var0, int var1, String var2, int var3) {
-		if (fontImages[var3] != null) {
-			int var4 = gGetClipHeight();
-			int var5 = gGetClipWidth();
-			int var6 = gGetClipX();
-			int var7 = gGetClipY();
-			if (var1 + fontHeights[var3] >= var7 && var7 + var4 >= var1) {
-				int var8 = var2.length();
-				if (var0 == -1000) {
-					var0 = (128 - getStringWidth(var2, var3)) / 2;
-				}
+	public static final void renderText(int x, int y, String string, int fontId) {
+		if (fontImages[fontId] == null)
+			return;
 
-				int var9 = var1;
-				int var10 = fontHeights[var3];
-				if (var7 > var1) {
-					var10 -= var7 - var1;
-					var9 = var7;
-				}
+		int clipHeight = gGetClipHeight();
+		int clipWidth = gGetClipWidth();
+		int clipX = gGetClipX();
+		int clipY = gGetClipY();
 
-				if (var1 + var10 > var7 + var4) {
-					var10 = var7 + var4 - var9;
-				}
+		if (y + fontHeights[fontId] < clipY ||
+				clipY + clipHeight < y)
+			return;
 
-				int var13 = var0;
+		int strLen = string.length();
 
-				for (int var14 = 0; var14 < var8; var14++) {
-					int var15 = var2.charAt(var14) - 30;
-					if (var13 <= 128 && var15 >= 0) {
-						short var16;
-						if ((var16 = fontCharMap[var3][var15]) == -1) {
-							if (fontCharWidths[var3] == null) {
-								var13 += fontAverageWidths[var3] + fontSpacesPerChars[var3];
-							} else {
-								var13 += fontCharWidths[var3][0] + fontSpacesPerChars[var3];
-							}
-						} else {
-							int var11 = var13;
-							int var12;
-							if (fontCharWidths[var3] == null) {
-								var12 = fontAverageWidths[var3];
-							} else {
-								var12 = fontCharWidths[var3][var15];
-							}
+		// Center of the screen
+		if (x == -1000) {
+			x = (128 - getStringWidth(string, fontId)) / 2;
+		}
 
-							if (var13 + var12 < 0) {
-								if (fontCharWidths[var3] != null) {
-									var13 += fontCharWidths[var3][var15] + fontSpacesPerChars[var3];
-								} else {
-									var13 += fontAverageWidths[var3] + fontSpacesPerChars[var3];
-								}
-							} else {
-								if (var13 < var6 || var13 + var12 > var6 + var5) {
-									if (var13 + var12 < var6) {
-										continue;
-									}
+		int textY = y;
+		int fontHeight = fontHeights[fontId];
 
-									if (var13 > var6 + var5) {
-										break;
-									}
+		if (clipY > y) {
+			fontHeight -= clipY - y;
+			textY = clipY;
+		}
 
-									if (var13 < var6) {
-										var12 -= var6 - var13;
-										var11 = var6;
-									}
+		if (y + fontHeight > clipY + clipHeight) {
+			fontHeight = clipY + clipHeight - textY;
+		}
 
-									if (var11 + var12 > var6 + var5) {
-										var12 = var6 + var5 - var11;
-									}
-								}
+		int curX = x;
 
-								gSetClip(var11, var9, var12, var10);
-								if (fontCharWidths[var3] != null) {
-									gDrawImage(fontImages[var3], var13 - fontCharOffsets[var3][var16], var1, 0);
-									var13 += fontCharWidths[var3][var15] + fontSpacesPerChars[var3];
-								} else {
-									gDrawImage(fontImages[var3], var13 - fontAverageWidths[var3] * var16, var1, 0);
-									var13 += fontAverageWidths[var3] + fontSpacesPerChars[var3];
-								}
-							}
+		for (int i = 0; i < strLen; i++) {
+
+			int ch = string.charAt(i) - 30;
+			if (curX > 128 || ch < 0)
+				return;
+
+			short charIndex;
+			if ((charIndex = fontCharMap[fontId][ch]) == -1) {
+
+				curX += fontCharWidths[fontId] != null ?
+					fontCharWidths[fontId][0] + fontSpacesPerChars[fontId] :
+					fontAverageWidths[fontId] + fontSpacesPerChars[fontId];
+
+			} else {
+
+				int charX = curX;
+				int charWidth = fontCharWidths[fontId] != null ?
+					fontCharWidths[fontId][ch] :
+					fontAverageWidths[fontId];
+
+				if (curX + charWidth < 0) {
+
+					curX += fontCharWidths[fontId] != null ?
+						fontCharWidths[fontId][ch] + fontSpacesPerChars[fontId] :
+						fontAverageWidths[fontId] + fontSpacesPerChars[fontId];
+
+				} else {
+
+					if (curX < clipX || curX + charWidth > clipX + clipWidth) {
+						if (curX + charWidth < clipX) continue;
+						if (curX > clipX + clipWidth) break;
+
+						if (curX < clipX) {
+							charWidth -= clipX - curX;
+							charX = clipX;
+						}
+
+						if (charX + charWidth > clipX + clipWidth) {
+							charWidth = clipX + clipWidth - charX;
 						}
 					}
-				}
 
-				gSetClip(var6, var7, var5, var4);
+					gSetClip(charX, textY, charWidth, fontHeight);
+
+					if (fontCharWidths[fontId] != null) {
+						gDrawImage(fontImages[fontId], curX - fontCharOffsets[fontId][charIndex], y, 0);
+						curX += fontCharWidths[fontId][ch] + fontSpacesPerChars[fontId];
+					} else {
+						gDrawImage(fontImages[fontId], curX - fontAverageWidths[fontId] * charIndex, y, 0);
+						curX += fontAverageWidths[fontId] + fontSpacesPerChars[fontId];
+					}
+				}
 			}
 		}
+
+		gSetClip(clipX, clipY, clipWidth, clipHeight);
 	}
 
 	public static final void setRandSeed(int seed) {
@@ -6936,6 +6942,9 @@ public final class Game extends GameCanvas implements Runnable {
 
 		gSetColor(0, 0, 0);
 		gFillArc(43, 43, 42, 42, 0, 360);
+		
+		renderText(64, 64, "Hello, world", 2);
+
 		gfxFlush();
 	}
 
