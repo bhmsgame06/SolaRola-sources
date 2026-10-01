@@ -2135,48 +2135,48 @@ public final class Game extends GameCanvas implements Runnable {
 		return result;
 	}
 
-	public static final void gSetColor(int var0) {
-		gfx.setColor(var0);
+	public static final void gSetColor(int rgb) {
+		gfx.setColor(rgb);
 	}
 
-	public static final void gSetColor(int var0, int var1, int var2) {
-		gfx.setColor(var0, var1, var2);
+	public static final void gSetColor(int red, int green, int blue) {
+		gfx.setColor(red, green, blue);
 	}
 
 	public static final int gGetColor() {
 		return gfx.getColor();
 	}
 
-	public static final void gFillRect(int var0, int var1, int var2, int var3) {
-		gfx.fillRect(var0, var1, var2, var3);
+	public static final void gFillRect(int x, int y, int width, int height) {
+		gfx.fillRect(x, y, width, height);
 	}
 
-	public static final void gDrawRect(int var0, int var1, int var2, int var3) {
-		gfx.drawRect(var0, var1, var2, var3);
+	public static final void gDrawRect(int x, int y, int width, int height) {
+		gfx.drawRect(x, y, width, height);
 	}
 
-	public static final void gDrawImage(Image var0, int var1, int var2, int var3) {
-		gfx.drawImage(var0, var1, var2, var3);
+	public static final void gDrawImage(Image img, int x, int y, int anchor) {
+		gfx.drawImage(img, x, y, anchor);
 	}
 
-	public static final void gDrawLine(int var0, int var1, int var2, int var3) {
-		gfx.drawLine(var0, var1, var2, var3);
+	public static final void gDrawLine(int x1, int y1, int x2, int y2) {
+		gfx.drawLine(x1, y1, x2, y2);
 	}
 
-	public static final void gFillArc(int var0, int var1, int var2, int var3, int var4, int var5) {
-		gfx.fillArc(var0, var1, var2, var3, var4, var5);
+	public static final void gFillArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+		gfx.fillArc(x, y, width, height, startAngle, arcAngle);
 	}
 
-	public static final void gDrawArc(int var0, int var1, int var2, int var3, int var4, int var5) {
-		gfx.drawArc(var0, var1, var2, var3, var4, var5);
+	public static final void gDrawArc(int x, int y, int width, int height, int startAngle, int arcAngle) {
+		gfx.drawArc(x, y, width, height, startAngle, arcAngle);
 	}
 
-	public static final void gFillTriangle(int var0, int var1, int var2, int var3, int var4, int var5) {
-		gfx.fillTriangle(var0, var1, var2, var3, var4, var5);
+	public static final void gFillTriangle(int x1, int y1, int x2, int y2, int x3, int y3) {
+		gfx.fillTriangle(x1, y1, x2, y2, x3, y3);
 	}
 
-	public static final void gSetClip(int var0, int var1, int var2, int var3) {
-		gfx.setClip(var0, var1, var2, var3);
+	public static final void gSetClip(int x, int y, int width, int height) {
+		gfx.setClip(x, y, width, height);
 	}
 
 	public static final int gGetClipX() {
