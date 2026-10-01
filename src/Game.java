@@ -2686,71 +2686,80 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void initSpace(int var0, int var1, int var2, int var3) {
-		if (currentSpaceWidth != var2 || currentSpaceHeight != var3 || spaceStarX == null || spaceStarX.length != var0 || spaceStarX[0].length != var1) {
-			currentSpaceWidth = var2;
-			currentSpaceHeight = var3;
-			spaceStarX = new int[var0][];
-			spaceStarY = new int[var0][];
-			spaceStarXVel = new int[var0][];
-			spaceStarFlashTicks = new int[var0][];
+	public static final void initSpace(int numSpaces, int maxStars, int width, int height) {
+		if (currentSpaceWidth != width ||
+				currentSpaceHeight != height ||
+				spaceStarX == null ||
+				spaceStarX.length != numSpaces ||
+				spaceStarX[0].length != maxStars) {
 
-			for (int var4 = 0; var4 < var0; var4++) {
-				spaceStarX[var4] = new int[var1];
-				spaceStarY[var4] = new int[var1];
-				spaceStarXVel[var4] = new int[var1];
-				spaceStarFlashTicks[var4] = new int[var1];
+			currentSpaceWidth = width;
+			currentSpaceHeight = height;
+			spaceStarX = new int[numSpaces][];
+			spaceStarY = new int[numSpaces][];
+			spaceStarXVel = new int[numSpaces][];
+			spaceStarFlashTicks = new int[numSpaces][];
 
-				for (int var5 = 0; var5 < var1; var5++) {
-					spaceStarX[var4][var5] = rand16() % var2 << 4;
-					spaceStarY[var4][var5] = rand16() % var3 << 4;
-					spaceStarXVel[var4][var5] = -1 - rand8() % 32;
-					spaceStarFlashTicks[var4][var5] = 0;
+			for (int i = 0; i < numSpaces; i++) {
+				spaceStarX[i] = new int[maxStars];
+				spaceStarY[i] = new int[maxStars];
+				spaceStarXVel[i] = new int[maxStars];
+				spaceStarFlashTicks[i] = new int[maxStars];
+
+				for (int j = 0; j < maxStars; j++) {
+					spaceStarX[i][j] = rand16() % width << 4;
+					spaceStarY[i][j] = rand16() % height << 4;
+					spaceStarXVel[i][j] = -1 - rand8() % 32;
+					spaceStarFlashTicks[i][j] = 0;
 				}
 			}
 		}
 	}
 
-	public static final void renderSpace(int var0, int var1, int var2) {
-		renderSpace(var0, var1, var2, true);
+	public static final void renderSpace(int spaceId, int x, int y) {
+		renderSpace(spaceId, x, y, true);
 	}
 
-	public static final void renderSpace(int var0, int var1, int var2, boolean var3) {
-		if (var0 >= 0 && var0 < spaceStarX.length) {
-			spaceStarFlashTicks[var0][rand16() % spaceStarFlashTicks[var0].length] = 9;
+	public static final void renderSpace(int spaceId, int x, int y, boolean update) {
+		if (spaceId >= 0 && spaceId < spaceStarX.length) {
+			spaceStarFlashTicks[spaceId][rand16() % spaceStarFlashTicks[spaceId].length] = 9;
 
-			for (int var7 = 0; var7 < spaceStarX[var0].length; var7++) {
-				int var5;
-				int var6;
-				int var4 = var5 = var6 = 30 - 7 * spaceStarXVel[var0][var7];
-				if (var7 % 3 == 1) {
-					var5 = 0;
-					var4 = 0;
+			for (int i = 0; i < spaceStarX[spaceId].length; i++) {
+
+				/* The brightness of the star depends on its velocity (or how I
+				 * call it, "Z axis"). */
+				int starR = 30 - 7 * spaceStarXVel[spaceId][i];
+				int starG = starR;
+				int starB = starR;
+
+				if (i % 3 == 1) {
+					starG = 0;
+					starR = 0;
 				}
 
-				if (var7 % 3 == 2) {
-					var6 = 0;
-					var5 = 0;
+				if (i % 3 == 2) {
+					starB = 0;
+					starG = 0;
 				}
 
-				gSetColor(var4, var5, var6);
-				if (spaceStarFlashTicks[var0][var7] > 0) {
-					int var10002 = spaceStarFlashTicks[var0][var7]--;
-					if (spaceStarFlashTicks[var0][var7] > 4) {
+				gSetColor(starR, starG, starB);
+
+				if (spaceStarFlashTicks[spaceId][i] > 0) {
+					if (--spaceStarFlashTicks[spaceId][i] > 4) {
 						gSetColor(0);
 					} else {
 						gSetColor(0xffffff);
 					}
 				}
 
-				renderStar(var1 + (spaceStarX[var0][var7] >> 4), var2 + (spaceStarY[var0][var7] >> 4));
-				if (var3) {
-					int[] var10000 = spaceStarX[var0];
-					var10000[var7] += spaceStarXVel[var0][var7];
-					if (spaceStarX[var0][var7] < 0) {
-						spaceStarX[var0][var7] = currentSpaceWidth - 1 << 4;
-						spaceStarY[var0][var7] = rand16() % currentSpaceHeight << 4;
-						spaceStarXVel[var0][var7] = -4 - rand8() % 28;
+				renderStar(x + (spaceStarX[spaceId][i] >> 4), y + (spaceStarY[spaceId][i] >> 4));
+
+				if (update) {
+					spaceStarX[spaceId][i] += spaceStarXVel[spaceId][i];
+					if (spaceStarX[spaceId][i] < 0) {
+						spaceStarX[spaceId][i] = currentSpaceWidth - 1 << 4;
+						spaceStarY[spaceId][i] = rand16() % currentSpaceHeight << 4;
+						spaceStarXVel[spaceId][i] = -4 - rand8() % 28;
 					}
 				}
 			}
@@ -2770,6 +2779,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void sceneHelpRun() {
 		renderHelp();
+
 		if (softkeyPressed(2, -1) == 2) {
 			setNewState(2, 0);
 		}
