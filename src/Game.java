@@ -2603,35 +2603,29 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void renderCritterShock(int var0, int var1, int var2, int var3, int var4, int var5) {
-		int var11 = (var2 - var0) / 7;
-		int var12 = (var3 - var1) / 7;
-		boolean var13 = false;
-		boolean var14 = false;
-		boolean var15 = false;
-		boolean var16 = false;
+	public static final void renderCritterShock(int x1, int y1, int x2, int y2, int numPoints, int shockDisplacement) {
+		int rateX = (x2 - x1) / 7;
+		int rateY = (y2 - y1) / 7;
 
-		for (int var17 = 0; var17 < 2; var17++) {
-			int var8 = var0;
-			int var9 = var1;
-			int var10 = 111 + rand8() % 140;
-			if (var17 == 0) {
-				gSetColor(var10, var10, var10);
-			} else {
-				gSetColor(var10, var10, 255);
-			}
+		for (int i = 0; i < 2; i++) {
+			int shX2 = x1;
+			int shY2 = y1;
+			int shockColor = 111 + rand8() % 140;
 
-			for (int var18 = 1; var18 < var4; var18++) {
-				int var6 = var8;
-				int var7 = var9;
-				var8 = var0 + var18 * var11 + rand8() % var5 - var5 / 2;
-				var9 = var1 + var18 * var12 + rand8() % var5 - var5 / 2;
-				if (var18 == 7) {
-					var8 = var2;
-					var9 = var3;
+			gSetColor(shockColor, shockColor, i == 0 ? shockColor : 255);
+
+			for (int j = 1; j < numPoints; j++) {
+				int shX1 = shX2;
+				int shY1 = shY2;
+				shX2 = x1 + j * rateX + rand8() % shockDisplacement - shockDisplacement / 2;
+				shY2 = y1 + j * rateY + rand8() % shockDisplacement - shockDisplacement / 2;
+
+				if (j == 7) {
+					shX2 = x2;
+					shY2 = y2;
 				}
 
-				gDrawLine(var6, var7, var8, var9);
+				gDrawLine(shX1, shY1, shX2, shY2);
 			}
 		}
 	}
