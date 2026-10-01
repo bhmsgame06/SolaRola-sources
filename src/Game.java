@@ -2662,29 +2662,26 @@ public final class Game extends GameCanvas implements Runnable {
 			gSetColor(0);
 		}
 
-		for (int var0 = 0; var0 < 10; var0++) {
-			if (precipitationY[var0] > 128 || precipitationX[var0] == 0 && precipitationY[var0] == 0) {
-				if (precipitationX[var0] == 0 && precipitationY[var0] == 0) {
-					precipitationY[var0] = rand16() % 128;
+		for (int i = 0; i < 10; i++) {
+			if (precipitationY[i] > 128 || precipitationX[i] == 0 && precipitationY[i] == 0) {
+				if (precipitationX[i] == 0 && precipitationY[i] == 0) {
+					precipitationY[i] = rand16() % 128;
 				} else {
-					precipitationY[var0] = -(rand16() % 10);
+					precipitationY[i] = -(rand16() % 10);
 				}
 
-				precipitationX[var0] = rand16() % 128;
-				precipitationDirectionCos[var0] = rand16() % 360;
+				precipitationX[i] = rand16() % 128;
+				precipitationDirectionCos[i] = rand16() % 360;
 			}
 
-			gDrawLine(precipitationX[var0] - 1, precipitationY[var0], precipitationX[var0] + 1, precipitationY[var0]);
-			gDrawLine(precipitationX[var0], precipitationY[var0] - 1, precipitationX[var0], precipitationY[var0] + 1);
-			int[] var10000 = precipitationX;
-			var10000[var0] += cos1000[precipitationDirectionCos[var0]] * 3 / 1000;
-			var10000 = precipitationY;
-			var10000[var0] += 2;
-			var10000 = precipitationDirectionCos;
-			var10000[var0] += 5;
-			if (precipitationDirectionCos[var0] >= 360) {
-				var10000 = precipitationDirectionCos;
-				var10000[var0] -= 360;
+			gDrawLine(precipitationX[i] - 1, precipitationY[i], precipitationX[i] + 1, precipitationY[i]);
+			gDrawLine(precipitationX[i], precipitationY[i] - 1, precipitationX[i], precipitationY[i] + 1);
+
+			precipitationX[i] += cos1000[precipitationDirectionCos[i]] * 3 / 1000;
+			precipitationY[i] += 2;
+			precipitationDirectionCos[i] += 5;
+			if (precipitationDirectionCos[i] >= 360) {
+				precipitationDirectionCos[i] -= 360;
 			}
 		}
 	}
