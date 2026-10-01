@@ -2638,17 +2638,15 @@ public final class Game extends GameCanvas implements Runnable {
 
 		gSetColor(0xc8c8c8);
 
-		for (int var0 = 0; var0 < 8; var0++) {
-			if (rainY[var0] > 128 || rainX[var0] == 0 && rainY[var0] == 0) {
-				rainX[var0] = rand16() % 149;
-				rainY[var0] = rand16() % 21;
+		for (int i = 0; i < 8; i++) {
+			if (rainY[i] > 128 || rainX[i] == 0 && rainY[i] == 0) {
+				rainX[i] = rand16() % 149;
+				rainY[i] = rand16() % 21;
 			}
 
-			gDrawLine(rainX[var0], rainY[var0], rainX[var0] + -3, rainY[var0] + 10);
-			int[] var10000 = rainX;
-			var10000[var0] += -9;
-			var10000 = rainY;
-			var10000[var0] += 30;
+			gDrawLine(rainX[i], rainY[i], rainX[i] + -3, rainY[i] + 10);
+			rainX[i] += -9;
+			rainY[i] += 30;
 		}
 	}
 
