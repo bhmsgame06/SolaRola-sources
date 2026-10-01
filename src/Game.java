@@ -2570,41 +2570,36 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void renderConfetti() {
-		for (int var0 = 0; var0 < 40; var0++) {
-			if (confettiColors[var0] == 0 || confettiY[var0] > 128) {
-				confettiColors[var0] = confettiColorsAll[rand8() % confettiColorsAll.length];
-				confettiHeights[var0] = rand8() % 40;
-				confettiX[var0] = rand16() % 128;
-				confettiY[var0] = -rand16() % 128;
-				confettiWidths[var0] = 8 + rand8() % 7;
-				confettiAngles[var0] = rand8();
+		for (int i = 0; i < 40; i++) {
+			if (confettiColors[i] == 0 || confettiY[i] > 128) {
+				confettiColors[i] = confettiColorsAll[rand8() % confettiColorsAll.length];
+				confettiHeights[i] = rand8() % 40;
+				confettiX[i] = rand16() % 128;
+				confettiY[i] = -rand16() % 128;
+				confettiWidths[i] = 8 + rand8() % 7;
+				confettiAngles[i] = rand8();
 			}
 
-			int[] var10000 = confettiY;
-			var10000[var0] += (1 + rand8() % 5) * 128 / 176;
-			var10000 = confettiX;
-			var10000[var0] += cos1000[confettiAngles[var0]] * 3 / 1000;
-			var10000 = confettiHeights;
-			var10000[var0] += 4 + rand8() % 5;
-			if (confettiHeights[var0] >= 40) {
-				confettiHeights[var0] = 0;
-				confettiColors[var0] = confettiColorsAll[rand8() % confettiColorsAll.length];
+			confettiY[i] += (1 + rand8() % 5) * 128 / 176;
+			confettiX[i] += cos1000[confettiAngles[i]] * 3 / 1000;
+			confettiHeights[i] += 4 + rand8() % 5;
+			if (confettiHeights[i] >= 40) {
+				confettiHeights[i] = 0;
+				confettiColors[i] = confettiColorsAll[rand8() % confettiColorsAll.length];
 			}
 
-			var10000 = confettiAngles;
-			var10000[var0] += 3 + var0 % 2;
-			if (confettiAngles[var0] >= 360) {
-				var10000 = confettiAngles;
-				var10000[var0] -= 360;
+			confettiAngles[i] += 3 + i % 2;
+			if (confettiAngles[i] >= 360) {
+				confettiAngles[i] -= 360;
 			}
 
-			int var1 = confettiHeights[var0] / 4;
-			if (confettiHeights[var0] >= 20) {
-				var1 = (40 - confettiHeights[var0]) / 4;
+			int confettiHeight = confettiHeights[i] / 4;
+			if (confettiHeights[i] >= 20) {
+				confettiHeight = (40 - confettiHeights[i]) / 4;
 			}
 
-			gSetColor(confettiColors[var0]);
-			gFillRect(confettiX[var0], confettiY[var0], confettiWidths[var0] * 128 / 176, var1 * 128 / 176);
+			gSetColor(confettiColors[i]);
+			gFillRect(confettiX[i], confettiY[i], confettiWidths[i] * 128 / 176, confettiHeight * 128 / 176);
 		}
 	}
 
@@ -6943,8 +6938,6 @@ public final class Game extends GameCanvas implements Runnable {
 		gSetColor(0, 0, 0);
 		gFillArc(43, 43, 42, 42, 0, 360);
 		
-		renderText(64, 64, "Hello, world", 2);
-
 		gfxFlush();
 	}
 
