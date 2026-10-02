@@ -2780,15 +2780,18 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void sceneHelpRun() {
 		renderHelp();
 
+		// OK softkey.
 		if (softkeyPressed(2, -1) == 2) {
 			setNewState(2, 0);
 		}
 
+		// Down key.
 		if (isKeyHeld(0x40)) {
 			sceneHelpScrollAccel -= (400 + sceneHelpScrollAccel) / 6;
 			sceneHelpAutoscrollActive = false;
 		}
 
+		// Up key.
 		if (isKeyHeld(0x20)) {
 			sceneHelpScrollAccel += (400 - sceneHelpScrollAccel) / 6;
 			sceneHelpAutoscrollActive = false;
@@ -2809,29 +2812,32 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		sceneHelpScroll++;
+
 		refreshGame();
 	}
 
 	public static final void renderHelp() {
 		gSetColor(0);
 		gFillRect(0, 0, 128, 128);
-		renderSpace(0, 0, 0, true);
-		int var0 = sceneHelpScrollDistance >> 8;
 
-		for (int var1 = 0; var1 < sceneHelpText.length; var1++) {
-			if (var0 > -14 && var0 < 128) {
-				int var2 = 0;
-				if (var0 < 42) {
-					var2 = 90 - var0 * 90 * 3 / 128;
-				} else if (var0 > 85) {
-					var2 = 90 - (128 - var0) * 90 * 3 / 128;
+		renderSpace(0, 0, 0, true);
+
+		int scrollDistance = sceneHelpScrollDistance >> 8;
+
+		for (int i = 0; i < sceneHelpText.length; i++) {
+			if (scrollDistance > -14 && scrollDistance < 128) {
+				int textOffsetX = 0;
+				if (scrollDistance < 42) {
+					textOffsetX = 90 - scrollDistance * 90 * 3 / 128;
+				} else if (scrollDistance > 85) {
+					textOffsetX = 90 - (128 - scrollDistance) * 90 * 3 / 128;
 				}
 
-				int var3 = 5 + sin(var2) * 128 / 2600;
-				renderText(var3, var0, sceneHelpText[var1], 2);
+				int textX = 5 + sin(textOffsetX) * 128 / 2600;
+				renderText(textX, scrollDistance, sceneHelpText[i], 2);
 			}
 
-			var0 += 14;
+			scrollDistance += 14;
 		}
 
 		gDrawImage(imgsScrollbar[0], 120, 43 - (sceneHelpScroll >> 2 & 3), 0);
@@ -2839,16 +2845,17 @@ public final class Game extends GameCanvas implements Runnable {
 		gDrawImage(imgsScrollbar[2], 120, 92 + (sceneHelpScroll >> 2 & 3), 0);
 	}
 
-	public static final void sceneHelpInit(int var0) {
+	public static final void sceneHelpInit(int arg) {
 		if (imgsScrollbar == null) {
 			imgsScrollbar = new Image[3];
 
-			for (int var1 = 0; var1 < 3; var1++) {
-				imgsScrollbar[var1] = loadImage("scrollBar" + var1 + ".pim", "scrollBar" + var1 + ".ppl");
+			for (int i = 0; i < 3; i++) {
+				imgsScrollbar[i] = loadImage("scrollBar" + i + ".pim", "scrollBar" + i + ".ppl");
 			}
 		}
 
 		initSpace(1, 50, 128, 128);
+
 		if (sceneHelpText == null) {
 			sceneHelpText = strSplitLines(getText(0x30000), 2);
 		}
@@ -2857,6 +2864,7 @@ public final class Game extends GameCanvas implements Runnable {
 		sceneHelpScrollAccel = 0;
 		sceneHelpAutoscrollActive = true;
 		sceneHelpScroll = 0;
+
 		playSound(-1);
 	}
 
