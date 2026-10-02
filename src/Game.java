@@ -2876,73 +2876,97 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void scenePreLevelRun() {
 		gSetColor(0);
 		gFillRect(0, 0, 128, 128);
+
 		renderSpace(0, 0, 0, false);
+
+		// A distant ship.
 		if (scenePreLevelCurTick > 65) {
 			gDrawImage(imgShipSmall, scenePreLevelSmallShipX, scenePreLevelSmallShipY, 0);
 			scenePreLevelSmallShipX -= 2;
 		}
 
+		// A planet.
 		gDrawImage(imgCurrentPlanet, 0, 128 - imgCurrentPlanet.getHeight(), 0);
+
+		// A closer ship.
 		if (scenePreLevelShipX < 128) {
 			gDrawImage(imgOutside, scenePreLevelShipX, scenePreLevelShipY, 0);
 			gDrawImage(imgsFlame[(int)(millis() / 100L % 2L)], scenePreLevelShipX + 7 - 10, scenePreLevelShipY + 16 - 3, 0);
 			scenePreLevelShipX += 5;
 		}
 
+		// Render a planet name.
 		if (scenePreLevelCurTick > 50) {
 			renderText(-1000, 85, currentPlanetText, 0);
 		}
 
+		// Render "press 5" string.
 		if (scenePreLevelCurTick > 120 && (millis() & 512L) > 0L) {
 			renderText(-1000, 114, titleText, 0);
 		}
 
-		if (scenePreLevelCurTick < 120 && softkeyPressed(-1, 3) == 3 || scenePreLevelCurTick > 120 && softkeyPressed(2, -1, true) == 2) {
+		// Enter the level if skipped or pressed OK.
+		if (scenePreLevelCurTick < 120 && softkeyPressed(-1, 3) == 3 ||
+				scenePreLevelCurTick > 120 && softkeyPressed(2, -1, true) == 2) {
+
 			setNewState(4, 0);
 		}
 
 		scenePreLevelCurTick++;
+
 		refreshGame();
 	}
 
-	public static final void scenePreLevelInit(int var0) {
+	public static final void scenePreLevelInit(int arg) {
 		playSound(-1);
+
+		// Preinitialize a level.
 		activateLevel(level);
+
 		currentPlanetText = loadTextTableFromIndex(86, -1)[level];
-		String var2 = "planet";
-		var2 = var2 + level % 2 + "_" + levelBackgroundId % 5;
-		imgCurrentPlanet = loadImage(var2 + ".pim", var2 + ".ppl");
+
+		String filename = "planet" + level % 2 + "_" + levelBackgroundId % 5;
+		imgCurrentPlanet = loadImage(filename + ".pim", filename + ".ppl");
 		imgOutside = loadImage("outside.pim", "outside.ppl");
 		imgShipSmall = loadImage("shipSmall.pim", "shipSmall.ppl");
+
+		// Ship positions.
 		scenePreLevelSmallShipX = 128;
 		scenePreLevelSmallShipY = 128 - imgCurrentPlanet.getHeight() * 4 / 5;
 		if (scenePreLevelSmallShipY < 32) {
 			scenePreLevelSmallShipY = 32;
 		}
-
 		scenePreLevelShipX = -61;
 		scenePreLevelShipY = 70;
+
+		// Flame sprites.
 		if (imgsFlame == null) {
 			imgsFlame = new Image[2];
 			imgsFlame[0] = loadImage("flame0.pim", "flame0.ppl");
 			imgsFlame[1] = loadImage("flame1.pim", "flame1.ppl");
 		}
 
+		// "press 5" string.
 		if (titleText == null) {
 			titleText = getText(0x1000f);
 		}
 
 		initSpace(1, 50, 128, 128);
+
 		playJingleFlyIn();
+
 		scenePreLevelCurTick = 0;
 	}
 
 	public static final void scenePreLevelFree() {
 		playSound(-1);
+
 		clearKeys();
+
 		imgCurrentPlanet = null;
 		imgOutside = null;
 		imgShipSmall = null;
+
 		garbageCollector();
 	}
 
