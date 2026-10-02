@@ -2319,7 +2319,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			int ch = string.charAt(i) - 30;
 			if (curX > 128 || ch < 0)
-				return;
+				continue;
 
 			short charIndex;
 			if ((charIndex = fontCharMap[fontId][ch]) == -1) {
