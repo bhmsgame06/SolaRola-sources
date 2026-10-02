@@ -2972,13 +2972,16 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void sceneLevelRun() {
 		switch(levelCompletionState) {
+			// Update the level constantly.
 			case 0:
-				_sceneLevelRun();
+				sceneLevelUpdate();
 				if (isLevelComplete) {
 					startDialogue("outro" + level + ".bms", levelCircleX[0], levelCircleY[0]);
 					levelCompletionState = 1;
 				}
 				break;
+
+			// Level completed.
 			case 1:
 				initVictory();
 				levelCompletionState = 2;
@@ -2987,6 +2990,8 @@ public final class Game extends GameCanvas implements Runnable {
 					levelCompletionState = 3;
 				}
 				break;
+
+			// Return to the ship.
 			case 3:
 				setNewState(2, 10);
 		}
@@ -2996,21 +3001,29 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void sceneLevelInit(int var0) {
+	public static final void sceneLevelInit(int arg) {
 		isShipPaused = false;
-		if (oldState != 5 && var0 != 1) {
+
+		/* 'arg' represents the choice of whether to load resources (possibly
+		 * reloading them) or to skip that. */
+		if (oldState != 5 && arg != 1) {
 			isLoadingBarShown = true;
 			levelCompletionState = 0;
+
 			loadFaces();
 			initExplosives();
 			initEnemies();
 			initSigns();
 			initGrabber();
+
 			mustExitPlayground = false;
 			isLevelComplete = false;
 		}
 
 		gamma = 100;
+
+		/* Do not bother audio engine if old scene was a dialogue or a
+		 * transition. */
 		if (oldState != 5 && oldState != 6) {
 			playCurrentBackgroundMusic();
 		}
@@ -3023,6 +3036,8 @@ public final class Game extends GameCanvas implements Runnable {
 			isLevelComplete = false;
 		}
 
+		/* Do not bother audio engine if old scene was a dialogue or a
+		 * transition. */
 		if (newStateIndex != 5 && newStateIndex != 6) {
 			playSound(-1);
 			garbageCollector();
@@ -6265,7 +6280,7 @@ public final class Game extends GameCanvas implements Runnable {
 		return var3;
 	}
 
-	public static final void _sceneLevelRun() {
+	public static final void sceneLevelUpdate() {
 		if (levelDialogueToDisplay > -1) {
 			levelDisplayDialogue(levelDialogueToDisplay);
 			levelDialogueToDisplay = -1;
