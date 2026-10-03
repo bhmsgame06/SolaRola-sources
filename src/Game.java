@@ -3091,27 +3091,29 @@ public final class Game extends GameCanvas implements Runnable {
 
 			// Maniacs of Noice scaling up.
 			case 4:
-				int[] var2 = new int[] {0, 0xffffff, 0, 0xffffff, 0x3aaec7};
-				int[] var3 = new int[] {54, 54, 37, 37, 18};
-				int[] var4 = new int[] {0, -10, -5, 2, 0};
+				int[] elemColors = new int[] {0, 0xffffff, 0, 0xffffff, 0x3aaec7};
+				int[] elemRadius = new int[] {54, 54, 37, 37, 18};
+				int[] elemX = new int[] {0, -10, -5, 2, 0};
 
-				for (int var5 = 0; var5 < 5; var5++) {
-					gSetColor(var2[var5]);
-					int var6 = sin1000[splashTick * 2] * var4[var5] / 1000;
-					int var7 = sin1000[splashTick * 2] * var3[var5] / 1000;
-					if (var5 != 2 && var5 != 3) {
-						gFillArc(64 + var6 - var7 / 2 - 1, 64 - var7 / 2, var7, var7, 0, 360);
-					} else {
-						gFillArc(64 + var6 - var7 / 2 - 1, 64 - var7 / 2, var7, var7, 80, 200);
-					}
+				for (int i = 0; i < 5; i++) {
+					gSetColor(elemColors[i]);
+
+					int scaleX = sin1000[splashTick * 2] * elemX[i] / 1000;
+					int scaleRadius = sin1000[splashTick * 2] * elemRadius[i] / 1000;
+
+					if (i != 2 && i != 3)
+						gFillArc(64 + scaleX - scaleRadius / 2 - 1, 64 - scaleRadius / 2, scaleRadius, scaleRadius, 0, 360);
+					else
+						gFillArc(64 + scaleX - scaleRadius / 2 - 1, 64 - scaleRadius / 2, scaleRadius, scaleRadius, 80, 200);
 				}
 
 				gDrawImage(imgPmRocket, splashLogoX, splashLogoY, 0);
+
 				splashLogoX += 4;
 				splashLogoY -= 4;
-				if (splashTick > 45) {
+
+				if (splashTick > 45)
 					splashDuration = 0L;
-				}
 
 				splashTick++;
 				break;
@@ -3121,6 +3123,7 @@ public final class Game extends GameCanvas implements Runnable {
 				gDrawImage(imgCenterLogo, 19, 18, 0);
 		}
 
+		// Show a next splash.
 		if (millis() > splashDuration || isKeyReleased(1)) {
 			setNewState(1, splash + 1);
 		}
@@ -3128,9 +3131,10 @@ public final class Game extends GameCanvas implements Runnable {
 		refreshGame();
 	}
 
-	public static final void sceneSplashInit(int screen) {
-		splash = screen;
-		switch(screen) {
+	public static final void sceneSplashInit(int arg) {
+		splash = arg;
+
+		switch(arg) {
 
 			// Eidos image.
 			case 0:
@@ -3149,13 +3153,11 @@ public final class Game extends GameCanvas implements Runnable {
 
 			// PM RocketFuel animation.
 			case 3:
-				if (imgCenterLogo == null) {
+				if (imgCenterLogo == null)
 					imgCenterLogo = loadImage("pmback.pim", "pmback.ppl");
-				}
 
-				if (imgPmRocket == null) {
+				if (imgPmRocket == null)
 					imgPmRocket = loadImage("pmrocket.pim", "pmrocket.ppl");
-				}
 
 				splashLogoX = 42;
 				splashLogoY = 20;
@@ -3177,6 +3179,7 @@ public final class Game extends GameCanvas implements Runnable {
 				splashDuration = millis() + 2000L;
 				return;
 
+			// Enter the main menu.
 			default:
 				setNewState(7, 0);
 				isLoadingBarShown = true;
@@ -3185,21 +3188,35 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void sceneSplashFree() {
 		switch(splash) {
+
+			// Eidos image.
 			case 0:
 				imgCenterLogo = null;
+
+			// Eidos legal line.
 			case 1:
 				imgEidosLegalLine = null;
+
+			// PM RocketFuel image.
 			case 2:
 				break;
+
+			// PM RocketFuel animation.
 			case 3:
 				imgCenterLogo = null;
 				break;
+
+			// Maniacs of Noice scaling up.
 			case 4:
 				imgPmRocket = null;
 				break;
+
+			// Maniacs of Noise image.
 			case 5:
 				imgCenterLogo = null;
 				break;
+
+			// Enter the main menu.
 			default:
 				imgCenterLogo = null;
 				imgEidosLegalLine = null;
