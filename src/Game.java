@@ -105,7 +105,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static Image[] imgsSoftkey;
 
 	// Fonts.
-	public static final int FONT_MAX_CHARS = 230;
+	private static final int FONT_MAX_CHARS = 230;
 	public static Image[] fontImages;
 	public static int[] fontAverageWidths;
 	public static int[] fontSpacesPerChars;
@@ -195,14 +195,21 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean showControlsGuide;
 
 	// Ship scene.
+	private static final int SHIP_OP_NOP = 0;
+	private static final int SHIP_OP_START = 1;
+	private static final int SHIP_OP_EXIT = 2;
+	private static final int SHIP_OP_RESTART = 3;
+	private static final int SHIP_OP_HOLODECK = 4;
+	private static final int SHIP_OP_RESET = 5;
+	private static final int SHIP_OP_RESUME = 6;
 	// Temporary field to check if the player is staying on the pod hitbox.
 	public static int levelShipCheckPodIndex = 0;
 	public static int levelShipSelectedPodIndex = 0;
-	public static int shipNextOp = 0;
+	public static int shipNextOp = SHIP_OP_NOP;
 	
 	// Dialogue scene.
 	public static boolean dialogueIsAwaitingLevelStart = false;
-	public static int beamAnimationFrame = 1;
+	public static int beamAnimationTicks = 1;
 	public static boolean skipPrologue;
 	public static int[] currentDialogue;
 	public static int currentDialogueIndex;
@@ -2519,13 +2526,13 @@ public final class Game extends GameCanvas implements Runnable {
 				case 7:
 					switch(res) {
 						case 0:
-							sceneMainMenuInit(stateArg);
+							sceneTitleInit(stateArg);
 							break;
 						case 1:
-							sceneMainMenuRun();
+							sceneTitleRun();
 							break;
 						case 2:
-							sceneMainMenuFree();
+							sceneTitleFree();
 					}
 					return;
 
@@ -3227,39 +3234,55 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneShipRun() {
+		// Animate beam.
 		if (isBeamAnimated) {
-			renderBeamAnimation(beamAnimationFrame);
-			beamAnimationFrame += 4;
-			if (beamAnimationFrame >= 130) {
+			renderBeamAnimation(beamAnimationTicks);
+			beamAnimationTicks += 4;
+
+			if (beamAnimationTicks >= 130) {
 				isBeamAnimated = false;
 			}
-		} else if (dialogueIsAwaitingLevelStart) {
+
+			return;
+		}
+
+		// Start intro dialogue.
+		if (dialogueIsAwaitingLevelStart) {
 			dialogueIsAwaitingLevelStart = false;
 			startDialogue("intro" + level + ".bms", levelCircleX[0], levelCircleY[0]);
-		} else if (shipNextOp > 0) {
+
+			return;
+		}
+
+		// Process ship operation after a pod was touched.
+		if (shipNextOp > SHIP_OP_NOP) {
 			switch(shipNextOp) {
-				case 1:
+				case SHIP_OP_START:
 					setNewState(3, 0);
 					break;
-				case 2:
+
+				case SHIP_OP_EXIT:
 					if (dialogueIsActionConfirmed) {
 						setNewState(-1, 0);
 					}
 					break;
-				case 3:
+
+				case SHIP_OP_RESTART:
 					if (dialogueIsActionConfirmed) {
 						nextLevelToLoad = currentLevelLoaded;
 						setNewState(4, 0);
 						swapLevelData(1);
 					}
 					break;
-				case 4:
+
+				case SHIP_OP_HOLODECK:
 					activateLevel(-1);
 					levelPlayerHealth = 500;
 					levelIntroTicks = 120;
 					setNewState(4, 0);
 					break;
-				case 5:
+
+				case SHIP_OP_RESET:
 					if (dialogueIsActionConfirmed) {
 						level = 0;
 						isMirrored = false;
@@ -3270,50 +3293,65 @@ public final class Game extends GameCanvas implements Runnable {
 						return;
 					}
 					break;
-				case 6:
+
+				case SHIP_OP_RESUME:
 					setNewState(4, 0);
 					swapLevelData(1);
 			}
 
-			shipNextOp = 0;
-		} else {
-			if (levelIsPlayerOnSurface && levelCircleY[0] > 0x960000 && levelShipSelectedPodIndex > 0) {
-				shipNextOp = processMainMenuDialogue(levelShipSelectedPodIndex, isShipPaused);
-				levelShipSelectedPodIndex = 0;
-			}
+			shipNextOp = SHIP_OP_NOP;
 
-			if (!isBeamAnimated) {
-				updateLevel();
-				updatePlayerControls();
-			}
-
-			if (levelShipTouchedCircleType > 0) {
-				if (levelShipTouchedCircleType == levelShipCheckPodIndex) {
-					levelShipTouchedCircleType = 0;
-				} else {
-					levelShipCheckPodIndex = levelShipTouchedCircleType;
-				}
-			}
-
-			if (levelIsPlayerOnSurface) {
-				levelShipCheckPodIndex = 0;
-			}
-
-			if (levelShipTouchedCircleType > 0) {
-				levelShipSelectedPodIndex = levelShipTouchedCircleType;
-			}
-
-			levelShipTouchedCircleType = 0;
-			levelSetCamera(levelCircleX[0], levelHeight / 2, 0);
-			levelSetPlayerPos(levelCircleX[6], levelCircleY[6], 6, 0x140000);
-			renderShipBlobs(isShipPaused);
-			refreshGame();
+			return;
 		}
+
+		// Process all physics in the ship.
+
+		/* If the player landed, set next ship operation that will be processed
+		 * in the next frame. */
+		if (levelIsPlayerOnSurface && levelCircleY[0] > 0x960000 && levelShipSelectedPodIndex > 0) {
+			shipNextOp = processShipDialogue(levelShipSelectedPodIndex, isShipPaused);
+			levelShipSelectedPodIndex = 0;
+		}
+
+		if (!isBeamAnimated) {
+			updateLevel();
+			updatePlayerControls();
+		}
+
+		if (levelShipTouchedCircleType > 0) {
+			if (levelShipTouchedCircleType == levelShipCheckPodIndex) {
+				levelShipTouchedCircleType = 0;
+			} else {
+				// Remember newly touched circle...
+				levelShipCheckPodIndex = levelShipTouchedCircleType;
+			}
+		}
+
+		// ...if landed, initialize it to 0, because shipNextOp will be set.
+		if (levelIsPlayerOnSurface) {
+			levelShipCheckPodIndex = 0;
+		}
+
+		if (levelShipTouchedCircleType > 0) {
+			levelShipSelectedPodIndex = levelShipTouchedCircleType;
+		}
+
+		levelShipTouchedCircleType = 0;
+
+		// Lock vertical camera position to the center.
+		levelSetCamera(levelCircleX[0], levelHeight / 2, 0);
+		// Set Waz position.
+		levelSetPlayerPos(levelCircleX[6], levelCircleY[6], 6, 0x140000);
+		renderShipBlobs(isShipPaused);
+
+		refreshGame();
 	}
 
-	public static final void sceneShipInit(int var0) {
+	public static final void sceneShipInit(int arg) {
 		loadRecordData();
+
 		if (level >= 25) {
+			// It's all over...
 			isMirrored = !isMirrored;
 			level = 0;
 			saveRecordData();
@@ -3329,16 +3367,20 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			dialogueIsAwaitingLevelStart = false;
-			if (var0 == 10) {
+
+			// Show intro dialogue.
+			if (arg == 10) {
 				if (isBeamAnimated) {
 					dialogueIsAwaitingLevelStart = true;
-					beamAnimationFrame = 1;
+					beamAnimationTicks = 1;
 					levelSetCamera(levelCircleX[6], levelHeight / 2, 0);
 				} else if (skipPrologue) {
+					// Welcome a player, then immediatelly enter the ship.
 					skipPrologue = false;
 					startDialogue("continueStory.bms", levelCircleX[0], levelCircleY[0]);
 					dialogueIsAwaitingLevelStart = true;
 				} else {
+					// Show a prologue.
 					startDialogue("intro" + level + ".bms", levelCircleX[0], levelCircleY[0]);
 					if (level == 0) {
 						showControlsGuide = true;
@@ -3348,10 +3390,12 @@ public final class Game extends GameCanvas implements Runnable {
 
 			levelShipTouchedCircleType = 0;
 			isPlayerAlive = true;
-			initSpace(2, 12, 92, 46);
+			initSpace(2, 12, 92, 46); // For the ship window.
 			initInsideShip();
 			loadFaces();
+
 			if (textTableShip == null) {
+				// Pod labels.
 				textTableShip = loadTextTableFromIndex(6, -1);
 				textTableShipPause = loadTextTableFromIndex(7, -1);
 			}
@@ -3809,7 +3853,7 @@ public final class Game extends GameCanvas implements Runnable {
 		sceneSelectionCleanup();
 	}
 
-	public static final void sceneMainMenuRun() {
+	public static final void sceneTitleRun() {
 		gSetColor(0);
 		gFillRect(0, 0, 128, 128);
 		renderSpace(0, 0, 0, true);
@@ -3833,7 +3877,7 @@ public final class Game extends GameCanvas implements Runnable {
 		refreshGame();
 	}
 
-	public static final void sceneMainMenuInit(int var0) {
+	public static final void sceneTitleInit(int var0) {
 		if (isPastSplash) {
 			isPastSplash = false;
 			setNewState(2, 10);
@@ -3850,7 +3894,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void sceneMainMenuFree() {
+	public static final void sceneTitleFree() {
 		imgGamelogoTop = null;
 		imgGamelogoBottom = null;
 		garbageCollector();
@@ -7189,21 +7233,21 @@ public final class Game extends GameCanvas implements Runnable {
 		levelSetCamera(levelCircleX[0], levelHeight / 2, 0);
 	}
 
-	public static final int processMainMenuDialogue(int var0, boolean var1) {
+	public static final int processShipDialogue(int var0, boolean var1) {
 		byte var2 = 0;
 		switch(var0) {
 			case 1:
 				if (!var1) {
 					startDialogue("start" + level + ".bms", levelCircleX[0], levelCircleY[0]);
-					var2 = 1;
+					var2 = SHIP_OP_START;
 				} else {
-					var2 = 6;
+					var2 = SHIP_OP_RESUME;
 				}
 				break;
 			case 2:
 				if (var1) {
 					startDialogue("menu_sure_restart.bms", levelCircleX[0], levelCircleY[0], true);
-					var2 = 3;
+					var2 = SHIP_OP_RESTART;
 				} else {
 					startDialogue("menu_no_restart.bms", levelCircleX[0], levelCircleY[0]);
 				}
@@ -7213,7 +7257,7 @@ public final class Game extends GameCanvas implements Runnable {
 					startDialogue("menu_no_holodeck.bms", levelCircleX[0], levelCircleY[0]);
 				} else {
 					startDialogue("menu_enter_holodeck.bms", levelCircleX[0], levelCircleY[0]);
-					var2 = 4;
+					var2 = SHIP_OP_HOLODECK;
 				}
 				break;
 			case 4:
@@ -7245,11 +7289,11 @@ public final class Game extends GameCanvas implements Runnable {
 				break;
 			case 8:
 				startDialogue("menu_sure_exit.bms", levelCircleX[0], levelCircleY[0], true);
-				var2 = 2;
+				var2 = SHIP_OP_EXIT;
 				break;
 			case 9:
 				startDialogue("menu_sure_reset.bms", levelCircleX[0], levelCircleY[0], true);
-				var2 = 5;
+				var2 = SHIP_OP_RESET;
 		}
 
 		return var2;
