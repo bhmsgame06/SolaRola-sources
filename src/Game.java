@@ -254,6 +254,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] dialogueSfx = new int[] {-1, -1, -1, -1, -1, -1, -1, -1};
 
 	// Selection scene.
+	private static final int SELECTION_STATE_LANGUAGE = 0;
+	private static final int SELECTION_STATE_AUDIO = 1;
 	public static int sceneSelectionState = 0;
 
 	// Main menu scene.
@@ -3947,31 +3949,48 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneSelectionRun() {
-		int select = getSelectedIndex();
-		if (select >= 0) {
-			if (sceneSelectionState == 0) {
-				language = select;
+		int index = getSelectedIndex();
+		if (index >= 0) {
+			if (sceneSelectionState == SELECTION_STATE_LANGUAGE) {
+				language = index;
 				saveRecordData();
-				setTextTableCrc((new short[] {(short)0x0085, (short)0x9e91, (short)0xdc77, (short)0x0d48, (short)0x4f2a})[language]);
+				setTextTableCrc((new short[] {
+					(short)0x0085,
+					(short)0x9e91,
+					(short)0xdc77,
+					(short)0x0d48,
+					(short)0x4f2a
+				})[language]);
 				setNewState(0, 1);
-				return;
+			} else {
+				isAudioEnabled = index == 1 || index == 3;
+				loadAllSounds();
+				setNewState(1, 0);
 			}
-
-			isAudioEnabled = select == 1 || select == 3;
-			loadAllSounds();
-			setNewState(1, 0);
 		}
 	}
 
-	public static final void sceneSelectionInit(int var0) {
+	public static final void sceneSelectionInit(int arg) {
 		gamma = 100;
-		sceneSelectionState = var0;
-		if (sceneSelectionState == 0) {
-			loadSelectionOptions(new String[] {"flag_uk", "flag_france", "flag_germany", "flag_spain", "flag_italy"}, language);
+		sceneSelectionState = arg;
+
+		if (sceneSelectionState == SELECTION_STATE_LANGUAGE) {
+			loadSelectionOptions(new String[] {
+				"flag_uk",
+				"flag_france",
+				"flag_germany",
+				"flag_spain",
+				"flag_italy"
+			}, language);
 		}
 
-		if (sceneSelectionState == 1) {
-			loadSelectionOptions(new String[] {"audio_off", "audio_on", "audio_off", "audio_on"}, 0);
+		if (sceneSelectionState == SELECTION_STATE_AUDIO) {
+			loadSelectionOptions(new String[] {
+				"audio_off",
+				"audio_on",
+				"audio_off",
+				"audio_on"
+			}, 0);
 		}
 	}
 
@@ -4837,7 +4856,7 @@ public final class Game extends GameCanvas implements Runnable {
 				levelCircleFlags[i] &= -2;
 
 				for (int k = 0; k < levelEnemyIndex.length; k++) {
-					if (levelEnemyIndex[k] == i) {
+					if (levelEnemyIndex[k] == i) { 
 						levelEnemyIsAlive[k] = false;
 					}
 				}
@@ -7937,63 +7956,78 @@ public final class Game extends GameCanvas implements Runnable {
 		imgsSelectionMenuArrows = null;
 	}
 
-	public static final void loadSelectionOptions(String[] imageFiles, int var1) {
-		numSelections = imageFiles.length;
+	public static final void loadSelectionOptions(String[] filenames, int defaultIndex) {
+		numSelections = filenames.length;
 		selectionAngleBetweenOthers = 360 / numSelections;
 		selectionAngleUntilAdjust = selectionAngleBetweenOthers / 2;
-		imgsSelectionMenu = new Image[numSelections];
 
-		for (int var2 = 0; var2 < numSelections; var2++) {
-			imgsSelectionMenu[var2] = loadImage(imageFiles[(var2 + var1) % numSelections] + ".pim", imageFiles[(var2 + var1) % numSelections] + ".ppl");
+		imgsSelectionMenu = new Image[numSelections];
+		for (int i = 0; i < numSelections; i++) {
+			imgsSelectionMenu[i] = loadImage(filenames[(i + defaultIndex) % numSelections] + ".pim", filenames[(i + defaultIndex) % numSelections] + ".ppl");
 		}
 
 		imgsSelectionMenuArrows = new Image[2];
 		imgsSelectionMenuArrows[0] = loadImage("arrow_left.pim", "arrow_left.ppl");
 		imgsSelectionMenuArrows[1] = loadImage("arrow_right.pim", "arrow_right.ppl");
+
 		levelInitCircles(10 + numSelections * 2 + 1);
 		levelInitHooks(numSelections);
+
 		activeSwapKey = -10;
 		levelMovableGravity = 30000;
 		levelXLossRate = 64000;
 		selectionAngle = 0;
 		selectionMainCircleId = 10 + numSelections * 2;
-		selectionDefaultIndex = var1;
+		selectionDefaultIndex = defaultIndex;
 
-		for (int var5 = 0; var5 < numSelections; var5++) {
-			int var3 = 5242 * cos(90 + var5 * selectionAngleBetweenOthers);
-			int var4 = 5242 * sin(90 + var5 * selectionAngleBetweenOthers);
-			levelSetCircle(var5 + 10, var3, var4, 0x50000, 200, 0, 0, false);
-			var3 = 6881 * cos(90 + var5 * selectionAngleBetweenOthers);
-			var4 = 6881 * sin(90 + var5 * selectionAngleBetweenOthers);
-			levelSetCircle(var5 + 10 + numSelections, var3, var4, 0x190000, 100, 3, 0, true);
+		// Set initial circle positions.
+		for (int i = 0; i < numSelections; i++) {
+			int x, y;
+
+			// Invisible pendant of the circle.
+			x = 5242 * cos(90 + i * selectionAngleBetweenOthers);
+			y = 5242 * sin(90 + i * selectionAngleBetweenOthers);
+			levelSetCircle(i + 10, x, y, 0x50000, 200, 0, 0, false);
+
+			// Actual circle with image.
+			x = 6881 * cos(90 + i * selectionAngleBetweenOthers);
+			y = 6881 * sin(90 + i * selectionAngleBetweenOthers);
+			levelSetCircle(i + 10 + numSelections, x, y, 0x190000, 100, 3, 0, true);
 		}
 
 		levelSetCircle(selectionMainCircleId, 0, 0, 0x500000, 200, 2, 0, false);
 
-		for (int var6 = 0; var6 < numSelections; var6++) {
-			levelSetHook(var6, var6 + 10, var6 + 10 + numSelections, 4, 0x3c0000, 65000, true, true);
+		// Set hooks.
+		for (int i = 0; i < numSelections; i++) {
+			levelSetHook(i, i + 10, i + 10 + numSelections, 4, 0x3c0000, 65000, true, true);
 		}
 
+		// Initial camera position.
 		levelSetCamera(levelCircleX[selectionMainCircleId], levelCircleY[selectionMainCircleId] + 0x640000, 0);
+
 		selectionState = 0;
 		selectionStateStartMs = millis();
 	}
 
 	public static final int getSelectedIndex() {
+		// Check if OK softkey is pressed.
 		if (selectionState == 1 && softkeyPressed(2, -1, true) == 2) {
 			selectionState++;
 			selectionStateStartMs = millis() + 500L;
 		}
 
 		if (isKeyHeld(8)) {
+			// Left key.
 			selectionAngle += 4;
 		} else if (isKeyHeld(16)) {
+			// Right key.
 			selectionAngle -= 4;
 		} else {
-			int var0 = selectionAngle % selectionAngleBetweenOthers;
-			if (var0 > selectionAngleUntilAdjust) {
+			// Adjust angle.
+			int remAngle = selectionAngle % selectionAngleBetweenOthers;
+			if (remAngle > selectionAngleUntilAdjust) {
 				selectionAngle += 2;
-			} else if (var0 > 0) {
+			} else if (remAngle > 0) {
 				selectionAngle -= 2;
 			}
 		}
@@ -8006,14 +8040,17 @@ public final class Game extends GameCanvas implements Runnable {
 			selectionAngle += 360;
 		}
 
-		for (int var3 = 0; var3 < numSelections; var3++) {
-			int var1 = 5242 * cos(selectionAngle + 90 + var3 * selectionAngleBetweenOthers);
-			int var2 = 5242 * sin(selectionAngle + 90 + var3 * selectionAngleBetweenOthers);
-			levelCircleX[var3 + 10] = var1;
-			levelCircleY[var3 + 10] = var2;
+		// Set circle pendant positions.
+		for (int i = 0; i < numSelections; i++) {
+			int x = 5242 * cos(selectionAngle + 90 + i * selectionAngleBetweenOthers);
+			int y = 5242 * sin(selectionAngle + 90 + i * selectionAngleBetweenOthers);
+			levelCircleX[i + 10] = x;
+			levelCircleY[i + 10] = y;
 		}
 
 		updateLevel();
+
+		// Fade animation and selection state are depending on the delta time.
 		if (selectionState == 0) {
 			gamma = (int)((millis() - selectionStateStartMs) / 5L);
 		}
@@ -8032,58 +8069,67 @@ public final class Game extends GameCanvas implements Runnable {
 			selectionState++;
 		}
 
+		// Render background.
 		setGammaColor(0xdddddd);
 		gFillRect(0, 0, 128, 128);
+
+		// Render a donut (main circle).
 		sceneSelectionRenderCircle(levelCircleX[selectionMainCircleId], levelCircleY[selectionMainCircleId], levelCircleRadius[selectionMainCircleId], 0xaaaaaa);
 		sceneSelectionRenderCircle(levelCircleX[selectionMainCircleId], levelCircleY[selectionMainCircleId], levelCircleRadius[selectionMainCircleId] / 2, 0xdddddd);
 		setGammaColor(0);
 
-		for (int var4 = 10; var4 < 10 + numSelections; var4++) {
-			levelRenderLine(levelCircleX[var4], levelCircleY[var4], levelCircleX[var4 + numSelections], levelCircleY[var4 + numSelections]);
+		// Render hooks.
+		for (int i = 10; i < 10 + numSelections; i++) {
+			levelRenderLine(levelCircleX[i], levelCircleY[i], levelCircleX[i + numSelections], levelCircleY[i + numSelections]);
 		}
 
-		for (int var5 = 0; var5 < numSelections; var5++) {
-			levelRenderCircle(levelCircleX[var5 + 10 + numSelections], levelCircleY[var5 + 10 + numSelections], levelCircleRadius[var5 + 10 + numSelections]);
+		// Render selections.
+		for (int i = 0; i < numSelections; i++) {
+			levelRenderCircle(levelCircleX[i + 10 + numSelections], levelCircleY[i + 10 + numSelections], levelCircleRadius[i + 10 + numSelections]);
 			if (gamma > 20) {
-				levelRenderImage(imgsSelectionMenu[var5], levelCircleX[var5 + 10 + numSelections], levelCircleY[var5 + 10 + numSelections]);
+				levelRenderImage(imgsSelectionMenu[i], levelCircleX[i + 10 + numSelections], levelCircleY[i + 10 + numSelections]);
 			}
 		}
 
+		// Render donut's screws.
 		setGammaColor(0x888888);
-
-		for (int var6 = 0; var6 < 5; var6++) {
-			int var9 = 3932 * cos(selectionAngle + 90 - 36 + var6 * 72);
-			int var10 = 3932 * sin(selectionAngle + 90 - 36 + var6 * 72);
-			levelRenderCircle(var9, var10, 0x50000);
+		for (int i = 0; i < 5; i++) {
+			int x = 3932 * cos(selectionAngle + 90 - 36 + i * 72);
+			int y = 3932 * sin(selectionAngle + 90 - 36 + i * 72);
+			levelRenderCircle(x, y, 0x50000);
 		}
 
+		// Render arrows.
 		if (gamma > 50) {
 			selectionArrowsAnimTicks += 12;
 			if (selectionArrowsAnimTicks > 179) {
 				selectionArrowsAnimTicks -= 180;
 			}
 
-			int var7 = 1 + sin1000[selectionArrowsAnimTicks] * 6 / 1000;
-			gDrawImage(imgsSelectionMenuArrows[0], var7, 85 - imgsSelectionMenuArrows[0].getHeight() / 2, 0);
-			gDrawImage(imgsSelectionMenuArrows[1], 128 - var7 - imgsSelectionMenuArrows[1].getWidth(), 85 - imgsSelectionMenuArrows[1].getHeight() / 2, 0);
+			int arrowX = 1 + sin1000[selectionArrowsAnimTicks] * 6 / 1000;
+			gDrawImage(imgsSelectionMenuArrows[0], arrowX, 85 - imgsSelectionMenuArrows[0].getHeight() / 2, 0);
+			gDrawImage(imgsSelectionMenuArrows[1], 128 - arrowX - imgsSelectionMenuArrows[1].getWidth(), 85 - imgsSelectionMenuArrows[1].getHeight() / 2, 0);
 		}
 
 		refreshGame();
+
+		// Check if selection is submitted.
 		if (selectionState == 3) {
-			int var8 = (360 - selectionAngle) / selectionAngleBetweenOthers + selectionDefaultIndex;
+			int selectionIndex = (360 - selectionAngle) / selectionAngleBetweenOthers + selectionDefaultIndex;
+
 			if (selectionAngle % selectionAngleBetweenOthers > selectionAngleUntilAdjust) {
-				var8++;
+				selectionIndex++;
 			}
 
-			if (var8 >= numSelections) {
-				var8 -= numSelections;
+			if (selectionIndex >= numSelections) {
+				selectionIndex -= numSelections;
 			}
 
-			if (var8 < 0) {
-				var8 += numSelections;
+			if (selectionIndex < 0) {
+				selectionIndex += numSelections;
 			}
 
-			return var8;
+			return selectionIndex;
 		} else {
 			return -1;
 		}
