@@ -208,6 +208,26 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int shipNextOp = SHIP_OP_NOP;
 	
 	// Dialogue scene.
+	private static final int DIALOGUE_CMD_SUBMIT = 0;
+	private static final int DIALOGUE_CMD_WAIT = 1;
+	private static final int DIALOGUE_CMD_WAIT_OK = 2;
+	private static final int DIALOGUE_CMD_SET_CAMERA_INSTANT = 3;
+	private static final int DIALOGUE_CMD_SET_CAMERA_SMOOTH = 4;
+	private static final int DIALOGUE_CMD_SET_TEXT = 5;
+	private static final int DIALOGUE_CMD_SET_EMOTION = 6;
+	private static final int DIALOGUE_CMD_SET_PLAYER_POS = 7;
+	private static final int DIALOGUE_CMD_SET_STATE = 8;
+	private static final int DIALOGUE_CMD_SET_ENV = 9;
+	private static final int DIALOGUE_CMD_HIDE_BOX = 10;
+	private static final int DIALOGUE_CMD_SET_BARS = 11;
+	private static final int DIALOGUE_CMD_SET_ALARM = 12;
+	private static final int DIALOGUE_CMD_SPACE_MAP_SHOW_POINTER = 13;
+	private static final int DIALOGUE_CMD_TRANSMISSION_SET_NOISE = 14;
+	private static final int DIALOGUE_CMD_TRANSMISSION_SET_SHAKE = 15;
+	private static final int DIALOGUE_CMD_PICTURE_SHOW = 16;
+	private static final int DIALOGUE_CMD_TRANSMISSION_SET_BACKGROUND_COLOR = 17;
+	private static final int DIALOGUE_CMD_RESERVED = 18;
+	private static final int DIALOGUE_CMD_PICTURE_SET_LABEL_ID = 19;
 	public static boolean dialogueIsAwaitingLevelStart = false;
 	public static int beamAnimationTicks = 1;
 	public static boolean skipPrologue;
@@ -223,7 +243,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean isSpeakingAnimationPlaying;
 	public static boolean dialogueIsOkKeyEnabled;
 	public static boolean dialogueIsWaiting;
-	public static boolean showBlackBars;
+	public static boolean dialogueShowBlackBars;
 	public static int dialogueEnvironment;
 	public static int dialogueCameraTargetX;
 	public static int dialogueCameraTargetY;
@@ -655,8 +675,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int gamma = 100;
 
 	// Decors inside ship: socks, flowers, cubes, etc.
-	public static short[] decorForeground;
-	public static short[] decorBackground;
+	public static short[] shipDecorForeground;
+	public static short[] shipDecorBackground;
 	public static Image[] imgsDecor;
 
 	public static Image imgArrowLeft;
@@ -701,21 +721,22 @@ public final class Game extends GameCanvas implements Runnable {
 	public static short[] sin1000;
 	public static short[] cos1000;
 
+	// Transmission.
 	public static Image[] imgsStatic;
 	public static int[] staticTiles;
-
-	public static boolean isTransmodigrafierMissing = true;
+	public static boolean isTransmissionNoisy = true;
 	public static boolean isTransmissionShaky = true;
-	public static boolean isShowingShardPicture = false;
+	public static boolean isPictureShown = false;
 	public static boolean isTransmissionBlinked = false;
 
-	public static int currentPurpleX = 59;
-	public static int currentPurpleY = 108;
-	public static int currentPurpleSize = 100;
-	public static int pingBackgroundColor = 0;
-	public static int activePurpleShardNameId = 0;
+	// Picture (album).
+	public static int currentPictureEntityX = 59;
+	public static int currentPictureEntityY = 108;
+	public static int currentPictureEntitySize = 100;
+	public static int transmissionBackgroundColor = 0;
+	public static int activePictureLabelId = 0;
 
-	public static String[] purpleShardNames = new String[] {
+	public static String[] pictureLabels = new String[] {
 		"Kachoo",
 		"NikSak",
 		"Rara",
@@ -3414,10 +3435,17 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneDialogueRun() {
-		long var0 = millis();
+		long curTime = millis();
+
 		if (!dialogueIsWaiting) {
+
+			/* Execute a next chunk of the script if time for previous chunk
+			 * has expired. */
 			currentDialogueIndex = executeDialogueScript(currentDialogue, currentDialogueIndex, false);
+
 		} else {
+
+			/* Wait for the chunk to complete execution. */
 			if (!isSpeakingAnimationPlaying && !dialogueIsOkKeyEnabled && dialogueWaitEndMs == 0L) {
 				if (dialogueEnvironment == 3) {
 					if (renderSpaceMapNextFrame()) {
@@ -3429,7 +3457,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 			}
 
-			if (dialogueWaitEndMs != 0L && dialogueWaitEndMs < var0) {
+			if (dialogueWaitEndMs != 0L && dialogueWaitEndMs < curTime) {
 				dialogueWaitEndMs = 0L;
 			}
 
@@ -3440,8 +3468,10 @@ public final class Game extends GameCanvas implements Runnable {
 			if (isSpeakingAnimationPlaying && currentSpeechDone) {
 				isSpeakingAnimationPlaying = false;
 			}
+
 		}
 
+		// Process an environment in where the dialogue will take place.
 		switch(dialogueEnvironment) {
 			case 0:
 				renderShipInside();
@@ -3450,8 +3480,9 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				renderPlayable(0, 0xff, true);
-				renderShipDecor(decorForeground);
+				renderShipDecor(shipDecorForeground);
 				break;
+
 			case 1:
 				if (levelCameraZoom != 72) {
 					dialogueCameraZoomApproach += (72000 - dialogueCameraZoomApproach) / 10;
@@ -3467,36 +3498,49 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				levelRender(true);
-			case 2:
-			default:
 				break;
+
+			case 2:
+				break;
+
 			case 3:
 				renderSpaceMap();
 				break;
+
 			case 4:
 				renderSplash();
 				break;
+
 			case 5:
 				renderTransmission();
 		}
 
-		if (showBlackBars) {
-			boolean var2 = false;
+		// Black bars.
+		if (dialogueShowBlackBars) {
 			gSetColor(0);
 			gFillRect(0, 0, 128, 12);
 			gFillRect(0, 116, 128, 17);
 		}
 
+		// Process dialogue box.
 		renderDialogueBox();
-		if (dialogueSelectionEnabled) {
-			int var3 = softkeyPressed(2, 4);
-			if (var3 >= 0) {
-				for (dialogueIsActionConfirmed = var3 == 2; currentDialogueIndex < currentDialogue.length; currentDialogueIndex = executeDialogueScript(currentDialogue, currentDialogueIndex, true)) {
+		if (dialogueSelectionEnabled) { // YES or NO.
+
+			int key = softkeyPressed(2, 4);
+			if (key >= 0) {
+				// Walk through the entire script until EOF.
+				dialogueIsActionConfirmed = key == 2;
+				while (currentDialogueIndex < currentDialogue.length) {
+					currentDialogueIndex = executeDialogueScript(currentDialogue, currentDialogueIndex, true);
 				}
 
 				dialogueIsWaiting = false;
 			}
-		} else if (dialogueIsOkKeyEnabled && softkeyPressed(2, 3) == 3 || !dialogueIsOkKeyEnabled && softkeyPressed(-1, 3) == 3) {
+
+		} else if (dialogueIsOkKeyEnabled && softkeyPressed(2, 3) == 3 ||
+				!dialogueIsOkKeyEnabled && softkeyPressed(-1, 3) == 3) { // OK or SKIP (or only SKIP).
+
+			// Walk through the entire script until EOF.
 			while (currentDialogueIndex < currentDialogue.length) {
 				currentDialogueIndex = executeDialogueScript(currentDialogue, currentDialogueIndex, true);
 			}
@@ -3504,23 +3548,29 @@ public final class Game extends GameCanvas implements Runnable {
 			dialogueIsWaiting = false;
 			setNewState(6, 100 + stateBeforeDialogue);
 			return;
+
 		}
 
 		refreshGame();
+
 		if (currentDialogueIndex >= currentDialogue.length && !dialogueIsWaiting) {
 			setNewState(stateBeforeDialogue, 0);
 		}
 	}
 
-	public static final void sceneDialogueInit(int var0) {
+	public static final void sceneDialogueInit(int arg) {
 		dialogueCameraZoomApproach = levelCameraZoom * 1000;
+
 		if (currentDialogue == null) {
+
 			setNewState(stateBeforeDialogue, 0);
+
 		} else if (!dialogueIsContinued) {
+
 			currentDialogueIndex = 0;
 			dialogueIsActionConfirmed = false;
 			stateBeforeDialogue = oldState;
-			activePurpleShardNameId = 0;
+			activePictureLabelId = 0;
 			dialogueLastSwapKey = activeSwapKey;
 			dialogueIsWazActive = dialogueLastSwapKey == 0;
 			if (dialogueIsWazActive) {
@@ -3537,8 +3587,13 @@ public final class Game extends GameCanvas implements Runnable {
 			dialogueIsCameraMoving = false;
 			isSpeakingAnimationPlaying = false;
 			dialogueIsOkKeyEnabled = false;
+
 		} else {
+
+			/* We don't need to load the resources again as we are continuing
+			 * the dialogue. */
 			dialogueIsContinued = false;
+
 		}
 	}
 
@@ -3553,78 +3608,95 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void resetDialogue() {
-		showBlackBars = false;
+		dialogueShowBlackBars = false;
 		shipAlarmRadius = 0;
 		spaceMapPlanetBeaconRadius = 0;
 		currentEmotion[0] = 0;
 		currentEmotion[1] = 0;
 	}
 
-	public static final void startDialogue(String var0, int var1, int var2) {
-		startDialogue(var0, var1, var2, false);
+	public static final void startDialogue(String filename, int originX, int originY) {
+		startDialogue(filename, originX, originY, false);
 	}
 
-	public static final void startDialogue(String var0, int var1, int var2, boolean var3) {
+	public static final void startDialogue(String var0, int originX, int originY, boolean enableSelection) {
 		isLoadingBarShown = false;
-		int[] var4 = loadFile32(var0);
+		int[] data = loadFile32(var0);
 		isLoadingBarShown = true;
-		if (var4 != null) {
-			startDialogue(var4, var1, var2, var3);
+		if (data != null) {
+			startDialogue(data, originX, originY, enableSelection);
 		}
 	}
 
-	public static final void levelDisplayDialogue(int var0) {
+	public static final void levelDisplayDialogue(int circleId) {
 		if (levelPlayerHealth > 0) {
-			int var1 = levelCircleType[var0] - 10;
-			startDialogue("ingame" + level + "-" + var1 + ".bms", levelCircleX[var0], levelCircleY[var0], false);
-			levelCircleFlags[var0] = 0;
+			int index = levelCircleType[circleId] - 10;
+			startDialogue("ingame" + level + "-" + index + ".bms", levelCircleX[circleId], levelCircleY[circleId], false);
+			levelCircleFlags[circleId] = 0;
 		}
 	}
 
-	public static final void startDialogue(int[] var0, int var1, int var2, boolean var3) {
-		dialogueOriginX = var1;
-		dialogueOriginY = var2;
-		dialogueSelectionEnabled = var3;
-		currentDialogue = var0;
+	public static final void startDialogue(int[] data, int originX, int originY, boolean enableSelection) {
+		dialogueOriginX = originX;
+		dialogueOriginY = originY;
+		dialogueSelectionEnabled = enableSelection;
+
+		currentDialogue = data;
 		hideDialogueBox();
+
 		setNewState(5, 0);
 	}
 
-	public static final int executeDialogueScript(int[] var0, int var1, boolean var2) {
-		while (var1 < var0.length) {
-			switch(var0[var1]) {
-				case 0:
-					return var1 + 1;
-				case 1:
+	/* The BMS script is divided into several independent parts (chunks). Each
+	 * part ends with DIALOGUE_CMD_SUBMIT command. */
+	public static final int executeDialogueScript(int[] data, int offset, boolean skipping) {
+		while (offset < data.length) {
+			switch(data[offset]) {
+				// Submit.
+				case DIALOGUE_CMD_SUBMIT:
+					return offset + 1;
+
+				// Wait n*10 milliseconds.
+				case DIALOGUE_CMD_WAIT:
 					dialogueIsWaiting = true;
-					dialogueWaitEndMs = millis() + (long)(var0[var1 + 1] * 10);
-					var1 += 2;
+					dialogueWaitEndMs = millis() + (long)(data[offset + 1] * 10);
+					offset += 2;
 					break;
-				case 2:
+
+				// Wait for the user to click OK key.
+				case DIALOGUE_CMD_WAIT_OK:
 					dialogueIsWaiting = true;
 					dialogueIsOkKeyEnabled = true;
-					var1++;
+					offset++;
 					break;
-				case 3:
+
+				// Set camera position.
+				case DIALOGUE_CMD_SET_CAMERA_INSTANT:
+					// When in the space map.
 					if (dialogueEnvironment == 3) {
-						if (var0[var1 + 1] == 6) {
+						if (data[offset + 1] == 6) {
 							spaceMapSetCameraToBeacon();
 						}
 
-						if (var0[var1 + 1] == 5) {
+						if (data[offset + 1] == 5) {
 							spaceMapSetCameraInstant(0, 0);
 						}
 
-						var1 += 2;
+						offset += 2;
 						break;
 					}
 
-					switch(var0[var1 + 1]) {
+					// When in the level.
+					switch(data[offset + 1]) {
+
+						// Set to the player.
 						case 0:
 							dialogueCameraTargetX = levelCircleX[0];
 							dialogueCameraTargetY = levelCircleY[0];
-							var1 += 2;
+							offset += 2;
 							break;
+
+						// Set to Wiz or Waz position (generally in the ship).
 						case 1:
 							if (dialogueIsWazActive) {
 								dialogueCameraTargetX = levelCircleX[6];
@@ -3634,43 +3706,56 @@ public final class Game extends GameCanvas implements Runnable {
 								dialogueCameraTargetY = levelCircleY[0];
 							}
 
-							var1 += 2;
+							offset += 2;
 							break;
+
+						// Set to the origin.
 						case 5:
 							dialogueCameraTargetX = dialogueOriginX;
 							dialogueCameraTargetY = dialogueOriginY;
-							var1 += 2;
+							offset += 2;
 							break;
+
+						// Pull camera position from the script data.
 						default:
-							dialogueCameraTargetX = levelAlignToGameMirror(var0[var1 + 1] << 16);
-							dialogueCameraTargetY = var0[var1 + 2] << 16;
-							var1 += 3;
+							dialogueCameraTargetX = levelAlignToGameMirror(data[offset + 1] << 16);
+							dialogueCameraTargetY = data[offset + 2] << 16;
+							offset += 3;
 					}
 
 					levelSetCamera(dialogueCameraTargetX, dialogueCameraTargetY, 0);
 					break;
-				case 4:
+
+				// Set camera position with a smooth movement.
+				case DIALOGUE_CMD_SET_CAMERA_SMOOTH:
 					dialogueIsCameraMoving = true;
+
+					// When in the space map.
 					if (dialogueEnvironment == 3) {
-						if (var0[var1 + 1] == 6) {
+						if (data[offset + 1] == 6) {
 							spaceMapSetTargetCameraToBeacon();
 						}
 
-						if (var0[var1 + 1] == 5) {
+						if (data[offset + 1] == 5) {
 							spaceMapSetTargetCamera(0, 0);
 						}
 
-						var1 += 2;
+						offset += 2;
 						dialogueIsWaiting = true;
 						break;
 					}
 
-					switch(var0[var1 + 1]) {
+					// When in the level.
+					switch(data[offset + 1]) {
+
+						// Set to the player.
 						case 0:
 							dialogueCameraTargetX = levelCircleX[0];
 							dialogueCameraTargetY = levelCircleY[0];
-							var1 += 2;
+							offset += 2;
 							break;
+
+						// Set to Wiz or Waz position.
 						case 1:
 							if (dialogueIsWazActive) {
 								dialogueCameraTargetX = levelCircleX[6];
@@ -3680,63 +3765,79 @@ public final class Game extends GameCanvas implements Runnable {
 								dialogueCameraTargetY = levelCircleY[0];
 							}
 
-							var1 += 2;
+							offset += 2;
 							break;
+
+						// Set to the origin.
 						case 5:
 							dialogueCameraTargetX = dialogueOriginX;
 							dialogueCameraTargetY = dialogueOriginY;
-							var1 += 2;
+							offset += 2;
 							break;
+
+						// Pull camera position from the script data.
 						default:
-							dialogueCameraTargetX = levelAlignToGameMirror(var0[var1 + 1] << 16);
-							dialogueCameraTargetY = var0[var1 + 2] << 16;
-							var1 += 3;
+							dialogueCameraTargetX = levelAlignToGameMirror(data[offset + 1] << 16);
+							dialogueCameraTargetY = data[offset + 2] << 16;
+							offset += 3;
 					}
 
 					dialogueIsWaiting = true;
 					break;
-				case 5:
-					setCurrentSpeech(getText(var0[var1 + 1]), var0[var1 + 2]);
+
+				// Set current text in dialogue (and who speaks it).
+				case DIALOGUE_CMD_SET_TEXT:
+					setCurrentSpeech(getText(data[offset + 1]), data[offset + 2]);
 					isSpeakingAnimationPlaying = true;
 					dialogueIsWaiting = true;
-					var1 += 3;
+					offset += 3;
 					break;
-				case 6:
-					currentEmotion[var0[var1 + 1]] = var0[var1 + 2];
-					if (dialogueSfx[var0[var1 + 2]] != -1 && !var2) {
-						playSound(dialogueSfx[var0[var1 + 2]], 1);
+
+				// Set an emotion to Wiz or Waz.
+				case DIALOGUE_CMD_SET_EMOTION:
+					currentEmotion[data[offset + 1]] = data[offset + 2];
+					if (dialogueSfx[data[offset + 2]] != -1 && !skipping) {
+						playSound(dialogueSfx[data[offset + 2]], 1);
 					}
 
-					var1 += 3;
+					offset += 3;
 					break;
-				case 7:
+
+				// Set player position.
+				case DIALOGUE_CMD_SET_PLAYER_POS:
 					if (dialogueEnvironment == 5) {
-						currentPurpleX = var0[var1 + 2] * 128 / 1000;
-						currentPurpleY = var0[var1 + 3] * 128 / 1000;
+						currentPictureEntityX = data[offset + 2] * 128 / 1000;
+						currentPictureEntityY = data[offset + 3] * 128 / 1000;
 					} else if (activeSwapKey == 0) {
-						if (var0[var1 + 1] == 0) {
-							levelSetPlayerPos(levelAlignToGameMirror(var0[var1 + 2] << 16), var0[var1 + 3] << 16, 0, 0x0c0000);
+						if (data[offset + 1] == 0) {
+							levelSetPlayerPos(levelAlignToGameMirror(data[offset + 2] << 16), data[offset + 3] << 16, 0, 0x0c0000);
 						} else {
-							levelSetPlayerPos(levelAlignToGameMirror(var0[var1 + 2] << 16), var0[var1 + 3] << 16, 6, 0x140000);
+							levelSetPlayerPos(levelAlignToGameMirror(data[offset + 2] << 16), data[offset + 3] << 16, 6, 0x140000);
 						}
 					}
 
-					var1 += 4;
+					offset += 4;
 					break;
-				case 8:
-					if (!var2) {
+
+				// Set a new scene with the transition.
+				case DIALOGUE_CMD_SET_STATE:
+					if (!skipping) {
 						dialogueIsContinued = true;
-						setNewState(6, var0[var1 + 1]);
-						var1 += 2;
-						return var1;
+						setNewState(6, data[offset + 1]);
+						offset += 2;
+						return offset;
 					}
 
-					var1 += 2;
+					offset += 2;
 					break;
-				case 9:
-					dialogueEnvironment = var0[var1 + 1];
+
+				// Set dialogue environment.
+				case DIALOGUE_CMD_SET_ENV:
+					dialogueEnvironment = data[offset + 1];
 					hideDialogueBox();
+
 					switch(dialogueEnvironment) {
+						// Ship.
 						case 0:
 							initSpace(2, 12, 92, 46);
 							swapLevelData(0);
@@ -3744,6 +3845,8 @@ public final class Game extends GameCanvas implements Runnable {
 							gamma = 100;
 							levelCameraZoom = 72;
 							break;
+
+						// Swap between Ship <-> Level locations.
 						case 1:
 							if (!dialogueIsWazActive) {
 								swapLevelData(1);
@@ -3752,71 +3855,95 @@ public final class Game extends GameCanvas implements Runnable {
 						case 5:
 						default:
 							break;
+
+						// Space map.
 						case 3:
-							initSpaceMap(var0[var1 + 2] * 72 / 100, var0[var1 + 3] * 72 / 100, var0[var1 + 4]);
+							initSpaceMap(data[offset + 2] * 72 / 100, data[offset + 3] * 72 / 100, data[offset + 4]);
 							initSpace(1, 150, 256, 256);
-							var1 += 3;
+							offset += 3;
 							break;
+
+						// Space.
 						case 4:
 							initSpace(1, 50, 128, 128);
 					}
 
-					var1 += 2;
+					offset += 2;
 					break;
-				case 10:
+
+				// Hide dialogue box.
+				case DIALOGUE_CMD_HIDE_BOX:
 					hideDialogueBox();
 					isSpeakingAnimationPlaying = false;
-					var1++;
+					offset++;
 					break;
-				case 11:
-					showBlackBars = var0[var1 + 1] == 1;
-					var1 += 2;
+
+				// Show black bars.
+				case DIALOGUE_CMD_SET_BARS:
+					dialogueShowBlackBars = data[offset + 1] == 1;
+					offset += 2;
 					break;
-				case 12:
+
+				// Enable one of the alarm visual signals.
+				case DIALOGUE_CMD_SET_ALARM:
 					if (dialogueEnvironment == 3) {
-						spaceMapPlanetBeaconRadius = var0[var1 + 1] == 1 ? 1 : 0;
+						spaceMapPlanetBeaconRadius = data[offset + 1] == 1 ? 1 : 0;
 					}
 
 					if (dialogueEnvironment == 0) {
-						shipAlarmRadius = var0[var1 + 1] == 1 ? 1 : 0;
+						shipAlarmRadius = data[offset + 1] == 1 ? 1 : 0;
 					}
 
-					var1 += 2;
+					offset += 2;
 					break;
-				case 13:
-					if (var0[var1 + 1] == 5) {
-						spaceMapShowShip = var0[var1 + 2] == 1;
+
+				// Space map: Show ship or planet pointer.
+				case DIALOGUE_CMD_SPACE_MAP_SHOW_POINTER:
+					if (data[offset + 1] == 5) {
+						spaceMapShowShip = data[offset + 2] == 1;
 					} else {
-						spaceMapShowPlanet = var0[var1 + 2] == 1;
+						spaceMapShowPlanet = data[offset + 2] == 1;
 					}
 
-					var1 += 3;
+					offset += 3;
 					break;
-				case 14:
-					isTransmodigrafierMissing = var0[var1 + 1] == 1;
-					var1 += 2;
+
+				// Transmission: Set interference.
+				case DIALOGUE_CMD_TRANSMISSION_SET_NOISE:
+					isTransmissionNoisy = data[offset + 1] == 1;
+					offset += 2;
 					break;
-				case 15:
-					isTransmissionShaky = var0[var1 + 1] == 1;
-					var1 += 2;
+
+				// Transmission: Set shake.
+				case DIALOGUE_CMD_TRANSMISSION_SET_SHAKE:
+					isTransmissionShaky = data[offset + 1] == 1;
+					offset += 2;
 					break;
-				case 16:
-					isShowingShardPicture = var0[var1 + 1] == 1;
-					var1 += 2;
+
+				// Picture: Show a picture.
+				case DIALOGUE_CMD_PICTURE_SHOW:
+					isPictureShown = data[offset + 1] == 1;
+					offset += 2;
 					break;
-				case 17:
-					pingBackgroundColor = var0[var1 + 1];
-					var1 += 2;
-				case 18:
-				default:
+
+				// Transmission: Set background color.
+				case DIALOGUE_CMD_TRANSMISSION_SET_BACKGROUND_COLOR:
+					transmissionBackgroundColor = data[offset + 1];
+					offset += 2;
 					break;
-				case 19:
-					activePurpleShardNameId = var0[var1 + 1];
-					var1 += 2;
+
+				// Reserved.
+				case DIALOGUE_CMD_RESERVED:
+					break;
+
+				// Picture: Set a label ID (see case 16).
+				case DIALOGUE_CMD_PICTURE_SET_LABEL_ID:
+					activePictureLabelId = data[offset + 1];
+					offset += 2;
 			}
 		}
 
-		return var1;
+		return offset;
 	}
 
 	public static final void sceneSelectionRun() {
@@ -7203,8 +7330,8 @@ public final class Game extends GameCanvas implements Runnable {
 				imgsDecor[i] = loadImage("shipDecor" + i + ".pim", "shipDecor" + i + ".ppl");
 			}
 
-			decorBackground = loadFile16("decor_background.bin");
-			decorForeground = loadFile16("decor_foreground.bin");
+			shipDecorBackground = loadFile16("decor_background.bin");
+			shipDecorForeground = loadFile16("decor_foreground.bin");
 		}
 
 		if (imgsShipIcons == null) {
@@ -7308,7 +7435,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		levelRenderPlayer();
-		renderShipDecor(decorForeground);
+		renderShipDecor(shipDecorForeground);
 		renderShipArrows();
 	}
 
@@ -7366,7 +7493,7 @@ public final class Game extends GameCanvas implements Runnable {
 		gDrawImage(imgInsideLamp, var4 - imgInsideLamp.getWidth() / 2, 2, 0);
 		renderWindow(var1 + 299, 30, 0);
 		renderWindow(var1 + 553, 30, 1);
-		renderShipDecor(decorBackground);
+		renderShipDecor(shipDecorBackground);
 		if (shipAlarmRadius > 0) {
 			int var12 = 2 + imgInsideLamp.getHeight() / 2;
 			gSetColor(0xff0000);
@@ -7575,7 +7702,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		levelRenderPlayer();
-		renderShipDecor(decorForeground);
+		renderShipDecor(shipDecorForeground);
 		refreshGame();
 	}
 
@@ -7717,15 +7844,15 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void renderTransmission() {
 		loadStatic();
-		gSetColor(pingBackgroundColor);
+		gSetColor(transmissionBackgroundColor);
 		gFillRect(0, 0, 128, 128);
 		if (isTransmissionShaky) {
-			renderPurple(currentPurpleX + sin1000[(int)(millis() / 5L % 360L)] * 12 / 1000, currentPurpleY + sin1000[(int)(millis() / 3L % 360L)] * 12 / 1000, currentPurpleSize + 40 + sin1000[(int)(millis() / 14L % 360L)] * 20 / 1000);
+			renderPurple(currentPictureEntityX + sin1000[(int)(millis() / 5L % 360L)] * 12 / 1000, currentPictureEntityY + sin1000[(int)(millis() / 3L % 360L)] * 12 / 1000, currentPictureEntitySize + 40 + sin1000[(int)(millis() / 14L % 360L)] * 20 / 1000);
 		} else {
-			renderPurple(currentPurpleX, currentPurpleY, currentPurpleSize);
+			renderPurple(currentPictureEntityX, currentPictureEntityY, currentPictureEntitySize);
 		}
 
-		if (isTransmodigrafierMissing) {
+		if (isTransmissionNoisy) {
 			int var0 = 0;
 
 			for (int var1 = 0; var1 <= 128; var1 += 23) {
@@ -7741,7 +7868,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 
-		if (isShowingShardPicture) {
+		if (isPictureShown) {
 			gSetColor(0xffffff);
 			gFillRect(0, 0, 128, 10);
 			gFillRect(0, 0, 10, 128);
@@ -7749,8 +7876,8 @@ public final class Game extends GameCanvas implements Runnable {
 			gFillRect(0, 98, 128, 30);
 			gSetColor(0);
 			gDrawRect(10, 10, 107, 87);
-			if (activePurpleShardNameId >= 0) {
-				renderText(-1000, 106, purpleShardNames[activePurpleShardNameId], 1);
+			if (activePictureLabelId >= 0) {
+				renderText(-1000, 106, pictureLabels[activePictureLabelId], 1);
 			}
 		}
 	}
@@ -7760,7 +7887,7 @@ public final class Game extends GameCanvas implements Runnable {
 		int var4 = var2 * 93 / 100;
 		gSetColor(0);
 		gFillArc(var0 - var3 / 2 - 2, var1 - var4 / 2 - 2, var3 + 2 + 2, var4 + 2 + 2, 0, 360);
-		if (isTransmodigrafierMissing) {
+		if (isTransmissionNoisy) {
 			gSetColor(0x696969);
 		} else {
 			gSetColor(0xa020f0);
@@ -7770,7 +7897,7 @@ public final class Game extends GameCanvas implements Runnable {
 		gSetColor(0);
 		int var5 = var2 * 23 / 100;
 		int var6 = var2 * 5 / 100;
-		if (isSpeakingAnimationPlaying && !isShowingShardPicture && (millis() / 150L & 1L) > 0L) {
+		if (isSpeakingAnimationPlaying && !isPictureShown && (millis() / 150L & 1L) > 0L) {
 			gFillArc(var0 - var5 / 2, var1 - var6 * 2, var5, var6 * 2, 0, 360);
 		} else {
 			gFillArc(var0 - var5 / 2, var1 - var6, var5, var6, 0, 360);
@@ -7790,8 +7917,8 @@ public final class Game extends GameCanvas implements Runnable {
 			gFillArc(var0 - var7 * 3 / 2 + var10 * var7 + var7 / 3, var1 - var4 * 45 / 100 + var7 / 3, var8, var8, 0, 360);
 		}
 
-		if (isTransmissionBlinked || !isShowingShardPicture && rand8() > 240) {
-			if (isTransmodigrafierMissing) {
+		if (isTransmissionBlinked || !isPictureShown && rand8() > 240) {
+			if (isTransmissionNoisy) {
 				gSetColor(0x696969);
 			} else {
 				gSetColor(0xa020f0);
