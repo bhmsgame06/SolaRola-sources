@@ -286,8 +286,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int sceneTransitionOffset;
 
 	// Level scene.
-	public static int levelFinishX;
-	public static int levelFinishY;
+	public static int levelEntityX;
+	public static int levelEntityY;
 	public static int levelReservedField0;
 	public static int levelReservedField1;
 	public static int levelPlayerRotationRate;
@@ -3633,9 +3633,9 @@ public final class Game extends GameCanvas implements Runnable {
 		startDialogue(filename, originX, originY, false);
 	}
 
-	public static final void startDialogue(String var0, int originX, int originY, boolean enableSelection) {
+	public static final void startDialogue(String filename, int originX, int originY, boolean enableSelection) {
 		isLoadingBarShown = false;
-		int[] data = loadFile32(var0);
+		int[] data = loadFile32(filename);
 		isLoadingBarShown = true;
 		if (data != null) {
 			startDialogue(data, originX, originY, enableSelection);
@@ -4038,7 +4038,7 @@ public final class Game extends GameCanvas implements Runnable {
 		refreshGame();
 	}
 
-	public static final void sceneTitleInit(int var0) {
+	public static final void sceneTitleInit(int arg) {
 		if (isPastSplash) {
 			isPastSplash = false;
 			setNewState(STATE_ID_SHIP, 10);
@@ -4135,7 +4135,7 @@ public final class Game extends GameCanvas implements Runnable {
 		sceneTransitionStartMs = -1L;
 	}
 
-	public static final void fillScreenBlack(int var0) {
+	public static final void fillScreenBlack(int arg) {
 		int oldColor = gGetColor();
 
 		gSetColor(0);
@@ -4338,21 +4338,29 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void renderFacePurple(int var0, int var1) {
-		int var2 = levelAlignX(var0, var1);
-		int var3 = levelAlignY(var0, var1);
-		int var4 = levelCameraZoom * 10 / 100;
-		int var5 = levelCameraZoom * 25 / 100;
-		if (!isOutOfScreenBounds(var2 - var4, var3 - var5, var2 + var4, var3 + var5)) {
+	public static final void renderFacePurple(int x, int y) {
+		int alignX = levelAlignX(x, y);
+		int alignY = levelAlignY(x, y);
+		int width = levelCameraZoom * 10 / 100;
+		int height = levelCameraZoom * 25 / 100;
+
+		if (!isOutOfScreenBounds(alignX - width, alignY - height, alignX + width, alignY + height)) {
+			// Outline of the body.
 			gSetColor(0);
-			gFillArc(var2 - var4 - 2, var3 - var5 - 2, 2 * (var4 + 2), 2 * (var5 + 2), 0, 360);
+			gFillArc(alignX - width - 2, alignY - height - 2, 2 * (width + 2), 2 * (height + 2), 0, 360);
+
+			// Purple's body.
 			gSetColor(0xa020f0);
-			gFillArc(var2 - var4, var3 - var5, 2 * var4, 2 * var5, 0, 360);
-			gDrawImage(imgMouth, var2 - imgMouth.getWidth() / 2, var3 - imgMouth.getHeight() / 2, 0);
-			var2 -= imgsEyeM[1].getWidth() / 2;
-			gDrawImage(imgsEyeM[1], var2 - var4, var3 - var5 * 2 / 3, 0);
-			gDrawImage(imgsEyeM[1], var2, var3 - var5 * 2 / 3, 0);
-			gDrawImage(imgsEyeM[1], var2 + var4, var3 - var5 * 2 / 3, 0);
+			gFillArc(alignX - width, alignY - height, 2 * width, 2 * height, 0, 360);
+
+			// Mouth.
+			gDrawImage(imgMouth, alignX - imgMouth.getWidth() / 2, alignY - imgMouth.getHeight() / 2, 0);
+			alignX -= imgsEyeM[1].getWidth() / 2;
+
+			// Eyes.
+			gDrawImage(imgsEyeM[1], alignX - width, alignY - height * 2 / 3, 0);
+			gDrawImage(imgsEyeM[1], alignX, alignY - height * 2 / 3, 0);
+			gDrawImage(imgsEyeM[1], alignX + width, alignY - height * 2 / 3, 0);
 		}
 	}
 
@@ -4361,6 +4369,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelPlayerRed = 100 + levelPlayerHealth * 100 / 500;
 		}
 
+		// Blink the color of the blob as we got a damage.
 		if ((levelPlayerHitTicks & 1) > 0) {
 			renderPlayable(0, 0, false);
 		} else {
@@ -4368,13 +4377,12 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void renderPlayable(int var0, int var1, boolean var2) {
-		byte var3 = 0;
-		if (var0 > 0 || var0 == 0 && activeSwapKey == 1) {
-			var3 = 1;
-		}
+	public static final void renderPlayable(int circleId, int var1, boolean var2) {
+		byte playerId = 0;
+		if (circleId > 0 || circleId == 0 && activeSwapKey == 1)
+			playerId = 1;
 
-		if (var3 == 0) {
+		if (playerId == 0) {
 			levelPlayerEyeVectorMagnitude = 18;
 			var1 = 0xff;
 			if (currentLevelLoaded == -1) {
@@ -4384,131 +4392,150 @@ public final class Game extends GameCanvas implements Runnable {
 			levelPlayerEyeVectorMagnitude = 13;
 		}
 
-		int var4 = levelAlignX(levelCircleX[var0], levelCircleY[var0]);
-		int var5 = levelAlignY(levelCircleX[var0], levelCircleY[var0]);
-		int[] var6 = new int[4];
+		int alignX = levelAlignX(levelCircleX[circleId], levelCircleY[circleId]);
+		int alignY = levelAlignY(levelCircleX[circleId], levelCircleY[circleId]);
+		int[] hitboxPos = new int[4];
+
+		// Rotate hitbox points if the camera is rotated significantly.
 		if (levelCameraAngle > 45 && levelCameraAngle < 315) {
 			if (levelCameraAngle >= 45 && levelCameraAngle <= 135) {
-				var6[0] = levelCircleX[var0 + 0] - levelCircleX[var0 + 3] >> 16;
-				var6[1] = levelCircleY[var0 + 0] - levelCircleY[var0 + 1] >> 16;
-				var6[2] = levelCircleX[var0 + 4] - levelCircleX[var0 + 0] >> 16;
-				var6[3] = levelCircleY[var0 + 2] - levelCircleY[var0 + 0] >> 16;
+				// 90 deg left.
+				hitboxPos[0] = levelCircleX[circleId + 0] - levelCircleX[circleId + 3] >> 16;
+				hitboxPos[1] = levelCircleY[circleId + 0] - levelCircleY[circleId + 1] >> 16;
+				hitboxPos[2] = levelCircleX[circleId + 4] - levelCircleX[circleId + 0] >> 16;
+				hitboxPos[3] = levelCircleY[circleId + 2] - levelCircleY[circleId + 0] >> 16;
 			} else if (levelCameraAngle >= 135 && levelCameraAngle <= 225) {
-				var6[0] = levelCircleY[var0 + 2] - levelCircleY[var0 + 0] >> 16;
-				var6[1] = levelCircleX[var0 + 0] - levelCircleX[var0 + 3] >> 16;
-				var6[2] = levelCircleY[var0 + 0] - levelCircleY[var0 + 1] >> 16;
-				var6[3] = levelCircleX[var0 + 4] - levelCircleX[var0 + 0] >> 16;
+				// 180 deg.
+				hitboxPos[0] = levelCircleY[circleId + 2] - levelCircleY[circleId + 0] >> 16;
+				hitboxPos[1] = levelCircleX[circleId + 0] - levelCircleX[circleId + 3] >> 16;
+				hitboxPos[2] = levelCircleY[circleId + 0] - levelCircleY[circleId + 1] >> 16;
+				hitboxPos[3] = levelCircleX[circleId + 4] - levelCircleX[circleId + 0] >> 16;
 			} else {
-				var6[0] = levelCircleX[var0 + 4] - levelCircleX[var0 + 0] >> 16;
-				var6[1] = levelCircleY[var0 + 2] - levelCircleY[var0 + 0] >> 16;
-				var6[2] = levelCircleX[var0 + 0] - levelCircleX[var0 + 3] >> 16;
-				var6[3] = levelCircleY[var0 + 0] - levelCircleY[var0 + 1] >> 16;
+				// 90 deg right.
+				hitboxPos[0] = levelCircleX[circleId + 4] - levelCircleX[circleId + 0] >> 16;
+				hitboxPos[1] = levelCircleY[circleId + 2] - levelCircleY[circleId + 0] >> 16;
+				hitboxPos[2] = levelCircleX[circleId + 0] - levelCircleX[circleId + 3] >> 16;
+				hitboxPos[3] = levelCircleY[circleId + 0] - levelCircleY[circleId + 1] >> 16;
 			}
 		} else {
-			var6[0] = levelCircleY[var0 + 0] - levelCircleY[var0 + 1] >> 16;
-			var6[1] = levelCircleX[var0 + 4] - levelCircleX[var0 + 0] >> 16;
-			var6[2] = levelCircleY[var0 + 2] - levelCircleY[var0 + 0] >> 16;
-			var6[3] = levelCircleX[var0 + 0] - levelCircleX[var0 + 3] >> 16;
+			// 0 deg.
+			hitboxPos[0] = levelCircleY[circleId + 0] - levelCircleY[circleId + 1] >> 16;
+			hitboxPos[1] = levelCircleX[circleId + 4] - levelCircleX[circleId + 0] >> 16;
+			hitboxPos[2] = levelCircleY[circleId + 2] - levelCircleY[circleId + 0] >> 16;
+			hitboxPos[3] = levelCircleX[circleId + 0] - levelCircleX[circleId + 3] >> 16;
 		}
 
-		for (int var7 = 0; var7 < 4; var7++) {
-			var6[var7] = levelCameraZoom * var6[var7] / 100;
+		// Align them to a current camera zoom value.
+		for (int i = 0; i < 4; i++) {
+			hitboxPos[i] = levelCameraZoom * hitboxPos[i] / 100;
 		}
 
-		int[] var13 = new int[4];
+		int[] hitboxPos2x = new int[4];
 
-		for (int var8 = 0; var8 < 4; var8++) {
-			var13[var8] = var6[var8] << 1;
+		for (int i = 0; i < 4; i++) {
+			hitboxPos2x[i] = hitboxPos[i] << 1;
 		}
 
+		// Blob's outline.
 		setGammaColor(0);
-		gSetClip(var4, 0, 200, var5);
-		gFillArc(var4 - var6[1] - 2, var5 - var6[0] - 2, var13[1] + 4, var13[0] + 4, 0, 360);
-		gSetClip(0, 0, var4, var5);
-		gFillArc(var4 - var6[3] - 2, var5 - var6[0] - 2, var13[3] + 4, var13[0] + 4, 90, 360);
-		gSetClip(0, var5, var4, 200);
-		gFillArc(var4 - var6[3] - 2, var5 - var6[2] - 2, var13[3] + 4, var13[2] + 4, 180, 360);
-		gSetClip(var4, var5, 200, 200);
-		gFillArc(var4 - var6[1] - 2, var5 - var6[2] - 2, var13[1] + 4, var13[2] + 4, 270, 360);
+		gSetClip(alignX, 0, 200, alignY);
+		gFillArc(alignX - hitboxPos[1] - 2, alignY - hitboxPos[0] - 2, hitboxPos2x[1] + 4, hitboxPos2x[0] + 4, 0, 360);
+		gSetClip(0, 0, alignX, alignY);
+		gFillArc(alignX - hitboxPos[3] - 2, alignY - hitboxPos[0] - 2, hitboxPos2x[3] + 4, hitboxPos2x[0] + 4, 90, 360);
+		gSetClip(0, alignY, alignX, 200);
+		gFillArc(alignX - hitboxPos[3] - 2, alignY - hitboxPos[2] - 2, hitboxPos2x[3] + 4, hitboxPos2x[2] + 4, 180, 360);
+		gSetClip(alignX, alignY, 200, 200);
+		gFillArc(alignX - hitboxPos[1] - 2, alignY - hitboxPos[2] - 2, hitboxPos2x[1] + 4, hitboxPos2x[2] + 4, 270, 360);
+
+		// Blob's body.
 		setGammaColor(var1);
-		gSetClip(var4, 0, 200, var5);
-		gFillArc(var4 - var6[1], var5 - var6[0], var6[1] * 2, var6[0] * 2, 0, 360);
-		gSetClip(0, 0, var4, var5);
-		gFillArc(var4 - var6[3], var5 - var6[0], var6[3] * 2, var6[0] * 2, 90, 360);
-		gSetClip(0, var5, var4, 200);
-		gFillArc(var4 - var6[3], var5 - var6[2], var6[3] * 2, var6[2] * 2, 180, 360);
-		gSetClip(var4, var5, 200, 200);
-		gFillArc(var4 - var6[1], var5 - var6[2], var6[1] * 2, var6[2] * 2, 270, 360);
+		gSetClip(alignX, 0, 200, alignY);
+		gFillArc(alignX - hitboxPos[1], alignY - hitboxPos[0], hitboxPos[1] * 2, hitboxPos[0] * 2, 0, 360);
+		gSetClip(0, 0, alignX, alignY);
+		gFillArc(alignX - hitboxPos[3], alignY - hitboxPos[0], hitboxPos[3] * 2, hitboxPos[0] * 2, 90, 360);
+		gSetClip(0, alignY, alignX, 200);
+		gFillArc(alignX - hitboxPos[3], alignY - hitboxPos[2], hitboxPos[3] * 2, hitboxPos[2] * 2, 180, 360);
+		gSetClip(alignX, alignY, 200, 200);
+		gFillArc(alignX - hitboxPos[1], alignY - hitboxPos[2], hitboxPos[1] * 2, hitboxPos[2] * 2, 270, 360);
+
 		gSetClip(0, 0, 128, 128);
+
 		if (gamma > 50 && levelPlayerHealth > 0) {
-			int var14 = levelPlayerAngle;
+			int playerAngle = levelPlayerAngle;
 			if (var2) {
-				var14 = 0;
+				playerAngle = 0;
 			}
 
+			// Render a mouth.
 			if (levelPlayerCurrentGrabberFlags >= 0) {
-				Image var9 = imgMouth;
-				gDrawImage(var9, var4 - var9.getWidth() / 2, var5 - var9.getHeight() / 2, 0);
+				Image img = imgMouth;
+				gDrawImage(img, alignX - img.getWidth() / 2, alignY - img.getHeight() / 2, 0);
 			} else {
-				Image var15 = imgsMouths[currentEmotion[var3]][var3];
-				if (currentEmotion[var3] > 0) {
-					gDrawImage(var15, var4 - var15.getWidth() / 2 + mouthX[currentEmotion[var3]][var3], var5 - var15.getHeight() / 2 + mouthY[currentEmotion[var3]][var3], 0);
+				Image img = imgsMouths[currentEmotion[playerId]][playerId];
+
+				if (currentEmotion[playerId] > 0) {
+					gDrawImage(img, alignX - img.getWidth() / 2 + mouthX[currentEmotion[playerId]][playerId], alignY - img.getHeight() / 2 + mouthY[currentEmotion[playerId]][playerId], 0);
 				} else {
-					int var10 = levelCameraZoom * 6 / 100;
-					int var11 = var4 + cos(var14 + 90) * var10 / 1000;
-					int var12 = var5 + sin(var14 + 90) * var10 / 1000;
-					gDrawImage(var15, var11 - var15.getWidth() / 2, var12 - var15.getHeight() / 2, 0);
+					int mouthMag = levelCameraZoom * 6 / 100;
+					int mouthX = alignX + cos(playerAngle + 90) * mouthMag / 1000;
+					int mouthY = alignY + sin(playerAngle + 90) * mouthMag / 1000;
+					gDrawImage(img, mouthX - img.getWidth() / 2, mouthY - img.getHeight() / 2, 0);
 				}
 			}
 
-			if (currentEmotion[var3] == 0) {
-				Image var16 = imgsEyeM[var3];
-				if (var0 > 0) {
-					if (levelCircleX[0] + 0x160000 < levelCircleX[var0]) {
-						var16 = imgsEyeLeft[var3];
-					}
+			// Render an eyes.
+			if (currentEmotion[playerId] == 0) {
+				Image img = imgsEyeM[playerId];
 
-					if (levelCircleX[0] - 0x160000 > levelCircleX[var0]) {
-						var16 = imgsEyeRight[var3];
-					}
+				if (circleId > 0) {
+					// Waz looks at Wiz (ship).
+					if (levelCircleX[0] + 0x160000 < levelCircleX[circleId])
+						img = imgsEyeLeft[playerId];
+
+					if (levelCircleX[0] - 0x160000 > levelCircleX[circleId])
+						img = imgsEyeRight[playerId];
 				} else {
-					if (levelCircleX[var0] + 0x010000 < levelCirclePrevX[var0]) {
-						var16 = imgsEyeLeft[var3];
-					}
+					// Ordinary levels.
+					if (levelCircleX[circleId] + 0x010000 < levelCirclePrevX[circleId])
+						img = imgsEyeLeft[playerId];
 
-					if (levelCircleX[var0] - 0x010000 > levelCirclePrevX[var0]) {
-						var16 = imgsEyeRight[var3];
-					}
+					if (levelCircleX[circleId] - 0x010000 > levelCirclePrevX[circleId])
+						img = imgsEyeRight[playerId];
 				}
 
-				if (currentEyeBlinkTicks[var3] > 0) {
-					var16 = imgsEyeC[var3];
+				// Closed eye.
+				if (currentEyeBlinkTicks[playerId] > 0) {
+					img = imgsEyeC[playerId];
 				}
 
-				int var18 = levelCameraZoom * levelPlayerEyeVectorMagnitude / 100;
-				int var20 = var4 + cos(var14 - 115) * var18 / 1000;
-				int var22 = var5 + sin(var14 - 115) * var18 / 1000;
-				gDrawImage(var16, var20 - var16.getWidth() / 2, var22 - var16.getHeight() / 2, 0);
-				var20 = var4 + cos(var14 - 65) * var18 / 1000;
-				var22 = var5 + sin(var14 - 65) * var18 / 1000;
-				gDrawImage(var16, var20 - var16.getWidth() / 2, var22 - var16.getHeight() / 2, 0);
+				// Rendering eyes.
+				int eyeMag = levelCameraZoom * levelPlayerEyeVectorMagnitude / 100;
+				int eyeX, eyeY;
+
+				eyeX = alignX + cos(playerAngle - 115) * eyeMag / 1000;
+				eyeY = alignY + sin(playerAngle - 115) * eyeMag / 1000;
+				gDrawImage(img, eyeX - img.getWidth() / 2, eyeY - img.getHeight() / 2, 0);
+
+				eyeX = alignX + cos(playerAngle - 65) * eyeMag / 1000;
+				eyeY = alignY + sin(playerAngle - 65) * eyeMag / 1000;
+				gDrawImage(img, eyeX - img.getWidth() / 2, eyeY - img.getHeight() / 2, 0);
 			} else {
-				int var17 = levelCameraZoom * levelPlayerEyeVectorMagnitude / 100;
-				Image var19 = imgsEyes[currentEmotion[var3]][var3];
-				if (currentEyeBlinkTicks[var3] > 0) {
-					var19 = imgsEyesC[currentEmotion[var3]][var3];
+				int eyeMag = levelCameraZoom * levelPlayerEyeVectorMagnitude / 100;
+
+				Image img = imgsEyes[currentEmotion[playerId]][playerId];
+				if (currentEyeBlinkTicks[playerId] > 0) {
+					img = imgsEyesC[currentEmotion[playerId]][playerId];
 				}
 
-				gDrawImage(var19, var4 - var19.getWidth() / 2 + eyesX[currentEmotion[var3]][var3], var5 - var17 - var19.getHeight() / 2 + eyesY[currentEmotion[var3]][var3], 0);
+				gDrawImage(img, alignX - img.getWidth() / 2 + eyesX[currentEmotion[playerId]][playerId], alignY - eyeMag - img.getHeight() / 2 + eyesY[currentEmotion[playerId]][playerId], 0);
 			}
 
-			if (currentEyeBlinkTicks[var3] > 0 || rand8() % 50 == var3) {
-				if (currentEyeBlinkTicks[var3] > 0) {
-					int var10002 = currentEyeBlinkTicks[var3]--;
-					return;
-				}
-
-				currentEyeBlinkTicks[var3] = 3;
+			// Handle pseudorandom eye blinking.
+			if (currentEyeBlinkTicks[playerId] > 0 || rand8() % 50 == playerId) {
+				if (currentEyeBlinkTicks[playerId] > 0)
+					currentEyeBlinkTicks[playerId]--;
+				else
+					currentEyeBlinkTicks[playerId] = 3;
 			}
 		}
 	}
@@ -5822,8 +5849,8 @@ public final class Game extends GameCanvas implements Runnable {
 		levelColorDestructible = sRead32();
 		int var2 = levelAlignToGameMirror(sReadU16() << 16);
 		int var3 = sReadU16() << 16;
-		levelFinishX = levelAlignToGameMirror(sReadU16() << 16);
-		levelFinishY = sReadU16() << 16;
+		levelEntityX = levelAlignToGameMirror(sReadU16() << 16);
+		levelEntityY = sReadU16() << 16;
 		int var4 = sReadU16();
 		levelPortalFilledRadius = 0;
 		int var5 = 0;
@@ -6791,8 +6818,8 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		renderSigns();
-		if (levelFinishY > 0) {
-			renderFacePurple(levelFinishX, levelFinishY);
+		if (levelEntityY > 0) {
+			renderFacePurple(levelEntityX, levelEntityY);
 		}
 
 		if (var0) {
