@@ -4002,19 +4002,22 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void sceneTitleRun() {
 		gSetColor(0);
 		gFillRect(0, 0, 128, 128);
+
 		renderSpace(0, 0, 0, true);
-		if (imgGamelogoTop != null) {
+
+		// Sola
+		if (imgGamelogoTop != null)
 			gDrawImage(imgGamelogoTop, 17, 0, 0);
-		}
 
-		if (imgGamelogoBottom != null) {
+		// Rola
+		if (imgGamelogoBottom != null)
 			gDrawImage(imgGamelogoBottom, 24, 55, 0);
-		}
 
-		if ((millis() & 512L) > 0L) {
+		// "press 5" string.
+		if ((millis() & 512L) > 0L)
 			renderText(-1000, 114, titleText, 0);
-		}
 
+		// OK softkey.
 		if (softkeyPressed(2, -1, true) == 2) {
 			isPastSplash = true;
 			setNewState(6, 2);
@@ -4034,8 +4037,10 @@ public final class Game extends GameCanvas implements Runnable {
 
 			imgGamelogoTop = loadImage("gamelogo.pim", "gamelogo.ppl");
 			imgGamelogoBottom = loadImage("gamelogo2.pim", "gamelogo2.ppl");
+
 			initSpace(1, 50, 128, 128);
 			playSound(8);
+
 			isBeamAnimated = false;
 		}
 	}
@@ -4043,6 +4048,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void sceneTitleFree() {
 		imgGamelogoTop = null;
 		imgGamelogoBottom = null;
+
 		garbageCollector();
 		playSound(-1);
 	}
