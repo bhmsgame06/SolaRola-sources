@@ -119,6 +119,18 @@ public final class Game extends GameCanvas implements Runnable {
 	private static long randSeed;
 
 	// States.
+	private static final int STATE_ID_SELECTION = 0;
+	private static final int STATE_ID_SPLASH = 1;
+	private static final int STATE_ID_SHIP = 2;
+	private static final int STATE_ID_PRE_LEVEL = 3;
+	private static final int STATE_ID_LEVEL = 4;
+	private static final int STATE_ID_DIALOGUE = 5;
+	private static final int STATE_ID_TRANSITION = 6;
+	private static final int STATE_ID_TITLE = 7;
+	private static final int STATE_ID_HELP = 8;
+	private static final int STATE_EXEC_INIT = 0;
+	private static final int STATE_EXEC_RUN = 1;
+	private static final int STATE_EXEC_FREE = 2;
 	public static boolean isNewState = true;
 	public static int oldState;
 	public static int curState = -1;
@@ -264,6 +276,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean isPastSplash = false;
 
 	// Transition scene.
+	private static final int TRANSITION_TYPE_WIPE = 0;
+	private static final int TRANSITION_TYPE_INSTANT = 2;
 	public static int sceneTransitionNextState;
 	public static long sceneTransitionStartMs;
 	public static int sceneTransitionInvCoeff;
@@ -2455,123 +2469,121 @@ public final class Game extends GameCanvas implements Runnable {
 		if (state >= 0) {
 			switch(state) {
 
-				case 0:
+				case STATE_ID_SELECTION:
 					switch(res) {
-						case 0:
+						case STATE_EXEC_INIT:
 							sceneSelectionInit(stateArg);
 							break;
-						case 1:
+						case STATE_EXEC_RUN:
 							sceneSelectionRun();
 							break;
-						case 2:
+						case STATE_EXEC_FREE:
 							sceneSelectionFree();
 					}
 					return;
 
-				case 1:
+				case STATE_ID_SPLASH:
 					switch(res) {
-						case 0:
+						case STATE_EXEC_INIT:
 							sceneSplashInit(stateArg);
 							break;
-						case 1:
+						case STATE_EXEC_RUN:
 							sceneSplashRun();
 							break;
-						case 2:
+						case STATE_EXEC_FREE:
 							sceneSplashFree();
 					}
 					return;
 
-				case 2:
+				case STATE_ID_SHIP:
 					switch(res) {
-						case 0:
+						case STATE_EXEC_INIT:
 							sceneShipInit(stateArg);
 							break;
-						case 1:
+						case STATE_EXEC_RUN:
 							sceneShipRun();
 							break;
-						case 2:
+						case STATE_EXEC_FREE:
 							sceneShipFree();
 					}
 					return;
 
-				case 3:
+				case STATE_ID_PRE_LEVEL:
 					switch(res) {
-						case 0:
+						case STATE_EXEC_INIT:
 							scenePreLevelInit(stateArg);
 							break;
-						case 1:
+						case STATE_EXEC_RUN:
 							scenePreLevelRun();
 							break;
-						case 2:
+						case STATE_EXEC_FREE:
 							scenePreLevelFree();
 					}
 					return;
 
-				case 4:
+				case STATE_ID_LEVEL:
 					switch(res) {
-						case 0:
+						case STATE_EXEC_INIT:
 							sceneLevelInit(stateArg);
 							break;
-						case 1:
+						case STATE_EXEC_RUN:
 							sceneLevelRun();
 							break;
-						case 2:
+						case STATE_EXEC_FREE:
 							sceneLevelFree();
 					}
 					return;
 
-				case 5:
+				case STATE_ID_DIALOGUE:
 					switch(res) {
-						case 0:
+						case STATE_EXEC_INIT:
 							sceneDialogueInit(stateArg);
 							break;
-						case 1:
+						case STATE_EXEC_RUN:
 							sceneDialogueRun();
 							break;
-						case 2:
+						case STATE_EXEC_FREE:
 							sceneDialogueFree();
 					}
 					return;
 
-				case 6:
+				case STATE_ID_TRANSITION:
 					switch(res) {
-						case 0:
+						case STATE_EXEC_INIT:
 							sceneTransitionInit(stateArg);
 							break;
-						case 1:
+						case STATE_EXEC_RUN:
 							sceneTransitionRun();
 							break;
-						case 2:
+						case STATE_EXEC_FREE:
 							sceneTransitionFree();
 					}
 					return;
 
-				case 7:
+				case STATE_ID_TITLE:
 					switch(res) {
-						case 0:
+						case STATE_EXEC_INIT:
 							sceneTitleInit(stateArg);
 							break;
-						case 1:
+						case STATE_EXEC_RUN:
 							sceneTitleRun();
 							break;
-						case 2:
+						case STATE_EXEC_FREE:
 							sceneTitleFree();
 					}
 					return;
 
-				case 8:
+				case STATE_ID_HELP:
 					switch(res) {
-						case 0:
+						case STATE_EXEC_INIT:
 							sceneHelpInit(stateArg);
 							return;
-						case 1:
+						case STATE_EXEC_RUN:
 							sceneHelpRun();
 							return;
-						case 2:
+						case STATE_EXEC_FREE:
 							sceneHelpFree();
 					}
-
-				default:
 			}
 		}
 	}
@@ -2812,7 +2824,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// OK softkey.
 		if (softkeyPressed(2, -1) == 2) {
-			setNewState(2, 0);
+			setNewState(STATE_ID_SHIP, 0);
 		}
 
 		// Down key.
@@ -2939,7 +2951,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if (scenePreLevelCurTick < 120 && softkeyPressed(-1, 3) == 3 ||
 				scenePreLevelCurTick > 120 && softkeyPressed(2, -1, true) == 2) {
 
-			setNewState(4, 0);
+			setNewState(STATE_ID_LEVEL, 0);
 		}
 
 		scenePreLevelCurTick++;
@@ -3023,11 +3035,11 @@ public final class Game extends GameCanvas implements Runnable {
 
 			// Return to the ship.
 			case 3:
-				setNewState(2, 10);
+				setNewState(STATE_ID_SHIP, 10);
 		}
 
 		if (mustExitPlayground) {
-			setNewState(2, 0);
+			setNewState(STATE_ID_SHIP, 0);
 		}
 	}
 
@@ -3155,7 +3167,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// Show a next splash.
 		if (millis() > splashDuration || isKeyReleased(1)) {
-			setNewState(1, splash + 1);
+			setNewState(STATE_ID_SPLASH, splash + 1);
 		}
 
 		refreshGame();
@@ -3209,9 +3221,9 @@ public final class Game extends GameCanvas implements Runnable {
 				splashDuration = millis() + 2000L;
 				return;
 
-			// Enter the main menu.
+			// Enter the title.
 			default:
-				setNewState(7, 0);
+				setNewState(STATE_ID_TITLE, 0);
 				isLoadingBarShown = true;
 		}
 	}
@@ -3246,7 +3258,7 @@ public final class Game extends GameCanvas implements Runnable {
 				imgCenterLogo = null;
 				break;
 
-			// Enter the main menu.
+			// Enter the title.
 			default:
 				imgCenterLogo = null;
 				imgEidosLegalLine = null;
@@ -3281,7 +3293,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if (shipNextOp > SHIP_OP_NOP) {
 			switch(shipNextOp) {
 				case SHIP_OP_START:
-					setNewState(3, 0);
+					setNewState(STATE_ID_PRE_LEVEL, 0);
 					break;
 
 				case SHIP_OP_EXIT:
@@ -3293,7 +3305,7 @@ public final class Game extends GameCanvas implements Runnable {
 				case SHIP_OP_RESTART:
 					if (dialogueIsActionConfirmed) {
 						nextLevelToLoad = currentLevelLoaded;
-						setNewState(4, 0);
+						setNewState(STATE_ID_LEVEL, 0);
 						swapLevelData(1);
 					}
 					break;
@@ -3302,7 +3314,7 @@ public final class Game extends GameCanvas implements Runnable {
 					activateLevel(-1);
 					levelPlayerHealth = 500;
 					levelIntroTicks = 120;
-					setNewState(4, 0);
+					setNewState(STATE_ID_LEVEL, 0);
 					break;
 
 				case SHIP_OP_RESET:
@@ -3312,13 +3324,13 @@ public final class Game extends GameCanvas implements Runnable {
 						saveRecordData();
 						isShipPaused = false;
 						activeSwapKey = -1;
-						setNewState(7, 0);
+						setNewState(STATE_ID_TITLE, 0);
 						return;
 					}
 					break;
 
 				case SHIP_OP_RESUME:
-					setNewState(4, 0);
+					setNewState(STATE_ID_LEVEL, 0);
 					swapLevelData(1);
 			}
 
@@ -3378,7 +3390,7 @@ public final class Game extends GameCanvas implements Runnable {
 			isMirrored = !isMirrored;
 			level = 0;
 			saveRecordData();
-			setNewState(7, 0);
+			setNewState(STATE_ID_TITLE, 0);
 		} else {
 			if (activeSwapKey != 0) {
 				initShip();
@@ -3548,7 +3560,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			dialogueIsWaiting = false;
-			setNewState(6, 100 + stateBeforeDialogue);
+			setNewState(STATE_ID_TRANSITION, 100 + stateBeforeDialogue);
 			return;
 
 		}
@@ -3646,7 +3658,7 @@ public final class Game extends GameCanvas implements Runnable {
 		currentDialogue = data;
 		hideDialogueBox();
 
-		setNewState(5, 0);
+		setNewState(STATE_ID_DIALOGUE, 0);
 	}
 
 	/* The BMS script is divided into several independent parts (chunks). Each
@@ -3825,7 +3837,7 @@ public final class Game extends GameCanvas implements Runnable {
 				case DIALOGUE_CMD_SET_STATE:
 					if (!skipping) {
 						dialogueIsContinued = true;
-						setNewState(6, data[offset + 1]);
+						setNewState(STATE_ID_TRANSITION, data[offset + 1]);
 						offset += 2;
 						return offset;
 					}
@@ -3961,11 +3973,11 @@ public final class Game extends GameCanvas implements Runnable {
 					(short)0x0d48,
 					(short)0x4f2a
 				})[language]);
-				setNewState(0, 1);
+				setNewState(STATE_ID_SELECTION, 1);
 			} else {
 				isAudioEnabled = index == 1 || index == 3;
 				loadAllSounds();
-				setNewState(1, 0);
+				setNewState(STATE_ID_SPLASH, 0);
 			}
 		}
 	}
@@ -4020,7 +4032,7 @@ public final class Game extends GameCanvas implements Runnable {
 		// OK softkey.
 		if (softkeyPressed(2, -1, true) == 2) {
 			isPastSplash = true;
-			setNewState(6, 2);
+			setNewState(STATE_ID_TRANSITION, 2);
 		}
 
 		refreshGame();
@@ -4029,7 +4041,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void sceneTitleInit(int var0) {
 		if (isPastSplash) {
 			isPastSplash = false;
-			setNewState(2, 10);
+			setNewState(STATE_ID_SHIP, 10);
 		} else {
 			if (titleText == null) {
 				titleText = getText(0x1000f);
@@ -4054,6 +4066,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneTransitionRun() {
+		/* refreshGame() calls updateTransition() on it's own even when
+		 * curState is not STATE_ID_TRANSITION. */
 		refreshGame();
 	}
 
@@ -4063,47 +4077,56 @@ public final class Game extends GameCanvas implements Runnable {
 				sceneTransitionStartMs = millis();
 			}
 
-			int var0 = (int)(millis() - sceneTransitionStartMs);
-			int var1 = sceneTransitionOffset + var0 * 1000 / sceneTransitionInvCoeff;
-			if (sceneTransitionOffset == 0 && var1 > 1000) {
-				var1 = 1000;
+			int elapsed = (int)(millis() - sceneTransitionStartMs);
+			int tick = sceneTransitionOffset + elapsed * 1000 / sceneTransitionInvCoeff;
+
+			if (sceneTransitionOffset == 0 && tick > 1000) {
+				// Middle of the transition.
+				tick = 1000;
 				setNewState(sceneTransitionNextState, 1);
 			}
 
-			if (var1 > 2000) {
+			if (tick > 2000) {
+				// Transition complete.
 				sceneTransitionDisabled = true;
 			} else {
+				// Render it the rest of the time.
 				switch(sceneTransitionType) {
-					case 0:
-						renderTransition(var1);
-					default:
-						return;
-					case 2:
-						fillScreenBlack(var1);
+					case TRANSITION_TYPE_WIPE:
+						renderTransition(tick);
+					case TRANSITION_TYPE_INSTANT:
+						fillScreenBlack(tick);
 				}
 			}
 		}
 	}
 
-	public static final void sceneTransitionInit(int var0) {
+	public static final void sceneTransitionInit(int arg) {
 		sceneTransitionOffset = 0;
 		sceneTransitionDisabled = false;
 		sceneTransitionStartMs = millis();
-		int var1 = sceneTransitionNextState;
+
+		// Save an old next state.
+		int savedState = sceneTransitionNextState;
 		sceneTransitionNextState = oldState;
-		if (var0 >= 100) {
-			sceneTransitionNextState = var0 - 100;
-			var0 = 2;
+
+		if (arg >= 100) {
+			sceneTransitionNextState = arg - 100;
+			arg = TRANSITION_TYPE_INSTANT;
 		}
 
-		sceneTransitionType = var0;
+		sceneTransitionType = arg;
+
+		// Leave more time for a wipe-transition.
 		sceneTransitionInvCoeff = 250;
-		if (var0 == 2) {
+		if (arg == TRANSITION_TYPE_INSTANT) {
 			sceneTransitionInvCoeff = 150;
 		}
 
-		if (sceneTransitionNextState == 6) {
-			sceneTransitionNextState = var1;
+		/* If 'arg' says that next state will be STATE_ID_TRANSITION, set
+		 * 'savedState' as a new state. */
+		if (sceneTransitionNextState == STATE_ID_TRANSITION) {
+			sceneTransitionNextState = savedState;
 		}
 	}
 
@@ -4113,35 +4136,42 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void fillScreenBlack(int var0) {
-		int var1 = gGetColor();
+		int oldColor = gGetColor();
+
 		gSetColor(0);
 		gSetClip(0, 0, 128, 128);
 		gFillRect(0, 0, 128, 128);
-		gSetColor(var1);
+
+		gSetColor(oldColor);
 	}
 
-	public static final void renderTransition(int var0) {
-		int var1 = var0 * 128 / 1000;
-		int var2 = gGetColor();
+	public static final void renderTransition(int tick) {
+		// Represent black pixels in the width that cover the screen.
+		int screenCover = tick * 128 / 1000;
+		int oldColor = gGetColor();
+
 		gSetColor(0);
 		gSetClip(0, 0, 128, 128);
-		gFillRect(var1 - 128, 0, 128, 128);
-		int var3 = var1 + 1;
-		if (var0 > 1000) {
-			var3 = 129;
+		gFillRect(screenCover - 128, 0, 128, 128);
 
-			for (int var4 = 6; var4 > 0; var4--) {
-				gFillRect(var1 - var3 - var4, 0, var4, 128);
-				var3 += var4 + (8 - var4);
+		// Current vertical line position.
+		int curLineX = screenCover + 1;
+
+		if (tick > 1000) {
+			curLineX = 129;
+
+			for (int i = 6; i > 0; i--) {
+				gFillRect(screenCover - curLineX - i, 0, i, 128);
+				curLineX += i + (8 - i);
 			}
 		} else {
-			for (int var6 = 6; var6 > 0; var6--) {
-				gFillRect(var3, 0, var6, 128);
-				var3 += var6 + (8 - var6);
+			for (int i = 6; i > 0; i--) {
+				gFillRect(curLineX, 0, i, 128);
+				curLineX += i + (8 - i);
 			}
 		}
 
-		gSetColor(var2);
+		gSetColor(oldColor);
 	}
 
 	public static final void loadFaces() {
@@ -6585,7 +6615,7 @@ public final class Game extends GameCanvas implements Runnable {
 				isShipPaused = true;
 				gamma = 100;
 				swapLevelData(0);
-				setNewState(2, 0);
+				setNewState(STATE_ID_SHIP, 0);
 			} else {
 				if (isPlayerAlive && levelIntroTicks >= 100) {
 					updatePlayerControls();
@@ -7130,7 +7160,7 @@ public final class Game extends GameCanvas implements Runnable {
 			skipPrologue = true;
 		}
 
-		setNewState(0, 0);
+		setNewState(STATE_ID_SELECTION, 0);
 	}
 
 	public static final void updateTransition() {
@@ -7413,7 +7443,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 				break;
 			case 4:
-				setNewState(8, 0);
+				setNewState(STATE_ID_HELP, 0);
 				break;
 			case 5:
 				if (isAudioEnabled) {
@@ -7799,7 +7829,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		if (levelCompleteTicks < -40) {
-			setNewState(6, 0);
+			setNewState(STATE_ID_TRANSITION, 0);
 			isBeamAnimated = true;
 			return true;
 		} else {
