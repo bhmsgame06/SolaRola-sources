@@ -303,10 +303,10 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int levelBombExplodeTicks = 0;
 	public static int levelBombObjectId;
 	public static int levelPlayerEyeVectorMagnitude;
-	public static int levelPlayerJumpTimes = 0;
+	public static int levelPlayerJumpTicks = 0;
 	public static int levelPlayerHitTicks = 0;
 	public static int levelPlayerCurrentGrabberFlags = -1;
-	public static int levelPlayerBlockGrabberId = -1;
+	public static int levelPlayerIgnoreGrabberId = -1;
 
 	// Facial proportions.
 	public static int[] currentEyeBlinkTicks = new int[2];
@@ -4206,10 +4206,10 @@ public final class Game extends GameCanvas implements Runnable {
 		if (imgsMouths == null) {
 			imgsMouths = new Image[8][];
 
-			for (int var0 = 0; var0 < imgsMouths.length; var0++) {
-				imgsMouths[var0] = new Image[2];
-				imgsMouths[var0][0] = loadImage("mouthWiz_" + var0 + ".pim", "mouthWiz_" + var0 + ".ppl");
-				imgsMouths[var0][1] = loadImage("mouthWaz_" + var0 + ".pim", "mouthWaz_" + var0 + ".ppl");
+			for (int i = 0; i < imgsMouths.length; i++) {
+				imgsMouths[i] = new Image[2];
+				imgsMouths[i][0] = loadImage("mouthWiz_" + i + ".pim", "mouthWiz_" + i + ".ppl");
+				imgsMouths[i][1] = loadImage("mouthWaz_" + i + ".pim", "mouthWaz_" + i + ".ppl");
 			}
 		}
 	}
@@ -4217,26 +4217,24 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void loadEyes() {
 		if (imgsEyes == null) {
 			imgsEyes = new Image[8][];
-
-			for (int var0 = 1; var0 < imgsEyes.length; var0++) {
-				imgsEyes[var0] = new Image[2];
-				imgsEyes[var0][0] = loadImage("eyesWiz_" + var0 + ".pim", "eyesWiz_" + var0 + ".ppl");
-				imgsEyes[var0][1] = loadImage("eyesWaz_" + var0 + ".pim", "eyesWaz_" + var0 + ".ppl");
+			for (int i = 1; i < imgsEyes.length; i++) {
+				imgsEyes[i] = new Image[2];
+				imgsEyes[i][0] = loadImage("eyesWiz_" + i + ".pim", "eyesWiz_" + i + ".ppl");
+				imgsEyes[i][1] = loadImage("eyesWaz_" + i + ".pim", "eyesWaz_" + i + ".ppl");
 			}
 
 			imgsEyesC = new Image[8][];
-
-			for (int var1 = 1; var1 < imgsEyesC.length; var1++) {
-				imgsEyesC[var1] = new Image[2];
-				imgsEyesC[var1][0] = loadImage("eyesWiz_C" + var1 + ".pim", "eyesWiz_C" + var1 + ".ppl");
-				imgsEyesC[var1][1] = loadImage("eyesWaz_C" + var1 + ".pim", "eyesWaz_C" + var1 + ".ppl");
+			for (int i = 1; i < imgsEyesC.length; i++) {
+				imgsEyesC[i] = new Image[2];
+				imgsEyesC[i][0] = loadImage("eyesWiz_C" + i + ".pim", "eyesWiz_C" + i + ".ppl");
+				imgsEyesC[i][1] = loadImage("eyesWaz_C" + i + ".pim", "eyesWaz_C" + i + ".ppl");
 			}
 		}
 	}
 
-	public static final void initPlayer(boolean var0) {
+	public static final void initPlayer(boolean isWaz) {
 		levelPlayerHealth = 500;
-		if (var0) {
+		if (isWaz) {
 			levelPlayerRed = 200;
 			levelPlayerGreen = 0;
 			levelPlayerBlue = 0;
@@ -4250,24 +4248,24 @@ public final class Game extends GameCanvas implements Runnable {
 
 		levelPlayerRotationRate = 0;
 		levelPlayerCurrentGrabberFlags = -1;
-		levelPlayerBlockGrabberId = -1;
+		levelPlayerIgnoreGrabberId = -1;
 	}
 
-	public static final void levelSetPlayerPos(int var0, int var1, int var2, int var3) {
-		levelCircleX[var2 + 0] = var0;
-		levelCircleY[var2 + 0] = var1;
-		levelCircleX[var2 + 1] = var0;
-		levelCircleY[var2 + 1] = var1 - var3;
-		levelCircleX[var2 + 2] = var0;
-		levelCircleY[var2 + 2] = var1 + var3;
-		levelCircleX[var2 + 3] = var0 - var3;
-		levelCircleY[var2 + 3] = var1;
-		levelCircleX[var2 + 4] = var0 + var3;
-		levelCircleY[var2 + 4] = var1;
+	public static final void levelSetPlayerPos(int x, int y, int circleId, int size) {
+		levelCircleX[circleId + 0] = x;
+		levelCircleY[circleId + 0] = y;
+		levelCircleX[circleId + 1] = x;
+		levelCircleY[circleId + 1] = y - size;
+		levelCircleX[circleId + 2] = x;
+		levelCircleY[circleId + 2] = y + size;
+		levelCircleX[circleId + 3] = x - size;
+		levelCircleY[circleId + 3] = y;
+		levelCircleX[circleId + 4] = x + size;
+		levelCircleY[circleId + 4] = y;
 
-		for (int var4 = var2; var4 < var2 + 5; var4++) {
-			levelCirclePrevX[var4] = levelCircleX[var4];
-			levelCirclePrevY[var4] = levelCircleY[var4];
+		for (int i = circleId; i < circleId + 5; i++) {
+			levelCirclePrevX[i] = levelCircleX[i];
+			levelCirclePrevY[i] = levelCircleY[i];
 		}
 	}
 
@@ -4276,65 +4274,67 @@ public final class Game extends GameCanvas implements Runnable {
 		levelHookIsVisible[16] = false;
 		levelCircleFlags[levelHookId2[16]] = levelPlayerCurrentGrabberFlags;
 		levelPlayerCurrentGrabberFlags = -1;
-		levelPlayerBlockGrabberId = levelHookId2[16];
+		levelPlayerIgnoreGrabberId = levelHookId2[16];
 		levelHookId2[16] = -1;
 	}
 
 	public static final void updatePlayerRotation() {
-		if (levelPlayerBlockGrabberId != -1 && (levelCircleX[levelPlayerBlockGrabberId] - levelCircleRadius[levelPlayerBlockGrabberId] > levelCircleX[0] + 0x190000 || levelCircleX[levelPlayerBlockGrabberId] + levelCircleRadius[levelPlayerBlockGrabberId] < levelCircleX[0] - 0x190000 || levelCircleY[levelPlayerBlockGrabberId] - levelCircleRadius[levelPlayerBlockGrabberId] > levelCircleY[0] + 0x190000 || levelCircleY[levelPlayerBlockGrabberId] + levelCircleRadius[levelPlayerBlockGrabberId] < levelCircleY[0] - 0x190000)) {
-			levelPlayerBlockGrabberId = -1;
+		// If the player is far enough from the last holded grabber.
+		if (levelPlayerIgnoreGrabberId != -1 &&
+				(levelCircleX[levelPlayerIgnoreGrabberId] - levelCircleRadius[levelPlayerIgnoreGrabberId] > levelCircleX[0] + 0x190000 ||
+				 levelCircleX[levelPlayerIgnoreGrabberId] + levelCircleRadius[levelPlayerIgnoreGrabberId] < levelCircleX[0] - 0x190000 ||
+				 levelCircleY[levelPlayerIgnoreGrabberId] - levelCircleRadius[levelPlayerIgnoreGrabberId] > levelCircleY[0] + 0x190000 ||
+				 levelCircleY[levelPlayerIgnoreGrabberId] + levelCircleRadius[levelPlayerIgnoreGrabberId] < levelCircleY[0] - 0x190000)) {
+
+			levelPlayerIgnoreGrabberId = -1;
 		}
 
-		if (levelPlayerJumpTimes > 0) {
-			int[] var10000 = levelCircleY;
-			var10000[0] -= 550000;
-			levelPlayerJumpTimes--;
+		// Handle jump.
+		if (levelPlayerJumpTicks > 0) {
+			levelCircleY[0] -= 550000;
+			levelPlayerJumpTicks--;
 		}
 
+		// Handle player rotational inertia.
 		if (levelPlayerRotationRate > 0) {
 			levelPlayerRotationRate--;
-			if (levelPlayerRotationRate > 25) {
+			if (levelPlayerRotationRate > 25)
 				levelPlayerRotationRate = 25;
-			}
 		}
 
 		if (levelPlayerRotationRate < 0) {
 			levelPlayerRotationRate++;
-			if (levelPlayerRotationRate < -25) {
+			if (levelPlayerRotationRate < -25)
 				levelPlayerRotationRate = -25;
-			}
 		}
 
+		// Handle player rotation.
 		levelPlayerAngle += levelPlayerRotationRate;
-		if (levelPlayerAngle >= 360) {
+		if (levelPlayerAngle >= 360)
 			levelPlayerAngle -= 360;
-		}
 
-		if (levelPlayerAngle < 0) {
+		if (levelPlayerAngle < 0)
 			levelPlayerAngle += 360;
-		}
 
+		// Smoothly return rotation angle to 0.
 		if (levelPlayerRotationRate == 0) {
-			byte var0 = 95;
-			if (!levelIsPlayerOnSurface) {
-				var0 = 90;
-			}
+			byte coeff = 95;
+			if (!levelIsPlayerOnSurface)
+				coeff = 90;
 
 			if (levelPlayerAngle < 180) {
-				levelPlayerAngle = levelPlayerAngle * var0 / 100;
+				levelPlayerAngle = levelPlayerAngle * coeff / 100;
 			} else {
 				levelPlayerAngle -= 360;
-				levelPlayerAngle = levelPlayerAngle * var0 / 100;
+				levelPlayerAngle = levelPlayerAngle * coeff / 100;
 				levelPlayerAngle += 360;
 			}
 
-			if (levelPlayerAngle >= 360) {
+			if (levelPlayerAngle >= 360)
 				levelPlayerAngle -= 360;
-			}
 
-			if (levelPlayerAngle < 0) {
+			if (levelPlayerAngle < 0)
 				levelPlayerAngle += 360;
-			}
 		}
 	}
 
@@ -6577,7 +6577,7 @@ public final class Game extends GameCanvas implements Runnable {
 						levelHookIsActive[16] = false;
 						levelCircleFlags[levelHookId2[16]] = levelPlayerCurrentGrabberFlags;
 						levelPlayerCurrentGrabberFlags = -1;
-						levelPlayerBlockGrabberId = levelHookId2[16];
+						levelPlayerIgnoreGrabberId = levelHookId2[16];
 					}
 				}
 
@@ -6686,7 +6686,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			if (levelIsPlayerOnSurface) {
-				levelPlayerJumpTimes = 3;
+				levelPlayerJumpTicks = 3;
 			}
 		}
 
@@ -6936,7 +6936,7 @@ public final class Game extends GameCanvas implements Runnable {
 				/* grabber. */
 				if (circleType == 3 &&
 						levelPlayerCurrentGrabberFlags == -1 &&
-						id2 != levelPlayerBlockGrabberId) {
+						id2 != levelPlayerIgnoreGrabberId) {
 
 					levelHookIsActive[16] = true;
 					levelHookId2[16] = id2;
