@@ -4679,33 +4679,45 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void swapLevelHookData() {
-		int var0 = levelNumHooks;
+		int tmp1;
+		int[] tmp2;
+		boolean tmp3;
+		
+		tmp1 = levelNumHooks;
 		levelNumHooks = swappedLevelNumHooks;
-		swappedLevelNumHooks = var0;
-		int[] var1 = levelHookId1;
+		swappedLevelNumHooks = tmp1;
+
+		tmp2 = levelHookId1;
 		levelHookId1 = swappedLevelHookId1;
-		swappedLevelHookId1 = var1;
-		var1 = levelHookId2;
+		swappedLevelHookId1 = tmp2;
+
+		tmp2 = levelHookId2;
 		levelHookId2 = swappedLevelHookId2;
-		swappedLevelHookId2 = var1;
-		var1 = levelHookType;
+		swappedLevelHookId2 = tmp2;
+
+		tmp2 = levelHookType;
 		levelHookType = swappedLevelHookType;
-		swappedLevelHookType = var1;
-		var1 = levelHookExtent;
+		swappedLevelHookType = tmp2;
+
+		tmp2 = levelHookExtent;
 		levelHookExtent = swappedLevelHookExtent;
-		swappedLevelHookExtent = var1;
-		var1 = levelHookExtentSquare;
+		swappedLevelHookExtent = tmp2;
+
+		tmp2 = levelHookExtentSquare;
 		levelHookExtentSquare = swappedLevelHookExtentSquare;
-		swappedLevelHookExtentSquare = var1;
-		var1 = levelHookStretchConstant;
+		swappedLevelHookExtentSquare = tmp2;
+
+		tmp2 = levelHookStretchConstant;
 		levelHookStretchConstant = swappedLevelHookStretchConstant;
-		swappedLevelHookStretchConstant = var1;
-		boolean[] var2 = levelHookIsVisible;
+		swappedLevelHookStretchConstant = tmp2;
+
+		tmp3 = levelHookIsVisible;
 		levelHookIsVisible = swappedLevelHookIsVisible;
-		swappedLevelHookIsVisible = var2;
-		var2 = levelHookIsActive;
+		swappedLevelHookIsVisible = tmp3;
+
+		tmp3 = levelHookIsActive;
 		levelHookIsActive = swappedLevelHookIsActive;
-		swappedLevelHookIsActive = var2;
+		swappedLevelHookIsActive = tmp3;
 	}
 
 	public static final void initSpiderLegs(int num) {
@@ -5441,21 +5453,28 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void swapLevelRectData() {
-		int var0 = levelNumRects;
+		int tmp1;
+		int[] tmp2;
+
+		tmp1 = levelNumRects;
 		levelNumRects = swappedLevelNumRects;
-		swappedLevelNumRects = var0;
-		int[] var1 = levelRectX;
+		swappedLevelNumRects = tmp1;
+
+		tmp2 = levelRectX;
 		levelRectX = swappedLevelRectX;
-		swappedLevelRectX = var1;
-		var1 = levelRectY;
+		swappedLevelRectX = tmp2;
+
+		tmp2 = levelRectY;
 		levelRectY = swappedLevelRectY;
-		swappedLevelRectY = var1;
-		var1 = levelRectHWidth;
+		swappedLevelRectY = tmp2;
+
+		tmp2 = levelRectHWidth;
 		levelRectHWidth = swappedLevelRectHWidth;
-		swappedLevelRectHWidth = var1;
-		var1 = levelRectHHeight;
+		swappedLevelRectHWidth = tmp2;
+
+		tmp2 = levelRectHHeight;
 		levelRectHHeight = swappedLevelRectHHeight;
-		swappedLevelRectHHeight = var1;
+		swappedLevelRectHHeight = tmp2;
 	}
 
 	public static final void initRocket() {
@@ -5713,36 +5732,50 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void swapLevelCircleData() {
-		int var0 = levelNumCircles;
+		int tmp1;
+		int[] tmp2;
+		byte[] tmp3;
+		boolean[] tmp4;
+
+		tmp1 = levelNumCircles;
 		levelNumCircles = swappedLevelNumCircles;
-		swappedLevelNumCircles = var0;
-		int[] var1 = levelCircleX;
+		swappedLevelNumCircles = tmp1;
+
+		tmp2 = levelCircleX;
 		levelCircleX = swappedLevelCircleX;
-		swappedLevelCircleX = var1;
-		var1 = levelCircleY;
+		swappedLevelCircleX = tmp2;
+
+		tmp2 = levelCircleY;
 		levelCircleY = swappedLevelCircleY;
-		swappedLevelCircleY = var1;
-		var1 = levelCircleRadius;
+		swappedLevelCircleY = tmp2;
+
+		tmp2 = levelCircleRadius;
 		levelCircleRadius = swappedLevelCircleRadius;
-		swappedLevelCircleRadius = var1;
-		var1 = levelCirclePrevX;
+		swappedLevelCircleRadius = tmp2;
+
+		tmp2 = levelCirclePrevX;
 		levelCirclePrevX = swappedLevelCirclePrevX;
-		swappedLevelCirclePrevX = var1;
-		var1 = levelCirclePrevY;
+		swappedLevelCirclePrevX = tmp2;
+
+		tmp2 = levelCirclePrevY;
 		levelCirclePrevY = swappedLevelCirclePrevY;
-		swappedLevelCirclePrevY = var1;
-		var1 = levelCircleFlags;
+		swappedLevelCirclePrevY = tmp2;
+
+		tmp2 = levelCircleFlags;
 		levelCircleFlags = swappedLevelCircleFlags;
-		swappedLevelCircleFlags = var1;
-		var1 = levelCircle4ByWeight;
+		swappedLevelCircleFlags = tmp2;
+
+		tmp2 = levelCircle4ByWeight;
 		levelCircle4ByWeight = swappedLevelCircle4ByWeight;
-		swappedLevelCircle4ByWeight = var1;
-		byte[] var2 = levelCircleType;
+		swappedLevelCircle4ByWeight = tmp2;
+
+		tmp3 = levelCircleType;
 		levelCircleType = swappedLevelCircleType;
-		swappedLevelCircleType = var2;
-		boolean[] var3 = levelCircleHasPhysics;
+		swappedLevelCircleType = tmp3;
+
+		tmp4 = levelCircleHasPhysics;
 		levelCircleHasPhysics = swappedLevelCircleHasPhysics;
-		swappedLevelCircleHasPhysics = var3;
+		swappedLevelCircleHasPhysics = tmp4;
 	}
 
 	public static final void levelObtainIds() {
@@ -6041,27 +6074,37 @@ public final class Game extends GameCanvas implements Runnable {
 		return var0;
 	}
 
-	public static final void swapLevelData(int var0) {
-		if (var0 != activeSwapKey) {
-			activeSwapKey = var0;
-			int var1 = levelWidth;
+	public static final void swapLevelData(int swapKey) {
+		if (swapKey != activeSwapKey) {
+			activeSwapKey = swapKey;
+
+			int tmp1;
+			boolean tmp2;
+
+			int tmp1 = levelWidth;
 			levelWidth = swappedLevelWidth;
-			swappedLevelWidth = var1;
-			var1 = levelHeight;
+			swappedLevelWidth = tmp1;
+
+			tmp1 = levelHeight;
 			levelHeight = swappedLevelHeight;
-			swappedLevelHeight = var1;
-			var1 = levelMovableGravity;
+			swappedLevelHeight = tmp1;
+
+			tmp1 = levelMovableGravity;
 			levelMovableGravity = swappedLevelMovableGravity;
-			swappedLevelMovableGravity = var1;
-			var1 = levelXLossRate;
+			swappedLevelMovableGravity = tmp1;
+
+			tmp1 = levelXLossRate;
 			levelXLossRate = swappedLevelXLossRate;
-			swappedLevelXLossRate = var1;
-			boolean var2 = levelIsPlayerOnSurface;
+			swappedLevelXLossRate = tmp1;
+
+			boolean tmp2 = levelIsPlayerOnSurface;
 			levelIsPlayerOnSurface = swappedLevelIsPlayerOnSurface;
-			swappedLevelIsPlayerOnSurface = var2;
-			var2 = isLevelComplete;
+			swappedLevelIsPlayerOnSurface = tmp2;
+
+			tmp2 = isLevelComplete;
 			isLevelComplete = swappedIsLevelComplete;
-			swappedIsLevelComplete = var2;
+			swappedIsLevelComplete = tmp2;
+
 			swapLevelCircleData();
 			swapLevelRectData();
 			swapLevelHookData();
@@ -6405,21 +6448,27 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void swapCameraData() {
-		int var0 = levelCameraIntX;
+		int tmp;
+
+		tmp = levelCameraIntX;
 		levelCameraIntX = swappedLevelCameraIntX;
-		swappedLevelCameraIntX = var0;
-		var0 = levelCameraIntY;
+		swappedLevelCameraIntX = tmp;
+
+		tmp = levelCameraIntY;
 		levelCameraIntY = swappedLevelCameraIntY;
-		swappedLevelCameraIntY = var0;
-		var0 = levelCameraX;
+		swappedLevelCameraIntY = tmp;
+
+		tmp = levelCameraX;
 		levelCameraX = swappedLevelCameraX;
-		swappedLevelCameraX = var0;
-		var0 = levelCameraY;
+		swappedLevelCameraX = tmp;
+
+		tmp = levelCameraY;
 		levelCameraY = swappedLevelCameraY;
-		swappedLevelCameraY = var0;
-		var0 = levelCameraAngle;
+		swappedLevelCameraY = tmp;
+
+		tmp = levelCameraAngle;
 		levelCameraAngle = swappedLevelCameraAngle;
-		swappedLevelCameraAngle = var0;
+		swappedLevelCameraAngle = tmp;
 	}
 
 	public static final void loadFacesIcons() {
