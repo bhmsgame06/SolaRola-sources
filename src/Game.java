@@ -2865,8 +2865,8 @@ public final class Game extends GameCanvas implements Runnable {
 			sceneHelpScrollAccel = -0xff;
 
 		sceneHelpScrollDistance += sceneHelpScrollAccel;
-		if (sceneHelpScrollDistance > 0x8000)
-			sceneHelpScrollDistance = 0x8000;
+		if (sceneHelpScrollDistance > (SCREEN_HEIGHT << 8))
+			sceneHelpScrollDistance = (SCREEN_HEIGHT << 8);
 
 		if (sceneHelpScrollDistance < -(sceneHelpText.length * 14 << 8))
 			sceneHelpScrollDistance = -(sceneHelpText.length * 14 << 8);
@@ -2888,9 +2888,9 @@ public final class Game extends GameCanvas implements Runnable {
 			if (scrollDistance > -14 && scrollDistance < SCREEN_HEIGHT) {
 				int textOffsetX = 0;
 
-				if (scrollDistance < 42)
-					textOffsetX = 90 - scrollDistance * 90 * 3 / SCREEN_WIDTH;
-				else if (scrollDistance > 85)
+				if (scrollDistance < (SCREEN_HEIGHT / 3))
+					textOffsetX = 90 - scrollDistance * 90 * 3 / SCREEN_HEIGHT;
+				else if (scrollDistance > (SCREEN_HEIGHT * 2 / 3))
 					textOffsetX = 90 - (SCREEN_HEIGHT - scrollDistance) * 90 * 3 / SCREEN_HEIGHT;
 
 				int textX = 5 + sin(textOffsetX) * SCREEN_WIDTH / 2600;
@@ -2900,9 +2900,9 @@ public final class Game extends GameCanvas implements Runnable {
 			scrollDistance += 14;
 		}
 
-		gDrawImage(imgsScrollbar[0], 120, 43 - (sceneHelpScroll >> 2 & 3), 0);
-		gDrawImage(imgsScrollbar[1], 118, 46 - ((sceneHelpScrollDistance >> 8) - SCREEN_HEIGHT) * 39 / (sceneHelpText.length * 14), 0);
-		gDrawImage(imgsScrollbar[2], 120, 92 + (sceneHelpScroll >> 2 & 3), 0);
+		gDrawImage(imgsScrollbar[0], SCREEN_WIDTH - 8, 43 - (sceneHelpScroll >> 2 & 3), 0);
+		gDrawImage(imgsScrollbar[1], SCREEN_WIDTH - 10, 46 - ((sceneHelpScrollDistance >> 8) - SCREEN_HEIGHT) * 39 / (sceneHelpText.length * 14), 0);
+		gDrawImage(imgsScrollbar[2], SCREEN_WIDTH - 8, 92 + (sceneHelpScroll >> 2 & 3), 0);
 	}
 
 	public static final void sceneHelpInit(int arg) {
@@ -2918,7 +2918,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if (sceneHelpText == null)
 			sceneHelpText = strSplitLines(getText(0x30000), 2);
 
-		sceneHelpScrollDistance = 0x8000;
+		sceneHelpScrollDistance = SCREEN_HEIGHT << 8;
 		sceneHelpScrollAccel = 0;
 		sceneHelpAutoscrollActive = true;
 		sceneHelpScroll = 0;
