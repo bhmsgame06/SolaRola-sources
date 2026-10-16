@@ -879,13 +879,13 @@ public final class Game extends GameCanvas implements Runnable {
 		super.keyPressed(keyCode);
 
 		if (keyCode == -6) {
-			pressOnlyKeys |= 1;
+			pressOnlyKeys |= KEY_OK;
 			pressOnlyKeys |= KEY_SOFT_LEFT;
 			tmpHeldKeys |= KEY_SOFT_LEFT;
 		}
 
 		if (keyCode == -7) {
-			pressOnlyKeys |= 4;
+			pressOnlyKeys |= KEY_BACK;
 			pressOnlyKeys |= KEY_SOFT_RIGHT;
 			tmpHeldKeys |= KEY_SOFT_RIGHT;
 		}
