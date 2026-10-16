@@ -915,7 +915,7 @@ public final class Game extends GameCanvas implements Runnable {
 		pressOnlyKeys = 0;
 	}
 
-	public static final byte[] makePNG(byte[] pimData, short pplCrc) {
+	public static final byte[] makePng(byte[] pimData, short pplCrc) {
 		if (pngTemplate == null) {
 			pngTemplate = loadFile8((short)0xdee7);
 		}
@@ -1002,7 +1002,7 @@ public final class Game extends GameCanvas implements Runnable {
 			return null;
 		} else {
 			if (pimData[0] != 0x89 && pimData[1] != 'P') {
-				pimData = makePNG(pimData, pplCrc);
+				pimData = makePng(pimData, pplCrc);
 			}
 
 			Image img = Image.createImage(pimData, 0, pimData.length);
@@ -1489,6 +1489,8 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
+	/* Load main index file (head.bfc) to RAM. It's used for indexing inner
+	 * files in N.bfc and reading them. */
 	public static final void bfcLoadHead() {
 		sCurrentLocation = -1;
 		sCurrentOffset = 0;
@@ -1629,40 +1631,47 @@ public final class Game extends GameCanvas implements Runnable {
 		sCurrentIndex = index;
 		sCurrentOffsetReserved = 0;
 		sCurrentReserved = false;
+
 		if (index >= 0 && bfcReservedData[index] != null) {
+			// Read the required file from RAM.
 			sCurrentSize = bfcHeadSizes[index];
 			sCurrentReserved = true;
 			return true;
 		} else {
-			if (index != -1) {
-				sCurrentSize = bfcHeadSizes[index];
-				if (sCurrentLocation == bfcHeadLocations[index] && sCurrentOffset <= bfcHeadOffsets[index]) {
-					sSkipBytes(bfcHeadOffsets[index] - sCurrentOffset);
+			// Read the required file from .bfc resources.
+			if (index == -1)
+				return false;
 
-					if (bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null)
-						bfcReserve(index);
+			sCurrentSize = bfcHeadSizes[index];
 
-					return true;
-				}
+			if (sCurrentLocation == bfcHeadLocations[index] &&
+					sCurrentOffset <= bfcHeadOffsets[index]) {
 
-				try {
-					if (sCurrentData != null)
-						sCloseFile();
+				sSkipBytes(bfcHeadOffsets[index] - sCurrentOffset);
 
-					sCurrentData = new DataInputStream(instance.getClass().getResourceAsStream("/" + bfcHeadLocations[index] + ".bfc"));
-					sCurrentData.skip((long)bfcHeadOffsets[index]);
-					sCurrentLocation = bfcHeadLocations[index];
-					sCurrentOffset = bfcHeadOffsets[index];
+				// Copy the file to RAM for future use.
+				if (bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null)
+					bfcReserve(index);
 
-					if (bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null)
-						bfcReserve(index);
-
-					return true;
-				} catch(Exception e) {
-				}
+				return true;
 			}
 
-			return false;
+			try {
+				if (sCurrentData != null)
+					sCloseFile();
+
+				sCurrentData = new DataInputStream(instance.getClass().getResourceAsStream("/" + bfcHeadLocations[index] + ".bfc"));
+				sCurrentData.skip((long)bfcHeadOffsets[index]);
+				sCurrentLocation = bfcHeadLocations[index];
+				sCurrentOffset = bfcHeadOffsets[index];
+
+				// Copy the file to RAM for future use.
+				if (bfcHeadMemStates[index] >= 0 && bfcReservedData[index] == null)
+					bfcReserve(index);
+
+				return true;
+			} catch(Exception e) {
+			}
 		}
 	}
 
@@ -1819,9 +1828,9 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 			isLoadingBarShown = tmp;
 
-			// Text table file header.
+			// File header.
 			int bitness = sReadU8(); // 0 = 16-bit for each char, 1 = 8-bit for each char.
-			int numTables = sReadU8();
+			int numTables = sReadU8(); // Number of tables (arrays of the strings).
 
 			if (index >= numTables) {
 				return textTableStrings;
@@ -1829,7 +1838,8 @@ public final class Game extends GameCanvas implements Runnable {
 				sSkipBytes(index * 2);
 				sSkipBytes(sReadU16() + (numTables - index - 1) * 2);
 
-				int numStrings = sReadU16();
+				// Table data structure.
+				int numStrings = sReadU16(); // Number of strings in the table.
 				int[] stringLens = new int[numStrings];
 
 				if (stringIndex < 0) {
@@ -1838,8 +1848,8 @@ public final class Game extends GameCanvas implements Runnable {
 					textTableIndex = index;
 
 					for (int i = 0; i < numStrings; i++) {
-						stringLens[i] = sReadU16();
-						sReadU16();
+						stringLens[i] = sReadU16(); // String length.
+						sReadU16(); // Offset to a string.
 					}
 				} else {
 					if (stringIndex >= numStrings)
@@ -1850,6 +1860,7 @@ public final class Game extends GameCanvas implements Runnable {
 					sSkipBytes(sReadU16() + (numStrings - stringIndex - 1) * 4);
 				}
 
+				// Reading the string.
 				for (int i = 0; i < numStrings; i++) {
 					stringLens[i]--;
 
