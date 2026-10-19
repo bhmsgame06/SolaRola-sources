@@ -249,7 +249,7 @@ public final class Game extends GameCanvas implements Runnable {
 	private static final int SCRIPT_CMD_SET_CAMERA_SMOOTH = 4;
 	private static final int SCRIPT_CMD_SET_TEXT = 5;
 	private static final int SCRIPT_CMD_SET_FACE = 6;
-	private static final int SCRIPT_CMD_SET_PLAYER_POS = 7;
+	private static final int SCRIPT_CMD_SET_ENTITY_POS = 7;
 	private static final int SCRIPT_CMD_SET_STATE = 8;
 	private static final int SCRIPT_CMD_SET_ENV = 9;
 	private static final int SCRIPT_CMD_HIDE_BOX = 10;
@@ -3827,8 +3827,9 @@ public final class Game extends GameCanvas implements Runnable {
 					offset += 3;
 					break;
 
-				// Set player position.
-				case SCRIPT_CMD_SET_PLAYER_POS:
+				/* Set entity position (can be either a player or entity in the
+				 * transmission). */
+				case SCRIPT_CMD_SET_ENTITY_POS:
 					if (scriptEnvironment == 5) {
 						currentPictureEntityX = SCREEN_WIDTH * data[offset + 2] / 1000;
 						currentPictureEntityY = SCREEN_HEIGHT * data[offset + 3] / 1000;
@@ -6479,7 +6480,6 @@ public final class Game extends GameCanvas implements Runnable {
 
 				/* This condition is NEVER executed as this is impossible to
 				 * have >= 100 zoom difference. */
-				System.out.println("11");
 				if (diffZoom > 0)
 					levelCameraZoom++;
 				else if (diffZoom < 0)
