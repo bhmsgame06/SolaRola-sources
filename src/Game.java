@@ -245,10 +245,10 @@ public final class Game extends GameCanvas implements Runnable {
 	private static final int SCRIPT_CMD_SUBMIT = 0;
 	private static final int SCRIPT_CMD_WAIT = 1;
 	private static final int SCRIPT_CMD_WAIT_OK = 2;
-	private static final int SCRIPT_CMD_SET_CAMERA_INSTANT = 3;
+	private static final int SCRIPT_CMD_SET_CAMERA = 3;
 	private static final int SCRIPT_CMD_SET_CAMERA_SMOOTH = 4;
 	private static final int SCRIPT_CMD_SET_TEXT = 5;
-	private static final int SCRIPT_CMD_SET_EMOTION = 6;
+	private static final int SCRIPT_CMD_SET_FACE = 6;
 	private static final int SCRIPT_CMD_SET_PLAYER_POS = 7;
 	private static final int SCRIPT_CMD_SET_STATE = 8;
 	private static final int SCRIPT_CMD_SET_ENV = 9;
@@ -342,7 +342,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	// Facial proportions.
 	public static int[] currentEyeBlinkTicks = new int[2];
-	public static int[] currentEmotion = new int[2];
+	public static int[] currentFace = new int[2];
 	public static Image[] imgsEyeLeft;
 	public static Image[] imgsEyeM;
 	public static Image[] imgsEyeRight;
@@ -3640,8 +3640,8 @@ public final class Game extends GameCanvas implements Runnable {
 		scriptShowBlackBars = false;
 		shipAlarmRadius = 0;
 		spaceMapPlanetBeaconRadius = 0;
-		currentEmotion[0] = 0;
-		currentEmotion[1] = 0;
+		currentFace[0] = 0;
+		currentFace[1] = 0;
 	}
 
 	public static final void startScript(String filename, int originX, int originY) {
@@ -3700,7 +3700,7 @@ public final class Game extends GameCanvas implements Runnable {
 					break;
 
 				// Set camera position.
-				case SCRIPT_CMD_SET_CAMERA_INSTANT:
+				case SCRIPT_CMD_SET_CAMERA:
 					// When in the space map.
 					if (scriptEnvironment == 3) {
 						if (data[offset + 1] == 6)
@@ -3818,9 +3818,9 @@ public final class Game extends GameCanvas implements Runnable {
 					offset += 3;
 					break;
 
-				// Set an emotion to Wiz or Waz.
-				case SCRIPT_CMD_SET_EMOTION:
-					currentEmotion[data[offset + 1]] = data[offset + 2];
+				// Set a face to Wiz or Waz.
+				case SCRIPT_CMD_SET_FACE:
+					currentFace[data[offset + 1]] = data[offset + 2];
 					if (scriptSfx[data[offset + 2]] != -1 && !skipping)
 						playSound(scriptSfx[data[offset + 2]], 1);
 
@@ -4478,10 +4478,10 @@ public final class Game extends GameCanvas implements Runnable {
 				Image img = imgMouth;
 				gDrawImage(img, alignX - img.getWidth() / 2, alignY - img.getHeight() / 2, 0);
 			} else {
-				Image img = imgsMouths[currentEmotion[playerId]][playerId];
+				Image img = imgsMouths[currentFace[playerId]][playerId];
 
-				if (currentEmotion[playerId] > 0) {
-					gDrawImage(img, alignX - img.getWidth() / 2 + mouthX[currentEmotion[playerId]][playerId], alignY - img.getHeight() / 2 + mouthY[currentEmotion[playerId]][playerId], 0);
+				if (currentFace[playerId] > 0) {
+					gDrawImage(img, alignX - img.getWidth() / 2 + mouthX[currentFace[playerId]][playerId], alignY - img.getHeight() / 2 + mouthY[currentFace[playerId]][playerId], 0);
 				} else {
 					int mouthMag = levelCameraZoom * 6 / 100;
 					int mouthX = alignX + cos(playerAngle + 90) * mouthMag / 1000;
@@ -4491,7 +4491,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			// Render an eyes.
-			if (currentEmotion[playerId] == 0) {
+			if (currentFace[playerId] == 0) {
 				Image img = imgsEyeM[playerId];
 
 				if (circleId > 0) {
@@ -4528,11 +4528,11 @@ public final class Game extends GameCanvas implements Runnable {
 			} else {
 				int eyeMag = levelCameraZoom * levelPlayerEyeVectorMagnitude / 100;
 
-				Image img = imgsEyes[currentEmotion[playerId]][playerId];
+				Image img = imgsEyes[currentFace[playerId]][playerId];
 				if (currentEyeBlinkTicks[playerId] > 0)
-					img = imgsEyesC[currentEmotion[playerId]][playerId];
+					img = imgsEyesC[currentFace[playerId]][playerId];
 
-				gDrawImage(img, alignX - img.getWidth() / 2 + eyesX[currentEmotion[playerId]][playerId], alignY - eyeMag - img.getHeight() / 2 + eyesY[currentEmotion[playerId]][playerId], 0);
+				gDrawImage(img, alignX - img.getWidth() / 2 + eyesX[currentFace[playerId]][playerId], alignY - eyeMag - img.getHeight() / 2 + eyesY[currentFace[playerId]][playerId], 0);
 			}
 
 			// Handle pseudorandom eye blinking.
