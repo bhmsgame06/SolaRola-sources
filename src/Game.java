@@ -258,10 +258,10 @@ public final class Game extends GameCanvas implements Runnable {
 	private static final int SCRIPT_CMD_SPACE_MAP_SHOW_POINTER = 13;
 	private static final int SCRIPT_CMD_TRANSMISSION_SET_NOISE = 14;
 	private static final int SCRIPT_CMD_TRANSMISSION_SET_SHAKE = 15;
-	private static final int SCRIPT_CMD_PICTURE_SHOW = 16;
+	private static final int SCRIPT_CMD_PHOTO_FRAME_SHOW = 16;
 	private static final int SCRIPT_CMD_TRANSMISSION_SET_BACKGROUND_COLOR = 17;
 	private static final int SCRIPT_CMD_RESERVED = 18;
-	private static final int SCRIPT_CMD_PICTURE_SET_LABEL_ID = 19;
+	private static final int SCRIPT_CMD_PHOTO_FRAME_SET_LABEL_ID = 19;
 	public static boolean scriptIsAwaitingLevelStart = false;
 	public static int beamAnimationTicks = 1;
 	public static boolean skipPrologue;
@@ -789,17 +789,15 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] staticTiles;
 	public static boolean isTransmissionNoisy = true;
 	public static boolean isTransmissionShaky = true;
-	public static boolean isPictureShown = false;
+	public static boolean isPhotoFrameShown = false;
 	public static boolean isTransmissionBlinked = false;
-
-	// Picture (album).
-	public static int currentPictureEntityX = 59;
-	public static int currentPictureEntityY = 108;
-	public static int currentPictureEntitySize = 100;
+	public static int transmissionEntityX = 59;
+	public static int transmissionEntityY = 108;
+	public static int transmissionEntitySize = 100;
 	public static int transmissionBackgroundColor = 0;
-	public static int activePictureLabelId = 0;
+	public static int activePhotoFrameLabelId = 0;
 
-	public static String[] pictureLabels = new String[] {
+	public static String[] photoFrameLabels = new String[] {
 		"Kachoo",
 		"NikSak",
 		"Rara",
@@ -875,6 +873,10 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public final void keyPressed(int keyCode) {
+		if (keyCode == 'p') {
+			startScript("test.bms", levelCircleX[0], levelCircleY[0]);
+		}
+
 		tmpHeldKeys |= pressedKeyValue(keyCode);
 		super.keyPressed(keyCode);
 
@@ -1590,6 +1592,18 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final int[] loadFile32(String file) {
+		try {
+			InputStream is = new java.io.FileInputStream("/home/bhms/Documents/projects/bmsc/" + file);
+			int count = is.available() >> 2;
+			int[] arr = new int[count];
+			for (int i = 0; i < count; i++) {
+				arr[i] = is.read() << 24 | is.read() << 16 | is.read() << 8 | is.read();
+			}
+			is.close();
+			return arr;
+		} catch (Exception e) {
+		}
+
 		return loadFile32(bfcCrcFilename(file));
 	}
 
@@ -3600,7 +3614,7 @@ public final class Game extends GameCanvas implements Runnable {
 			currentScriptIndex = 0;
 			scriptIsActionConfirmed = false;
 			stateBeforeScript = oldState;
-			activePictureLabelId = 0;
+			activePhotoFrameLabelId = 0;
 			scriptLastSwapKey = activeSwapKey;
 			scriptIsWazActive = scriptLastSwapKey == 0;
 			if (scriptIsWazActive)
@@ -3831,8 +3845,8 @@ public final class Game extends GameCanvas implements Runnable {
 				 * transmission). */
 				case SCRIPT_CMD_SET_ENTITY_POS:
 					if (scriptEnvironment == 5) {
-						currentPictureEntityX = SCREEN_WIDTH * data[offset + 2] / 1000;
-						currentPictureEntityY = SCREEN_HEIGHT * data[offset + 3] / 1000;
+						transmissionEntityX = SCREEN_WIDTH * data[offset + 2] / 1000;
+						transmissionEntityY = SCREEN_HEIGHT * data[offset + 3] / 1000;
 					} else if (activeSwapKey == 0) {
 						if (data[offset + 1] == 0)
 							levelSetPlayerPos(levelAlignXToMirror(data[offset + 2] << 16), data[offset + 3] << 16, 0, 0xc0000);
@@ -3940,9 +3954,9 @@ public final class Game extends GameCanvas implements Runnable {
 					offset += 2;
 					break;
 
-				// Picture: Show a picture.
-				case SCRIPT_CMD_PICTURE_SHOW:
-					isPictureShown = data[offset + 1] == 1;
+				// Photo frame: Show a photo frame.
+				case SCRIPT_CMD_PHOTO_FRAME_SHOW:
+					isPhotoFrameShown = data[offset + 1] == 1;
 					offset += 2;
 					break;
 
@@ -3956,9 +3970,9 @@ public final class Game extends GameCanvas implements Runnable {
 				case SCRIPT_CMD_RESERVED:
 					break;
 
-				// Picture: Set a label ID (see case 16).
-				case SCRIPT_CMD_PICTURE_SET_LABEL_ID:
-					activePictureLabelId = data[offset + 1];
+				// Photo frame: Set a label ID (see case 16).
+				case SCRIPT_CMD_PHOTO_FRAME_SET_LABEL_ID:
+					activePhotoFrameLabelId = data[offset + 1];
 					offset += 2;
 			}
 		}
@@ -6480,6 +6494,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 				/* This condition is NEVER executed as this is impossible to
 				 * have >= 100 zoom difference. */
+				System.out.println("11");
 				if (diffZoom > 0)
 					levelCameraZoom++;
 				else if (diffZoom < 0)
@@ -8177,13 +8192,13 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// Render an entity.
 		if (isTransmissionShaky) {
-			renderPurple(currentPictureEntityX + sin1000[(int)(millis() / 5L % 360L)] * (SCREEN_WIDTH / 10) / 1000,
-					currentPictureEntityY + sin1000[(int)(millis() / 3L % 360L)] * (SCREEN_HEIGHT / 10) / 1000,
-					currentPictureEntitySize + 40 + sin1000[(int)(millis() / 14L % 360L)] * 20 / 1000);
+			renderPurple(transmissionEntityX + sin1000[(int)(millis() / 5L % 360L)] * (SCREEN_WIDTH / 10) / 1000,
+					transmissionEntityY + sin1000[(int)(millis() / 3L % 360L)] * (SCREEN_HEIGHT / 10) / 1000,
+					transmissionEntitySize + 40 + sin1000[(int)(millis() / 14L % 360L)] * 20 / 1000);
 		} else {
-			renderPurple(currentPictureEntityX,
-					currentPictureEntityY,
-					currentPictureEntitySize);
+			renderPurple(transmissionEntityX,
+					transmissionEntityY,
+					transmissionEntitySize);
 		}
 
 		// Render a transmission interference.
@@ -8206,8 +8221,8 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 
-		// Show a picture of the entity.
-		if (isPictureShown) {
+		// Show a photoFrame of the entity.
+		if (isPhotoFrameShown) {
 			gSetColor(0xffffff);
 			gFillRect(0, 0, SCREEN_WIDTH, 10);
 			gFillRect(0, 0, 10, SCREEN_HEIGHT);
@@ -8217,8 +8232,8 @@ public final class Game extends GameCanvas implements Runnable {
 			gSetColor(0);
 			gDrawRect(10, 10, SCREEN_WIDTH - 21, SCREEN_HEIGHT - 41);
 
-			if (activePictureLabelId >= 0)
-				renderText(-1000, SCREEN_HEIGHT - 22, pictureLabels[activePictureLabelId], 1);
+			if (activePhotoFrameLabelId >= 0)
+				renderText(-1000, SCREEN_HEIGHT - 22, photoFrameLabels[activePhotoFrameLabelId], 1);
 		}
 	}
 
@@ -8254,7 +8269,7 @@ public final class Game extends GameCanvas implements Runnable {
 		int mouthWidth = size * 23 / 100;
 		int mouthHeight = size * 5 / 100;
 
-		if (isSpeakingAnimationPlaying && !isPictureShown && (millis() / 150L & 1L) > 0L)
+		if (isSpeakingAnimationPlaying && !isPhotoFrameShown && (millis() / 150L & 1L) > 0L)
 			gFillArc(x - mouthWidth / 2,
 					y - mouthHeight * 2,
 					mouthWidth,
@@ -8294,7 +8309,7 @@ public final class Game extends GameCanvas implements Runnable {
 					360);
 
 		// Render eyelids.
-		if (isTransmissionBlinked || !isPictureShown && rand8() > 240) {
+		if (isTransmissionBlinked || !isPhotoFrameShown && rand8() > 240) {
 			if (isTransmissionNoisy)
 				gSetColor(0x696969);
 			else
