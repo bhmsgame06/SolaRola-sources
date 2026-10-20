@@ -8221,7 +8221,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		}
 
-		// Show a photoFrame of the entity.
+		// Show a photo frame of the entity.
 		if (isPhotoFrameShown) {
 			gSetColor(0xffffff);
 			gFillRect(0, 0, SCREEN_WIDTH, 10);
