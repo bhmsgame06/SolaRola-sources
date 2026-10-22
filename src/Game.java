@@ -873,10 +873,6 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public final void keyPressed(int keyCode) {
-		if (keyCode == 'p') {
-			startScript("test.bms", levelCircleX[0], levelCircleY[0]);
-		}
-
 		tmpHeldKeys |= pressedKeyValue(keyCode);
 		super.keyPressed(keyCode);
 
@@ -1592,18 +1588,6 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final int[] loadFile32(String file) {
-		try {
-			InputStream is = new java.io.FileInputStream("/home/bhms/Documents/projects/bmsc/" + file);
-			int count = is.available() >> 2;
-			int[] arr = new int[count];
-			for (int i = 0; i < count; i++) {
-				arr[i] = is.read() << 24 | is.read() << 16 | is.read() << 8 | is.read();
-			}
-			is.close();
-			return arr;
-		} catch (Exception e) {
-		}
-
 		return loadFile32(bfcCrcFilename(file));
 	}
 
