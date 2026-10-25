@@ -2145,7 +2145,7 @@ public final class Game extends GameCanvas implements Runnable {
 		int newLineStreakCount = 0;
 
 		while (curIndex < strLen) {
-			switch(string.charAt(curIndex)) {
+			switch (string.charAt(curIndex)) {
 				case '\n':
 					if (!ignoreFirstNewLines && newLineStreakCount > 0)
 						approxLineIndices[numNewLines++] = curIndex;
@@ -2284,7 +2284,7 @@ public final class Game extends GameCanvas implements Runnable {
 		int newLineStreakCount = 0;
 
 		while (index < strLen && y < bottom) {
-			switch(string.charAt(index)) {
+			switch (string.charAt(index)) {
 				case '\n':
 					if (!ignoreFirstNewLines && newLineStreakCount > 0 && (y += fontHeights[fontId] + fontLineGaps[fontId]) > bottom)
 						return index;
@@ -2494,10 +2494,10 @@ public final class Game extends GameCanvas implements Runnable {
 	// res: 0 - init, 1 - run, 2 - free
 	public static final void execState(int state, int res) {
 		if (state >= 0) {
-			switch(state) {
+			switch (state) {
 
 				case STATE_ID_SELECTION:
-					switch(res) {
+					switch (res) {
 						case STATE_EXEC_INIT:
 							sceneSelectionInit(stateArg);
 							break;
@@ -2510,7 +2510,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case STATE_ID_SPLASH:
-					switch(res) {
+					switch (res) {
 						case STATE_EXEC_INIT:
 							sceneSplashInit(stateArg);
 							break;
@@ -2523,7 +2523,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case STATE_ID_SHIP:
-					switch(res) {
+					switch (res) {
 						case STATE_EXEC_INIT:
 							sceneShipInit(stateArg);
 							break;
@@ -2536,7 +2536,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case STATE_ID_PRE_LEVEL:
-					switch(res) {
+					switch (res) {
 						case STATE_EXEC_INIT:
 							scenePreLevelInit(stateArg);
 							break;
@@ -2549,7 +2549,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case STATE_ID_LEVEL:
-					switch(res) {
+					switch (res) {
 						case STATE_EXEC_INIT:
 							sceneLevelInit(stateArg);
 							break;
@@ -2562,7 +2562,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case STATE_ID_SCRIPT:
-					switch(res) {
+					switch (res) {
 						case STATE_EXEC_INIT:
 							sceneScriptInit(stateArg);
 							break;
@@ -2575,7 +2575,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case STATE_ID_TRANSITION:
-					switch(res) {
+					switch (res) {
 						case STATE_EXEC_INIT:
 							sceneTransitionInit(stateArg);
 							break;
@@ -2588,7 +2588,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case STATE_ID_TITLE:
-					switch(res) {
+					switch (res) {
 						case STATE_EXEC_INIT:
 							sceneTitleInit(stateArg);
 							break;
@@ -2601,7 +2601,7 @@ public final class Game extends GameCanvas implements Runnable {
 					return;
 
 				case STATE_ID_HELP:
-					switch(res) {
+					switch (res) {
 						case STATE_EXEC_INIT:
 							sceneHelpInit(stateArg);
 							return;
@@ -3025,7 +3025,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneLevelRun() {
-		switch(levelCompletionState) {
+		switch (levelCompletionState) {
 			// Update the level constantly.
 			case 0:
 				sceneLevelUpdate();
@@ -3098,7 +3098,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void sceneSplashRun() {
 		gSetColor(0xffffff);
 		gFillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		switch(splash) {
+		switch (splash) {
 
 			// Eidos logo.
 			case 0:
@@ -3194,7 +3194,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void sceneSplashInit(int arg) {
 		splash = arg;
 
-		switch(arg) {
+		switch (arg) {
 
 			// Eidos logo.
 			case 0:
@@ -3247,7 +3247,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneSplashFree() {
-		switch(splash) {
+		switch (splash) {
 
 			// Eidos logo.
 			case 0:
@@ -3308,7 +3308,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// Process ship operation after a pod was touched.
 		if (shipNextOp > SHIP_OP_NOP) {
-			switch(shipNextOp) {
+			switch (shipNextOp) {
 				case SHIP_OP_START:
 					setNewState(STATE_ID_PRE_LEVEL, 0);
 					break;
@@ -3496,7 +3496,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		// Process an environment in where the script will take place.
-		switch(scriptEnvironment) {
+		switch (scriptEnvironment) {
 			case 0:
 				renderShipInside();
 
@@ -3678,7 +3678,7 @@ public final class Game extends GameCanvas implements Runnable {
 	 * part ends with `SCRIPT_CMD_SUBMIT` command. */
 	public static final int execScript(int[] data, int offset, boolean skipping) {
 		while (offset < data.length) {
-			switch(data[offset]) {
+			switch (data[offset]) {
 				// Submit.
 				case SCRIPT_CMD_SUBMIT:
 					return offset + 1;
@@ -3712,7 +3712,7 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 
 					// When in the level.
-					switch(data[offset + 1]) {
+					switch (data[offset + 1]) {
 
 						// Set to the player.
 						case 0:
@@ -3769,7 +3769,7 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 
 					// When in the level.
-					switch(data[offset + 1]) {
+					switch (data[offset + 1]) {
 
 						// Set to the player.
 						case 0:
@@ -3858,7 +3858,7 @@ public final class Game extends GameCanvas implements Runnable {
 					scriptEnvironment = data[offset + 1];
 					hideDialogueBox();
 
-					switch(scriptEnvironment) {
+					switch (scriptEnvironment) {
 						// Ship.
 						case 0:
 							initSpace(2, 12, 92, 46);
@@ -4093,7 +4093,7 @@ public final class Game extends GameCanvas implements Runnable {
 				sceneTransitionDisabled = true;
 			} else {
 				// Render it the rest of the time.
-				switch(sceneTransitionType) {
+				switch (sceneTransitionType) {
 					case TRANSITION_TYPE_WIPE:
 						renderWipeTransition(tick);
 						break;
@@ -6040,7 +6040,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if ((levelCircleFlags[i] & 4) > 0 &&
 					levelCircleHasPhysics[i]) {
 
-				switch(levelCircleType[i]) {
+				switch (levelCircleType[i]) {
 
 					// Disable "MORE GAMES" pod physics and collision.
 					case 7:
@@ -6184,7 +6184,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	// Play the background soundtrack.
 	public static final void playCurrentBackgroundMusic() {
-		switch(levelBackgroundId) {
+		switch (levelBackgroundId) {
 			case 0:
 				playSound(7);
 				return;
@@ -7632,7 +7632,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final int processShipScript(int choice, boolean isInPlanet) {
 		byte shipOp = 0;
 
-		switch(choice) {
+		switch (choice) {
 			case 1:
 				if (!isInPlanet) {
 					startScript("start" + level + ".bms", levelCircleX[0], levelCircleY[0]);
@@ -7828,7 +7828,7 @@ public final class Game extends GameCanvas implements Runnable {
 				img = imgsShipIcon[podId];
 
 				// Switch to the "off" variant of the icons if needed.
-				switch(podId) {
+				switch (podId) {
 					case 4:
 						if (!isAudioEnabled)
 							img = imgsShipIconB[podId];
