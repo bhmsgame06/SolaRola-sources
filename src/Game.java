@@ -2604,13 +2604,14 @@ public final class Game extends GameCanvas implements Runnable {
 					switch (res) {
 						case STATE_EXEC_INIT:
 							sceneHelpInit(stateArg);
-							return;
+							break;
 						case STATE_EXEC_RUN:
 							sceneHelpRun();
-							return;
+							break;
 						case STATE_EXEC_FREE:
 							sceneHelpFree();
 					}
+					return;
 			}
 		}
 	}
