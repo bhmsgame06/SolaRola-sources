@@ -1016,7 +1016,7 @@ public final class Game extends GameCanvas implements Runnable {
 		updateKeys();
 		updateTransition();
 		gfxFlush();
-		lockFPS();
+		lockFps();
 	}
 
 	public static final void sleep(long ms) {
@@ -1037,7 +1037,7 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
-	public static final void lockFPS() {
+	public static final void lockFps() {
 		currTime = millis();
 		if (currTime - prevTime < 45L)
 			sleep(45L - (currTime - prevTime));
