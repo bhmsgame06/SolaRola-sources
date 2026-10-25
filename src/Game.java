@@ -6478,7 +6478,6 @@ public final class Game extends GameCanvas implements Runnable {
 
 				/* This condition is NEVER executed as this is impossible to
 				 * have >= 100 zoom difference. */
-				System.out.println("11");
 				if (diffZoom > 0)
 					levelCameraZoom++;
 				else if (diffZoom < 0)
