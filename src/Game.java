@@ -522,7 +522,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[] levelCirclePrevX;
 	public static int[] levelCirclePrevY;
 	public static int[] levelCircleFlags;
-	public static int[] levelCircleDensity;
+	public static int[] levelCircleWeight;
 	public static byte[] levelCircleType;
 	public static boolean[] levelCircleHasPhysics;
 
@@ -3129,7 +3129,7 @@ public final class Game extends GameCanvas implements Runnable {
 				} else {
 					splashRocketX += (splashTick - 20) / 8;
 					splashRocketY -= (splashTick - 20) / 8;
-					gDrawImage(imgCenterLogo, (((SCREEN_WIDTH - 49) >> 1) + 3) - 27, (((SCREEN_HEIGHT - 58) >> 1) - 15) - 1, 0);
+					gDrawImage(imgCenterLogo, (SCREEN_WIDTH - 97) >> 1, (SCREEN_HEIGHT - 89) >> 1, 0);
 				}
 
 				gDrawImage(imgPmRocket, x, y, 0);
@@ -4674,8 +4674,8 @@ public final class Game extends GameCanvas implements Runnable {
 		if (hookType != 4 || mag >= extent) {
 			if (hookType != 3 || mag <= extent) {
 				if (mag >= 70000) {
-					int density1 = levelCircleDensity[circleId1];
-					int density2 = levelCircleDensity[circleId2];
+					int density1 = levelCircleWeight[circleId1];
+					int density2 = levelCircleWeight[circleId2];
 
 					int overlapRatio = lp32Div(mag - extent, lp32Mul(mag, density1 + density2));
 					int pushX = lp32Mul(stretchConst, lp32Mul(triLeg1, overlapRatio));
@@ -4766,7 +4766,7 @@ public final class Game extends GameCanvas implements Runnable {
 		for (int i = 0; i < levelSpiderLegIds.length; i++) {
 			if (levelSpiderLegParent[i] == parent) {
 				levelSpiderLegTicks[i] = 400000;
-				levelCircleDensity[levelSpiderLegIds[i]] = 52000;
+				levelCircleWeight[levelSpiderLegIds[i]] = 52000;
 
 				for (int j = 0; j < levelNumHooks; j++) {
 					if ((levelHookId1[j] == levelSpiderLegIds[i] ||
@@ -5604,7 +5604,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelCirclePrevX = new int[num];
 		levelCirclePrevY = new int[num];
 		levelCircleFlags = new int[num];
-		levelCircleDensity = new int[num];
+		levelCircleWeight = new int[num];
 		levelCircleType = new byte[num];
 		levelCircleHasPhysics = new boolean[num];
 	}
@@ -5621,7 +5621,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelCircleFlags[id] = flags;
 		levelCircleHasPhysics[id] = hasPhysics;
 		levelCircleType[id] = (byte)type;
-		levelCircleDensity[id] = lp32Div(0x10000, density << 14);
+		levelCircleWeight[id] = lp32Div(0x10000, density << 14);
 	}
 
 	public static final void updatePlayerMovement() {
@@ -5757,8 +5757,8 @@ public final class Game extends GameCanvas implements Runnable {
 		levelCircleFlags = swappedLevelCircleFlags;
 		swappedLevelCircleFlags = tmp2;
 
-		tmp2 = levelCircleDensity;
-		levelCircleDensity = swappedLevelCircleDensity;
+		tmp2 = levelCircleWeight;
+		levelCircleWeight = swappedLevelCircleDensity;
 		swappedLevelCircleDensity = tmp2;
 
 		tmp3 = levelCircleType;
@@ -6806,7 +6806,7 @@ public final class Game extends GameCanvas implements Runnable {
 				if (levelBombExplodeTicks > 0) {
 					levelSetCamera(levelCircleX[levelBombObjectId], levelCircleY[levelBombObjectId], 0);
 					levelBombExplodeTicks--;
-					levelCircleDensity[levelBombObjectId] = 0;
+					levelCircleWeight[levelBombObjectId] = 0;
 
 					if (levelBombExplodeTicks > 0) {
 						levelCircleRadius[levelBombObjectId] += 0xf0000;
