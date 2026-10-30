@@ -579,7 +579,20 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int swappedLevelMovableAccel;
 	public static boolean swappedLevelIsPlayerOnSurface;
 	public static boolean swappedIsLevelComplete;
+
+	// Manage sounds.
+	private static final int SOUND_ID_JINGLE_FLYIN = 0;
+	private static final int SOUND_ID_JINGLE_COMPLETE = 1;
+	private static final int SOUND_ID_SHIP = 2;
+	private static final int SOUND_ID_INGAME1 = 3;
+	private static final int SOUND_ID_INGAME2 = 4;
+	private static final int SOUND_ID_INGAME3 = 5;
+	private static final int SOUND_ID_INGAME4 = 6;
+	private static final int SOUND_ID_INGAME0 = 7;
+	private static final int SOUND_ID_TITLE = 8;
+	private static final int SOUND_NUM_SOUNDS = 9;
 	public static int currentSoundId = -1;
+
 	public static Image[] imgsBackground;
 	public static int[][] activeBackgroundPattern;
 	public static int[][] activeBackgroundObjectsPattern;
@@ -3453,7 +3466,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			if (!isShipPaused)
-				playSound(2);
+				playSound(SOUND_ID_SHIP);
 		}
 	}
 
@@ -4060,7 +4073,7 @@ public final class Game extends GameCanvas implements Runnable {
 			imgGameLogoBottom = loadImage("gamelogo2.pim", "gamelogo2.ppl");
 
 			initSpace(1, 50, SCREEN_WIDTH, SCREEN_HEIGHT);
-			playSound(8);
+			playSound(SOUND_ID_TITLE);
 
 			isBeamAnimated = false;
 		}
@@ -6150,16 +6163,16 @@ public final class Game extends GameCanvas implements Runnable {
 
 	// Load all sounds used by the game.
 	public static final void loadAllSounds() {
-		initSoundSystem(9);
-		loadSoundToIndex(8, "title", 1, 15804);
-		loadSoundToQueue(2, "ship", 1, 13962);
-		loadSoundToQueue(7, "ingame0", 1, 10987);
-		loadSoundToQueue(3, "ingame1", 1, 21882);
-		loadSoundToQueue(4, "ingame2", 1, 13885);
-		loadSoundToQueue(5, "ingame3", 1, 21561);
-		loadSoundToQueue(6, "ingame4", 1, 14583);
-		loadSoundToQueue(0, "jingle_flyIn", 1, 980);
-		loadSoundToQueue(1, "jingle_complete", 1, 815);
+		initSoundSystem(SOUND_NUM_SOUNDS);
+		loadSoundToIndex(SOUND_ID_TITLE, "title", 1, 15804);
+		loadSoundToQueue(SOUND_ID_SHIP, "ship", 1, 13962);
+		loadSoundToQueue(SOUND_ID_INGAME0, "ingame0", 1, 10987);
+		loadSoundToQueue(SOUND_ID_INGAME1, "ingame1", 1, 21882);
+		loadSoundToQueue(SOUND_ID_INGAME2, "ingame2", 1, 13885);
+		loadSoundToQueue(SOUND_ID_INGAME3, "ingame3", 1, 21561);
+		loadSoundToQueue(SOUND_ID_INGAME4, "ingame4", 1, 14583);
+		loadSoundToQueue(SOUND_ID_JINGLE_FLYIN, "jingle_flyIn", 1, 980);
+		loadSoundToQueue(SOUND_ID_JINGLE_COMPLETE, "jingle_complete", 1, 815);
 	}
 
 	public static final void playSound(int index) {
@@ -6192,34 +6205,34 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void playCurrentBackgroundMusic() {
 		switch (levelBackgroundId) {
 			case 0:
-				playSound(7);
+				playSound(SOUND_ID_INGAME0);
 				return;
 
 			case 1:
-				playSound(3);
+				playSound(SOUND_ID_INGAME1);
 				return;
 
 			case 2:
-				playSound(4);
+				playSound(SOUND_ID_INGAME2);
 				return;
 
 			case 3:
-				playSound(5);
+				playSound(SOUND_ID_INGAME3);
 				return;
 
 			case 4:
-				playSound(6);
+				playSound(SOUND_ID_INGAME4);
 		}
 	}
 
 	public static final void playJingleFlyIn() {
 		playSound(-1);
-		playSound(0, 1);
+		playSound(SOUND_ID_JINGLE_FLYIN, 1);
 	}
 
 	public static final void playJingleComplete() {
 		playSound(-1);
-		playSound(1, 1);
+		playSound(SOUND_ID_JINGLE_COMPLETE, 1);
 	}
 
 	/* Function that sets weather and background of the level by their ID.
