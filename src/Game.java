@@ -581,8 +581,37 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int swappedLevelMovableAccel;
 	public static boolean swappedLevelIsPlayerOnSurface;
 	public static boolean swappedIsLevelComplete;
+
+	// Manage sounds.
+	private static final int SOUND_ID_JINGLE_FLYIN = 0;
+	private static final int SOUND_ID_JINGLE_COMPLETE = 1;
+	private static final int SOUND_ID_SHIP = 2;
+	private static final int SOUND_ID_INGAME1 = 3;
+	private static final int SOUND_ID_INGAME2 = 4;
+	private static final int SOUND_ID_INGAME3 = 5;
+	private static final int SOUND_ID_INGAME4 = 6;
+	private static final int SOUND_ID_INGAME0 = 7;
+	private static final int SOUND_ID_TITLE = 8;
+	private static final int SOUND_ID_SFX_JUMP = 9;
+	private static final int SOUND_ID_SFX_HURT = 10;
+	private static final int SOUND_ID_SFX_BOMB = 11;
+	private static final int SOUND_ID_SFX_GO = 12;
+	private static final int SOUND_ID_SFX_HURRA = 13;
+	private static final int SOUND_ID_SFX_EMO_STARTLED = 14;
+	private static final int SOUND_ID_SFX_EMO_SURPRISED = 15;
+	private static final int SOUND_ID_SFX_EMO_HAPPY = 16;
+	private static final int SOUND_ID_SFX_EMO_ANGRY = 17;
+	private static final int SOUND_ID_SFX_EMO_BORED = 18;
+	private static final int SOUND_ID_SFX_ROCKET = 21;
+	private static final int SOUND_ID_SFX_XIFU = 22;
+	private static final int SOUND_ID_SFX_DISTRESS = 23;
+	private static final int SOUND_ID_SFX_JUMP2 = 24;
+	private static final int SOUND_ID_SFX_HURT2 = 25;
+	private static final int SOUND_ID_SFX_XIFU2 = 26;
+	private static final int SOUND_NUM_SOUNDS = 27;
 	public static boolean currentSoundSfxXifuState;
 	public static int currentSoundId = -1;
+
 	public static Image[] imgsBackground;
 	public static int[][] activeBackgroundPattern;
 	public static int[][] activeBackgroundObjectsPattern;
@@ -3535,7 +3564,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			if (!isShipPaused)
-				playSound(2);
+				playSound(SOUND_ID_SHIP);
 		}
 	}
 
@@ -4140,7 +4169,7 @@ public final class Game extends GameCanvas implements Runnable {
 			imgGameLogoBottom = loadImage("gamelogo2.pim", "gamelogo2.ppl");
 
 			initSpace(1, 50, SCREEN_WIDTH, SCREEN_HEIGHT);
-			playSound(8);
+			playSound(SOUND_ID_TITLE);
 
 			isBeamAnimated = false;
 		}
@@ -6230,32 +6259,32 @@ public final class Game extends GameCanvas implements Runnable {
 
 	// Load all sounds used by the game.
 	public static final void loadAllSounds() {
-		initSoundSystem(27);
-		loadSoundToIndex(8, "title", 1, 15804);
-		loadSoundToQueue(2, "ship", 1, 13962);
-		loadSoundToQueue(7, "ingame0", 1, 10987);
-		loadSoundToQueue(3, "ingame1", 1, 21882);
-		loadSoundToQueue(4, "ingame2", 1, 13885);
-		loadSoundToQueue(5, "ingame3", 1, 21561);
-		loadSoundToQueue(6, "ingame4", 1, 14583);
-		loadSoundToQueue(0, "jingle_flyIn", 1, 980);
-		loadSoundToQueue(1, "jingle_complete", 1, 815);
-		loadSoundToQueue(9, "sfx_jump", 6, 6904);
-		loadSoundToQueue(24, "sfx_jump2", 6, 10800);
-		loadSoundToQueue(10, "sfx_hurt", 6, 6942);
-		loadSoundToQueue(25, "sfx_hurt2", 6, 7742);
-		loadSoundToQueue(22, "sfx_xifu", 6, 9120);
-		loadSoundToQueue(26, "sfx_xifu2", 6, 12386);
-		loadSoundToQueue(14, "sfx_emo_startled", 6, 6252);
-		loadSoundToQueue(15, "sfx_emo_surprised", 6, 6170);
-		loadSoundToQueue(16, "sfx_emo_happy", 6, 8682);
-		loadSoundToQueue(17, "sfx_emo_angry", 6, 8036);
-		loadSoundToQueue(18, "sfx_emo_bored", 6, 19966);
-		loadSoundToQueue(23, "sfx_distress", 6, 8228);
-		loadSoundToQueue(21, "sfx_rocket", 6, 43036);
-		loadSoundToQueue(11, "sfx_bomb", 6, 10672);
-		loadSoundToQueue(12, "sfx_go", 6, 12500);
-		loadSoundToQueue(13, "sfx_hurra", 6, 10690);
+		initSoundSystem(SOUND_NUM_SOUNDS);
+		loadSoundToIndex(SOUND_ID_TITLE, "title", 1, 15804);
+		loadSoundToQueue(SOUND_ID_SHIP, "ship", 1, 13962);
+		loadSoundToQueue(SOUND_ID_INGAME0, "ingame0", 1, 10987);
+		loadSoundToQueue(SOUND_ID_INGAME1, "ingame1", 1, 21882);
+		loadSoundToQueue(SOUND_ID_INGAME2, "ingame2", 1, 13885);
+		loadSoundToQueue(SOUND_ID_INGAME3, "ingame3", 1, 21561);
+		loadSoundToQueue(SOUND_ID_INGAME4, "ingame4", 1, 14583);
+		loadSoundToQueue(SOUND_ID_JINGLE_FLYIN, "jingle_flyIn", 1, 980);
+		loadSoundToQueue(SOUND_ID_JINGLE_COMPLETE, "jingle_complete", 1, 815);
+		loadSoundToQueue(SOUND_ID_SFX_JUMP, "sfx_jump", 6, 6904);
+		loadSoundToQueue(SOUND_ID_SFX_JUMP2, "sfx_jump2", 6, 10800);
+		loadSoundToQueue(SOUND_ID_SFX_HURT, "sfx_hurt", 6, 6942);
+		loadSoundToQueue(SOUND_ID_SFX_HURT2, "sfx_hurt2", 6, 7742);
+		loadSoundToQueue(SOUND_ID_SFX_XIFU, "sfx_xifu", 6, 9120);
+		loadSoundToQueue(SOUND_ID_SFX_XIFU2, "sfx_xifu2", 6, 12386);
+		loadSoundToQueue(SOUND_ID_SFX_EMO_STARTLED, "sfx_emo_startled", 6, 6252);
+		loadSoundToQueue(SOUND_ID_SFX_EMO_SURPRISED, "sfx_emo_surprised", 6, 6170);
+		loadSoundToQueue(SOUND_ID_SFX_EMO_HAPPY, "sfx_emo_happy", 6, 8682);
+		loadSoundToQueue(SOUND_ID_SFX_EMO_ANGRY, "sfx_emo_angry", 6, 8036);
+		loadSoundToQueue(SOUND_ID_SFX_EMO_BORED, "sfx_emo_bored", 6, 19966);
+		loadSoundToQueue(SOUND_ID_SFX_DISTRESS, "sfx_distress", 6, 8228);
+		loadSoundToQueue(SOUND_ID_SFX_ROCKET, "sfx_rocket", 6, 43036);
+		loadSoundToQueue(SOUND_ID_SFX_BOMB, "sfx_bomb", 6, 10672);
+		loadSoundToQueue(SOUND_ID_SFX_GO, "sfx_go", 6, 12500);
+		loadSoundToQueue(SOUND_ID_SFX_HURRA, "sfx_hurra", 6, 10690);
 	}
 
 	public static final void playSound(int index) {
@@ -6288,78 +6317,78 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void playCurrentBackgroundMusic() {
 		switch (levelBackgroundId) {
 			case 0:
-				playSound(7);
+				playSound(SOUND_ID_INGAME0);
 				return;
 
 			case 1:
-				playSound(3);
+				playSound(SOUND_ID_INGAME1);
 				return;
 
 			case 2:
-				playSound(4);
+				playSound(SOUND_ID_INGAME2);
 				return;
 
 			case 3:
-				playSound(5);
+				playSound(SOUND_ID_INGAME3);
 				return;
 
 			case 4:
-				playSound(6);
+				playSound(SOUND_ID_INGAME4);
 		}
 	}
 
 	public static final void playSfxJump() {
 		if (rand8() % 3 == 0 && !isShipPaused) {
 			if (rand8() % 2 == 0)
-				playSound(24, 1);
+				playSound(SOUND_ID_SFX_JUMP2, 1);
 			else
-				playSound(9, 1);
+				playSound(SOUND_ID_SFX_JUMP, 1);
 		}
 	}
 
 	public static final void playSfxHurt() {
 		if (rand8() % 2 == 0)
-			playSound(25, 1);
+			playSound(SOUND_ID_SFX_HURT2, 1);
 		else
-			playSound(10, 1);
+			playSound(SOUND_ID_SFX_HURT, 1);
 	}
 
 	public static final void playJingleFlyIn() {
 		playSound(-1);
-		playSound(0, 1);
+		playSound(SOUND_ID_JINGLE_FLYIN, 1);
 	}
 
 	public static final void playSfxRocket() {
-		playSound(21, 1);
+		playSound(SOUND_ID_SFX_ROCKET, 1);
 	}
 
 	public static final void playSfxBomb() {
-		playSound(11, 1);
+		playSound(SOUND_ID_SFX_BOMB, 1);
 	}
 
 	public static final void playSfxDistress() {
-		playSound(23, 1);
+		playSound(SOUND_ID_SFX_DISTRESS, 1);
 	}
 
 	public static final void playJingleComplete() {
 		playSound(-1);
-		playSound(1, 1);
+		playSound(SOUND_ID_JINGLE_COMPLETE, 1);
 	}
 
 	public static final void playSfxHurra() {
-		playSound(13, 1);
+		playSound(SOUND_ID_SFX_HURRA, 1);
 	}
 
 	public static final void playSfxGo() {
-		playSound(12, 1);
+		playSound(SOUND_ID_SFX_GO, 1);
 	}
 
 	public static final void playSfxXifu() {
 		currentSoundSfxXifuState = !currentSoundSfxXifuState;
 		if (currentSoundSfxXifuState)
-			playSound(26, 1);
+			playSound(SOUND_ID_SFX_XIFU2, 1);
 		else
-			playSound(22, 1);
+			playSound(SOUND_ID_SFX_XIFU, 1);
 	}
 
 	/* Function that sets weather and background of the level by their ID.
