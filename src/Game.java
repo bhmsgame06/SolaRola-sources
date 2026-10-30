@@ -599,11 +599,11 @@ public final class Game extends GameCanvas implements Runnable {
 	private static final int SOUND_NUM_SOUNDS = 9;
 	public static int currentSoundId = -1;
 
+	// Background.
 	public static Image[] imgsBackground;
 	public static int[][] activeBackgroundPattern;
 	public static int[][] activeBackgroundObjectsPattern;
 	public static int currentLoadedBackgroundId;
-
 	// NOTE: this field is always zero.
 	public static int backgroundOffsetY;
 	public static int backgroundEndPosY;
