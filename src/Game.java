@@ -6,6 +6,7 @@ import javax.microedition.lcdui.game.GameCanvas;
 import javax.microedition.media.*;
 import javax.microedition.media.control.VolumeControl;
 import javax.microedition.rms.*;
+import com.nokia.mid.sound.Sound;
 
 public final class Game extends GameCanvas implements Runnable {
 	public static Game instance;
@@ -75,6 +76,7 @@ public final class Game extends GameCanvas implements Runnable {
 	private static int[] soundTypes;
 	private static String[] soundFilenames;
 	private static int numActiveSoundsTotal;
+	private static Sound[] soundPlayersOtt;
 	private static Player[] soundPlayers;
 	private static Player[] soundPlayersMidi;
 
@@ -133,8 +135,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static byte[][] fontCharWidths;
 	public static short[][] fontCharMap;
 
-	private static final int SCREEN_WIDTH = 128;
-	private static final int SCREEN_HEIGHT = 128;
+	private static final int SCREEN_WIDTH = 240;
+	private static final int SCREEN_HEIGHT = 320;
 	public static Graphics gfx;
 	private static long randSeed;
 
@@ -287,13 +289,13 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean scriptIsCameraMoving;
 	public static int[] scriptSfx = new int[] {
 		-1,
-		-1,
-		-1,
-		-1,
-		-1,
-		-1,
-		-1,
-		-1,
+		20,
+		14,
+		19,
+		15,
+		17,
+		16,
+		18,
 	};
 
 	// Selection scene.
@@ -355,41 +357,41 @@ public final class Game extends GameCanvas implements Runnable {
 		{0, 0},
 		{0, 0},
 		{0, 0},
-		{6, 8},
-		{0, -2},
+		{8, 11},
+		{0, -3},
 		{0, 0},
 		{0, 0},
 		{0, 0},
 	};
 	public static int[][] eyesY = new int[][] {
-		{0, -3},
-		{3, 0},
-		{3, 0},
-		{10, 4},
-		{0, -5},
-		{4, 4},
-		{4, 1},
-		{6, 4},
+		{0, -4},
+		{4, 0},
+		{4, 0},
+		{14, 5},
+		{0, -7},
+		{6, 6},
+		{5, 1},
+		{8, 6},
 	};
 	public static int[][] mouthX = new int[][] {
 		{0, 0},
-		{2, 6},
+		{3, 8},
 		{0, 0},
-		{-4, -8},
-		{4, 2},
-		{4, 4},
+		{-5, -11},
+		{6, 2},
+		{5, 5},
 		{0, 0},
-		{2, 6},
+		{3, 8},
 	};
 	public static int[][] mouthY = new int[][] {
 		{0, 0},
-		{5, 2},
+		{7, 3},
+		{4, 8},
+		{7, 13},
+		{6, 13},
 		{3, 6},
-		{5, 9},
+		{6, 5},
 		{4, 9},
-		{2, 4},
-		{3, 7},
-		{3, 6},
 	};
 
 	public static int swappedLevelReservedField0;
@@ -579,6 +581,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int swappedLevelMovableAccel;
 	public static boolean swappedLevelIsPlayerOnSurface;
 	public static boolean swappedIsLevelComplete;
+	public static boolean currentSoundSfxXifuState;
 	public static int currentSoundId = -1;
 	public static Image[] imgsBackground;
 	public static int[][] activeBackgroundPattern;
@@ -704,7 +707,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean isDejaVuMessageShown = false;
 	public static boolean isBeamAnimated = false;
 
-	private static final int LEVEL_CAMERA_ZOOM_DEFAULT = 72;
+	private static final int LEVEL_CAMERA_ZOOM_DEFAULT = 100;
 	public static int levelDeathTicks = 70;
 	public static int levelTicks = 0;
 	public static int levelScriptToRun = -1;
@@ -734,6 +737,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean isPlayerInvincible = false;
 	public static boolean isPlayerAlive = true;
 	public static boolean pauseScreenDraw = false;
+	public static boolean loadingBarSoundCleanup = true;
 	public static int[] loadingBarColors = new int[12];
 	public static int loadingBarColorIndex = 9;
 	public static boolean isFadeBlackSet = false;
@@ -793,8 +797,8 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean isTransmissionShaky = true;
 	public static boolean isPhotoFrameShown = false;
 	public static boolean isTransmissionBlinked = false;
-	public static int transmissionEntityX = 59;
-	public static int transmissionEntityY = 108;
+	public static int transmissionEntityX = 115;
+	public static int transmissionEntityY = 300;
 	public static int transmissionEntitySize = 100;
 	public static int transmissionBackgroundColor = 0;
 	public static int activePhotoFrameLabelId = 0;
@@ -1133,6 +1137,7 @@ public final class Game extends GameCanvas implements Runnable {
 		soundLoopCounts = new int[num];
 		soundTypes = new int[num];
 		activeSound = -1;
+		soundPlayersOtt = new Sound[num];
 		soundPlayers = new Player[num];
 		soundPlayersMidi = new Player[num];
 		numActiveSoundsMidi = 0;
@@ -1146,6 +1151,7 @@ public final class Game extends GameCanvas implements Runnable {
 			soundVolume[i] = 5;
 			soundLoopCounts[i] = 1;
 			soundTypes[i] = 999;
+			soundPlayersOtt[i] = null;
 			soundPlayers[i] = null;
 			soundPlayersMidi[i] = null;
 		}
@@ -1166,6 +1172,24 @@ public final class Game extends GameCanvas implements Runnable {
 		soundTypes[index] = soundType;
 		if (!filename.equals(soundFilenames[index])) {
 			soundFilenames[index] = filename;
+		}
+
+		String obj = "";
+
+		if (soundType == 0) {
+			InputStream is = null;
+			try {
+				is = obj.getClass().getResourceAsStream("/" + filename + ".ott");
+				byte[] arr = new byte[size];
+				is.read(arr);
+				soundPlayersOtt[index] = new Sound(arr, 1);
+				is.close();
+			} catch (Exception e) {
+				soundPlayersOtt[index] = null;
+				soundTypes[index] = 999;
+				soundTypes[index] = 0;
+			}
+			return 0;
 		}
 
 		return -4;
@@ -1189,6 +1213,23 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 
 		String obj = "";
+
+		if (soundType == 0) {
+			InputStream is = null;
+			try {
+				is = obj.getClass().getResourceAsStream("/" + filename + ".ott");
+				byte[] arr = new byte[size];
+				is.read(arr);
+				soundPlayersOtt[index] = new Sound(arr, 1);
+				is.close();
+			} catch (Exception e) {
+				soundPlayersOtt[index] = null;
+				soundTypes[index] = 999;
+				soundTypes[index] = 0;
+			}
+			return 0;
+		}
+
 		Player pl = null;
 
 		try {
@@ -1286,6 +1327,11 @@ public final class Game extends GameCanvas implements Runnable {
 			soundPlayers[index] = soundPlayersMidi[index] = null;
 			numActiveSoundsTotal--;
 		}
+
+		if (soundPlayersOtt[index] != null) {
+			soundPlayersOtt[index].release();
+			soundPlayersOtt[index] = null;
+		}
 	}
 
 	public static final boolean isSoundIndexUsed(int index) {
@@ -1293,6 +1339,9 @@ public final class Game extends GameCanvas implements Runnable {
 			return true;
 
 		if (soundPlayersMidi[index] != null)
+			return true;
+
+		if (soundPlayersOtt[index] != null)
 			return true;
 
 		return false;
@@ -1307,6 +1356,9 @@ public final class Game extends GameCanvas implements Runnable {
 		if ((soundType == soundTypes[index] || soundType == -1) && soundActiveStates[index])
 			return true;
 
+		if ((soundType == 0 || soundType == -1) && soundPlayersOtt[index] != null)
+			started = soundPlayersOtt[index].getState() == 0;
+
 		if ((soundType == 6 || soundType == -1) && soundPlayers[index] != null)
 			started = soundPlayers[index].getState() == Player.STARTED;
 
@@ -1320,7 +1372,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if (!isAudioEnabled)
 			return true;
 
-		if (millis() - soundStartMillis < 100L)
+		if (millis() - soundStartMillis < 300L)
 			return false;
 
 		soundStartMillis = millis();
@@ -1335,7 +1387,7 @@ public final class Game extends GameCanvas implements Runnable {
 				if (isSoundActive(i, soundTypes[i]))
 					activeSounds++;
 
-			if (activeSounds >= 2)
+			if (activeSounds >= 3)
 				return false;
 		}
 
@@ -1352,6 +1404,9 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	private static void stopSoundAtIndex(int index, boolean checkStarted) {
+		if (soundPlayersOtt[index] != null)
+			soundPlayersOtt[index].stop();
+
 		Player pl;
 		if (soundPlayersMidi[index] != null)
 			pl = soundPlayersMidi[index];
@@ -1381,78 +1436,102 @@ public final class Game extends GameCanvas implements Runnable {
 		if (!isAudioEnabled || soundActiveStates == null)
 			return;
 
-		for (int i = 0; i < numSounds; i++) {
-			if (soundQueueCleanup[i]) {
-				soundQueueCleanup[i] = false;
-				stopSoundAtIndex(i, false);
+		try {
+			for (int i = 0; i < numSounds; i++) {
+				if (soundQueueCleanup[i]) {
+					soundQueueCleanup[i] = false;
+					stopSoundAtIndex(i, false);
 
-				if (soundTypes[i] != 0)
-					closeSoundAtIndex(i);
+					if (soundTypes[i] != 0)
+						closeSoundAtIndex(i);
 
-				if (activeSound == i)
-					activeSound = -1;
-			}
-
-			if (soundActiveStates[i] && soundTypes[i] == 1) {
-				for (int j = 0; j < numSounds; j++) {
-					if (j != i) {
-						stopSoundAtIndex(j, false);
-						soundActiveStates[j] = false;
-					}
+					if (activeSound == i)
+						activeSound = -1;
 				}
 
-				for (boolean b = true; b; sleep(5L)) {
+				if (soundActiveStates[i] && soundTypes[i] == 1) {
 					for (int j = 0; j < numSounds; j++) {
-						if (j != i && isSoundActive(j, -1)) {
-							b = true;
-							break;
+						if (j != i) {
+							stopSoundAtIndex(j, false);
+							soundActiveStates[j] = false;
 						}
+					}
 
-						b = false;
+					for (boolean b = true; b; sleep(5L)) {
+						for (int j = 0; j < numSounds; j++) {
+							if (j != i && isSoundActive(j, -1)) {
+								b = true;
+								break;
+							}
+
+							b = false;
+						}
 					}
 				}
-			}
 
-			if (!isSoundIndexUsed(i)) {
-				if (soundTypes[i] == 0 || !soundActiveStates[i])
-					continue;
+				if (!isSoundIndexUsed(i)) {
+					if (soundTypes[i] == 0 || !soundActiveStates[i])
+						continue;
 
-				boolean tmp = isLoadingBarShown;
-				isLoadingBarShown = false;
-				loadSoundToIndex(i, soundFilenames[i], soundTypes[i], 0);
-				isLoadingBarShown = tmp;
-			}
+					boolean tmp = isLoadingBarShown;
+					isLoadingBarShown = false;
+					loadSoundToIndex(i, soundFilenames[i], soundTypes[i], 0);
+					isLoadingBarShown = tmp;
+				}
 
-			Player pl;
-			if (soundPlayersMidi[i] != null)
-				pl = soundPlayersMidi[i];
-			else
-				pl = soundPlayers[i];
+				Player pl;
+				if (soundPlayersMidi[i] != null)
+					pl = soundPlayersMidi[i];
+				else
+					pl = soundPlayers[i];
 
-			if (soundUsedStates[i]) {
-				soundUsedStates[i] = false;
-				if (pl != null) {
+				if (soundUsedStates[i]) {
+					soundUsedStates[i] = false;
+					if (pl != null) {
+						try {
+							VolumeControl control;
+							if ((control = (VolumeControl)pl.getControl("VolumeControl")) != null)
+								control.setLevel(soundVolume[i] * 10);
+						} catch (IllegalStateException e) {
+						}
+					}
+
+					boolean stopped = false;
+
+					if (activeSound != -1 && soundPlayersOtt[activeSound] != null && isSoundActive(activeSound, 0)) {
+						soundPlayersOtt[activeSound].stop();
+						stopped = true;
+					}
+
+					if (soundPlayersOtt[i] != null)
+						soundPlayersOtt[i].setGain(soundVolume[i] * 15);
+
+					if (activeSound != -1 && soundPlayersOtt[activeSound] != null && stopped)
+						soundPlayersOtt[activeSound].play(soundLoopCounts[activeSound] == -1 ? 0 : soundLoopCounts[activeSound]);
+				}
+
+				if (soundActiveStates[i]) {
+					soundActiveStates[i] = false;
+
 					try {
-						VolumeControl control;
-						if ((control = (VolumeControl)pl.getControl("VolumeControl")) != null)
-							control.setLevel(soundVolume[i] * 10);
-					} catch (IllegalStateException e) {
+						if (soundPlayersOtt[i] != null) {
+							soundPlayersOtt[i].play(soundLoopCounts[i] == -1 ? 0 : soundLoopCounts[i]);
+						}
+					} catch (Exception e) {
+					}
+
+					try {
+						if (pl != null && pl.getState() != Player.STARTED) {
+							pl.setLoopCount(soundLoopCounts[i]);
+							pl.start();
+							activeSound = i;
+						}
+					} catch (MediaException e) {
 					}
 				}
 			}
-
-			if (soundActiveStates[i]) {
-				soundActiveStates[i] = false;
-
-				try {
-					if (pl != null && pl.getState() != Player.STARTED) {
-						pl.setLoopCount(soundLoopCounts[i]);
-						pl.start();
-						activeSound = i;
-					}
-				} catch (MediaException e) {
-				}
-			}
+		} catch (IllegalStateException e) {
+			return;
 		}
 	}
 
@@ -2008,12 +2087,12 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void renderSoftkeyIcons() {
 		if (imgsSoftkey != null) {
 			if (leftSoftkey > -1) {
-				gDrawImage(imgsSoftkey[leftSoftkey], 1, SCREEN_HEIGHT - 1 - softkeyHeight[leftSoftkey], 0);
+				gDrawImage(imgsSoftkey[leftSoftkey], 1, SCREEN_HEIGHT - 2 - softkeyHeight[leftSoftkey], 0);
 				leftSoftkey = -1;
 			}
 
 			if (rightSoftkey > -1) {
-				gDrawImage(imgsSoftkey[rightSoftkey], SCREEN_WIDTH - 1 - softkeyWidth[rightSoftkey], SCREEN_HEIGHT - 1 - softkeyHeight[rightSoftkey], 0);
+				gDrawImage(imgsSoftkey[rightSoftkey], SCREEN_WIDTH - 2 - softkeyWidth[rightSoftkey], SCREEN_HEIGHT - 1 - softkeyHeight[rightSoftkey], 0);
 				rightSoftkey = -1;
 			}
 		}
@@ -2712,8 +2791,8 @@ public final class Game extends GameCanvas implements Runnable {
 
 		for (int i = 0; i < 8; i++) {
 			if (rainY[i] > SCREEN_HEIGHT || rainX[i] == 0 && rainY[i] == 0) {
-				rainX[i] = rand16() % 149;
-				rainY[i] = rand16() % 21;
+				rainX[i] = rand16() % 280;
+				rainY[i] = rand16() % 53;
 			}
 
 			gDrawLine(rainX[i], rainY[i], rainX[i] + -3, rainY[i] + 10);
@@ -2872,8 +2951,8 @@ public final class Game extends GameCanvas implements Runnable {
 		if (sceneHelpScrollDistance > (SCREEN_HEIGHT << 8))
 			sceneHelpScrollDistance = (SCREEN_HEIGHT << 8);
 
-		if (sceneHelpScrollDistance < -(sceneHelpText.length * 14 << 8))
-			sceneHelpScrollDistance = -(sceneHelpText.length * 14 << 8);
+		if (sceneHelpScrollDistance < -(sceneHelpText.length * 21 << 8))
+			sceneHelpScrollDistance = -(sceneHelpText.length * 21 << 8);
 
 		sceneHelpScroll++;
 
@@ -2889,7 +2968,7 @@ public final class Game extends GameCanvas implements Runnable {
 		int scrollDistance = sceneHelpScrollDistance >> 8;
 
 		for (int i = 0; i < sceneHelpText.length; i++) {
-			if (scrollDistance > -14 && scrollDistance < SCREEN_HEIGHT) {
+			if (scrollDistance > -21 && scrollDistance < SCREEN_HEIGHT) {
 				int textOffsetX = 0;
 
 				if (scrollDistance < (SCREEN_HEIGHT / 3))
@@ -2901,12 +2980,12 @@ public final class Game extends GameCanvas implements Runnable {
 				renderText(textX, scrollDistance, sceneHelpText[i], 2);
 			}
 
-			scrollDistance += 14;
+			scrollDistance += 21;
 		}
 
-		gDrawImage(imgsScrollbar[0], SCREEN_WIDTH - 8, 43 - (sceneHelpScroll >> 2 & 3), 0);
-		gDrawImage(imgsScrollbar[1], SCREEN_WIDTH - 10, 46 - ((sceneHelpScrollDistance >> 8) - SCREEN_HEIGHT) * 39 / (sceneHelpText.length * 14), 0);
-		gDrawImage(imgsScrollbar[2], SCREEN_WIDTH - 8, 92 + (sceneHelpScroll >> 2 & 3), 0);
+		gDrawImage(imgsScrollbar[0], SCREEN_WIDTH - 11, 107 - (sceneHelpScroll >> 2 & 3), 0);
+		gDrawImage(imgsScrollbar[1], SCREEN_WIDTH - 11, 112 - ((sceneHelpScrollDistance >> 8) - SCREEN_HEIGHT) * 101 / (sceneHelpText.length * 21), 0);
+		gDrawImage(imgsScrollbar[2], SCREEN_WIDTH - 11, 224 + (sceneHelpScroll >> 2 & 3), 0);
 	}
 
 	public static final void sceneHelpInit(int arg) {
@@ -2944,7 +3023,7 @@ public final class Game extends GameCanvas implements Runnable {
 		// A distant ship.
 		if (scenePreLevelCurTick > 65) {
 			gDrawImage(imgShipSmall, scenePreLevelSmallShipX, scenePreLevelSmallShipY, 0);
-			scenePreLevelSmallShipX -= 2;
+			scenePreLevelSmallShipX -= 4;
 		}
 
 		// A planet.
@@ -2953,17 +3032,17 @@ public final class Game extends GameCanvas implements Runnable {
 		// A closer ship.
 		if (scenePreLevelShipX < SCREEN_WIDTH) {
 			gDrawImage(imgOutside, scenePreLevelShipX, scenePreLevelShipY, 0);
-			gDrawImage(imgsFlame[(int)(millis() / 100L % 2L)], scenePreLevelShipX + 7 - 10, scenePreLevelShipY + 16 - 3, 0);
-			scenePreLevelShipX += 5;
+			gDrawImage(imgsFlame[(int)(millis() / 100L % 2L)], scenePreLevelShipX + 8 - 15, scenePreLevelShipY + 23 - 5, 0);
+			scenePreLevelShipX += 10;
 		}
 
 		// Render a planet name.
 		if (scenePreLevelCurTick > 50)
-			renderText(-1000, SCREEN_HEIGHT - 43, currentPlanetText, 0);
+			renderText(-1000, SCREEN_HEIGHT - 107, currentPlanetText, 0);
 
 		// Render "press 5" string.
 		if (scenePreLevelCurTick > 120 && (millis() & 512L) > 0L)
-			renderText(-1000, SCREEN_HEIGHT - 14, titleText, 0);
+			renderText(-1000, SCREEN_HEIGHT - 19, titleText, 0);
 
 		// Enter the level if skipped or pressed OK.
 		if (scenePreLevelCurTick < 120 && softkeyPressed(-1, 3) == 3 ||
@@ -2994,11 +3073,11 @@ public final class Game extends GameCanvas implements Runnable {
 		scenePreLevelSmallShipX = SCREEN_WIDTH;
 		scenePreLevelSmallShipY = SCREEN_HEIGHT - imgCurrentPlanet.getHeight() * 4 / 5;
 
-		if (scenePreLevelSmallShipY < SCREEN_HEIGHT >> 2)
-			scenePreLevelSmallShipY = SCREEN_HEIGHT >> 2;
+		if (scenePreLevelSmallShipY < SCREEN_HEIGHT / 4)
+			scenePreLevelSmallShipY = SCREEN_HEIGHT / 4;
 
-		scenePreLevelShipX = -61;
-		scenePreLevelShipY = 70;
+		scenePreLevelShipX = -85;
+		scenePreLevelShipY = 238;
 
 		// Flame sprites.
 		if (imgsFlame == null) {
@@ -3109,7 +3188,6 @@ public final class Game extends GameCanvas implements Runnable {
 			// Eidos logo.
 			case 0:
 				gDrawImage(imgCenterLogo, (SCREEN_WIDTH - imgCenterLogo.getWidth()) / 2, (SCREEN_HEIGHT - imgCenterLogo.getHeight()) / 2, 0);
-				break;
 
 			// Eidos legal line.
 			case 1:
@@ -3118,7 +3196,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			// Progressive Media logo.
 			case 2:
-				gDrawImage(imgCenterLogo, splashRocketX - 27, splashRocketY - 1, 0);
+				gDrawImage(imgCenterLogo, splashRocketX - 35, splashRocketY - 5, 0);
 				gDrawImage(imgPmRocket, splashRocketX, splashRocketY, 0);
 				break;
 
@@ -3130,11 +3208,11 @@ public final class Game extends GameCanvas implements Runnable {
 				if (splashTick < 20) {
 					x = splashRocketX + rand8() % 5 - 2;
 					y = splashRocketY + rand8() % 5 - 2;
-					gDrawImage(imgCenterLogo, x - 27, y - 1, 0);
+					gDrawImage(imgCenterLogo, x - 35, y - 5, 0);
 				} else {
 					splashRocketX += (splashTick - 20) / 8;
 					splashRocketY -= (splashTick - 20) / 8;
-					gDrawImage(imgCenterLogo, (SCREEN_WIDTH - 97) >> 1, (SCREEN_HEIGHT - 89) >> 1, 0);
+					gDrawImage(imgCenterLogo, (SCREEN_WIDTH - 136) >> 1, (SCREEN_HEIGHT - 124) >> 1, 0);
 				}
 
 				gDrawImage(imgPmRocket, x, y, 0);
@@ -3149,8 +3227,8 @@ public final class Game extends GameCanvas implements Runnable {
 			// Maniacs of Noice logo scaling up.
 			case 4:
 				int[] elemColors = new int[] {0, 0xffffff, 0, 0xffffff, 0x3aaec7};
-				int[] elemRadius = new int[] {54, 54, 37, 37, 18};
-				int[] elemX = new int[] {0, -10, -5, 2, 0};
+				int[] elemRadius = new int[] {74, 74, 50, 50, 24};
+				int[] elemX = new int[] {0, -14, -7, 3, 0};
 
 				for (int i = 0; i < 5; i++) {
 					gSetColor(elemColors[i]);
@@ -3187,7 +3265,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			// Maniacs of Noise logo.
 			case 5:
-				gDrawImage(imgCenterLogo, ((SCREEN_WIDTH - 92) >> 1) + 1, ((SCREEN_HEIGHT - 86) >> 1) - 3, 0);
+				gDrawImage(imgCenterLogo, ((SCREEN_WIDTH - 128) >> 1) + 2, ((SCREEN_HEIGHT - 120) >> 1) - 3, 0);
 		}
 
 		// Show a next splash.
@@ -3198,6 +3276,11 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneSplashInit(int arg) {
+		/* Skip the Eidos legal line because it's already merged with Eidos
+		 * logo splash. */
+		if (arg == 1)
+			arg++;
+
 		splash = arg;
 
 		switch (arg) {
@@ -3206,7 +3289,6 @@ public final class Game extends GameCanvas implements Runnable {
 			case 0:
 				imgCenterLogo = loadImage("eidos.pim", "eidos.ppl");
 				splashDuration = millis() + 2500L;
-				return;
 
 			// Eidos legal line.
 			case 1:
@@ -3225,15 +3307,15 @@ public final class Game extends GameCanvas implements Runnable {
 				if (imgPmRocket == null)
 					imgPmRocket = loadImage("pmrocket.pim", "pmrocket.ppl");
 
-				splashRocketX = ((SCREEN_WIDTH - 49) >> 1) + 3;
-				splashRocketY = ((SCREEN_HEIGHT - 58) >> 1) - 15;
+				splashRocketX = ((SCREEN_WIDTH - 68) >> 1) + 1;
+				splashRocketY = ((SCREEN_HEIGHT - 84) >> 1) - 15;
 				splashTick = 0;
 				splashDuration = millis() + 2000L;
 				return;
 
 			// Maniacs of Noice logo scaling up.
 			case 4:
-				splashRocketX = -49;
+				splashRocketX = -68;
 				splashRocketY = SCREEN_HEIGHT;
 				splashTick = 0;
 				splashDuration = millis() + 10000L;
@@ -3442,7 +3524,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			levelShipTouchedCircleType = 0;
 			isPlayerAlive = true;
-			initSpace(2, 12, 92, 46); // For the ship window.
+			initSpace(2, 12, 128, 64); // For the ship window.
 			initInsideShip();
 			loadFaces();
 
@@ -3514,8 +3596,8 @@ public final class Game extends GameCanvas implements Runnable {
 				break;
 
 			case 1:
-				if (levelCameraZoom != LEVEL_CAMERA_ZOOM_DEFAULT) {
-					scriptCameraZoomApproach += ((LEVEL_CAMERA_ZOOM_DEFAULT * 1000) - scriptCameraZoomApproach) / 10;
+				if (levelCameraZoom != 100) {
+					scriptCameraZoomApproach += (LEVEL_CAMERA_ZOOM_DEFAULT - scriptCameraZoomApproach) / 10;
 					levelCameraZoom = scriptCameraZoomApproach / 1000;
 				}
 
@@ -3548,8 +3630,8 @@ public final class Game extends GameCanvas implements Runnable {
 		// Black bars.
 		if (scriptShowBlackBars) {
 			gSetColor(0);
-			gFillRect(0, 0, SCREEN_WIDTH, 12);
-			gFillRect(0, SCREEN_HEIGHT - 12, SCREEN_WIDTH, 17);
+			gFillRect(0, 0, SCREEN_WIDTH, 32);
+			gFillRect(0, SCREEN_HEIGHT - 32, SCREEN_WIDTH, 37);
 		}
 
 		// Process dialogue script box.
@@ -3867,7 +3949,7 @@ public final class Game extends GameCanvas implements Runnable {
 					switch (scriptEnvironment) {
 						// Ship.
 						case 0:
-							initSpace(2, 12, 92, 46);
+							initSpace(2, 12, 128, 46);
 							swapLevelData(0);
 							levelSetPlayerPos(levelCircleX[6], levelCircleY[6], 6, 0x140000);
 							fade = 100;
@@ -3916,8 +3998,11 @@ public final class Game extends GameCanvas implements Runnable {
 					if (scriptEnvironment == 3)
 						spaceMapPlanetBeaconRadius = data[offset + 1] == 1 ? 1 : 0;
 
-					if (scriptEnvironment == 0)
-						shipAlarmRadius = data[offset + 1] == 1 ? 1 : 0;
+					if (scriptEnvironment == 0) {
+						int rad = shipAlarmRadius = data[offset + 1] == 1 ? 1 : 0;
+						if (rad > 0 && !skipping)
+							playSfxDistress();
+					}
 
 					offset += 2;
 					break;
@@ -4022,22 +4107,17 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneTitleRun() {
-		gSetColor(0);
-		gFillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-		renderSpace(0, 0, 0, true);
+		renderOutside();
 
 		// Sola
-		if (imgGameLogoTop != null)
-			gDrawImage(imgGameLogoTop, (SCREEN_WIDTH - 93) >> 1, 0, 0);
+		gDrawImage(imgGameLogoTop, (SCREEN_WIDTH - 102) >> 1, ((SCREEN_HEIGHT - 64) >> 1) - 53, 0);
 
 		// Rola
-		if (imgGameLogoBottom != null)
-			gDrawImage(imgGameLogoBottom, (SCREEN_WIDTH - 80) >> 1, (SCREEN_HEIGHT - 54) - 19, 0);
+		gDrawImage(imgGameLogoBottom, (SCREEN_WIDTH - 88) >> 1, ((SCREEN_HEIGHT - 59) >> 1) + 50, 0);
 
 		// "press 5" string.
 		if ((millis() & 512L) > 0L)
-			renderText(-1000, SCREEN_HEIGHT - 14, titleText, 0);
+			renderText(-1000, SCREEN_HEIGHT - 19, titleText, 0);
 
 		// OK softkey.
 		if (softkeyPressed(2, -1, true) == 2) {
@@ -4355,10 +4435,10 @@ public final class Game extends GameCanvas implements Runnable {
 		if (!isOutOfScreenBounds(alignX - width, alignY - height, alignX + width, alignY + height)) {
 			// Outline of the body.
 			gSetColor(0);
-			gFillArc(alignX - width - 2,
-					alignY - height - 2,
-					2 * (width + 2),
-					2 * (height + 2),
+			gFillArc(alignX - width - 3,
+					alignY - height - 3,
+					2 * (width + 3),
+					2 * (height + 3),
 					0,
 					360);
 
@@ -4452,13 +4532,13 @@ public final class Game extends GameCanvas implements Runnable {
 		// Blob's outline.
 		setFadeColor(0);
 		gSetClip(alignX, 0, 200, alignY);
-		gFillArc(alignX - hitboxPos[1] - 2, alignY - hitboxPos[0] - 2, hitboxPos2x[1] + 4, hitboxPos2x[0] + 4, 0, 360);
+		gFillArc(alignX - hitboxPos[1] - 3, alignY - hitboxPos[0] - 3, hitboxPos2x[1] + 6, hitboxPos2x[0] + 6, 0, 360);
 		gSetClip(0, 0, alignX, alignY);
-		gFillArc(alignX - hitboxPos[3] - 2, alignY - hitboxPos[0] - 2, hitboxPos2x[3] + 4, hitboxPos2x[0] + 4, 90, 360);
+		gFillArc(alignX - hitboxPos[3] - 3, alignY - hitboxPos[0] - 3, hitboxPos2x[3] + 6, hitboxPos2x[0] + 6, 90, 360);
 		gSetClip(0, alignY, alignX, 200);
-		gFillArc(alignX - hitboxPos[3] - 2, alignY - hitboxPos[2] - 2, hitboxPos2x[3] + 4, hitboxPos2x[2] + 4, 180, 360);
+		gFillArc(alignX - hitboxPos[3] - 3, alignY - hitboxPos[2] - 3, hitboxPos2x[3] + 6, hitboxPos2x[2] + 6, 180, 360);
 		gSetClip(alignX, alignY, 200, 200);
-		gFillArc(alignX - hitboxPos[1] - 2, alignY - hitboxPos[2] - 2, hitboxPos2x[1] + 4, hitboxPos2x[2] + 4, 270, 360);
+		gFillArc(alignX - hitboxPos[1] - 3, alignY - hitboxPos[2] - 3, hitboxPos2x[1] + 6, hitboxPos2x[2] + 6, 270, 360);
 
 		// Blob's body.
 		setFadeColor(color);
@@ -4591,11 +4671,11 @@ public final class Game extends GameCanvas implements Runnable {
 		int alignY = levelAlignY(x, y);
 
 		if (levelBombStartTicks + 200 > levelTicks)
-			gDrawImage(imgsBomb[1], alignX - 9, alignY - 11 - 2, 0);
+			gDrawImage(imgsBomb[1], alignX - 12, alignY - 16 - 3, 0);
 		else
-			gDrawImage(imgsBomb[1], alignX - 9, alignY - 11 - 5, 0);
+			gDrawImage(imgsBomb[1], alignX - 12, alignY - 16 - 7, 0);
 
-		gDrawImage(imgsBomb[0], alignX - 14, alignY - 11, 0);
+		gDrawImage(imgsBomb[0], alignX - 20, alignY - 16, 0);
 	}
 
 	public static final void levelInitHooks(int num) {
@@ -5287,8 +5367,8 @@ public final class Game extends GameCanvas implements Runnable {
 
 				gDrawImage(pointyRoll, alignX - pointyRoll.getWidth() / 2, alignY - pointyRoll.getHeight() / 2, 0);
 				if (levelEnemyIsAlive[enemyId]) {
-					gDrawImage(pointyEyes, alignX + 0 - pointyEyes.getWidth() / 2, alignY + -6 - pointyEyes.getHeight() / 2, 0);
-					gDrawImage(pointyMouth, alignX + 0 - pointyMouth.getWidth() / 2, alignY + 3 - pointyMouth.getHeight() / 2, 0);
+					gDrawImage(pointyEyes, alignX + 0 - pointyEyes.getWidth() / 2, alignY + -8 - pointyEyes.getHeight() / 2, 0);
+					gDrawImage(pointyMouth, alignX + 0 - pointyMouth.getWidth() / 2, alignY + 5 - pointyMouth.getHeight() / 2, 0);
 				}
 
 			}
@@ -5487,7 +5567,7 @@ public final class Game extends GameCanvas implements Runnable {
 		gDrawImage(imgRocket, x, y, 0);
 
 		if (tick >= 0)
-			gDrawImage(imgsVertFlame[tick & 1], x + 36, y + 33, 0);
+			gDrawImage(imgsVertFlame[tick & 1], x + 50, y + 48, 0);
 	}
 
 	public static final void initSigns() {
@@ -6023,8 +6103,8 @@ public final class Game extends GameCanvas implements Runnable {
 		// If in a standard level, Waz will fall out from the rocket.
 		if (levelId >= 0) {
 			for (int i = 0; i < 5; i++) {
-				levelCircleY[i] -= 0x750000;
-				levelCirclePrevY[i] -= 0x750000;
+				levelCircleY[i] -= 0xbe0000;
+				levelCirclePrevY[i] -= 0xbe0000;
 			}
 		}
 
@@ -6150,7 +6230,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	// Load all sounds used by the game.
 	public static final void loadAllSounds() {
-		initSoundSystem(9);
+		initSoundSystem(27);
 		loadSoundToIndex(8, "title", 1, 15804);
 		loadSoundToQueue(2, "ship", 1, 13962);
 		loadSoundToQueue(7, "ingame0", 1, 10987);
@@ -6160,6 +6240,22 @@ public final class Game extends GameCanvas implements Runnable {
 		loadSoundToQueue(6, "ingame4", 1, 14583);
 		loadSoundToQueue(0, "jingle_flyIn", 1, 980);
 		loadSoundToQueue(1, "jingle_complete", 1, 815);
+		loadSoundToQueue(9, "sfx_jump", 6, 6904);
+		loadSoundToQueue(24, "sfx_jump2", 6, 10800);
+		loadSoundToQueue(10, "sfx_hurt", 6, 6942);
+		loadSoundToQueue(25, "sfx_hurt2", 6, 7742);
+		loadSoundToQueue(22, "sfx_xifu", 6, 9120);
+		loadSoundToQueue(26, "sfx_xifu2", 6, 12386);
+		loadSoundToQueue(14, "sfx_emo_startled", 6, 6252);
+		loadSoundToQueue(15, "sfx_emo_surprised", 6, 6170);
+		loadSoundToQueue(16, "sfx_emo_happy", 6, 8682);
+		loadSoundToQueue(17, "sfx_emo_angry", 6, 8036);
+		loadSoundToQueue(18, "sfx_emo_bored", 6, 19966);
+		loadSoundToQueue(23, "sfx_distress", 6, 8228);
+		loadSoundToQueue(21, "sfx_rocket", 6, 43036);
+		loadSoundToQueue(11, "sfx_bomb", 6, 10672);
+		loadSoundToQueue(12, "sfx_go", 6, 12500);
+		loadSoundToQueue(13, "sfx_hurra", 6, 10690);
 	}
 
 	public static final void playSound(int index) {
@@ -6212,14 +6308,58 @@ public final class Game extends GameCanvas implements Runnable {
 		}
 	}
 
+	public static final void playSfxJump() {
+		if (rand8() % 3 == 0 && !isShipPaused) {
+			if (rand8() % 2 == 0)
+				playSound(24, 1);
+			else
+				playSound(9, 1);
+		}
+	}
+
+	public static final void playSfxHurt() {
+		if (rand8() % 2 == 0)
+			playSound(25, 1);
+		else
+			playSound(10, 1);
+	}
+
 	public static final void playJingleFlyIn() {
 		playSound(-1);
 		playSound(0, 1);
 	}
 
+	public static final void playSfxRocket() {
+		playSound(21, 1);
+	}
+
+	public static final void playSfxBomb() {
+		playSound(11, 1);
+	}
+
+	public static final void playSfxDistress() {
+		playSound(23, 1);
+	}
+
 	public static final void playJingleComplete() {
 		playSound(-1);
 		playSound(1, 1);
+	}
+
+	public static final void playSfxHurra() {
+		playSound(13, 1);
+	}
+
+	public static final void playSfxGo() {
+		playSound(12, 1);
+	}
+
+	public static final void playSfxXifu() {
+		currentSoundSfxXifuState = !currentSoundSfxXifuState;
+		if (currentSoundSfxXifuState)
+			playSound(26, 1);
+		else
+			playSound(22, 1);
 	}
 
 	/* Function that sets weather and background of the level by their ID.
@@ -6381,11 +6521,11 @@ public final class Game extends GameCanvas implements Runnable {
 		if (activeSwapKey == 0) {
 			y = levelHeight / 2;
 
-			if (x < 0x578000)
-				x = 0x578000;
+			if (x < 0x780000)
+				x = 0x780000;
 
-			if (x > levelWidth - 0x578000)
-				x = levelWidth - 0x578000;
+			if (x > levelWidth - 0x780000)
+				x = levelWidth - 0x780000;
 		}
 
 		levelCameraX = x;
@@ -6412,14 +6552,14 @@ public final class Game extends GameCanvas implements Runnable {
 		// Check target position.
 		if (activeSwapKey == 0)
 			y = levelHeight / 2;
-		else if (y > levelHeight - 0x578000)
-			y = levelHeight - 0x578000;
+		else if (y > levelHeight - 0xa00000)
+			y = levelHeight - 0xa00000;
 
-		if (x < 0x578000)
-			x = 0x578000;
+		if (x < 0x780000)
+			x = 0x780000;
 
-		if (x > levelWidth - 0x578000)
-			x = levelWidth - 0x578000;
+		if (x > levelWidth - 0x780000)
+			x = levelWidth - 0x780000;
 
 		int xDiff = x - levelCameraX;
 		int yDiff = y - levelCameraY;
@@ -6475,9 +6615,9 @@ public final class Game extends GameCanvas implements Runnable {
 			// Divide by 256.
 			playerXDiff >>= 8;
 
-			int targetZoom = 82 - playerXDiff * LEVEL_CAMERA_ZOOM_DEFAULT * 45 / 0x32000;
-			if (targetZoom < 36)
-				targetZoom = 36;
+			int targetZoom = 110 - playerXDiff * LEVEL_CAMERA_ZOOM_DEFAULT * 45 / 0x32000;
+			if (targetZoom < 50)
+				targetZoom = 50;
 
 			int diffZoom = (targetZoom - levelCameraZoom) / 10;
 			if (diffZoom <= 10 && diffZoom >= 10) {
@@ -6577,7 +6717,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void setCurrentDialogue(String string, int faceId) {
-		int boxHeight = 12 + dialogueNumLines * 13;
+		int boxHeight = 12 + dialogueNumLines * 19;
 		dialogueFace = faceId;
 		dialogueNumLines = numNewLines(string);
 		dialogueText = string;
@@ -6586,7 +6726,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if (dialogueIsShown == 1) {
 			/* If the dialogue box wasn't hidden before the next one appeared
 			 * continue sliding it so that the new text fits. */
-			int newBoxHeight = 12 + dialogueNumLines * 13;
+			int newBoxHeight = 12 + dialogueNumLines * 19;
 			dialogueStartMs -= (long)(boxHeight * SCRIPT_DIALOGUE_BOX_SLIDE_MS / newBoxHeight);
 		}
 
@@ -6600,7 +6740,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if (dialogueIsShown == 1) {
 			long currTime = millis();
 			int elapsed = (int)(currTime - dialogueStartMs);
-			int boxHeight = 12 + dialogueNumLines * 13;
+			int boxHeight = 12 + dialogueNumLines * 19;
 
 			// Make slide effect if we're just starting the next dialogue box.
 			if (dialogueIteration == 0 && elapsed < SCRIPT_DIALOGUE_BOX_SLIDE_MS)
@@ -6620,27 +6760,30 @@ public final class Game extends GameCanvas implements Runnable {
 				byte textX = 0;
 				if (imgsFaces[dialogueFace] != null) {
 					Image img = imgsFaces[dialogueFace][dialogueFaceIteration % imgsFaces[dialogueFace].length];
-					int imgX = (21 - img.getWidth()) / 2;
+					int imgX = (27 - img.getWidth()) / 2;
 
 					if (dialogueFace == 0) {
 						// Wiz at the left.
-						gDrawImage(img, 0 + imgX, 6 + (dialogueNumLines * 13 - img.getHeight()) / 2, 0);
-						textX = 21;
+						gDrawImage(img, 0 + imgX, 6 + (dialogueNumLines * 19 - img.getHeight()) / 2, 0);
+						textX = 27;
 					} else {
 						// Other at the right.
-						gDrawImage(img, SCREEN_WIDTH - 21 + imgX, 6 + (dialogueNumLines * 15 - img.getHeight()) / 2, 0);
+						gDrawImage(img, SCREEN_WIDTH - 27 + imgX, 6 + (dialogueNumLines * 15 - img.getHeight()) / 2, 0);
 						textX = 8;
 					}
 
 					// Render a text itself.
-					renderTextEx(textX, 6, SCREEN_WIDTH - 29, dialogueNumLines * 13, dialogueText, 1, 0, dialogueIteration, false);
+					renderTextEx(textX, 6, SCREEN_WIDTH - 35, dialogueNumLines * 19, dialogueText, 1, 0, dialogueIteration, false);
 				} else {
-					renderTextEx(14, 6, SCREEN_WIDTH - 29, dialogueNumLines * 13, dialogueText, 1, 0, dialogueIteration, false);
+					renderTextEx(17, 6, SCREEN_WIDTH - 35, dialogueNumLines * 19, dialogueText, 1, 0, dialogueIteration, false);
 				}
 
 				/* Find the next space or period character in the script
 				 * string. */
 				if (currTime > dialogueStartMs) {
+					if (dialogueFace == 2 && dialogueIteration == 0 && scriptEnvironment == 5)
+						playSfxXifu();
+
 					dialogueStartMs = currTime + 150L;
 					dialogueIteration++;
 
@@ -6664,12 +6807,12 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final int numNewLines(String string) {
-		return getNewLineIndices(SCREEN_WIDTH - 29, string, 1).length;
+		return getNewLineIndices(SCREEN_WIDTH - 35, string, 1).length;
 	}
 
 	// Split a continuous string into string array (lines).
 	public static final String[] strSplitLines(String string, int fontId) {
-		int[] lineIndices = getNewLineIndices(SCREEN_WIDTH - 29, string, fontId);
+		int[] lineIndices = getNewLineIndices(SCREEN_WIDTH - 35, string, fontId);
 		String[] arr = new String[lineIndices.length];
 
 		for (int i = 0; i < lineIndices.length; i++) {
@@ -6719,7 +6862,7 @@ public final class Game extends GameCanvas implements Runnable {
 			// Process a player death.
 			if (levelPlayerHealth < 1) {
 				if (levelDeathTicks == 70) {
-					vibrate(640);
+					vibrate(40);
 					isPlayerAlive = false;
 					levelCircleRadius[0] = 0x20000;
 					levelCircleRadius[2] = 0x10000;
@@ -6803,7 +6946,8 @@ public final class Game extends GameCanvas implements Runnable {
 
 						// Begin explode.
 						levelBombExplodeTicks = 5;
-						vibrate(40);
+						playSfxBomb();
+						vibrate(10);
 					}
 				}
 
@@ -6829,22 +6973,24 @@ public final class Game extends GameCanvas implements Runnable {
 				if (levelIntroTicks < 100) {
 					int rocketY;
 					if (levelIntroTicks < 80)
-						rocketY = -51 + levelIntroTicks * 51 / 50;
+						rocketY = -72 + levelIntroTicks * 72 / 50;
 					else
-						rocketY = -51 + (100 - levelIntroTicks) * 51 / 20;
+						rocketY = -72 + (100 - levelIntroTicks) * 72 / 20;
 
 					if (rocketY > 0)
 						rocketY = 0;
 
-					if (levelIntroTicks == 80)
-						vibrate(140);
+					if (levelIntroTicks == 80) {
+						playSfxRocket();
+						vibrate(15);
+					}
 
 					if (levelIntroTicks < 80)
-						renderRocket(((SCREEN_WIDTH - 88) >> 1) - 6, rocketY, -1);
+						renderRocket(((SCREEN_WIDTH - 123) >> 1) - 7, rocketY, -1);
 					else
-						renderRocket(rand8() % 5 - 2 + (SCREEN_WIDTH >> 1) - 50, rocketY, levelIntroTicks);
+						renderRocket(rand8() % 5 - 2 + (SCREEN_WIDTH >> 1) - 69, rocketY, levelIntroTicks);
 
-					renderText(4, SCREEN_HEIGHT - 14, currentPlanetText, 0);
+					renderText(4, SCREEN_HEIGHT - 19, currentPlanetText, 0);
 					levelIntroTicks++;
 				}
 
@@ -6863,8 +7009,10 @@ public final class Game extends GameCanvas implements Runnable {
 			if (levelPlayerCurrentGrabberFlags >= 0)
 				levelPlayerReleaseGrabber();
 
-			if (levelIsPlayerOnSurface)
+			if (levelIsPlayerOnSurface) {
+				playSfxJump();
 				levelPlayerJumpTicks = LEVEL_DEFAULT_JUMP_TICKS;
+			}
 		}
 
 		// Process player moving right.
@@ -7155,13 +7303,15 @@ public final class Game extends GameCanvas implements Runnable {
 						if (levelCircleY[2] - levelCirclePrevY[2] > 120000)
 							killEnemy(circleId2);
 					} else {
+						playSfxHurt();
+
 						if (!isPlayerInvincible)
 							levelPlayerHealth -= 170;
 
 						lastAttackingEnemy = circleId2;
 						if (levelPlayerHealth > 0) {
 							levelPlayerHitTicks = 50;
-							vibrate(240);
+							vibrate(20);
 						}
 					}
 				}
@@ -7169,6 +7319,7 @@ public final class Game extends GameCanvas implements Runnable {
 				if (circleType == 8) {
 
 					// Finish the level.
+					playSfxHurra();
 					isLevelComplete = true;
 
 				} else if (circleType >= 9 &&
@@ -7230,6 +7381,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 						if (levelPortalFilledRadius >= levelCircleRadius[swpId1]) {
 							levelPortalFilledRadius = levelCircleRadius[swpId1];
+							playSfxHurra();
 							isLevelComplete = true;
 						}
 
@@ -7294,6 +7446,7 @@ public final class Game extends GameCanvas implements Runnable {
 					if ((circleType1 == 1 || circleType2 == 1) &&
 							(circleType1 == 2 || circleType2 == 2)) {
 
+						playSfxHurra();
 						isLevelComplete = true;
 					}
 
@@ -7353,6 +7506,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void updateTransition() {
 		playCurrentSound();
+		loadingBarSoundCleanup = true;
 		renderTransition();
 	}
 
@@ -7363,9 +7517,9 @@ public final class Game extends GameCanvas implements Runnable {
 
 		initFonts(4);
 		loadFont(3, (short)0xb6ce, (short)0x7b1d, (short)0xc674, (byte)4, (short)0x88a8, 1, -2);
-		loadFont(1, (short)0xe878, (short)0x25ab, (short)0x98c2, (byte)3, (short)0xd61e, 1, -1);
-		loadFont(2, (short)0xa1c0, (short)0x6c13, (short)0xd17a, (byte)3, (short)0x9fa6, 1, -1);
-		loadFont(0, (short)0x86ec, (short)0x4b3f, (short)0xf656, (byte)3, (short)0xb88a, -1, -1);
+		loadFont(1, (short)0xe878, (short)0x25ab, (short)0x98c2, (byte)4, (short)0xd61e, -1, -2);
+		loadFont(2, (short)0xa1c0, (short)0x6c13, (short)0xd17a, (byte)4, (short)0x9fa6, -1, -2);
+		loadFont(0, (short)0x86ec, (short)0x4b3f, (short)0xf656, (byte)5, (short)0xb88a, -1, -1);
 
 		initSoftkeyIcons();
 		setSoftkeyIcon(2, loadImage((short)0xe4f2, (short)0x2921));
@@ -7382,6 +7536,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void pauseScreenOnce() {
 		if (pauseScreenDraw) {
 			pauseScreenDraw = false;
+			clearKeys();
 			gSetColor(0, 0, 0);
 
 			// Draw a network.
@@ -7390,13 +7545,19 @@ public final class Game extends GameCanvas implements Runnable {
 					gDrawLine(x, y, x, y);
 
 			// Softkey field at the bottom.
-			gFillRect(0, SCREEN_HEIGHT - 19, SCREEN_WIDTH, SCREEN_HEIGHT);
+			gFillRect(0, SCREEN_HEIGHT - 28, SCREEN_WIDTH, SCREEN_HEIGHT);
 			softkeyPressed(2, -1);
 		}
 	}
 
 	// Funny circle again...
 	public static final void renderLoadingBarNextFrame() {
+		if (loadingBarSoundCleanup) {
+			queueAllSoundsForCleanup();
+			queueSoundCleanup();
+			loadingBarSoundCleanup = false;
+		}
+
 		gSetColor(0, 0, 0);
 		gFillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
@@ -7415,7 +7576,6 @@ public final class Game extends GameCanvas implements Runnable {
 					SCREEN_WIDTH >> 1,
 					i * 30,
 					20);
-
 		}
 
 		gSetColor(0, 0, 0);
@@ -7427,6 +7587,8 @@ public final class Game extends GameCanvas implements Runnable {
 				360);
 
 		gfxFlush();
+
+		clearKeys();
 	}
 
 	public static final void levelRenderLine(int x1, int y1, int x2, int y2) {
@@ -7469,7 +7631,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static final void levelDrawRect(int x, int y, int width, int height) {
 		if (isFadeBlackSet) {
-			int outlineWidth = 0x20000;
+			int outlineWidth = 0x30000;
 			// Keep the outline pixel width the same on any camera zoom value.
 			outlineWidth = outlineWidth * 100 / levelCameraZoom;
 
@@ -7526,7 +7688,7 @@ public final class Game extends GameCanvas implements Runnable {
 			radius = levelCameraZoom * radius / 100;
 
 			if (isFadeBlackSet)
-				radius += 2;
+				radius += 3;
 
 			if (alignX > -radius &&
 					alignX < SCREEN_WIDTH + radius &&
@@ -7560,7 +7722,7 @@ public final class Game extends GameCanvas implements Runnable {
 		radius = levelCameraZoom * radius / 100;
 
 		if (isFadeBlackSet)
-			radius += 2;
+			radius += 3;
 
 		if (alignX > -radius &&
 				alignX < SCREEN_WIDTH + radius &&
@@ -7637,7 +7799,7 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void initShip() {
-		initSpace(2, 12, 92, 46);
+		initSpace(2, 12, 128, 64);
 		fade = 100;
 		loadLevel(-2);
 		initInsideShip();
@@ -7653,6 +7815,7 @@ public final class Game extends GameCanvas implements Runnable {
 		switch (choice) {
 			case 1:
 				if (!isInPlanet) {
+					playSfxGo();
 					startScript("start" + level + ".bms", levelCircleX[0], levelCircleY[0]);
 					shipOp = SHIP_OP_START;
 				} else {
@@ -7703,7 +7866,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 				isVibraEnabled = !isVibraEnabled;
 				saveRecordData();
-				vibrate(640);
+				vibrate(40);
 
 			case 7:
 				// Reserved.
@@ -7739,10 +7902,10 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void renderShipArrows() {
 		// Don't render arrows if the player is almost close to the ship bounds.
 		if (levelCircleX[0] > 0x6e0000)
-			gDrawImage(imgArrowLeft, 4, (SCREEN_HEIGHT >> 1) + 24, 0);
+			gDrawImage(imgArrowLeft, 4, (SCREEN_HEIGHT >> 1) + 27, 0);
 
 		if (levelCircleX[0] < 0x41a0000)
-			gDrawImage(imgArrowRight, SCREEN_WIDTH - 4 - 17, (SCREEN_HEIGHT >> 1) + 24, 0);
+			gDrawImage(imgArrowRight, SCREEN_WIDTH - 4 - 17, (SCREEN_HEIGHT >> 1) + 27, 0);
 	}
 
 	public static final void renderShipDecor(short[] decorData) {
@@ -7758,7 +7921,7 @@ public final class Game extends GameCanvas implements Runnable {
 					int x = shiftX + levelAlignXToMirror(decorData[i + 1]) - img.getWidth() / 2;
 					int width = img.getWidth();
 					if (x > -width && x < SCREEN_WIDTH + width)
-						gDrawImage(img, x, ((SCREEN_HEIGHT - 161) >> 1) + 1 + decorData[i + 2] - img.getHeight() / 2, 0);
+						gDrawImage(img, x, ((SCREEN_HEIGHT - 224) >> 1) + decorData[i + 2] - img.getHeight() / 2, 0);
 				}
 
 			}
@@ -7766,6 +7929,10 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void renderShipInside() {
+		gSetColor(0);
+		gFillRect(0, 0, SCREEN_WIDTH, (SCREEN_HEIGHT - 224) >> 1);
+		gFillRect(0, SCREEN_HEIGHT - ((SCREEN_HEIGHT - 224) >> 1), SCREEN_WIDTH, (SCREEN_HEIGHT - 224) >> 1);
+
 		/* Starting point from where everything in the ship will be rendered
 		 * left-to-right. */
 		int shiftX = (SCREEN_WIDTH >> 1) - levelCameraIntX * levelCameraZoom / 100;
@@ -7775,31 +7942,31 @@ public final class Game extends GameCanvas implements Runnable {
 			wallX = 0;
 
 		// Render background of the ship.
-		gDrawImage(imgsInside[0], wallX, ((SCREEN_HEIGHT - 161) >> 1) + 1, 0);
-		wallX += 28;
+		gDrawImage(imgsInside[0], wallX, (SCREEN_HEIGHT - 224) >> 1, 0);
+		wallX += 40;
 
 		for (int i = 0; i < 17; i++) {
-			if (wallX + 46 > 0 && wallX <= SCREEN_WIDTH)
-				gDrawImage(imgsInside[1], wallX, ((SCREEN_HEIGHT - 161) >> 1) + 1, 0);
+			if (wallX + 64 > 0 && wallX <= SCREEN_WIDTH)
+				gDrawImage(imgsInside[1], wallX, (SCREEN_HEIGHT - 224) >> 1, 0);
 
-			wallX += 46;
+			wallX += 64;
 		}
 
 		if (wallX <= SCREEN_WIDTH)
-			gDrawImage(imgsInside[2], wallX, ((SCREEN_HEIGHT - 161) >> 1) + 1, 0);
+			gDrawImage(imgsInside[2], wallX, (SCREEN_HEIGHT - 224) >> 1, 0);
 
 		// Render a lamp.
 		int lampX = shiftX + levelAlignXToMirror(193) * LEVEL_CAMERA_ZOOM_DEFAULT / 100;
-		gDrawImage(imgInsideLamp, lampX - imgInsideLamp.getWidth() / 2, (SCREEN_HEIGHT >> 1) - 62, 0);
+		gDrawImage(imgInsideLamp, lampX - imgInsideLamp.getWidth() / 2, (SCREEN_HEIGHT >> 1) - 110, 0);
 
 		// Render window.
-		renderShipWindow(shiftX + 299, ((SCREEN_HEIGHT - 46) >> 1) - 11, 0);
-		renderShipWindow(shiftX + 553, ((SCREEN_HEIGHT - 46) >> 1) - 11, 1);
+		renderShipWindow(shiftX + 410, ((SCREEN_HEIGHT - 64) >> 1) - 16, 0);
+		renderShipWindow(shiftX + 758, ((SCREEN_HEIGHT - 64) >> 1) - 16, 1);
 		renderShipDecor(shipDecorBackground);
 
 		// Render the lamp beacon animation.
 		if (shipAlarmRadius > 0) {
-			int lampY = (SCREEN_HEIGHT >> 1) - 62 + imgInsideLamp.getHeight() / 2;
+			int lampY = (SCREEN_HEIGHT >> 1) - 110 + imgInsideLamp.getHeight() / 2;
 
 			gSetColor(0xff0000);
 			int rad = shipAlarmRadius;
@@ -7839,8 +8006,8 @@ public final class Game extends GameCanvas implements Runnable {
 
 				// Render pistons.
 				Image img;
-				gDrawImage(img = imgsPiston[1], shiftX + podX - img.getWidth() / 2, ((SCREEN_HEIGHT - 161) >> 1) + 1 + podY - img.getHeight(), 0);
-				gDrawImage(img = imgsPiston[0], shiftX + podX - img.getWidth() / 2, ((SCREEN_HEIGHT - 161) >> 1) + 1, 0);
+				gDrawImage(img = imgsPiston[1], shiftX + podX - img.getWidth() / 2, ((SCREEN_HEIGHT - 224) >> 1) + podY - img.getHeight(), 0);
+				gDrawImage(img = imgsPiston[0], shiftX + podX - img.getWidth() / 2, (SCREEN_HEIGHT - 224) >> 1, 0);
 
 				int podId = levelCircleType[i] - 1;
 				img = imgsShipIcon[podId];
@@ -7858,18 +8025,18 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				// Draw pod icons.
-				gDrawImage(img, shiftX + podX - img.getWidth() / 2, ((SCREEN_HEIGHT - 161) >> 1) + 1 + podY - img.getHeight() / 2, 0);
+				gDrawImage(img, shiftX + podX - img.getWidth() / 2, ((SCREEN_HEIGHT - 224) >> 1) + podY - img.getHeight() / 2, 0);
 
 				// Render pod labels.
 				if (isTextRendered &&
 						shiftX + podX > -100 &&
-						shiftX + podX < 228) {
+						shiftX + podX < 340) {
 
 					String label = textTableShip[podId];
 					if (isShipPaused)
 						label = textTableShipPause[podId];
 
-					renderText(shiftX + podX - getStringWidth(label, 3) / 2, (SCREEN_HEIGHT >> 1) + 25, label, 3);
+					renderText(shiftX + podX - getStringWidth(label, 3) / 2, (SCREEN_HEIGHT >> 1) + 28, label, 3);
 				}
 			}
 		}
@@ -7910,10 +8077,10 @@ public final class Game extends GameCanvas implements Runnable {
 		gFillRect(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		renderSpace(0, 0, 0, true);
 
-		int shipX = (SCREEN_WIDTH - 61) >> 1;
-		int shipY = (SCREEN_HEIGHT - 29) >> 1;
+		int shipX = (SCREEN_WIDTH - 85) >> 1;
+		int shipY = (SCREEN_HEIGHT - 41) >> 1;
 		gDrawImage(imgSplashShip, shipX, shipY, 0);
-		gDrawImage(imgsFlame[(int)(millis() / 100L % 2L)], shipX - 3, shipY + 13, 0);
+		gDrawImage(imgsFlame[(int)(millis() / 100L % 2L)], shipX - 7, shipY + 18, 0);
 	}
 
 	public static final void initSpaceMap(int planetX, int planetY, int planetId) {
@@ -7995,8 +8162,8 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// Render a ship pointer.
 		if (spaceMapShowShip) {
-			gDrawImage(imgPointer, posX - 16, posY - 58 - 2, 0);
-			gDrawImage(imgShip, posX - imgShip.getWidth() / 2, posY - 58 + (33 - imgShip.getHeight()) / 2 - 2, 0);
+			gDrawImage(imgPointer, posX - 23, posY - 81 - 2, 0);
+			gDrawImage(imgShip, posX - imgShip.getWidth() / 2, posY - 81 + (47 - imgShip.getHeight()) / 2 - 2, 0);
 		}
 
 		// Render a planet (star).
@@ -8020,8 +8187,8 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// Render a planet pointer.
 		if (spaceMapShowPlanet) {
-			gDrawImage(imgPointer, posX - 16, posY - 58 - 2, 0);
-			gDrawImage(imgPlanet, posX - imgPlanet.getWidth() / 2, posY - 58 + (33 - imgPlanet.getHeight()) / 2 - 2, 0);
+			gDrawImage(imgPointer, posX - 23, posY - 81 - 2, 0);
+			gDrawImage(imgPlanet, posX - imgPlanet.getWidth() / 2, posY - 81 + (47 - imgPlanet.getHeight()) / 2 - 2, 0);
 		}
 	}
 
@@ -8112,7 +8279,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// Render the "mission completed" text.
 		renderText((SCREEN_WIDTH - getStringWidth(textMission, 0)) / 2 - SCREEN_WIDTH * cos1000[angle] / 1000, SCREEN_HEIGHT >> 2, textMission, 0);
-		renderText((SCREEN_WIDTH - getStringWidth(textCompleted, 0)) / 2 + SCREEN_WIDTH * cos1000[angle] / 1000, (SCREEN_HEIGHT >> 2) + 11, textCompleted, 0);
+		renderText((SCREEN_WIDTH - getStringWidth(textCompleted, 0)) / 2 + SCREEN_WIDTH * cos1000[angle] / 1000, (SCREEN_HEIGHT >> 2) + 14, textCompleted, 0);
 		refreshGame();
 
 		victoryTicks -= 2;
@@ -8206,8 +8373,8 @@ public final class Game extends GameCanvas implements Runnable {
 		if (isTransmissionNoisy) {
 			int index = 0;
 
-			for (int y = 0; y <= SCREEN_HEIGHT; y += 23) {
-				for (int x = -rand8() % 30; x <= SCREEN_WIDTH; x += 23) {
+			for (int y = 0; y <= SCREEN_HEIGHT; y += 32) {
+				for (int x = -rand8() % 30; x <= SCREEN_WIDTH; x += 32) {
 					int tileId;
 
 					do {
@@ -8239,8 +8406,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void renderPurple(int x, int y, int size) {
-		int purpleWidth = size * 40 / 100;
-		int purpleHeight = size * 93 / 100;
+		int purpleWidth = size * 102 / 100;
+		int purpleHeight = size * 233 / 100;
 
 		// Render purple's outline.
 		gSetColor(0);
@@ -8267,8 +8434,8 @@ public final class Game extends GameCanvas implements Runnable {
 		// Render mouth.
 		gSetColor(0);
 
-		int mouthWidth = size * 23 / 100;
-		int mouthHeight = size * 5 / 100;
+		int mouthWidth = size * 57 / 100;
+		int mouthHeight = size * 12 / 100;
 
 		if (isSpeakingAnimationPlaying && !isPhotoFrameShown && (millis() / 150L & 1L) > 0L)
 			gFillArc(x - mouthWidth / 2,
@@ -8288,8 +8455,8 @@ public final class Game extends GameCanvas implements Runnable {
 		// Render eyes.
 		gSetColor(0xffffff);
 
-		int sizeEyes = size * 14 / 100;
-		int sizePupils = size * 6 / 100;
+		int sizeEyes = size * 35 / 100;
+		int sizePupils = size * 16 / 100;
 
 		for (int i = 0; i < 3; i++)
 			gFillArc(x - sizeEyes * 3 / 2 + i * sizeEyes,
