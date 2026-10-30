@@ -3083,7 +3083,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		/* `arg` represents the choice of whether to load resources (possibly
 		 * reloading them) or to skip that. */
-		if (oldState != 5 && arg != 1) {
+		if (oldState != STATE_ID_SCRIPT && arg != 1) {
 			isLoadingBarShown = true;
 			levelCompletionState = 0;
 
@@ -3101,7 +3101,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		/* Do not bother audio engine if old scene was a script or a
 		 * transition. */
-		if (oldState != 5 && oldState != 6)
+		if (oldState != STATE_ID_SCRIPT && oldState != STATE_ID_TRANSITION)
 			playCurrentBackgroundMusic();
 	}
 
