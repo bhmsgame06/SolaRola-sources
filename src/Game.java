@@ -3596,8 +3596,8 @@ public final class Game extends GameCanvas implements Runnable {
 				break;
 
 			case 1:
-				if (levelCameraZoom != 100) {
-					scriptCameraZoomApproach += (LEVEL_CAMERA_ZOOM_DEFAULT - scriptCameraZoomApproach) / 10;
+				if (levelCameraZoom != LEVEL_CAMERA_ZOOM_DEFAULT) {
+					scriptCameraZoomApproach += ((LEVEL_CAMERA_ZOOM_DEFAULT * 1000) - scriptCameraZoomApproach) / 10;
 					levelCameraZoom = scriptCameraZoomApproach / 1000;
 				}
 
