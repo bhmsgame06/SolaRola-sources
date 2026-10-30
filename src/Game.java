@@ -62,7 +62,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	// Audio engine.
 	public static boolean isAudioEnabled = true;
-	private static int numActiveSoundsMIDI;
+	private static int numActiveSoundsMidi;
 	private static int numActiveSounds;
 	private static int numSounds;
 	private static int activeSound;
@@ -76,8 +76,8 @@ public final class Game extends GameCanvas implements Runnable {
 	private static String[] soundFilenames;
 	private static int numActiveSoundsTotal;
 	private static Player[] soundPlayers;
-	private static Player[] soundPlayersMIDI;
-	
+	private static Player[] soundPlayersMidi;
+
 	// BFC streams.
 	public static DataInputStream sCurrentData;
 	public static int sCurrentSize;
@@ -86,7 +86,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int sCurrentLocation = -1;
 	public static int sCurrentIndex = -1;
 	public static boolean sCurrentReserved;
-	
+
 	// BFC head.
 	// Reserve data to RAM for future use (prevent reloading from bfc)
 	public static byte[][] bfcReservedData;
@@ -106,7 +106,7 @@ public final class Game extends GameCanvas implements Runnable {
 	private static int bfcCrcPoly = 0x1021;
 	// Filename crc table (we'll turn strings into 16-bit values).
 	private static int[] bfcCrcTable = new int[256];
-	
+
 	// Text tables.
 	public static String[] textTableStrings;
 	public static byte[] textTableStringTypes;
@@ -191,7 +191,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int[][] spaceStarFlashTicks;
 	public static int currentSpaceWidth;
 	public static int currentSpaceHeight;
-	
+
 	// Help scene.
 	public static String[] sceneHelpText;
 	public static int sceneHelpScrollDistance;
@@ -239,7 +239,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static int shipCheckPodId = 0;
 	public static int shipPodChoiceId = 0;
 	public static int shipNextOp = SHIP_OP_NOP;
-	
+
 	// Script (cutscene) scene.
 	private static final int SCRIPT_DIALOGUE_BOX_SLIDE_MS = 400;
 	private static final int SCRIPT_CMD_SUBMIT = 0;
@@ -703,12 +703,14 @@ public final class Game extends GameCanvas implements Runnable {
 	public static boolean mustExitHolodeck = false;
 	public static boolean isDejaVuMessageShown = false;
 	public static boolean isBeamAnimated = false;
+
+	private static final int LEVEL_CAMERA_ZOOM_DEFAULT = 72;
 	public static int levelDeathTicks = 70;
 	public static int levelTicks = 0;
 	public static int levelScriptToRun = -1;
 	public static int language = 0;
-	public static int levelCameraZoom = 72;
-	
+	public static int levelCameraZoom = LEVEL_CAMERA_ZOOM_DEFAULT;
+
 	// Cheat codes.
 	public static int[] cheatCodeLevelComplete = new int[] {
 		KEY_LEFT,
@@ -1022,7 +1024,7 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final void sleep(long ms) {
 		try {
 			Thread.sleep(ms);
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 	}
 
@@ -1056,7 +1058,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 				rs.closeRecordStore();
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 	}
 
@@ -1069,7 +1071,7 @@ public final class Game extends GameCanvas implements Runnable {
 				data = rs.getRecord(1);
 				rs.closeRecordStore();
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 
 		return data;
@@ -1115,7 +1117,7 @@ public final class Game extends GameCanvas implements Runnable {
 				isVibraEnabled = data[9] == 1;
 
 				return true;
-			} catch(Exception e) {
+			} catch (Exception e) {
 				return false;
 			}
 		}
@@ -1132,8 +1134,8 @@ public final class Game extends GameCanvas implements Runnable {
 		soundTypes = new int[num];
 		activeSound = -1;
 		soundPlayers = new Player[num];
-		soundPlayersMIDI = new Player[num];
-		numActiveSoundsMIDI = 0;
+		soundPlayersMidi = new Player[num];
+		numActiveSoundsMidi = 0;
 		numActiveSounds = 0;
 		soundFilenames = new String[num];
 
@@ -1145,118 +1147,120 @@ public final class Game extends GameCanvas implements Runnable {
 			soundLoopCounts[i] = 1;
 			soundTypes[i] = 999;
 			soundPlayers[i] = null;
-			soundPlayersMIDI[i] = null;
+			soundPlayersMidi[i] = null;
 		}
 	}
 
-	public static final int loadSoundToQueue(int index, String filename, int soundType, int reserved) {
-		if (isSoundIndexUsed(index)) {
+	public static final int loadSoundToQueue(int index, String filename, int soundType, int size) {
+		if (isSoundIndexUsed(index))
 			return -2;
-		} else if (index >= numSounds) {
+
+		if (index >= numSounds)
 			return -3;
-		} else if (filename == null) {
+
+		if (filename == null)
 			return -1;
-		} else {
-			if (isLoadingBarShown) renderLoadingBar();
 
-			soundTypes[index] = soundType;
-			if (!filename.equals(soundFilenames[index])) {
-				soundFilenames[index] = filename;
-			}
+		if (isLoadingBarShown) renderLoadingBar();
 
-			return -4;
+		soundTypes[index] = soundType;
+		if (!filename.equals(soundFilenames[index])) {
+			soundFilenames[index] = filename;
 		}
+
+		return -4;
 	}
 
-	public static final int loadSoundToIndex(int index, String filename, int soundType, int reserved) {
-		if (isSoundIndexUsed(index)) {
+	public static final int loadSoundToIndex(int index, String filename, int soundType, int size) {
+		if (isSoundIndexUsed(index))
 			return -2;
-		} else if (index >= numSounds) {
-			return -3;
-		} else if (filename == null) {
-			return -1;
-		} else {
-			if (isLoadingBarShown) renderLoadingBar();
 
-			soundTypes[index] = soundType;
-			if (!filename.equals(soundFilenames[index])) {
-				soundFilenames[index] = filename;
+		if (index >= numSounds)
+			return -3;
+
+		if (filename == null)
+			return -1;
+
+		if (isLoadingBarShown) renderLoadingBar();
+
+		soundTypes[index] = soundType;
+		if (!filename.equals(soundFilenames[index])) {
+			soundFilenames[index] = filename;
+		}
+
+		String obj = "";
+		Player pl = null;
+
+		try {
+			if (soundType == 6) {
+				InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".wav");
+				soundPlayers[index] = Manager.createPlayer(is, "audio/x-wav");
+				pl = soundPlayers[index];
 			}
 
-			String obj = "";
-			Player pl = null;
+			if (soundType == 7) {
+				InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".amr");
+				soundPlayers[index] = Manager.createPlayer(is, "audio/amr");
+				pl = soundPlayers[index];
+			}
 
-			try {
-				if (soundType == 6) {
-					InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".wav");
-					soundPlayers[index] = Manager.createPlayer(is, "audio/x-wav");
-					pl = soundPlayers[index];
-				}
+			if (soundType == 8) {
+				InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".mp3");
+				soundPlayers[index] = Manager.createPlayer(is, "audio/mp3");
+				pl = soundPlayers[index];
+			}
 
-				if (soundType == 7) {
-					InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".amr");
-					soundPlayers[index] = Manager.createPlayer(is, "audio/amr");
-					pl = soundPlayers[index];
-				}
+			if (soundType == 2) {
+				InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".mid");
+				soundPlayersMidi[index] = Manager.createPlayer(is, "audio/sp-midi");
+				pl = soundPlayersMidi[index];
+			}
 
-				if (soundType == 8) {
-					InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".mp3");
-					soundPlayers[index] = Manager.createPlayer(is, "audio/mp3");
-					pl = soundPlayers[index];
-				}
+			if (soundType == 1) {
+				InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".mid");
+				soundPlayersMidi[index] = Manager.createPlayer(is, "audio/midi");
+				pl = soundPlayersMidi[index];
+			}
 
-				if (soundType == 2) {
-					InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".mid");
-					soundPlayersMIDI[index] = Manager.createPlayer(is, "audio/sp-midi");
-					pl = soundPlayersMIDI[index];
-				}
+			pl.realize();
 
-				if (soundType == 1) {
-					InputStream is = obj.getClass().getResourceAsStream("/" + filename + ".mid");
-					soundPlayersMIDI[index] = Manager.createPlayer(is, "audio/midi");
-					pl = soundPlayersMIDI[index];
-				}
+			while (pl.getState() != Player.REALIZED)
+				sleep(30L);
 
-				pl.realize();
+			numActiveSoundsTotal++;
+			soundUsedStates[index] = true;
 
-				while (pl.getState() != Player.REALIZED)
-					sleep(30L);
+			boolean prefetched = false;
+			if (soundType != 1 && soundType != 2) {
+				if (soundType != 6 && soundType != 7 && soundType != 8)
+					return -2;
 
-				numActiveSoundsTotal++;
-				soundUsedStates[index] = true;
-
-				boolean prefetched = false;
-				if (soundType != 1 && soundType != 2) {
-					if (soundType != 6 && soundType != 7 && soundType != 8)
-						return -2;
-
-					if (numActiveSounds < 1) {
-						pl.prefetch();
-						numActiveSounds++;
-						prefetched = true;
-					}
-				} else if (numActiveSoundsMIDI < 1) {
+				if (numActiveSounds < 1) {
 					pl.prefetch();
-					numActiveSoundsMIDI++;
+					numActiveSounds++;
 					prefetched = true;
 				}
-
-				if (prefetched)
-					while (pl.getState() != Player.PREFETCHED)
-						sleep(30L);
-
-				return 0;
-			} catch(Exception e) {
-				if (pl != null) {
-					pl.close();
-					soundPlayers[index] = null;
-					soundPlayersMIDI[index] = null;
-					soundTypes[index] = 999;
-					soundFilenames[index] = "";
-				}
-
-				return -1;
+			} else if (numActiveSoundsMidi < 1) {
+				pl.prefetch();
+				numActiveSoundsMidi++;
+				prefetched = true;
 			}
+
+			if (prefetched)
+				while (pl.getState() != Player.PREFETCHED)
+					sleep(30L);
+
+			return 0;
+		} catch (Exception e) {
+			if (pl != null) {
+				pl.close();
+				soundPlayers[index] = null;
+				soundPlayersMidi[index] = null;
+				soundTypes[index] = 999;
+				soundFilenames[index] = "";
+			}
+
+			return -1;
 		}
 	}
 
@@ -1268,9 +1272,9 @@ public final class Game extends GameCanvas implements Runnable {
 			numActiveSounds--;
 		}
 
-		if (soundPlayersMIDI[index] != null) {
-			pl = soundPlayersMIDI[index];
-			numActiveSoundsMIDI--;
+		if (soundPlayersMidi[index] != null) {
+			pl = soundPlayersMidi[index];
+			numActiveSoundsMidi--;
 		}
 
 		if (pl != null) {
@@ -1279,7 +1283,7 @@ public final class Game extends GameCanvas implements Runnable {
 			while (pl.getState() != Player.CLOSED)
 				sleep(30L);
 
-			soundPlayers[index] = soundPlayersMIDI[index] = null;
+			soundPlayers[index] = soundPlayersMidi[index] = null;
 			numActiveSoundsTotal--;
 		}
 	}
@@ -1287,58 +1291,58 @@ public final class Game extends GameCanvas implements Runnable {
 	public static final boolean isSoundIndexUsed(int index) {
 		if (soundPlayers[index] != null)
 			return true;
-		else
-			return soundPlayersMIDI[index] != null;
+
+		if (soundPlayersMidi[index] != null)
+			return true;
+
+		return false;
 	}
 
 	public static final boolean isSoundActive(int index, int soundType) {
-		if (!isAudioEnabled) {
+		if (!isAudioEnabled)
 			return false;
-		} else {
-			boolean started = false;
 
-			if ((soundType == soundTypes[index] || soundType == -1) && soundActiveStates[index]) {
-				return true;
-			} else {
-				if ((soundType == 6 || soundType == -1) && soundPlayers[index] != null)
-					started = soundPlayers[index].getState() == Player.STARTED;
+		boolean started = false;
 
-				if ((soundType == 1 || soundType == -1) && soundPlayersMIDI[index] != null)
-					started = soundPlayersMIDI[index].getState() == Player.STARTED;
+		if ((soundType == soundTypes[index] || soundType == -1) && soundActiveStates[index])
+			return true;
 
-				return started;
-			}
-		}
+		if ((soundType == 6 || soundType == -1) && soundPlayers[index] != null)
+			started = soundPlayers[index].getState() == Player.STARTED;
+
+		if ((soundType == 1 || soundType == -1) && soundPlayersMidi[index] != null)
+			started = soundPlayersMidi[index].getState() == Player.STARTED;
+
+		return started;
 	}
 
 	public static final boolean playSound(int index, int loopCount) {
-		if (!isAudioEnabled) {
+		if (!isAudioEnabled)
 			return true;
-		} else if (millis() - soundStartMillis < 100L) {
+
+		if (millis() - soundStartMillis < 100L)
 			return false;
-		} else {
-			soundStartMillis = millis();
 
-			if (isSoundActive(index, -1)) {
+		soundStartMillis = millis();
+
+		if (isSoundActive(index, -1))
+			return false;
+
+		int activeSounds = 0;
+
+		if (soundTypes[index] == 6 || soundTypes[index] == 7 || soundTypes[index] == 8) {
+			for (int i = 0; i < numSounds; i++)
+				if (isSoundActive(i, soundTypes[i]))
+					activeSounds++;
+
+			if (activeSounds >= 2)
 				return false;
-			} else {
-				int activeSounds = 0;
-
-				if (soundTypes[index] == 6 || soundTypes[index] == 7 || soundTypes[index] == 8) {
-					for (int i = 0; i < numSounds; i++)
-						if (isSoundActive(i, soundTypes[i]))
-							activeSounds++;
-
-					if (activeSounds >= 2)
-						return false;
-				}
-
-				soundActiveStates[index] = true;
-				soundLoopCounts[index] = loopCount;
-
-				return true;
-			}
 		}
+
+		soundActiveStates[index] = true;
+		soundLoopCounts[index] = loopCount;
+
+		return true;
 	}
 
 	public static final void queueAllSoundsForCleanup() {
@@ -1349,8 +1353,8 @@ public final class Game extends GameCanvas implements Runnable {
 
 	private static void stopSoundAtIndex(int index, boolean checkStarted) {
 		Player pl;
-		if (soundPlayersMIDI[index] != null)
-			pl = soundPlayersMIDI[index];
+		if (soundPlayersMidi[index] != null)
+			pl = soundPlayersMidi[index];
 		else
 			pl = soundPlayers[index];
 
@@ -1366,86 +1370,87 @@ public final class Game extends GameCanvas implements Runnable {
 						pl.stop();
 						pl.setMediaTime(0L);
 					}
-				} catch(IllegalStateException e) {
+				} catch (IllegalStateException e) {
 				}
 			}
-		} catch(MediaException e) {
+		} catch (MediaException e) {
 		}
 	}
 
 	public static final void queueSoundCleanup() {
-		if (isAudioEnabled && soundActiveStates != null) {
-			for (int i = 0; i < numSounds; i++) {
-				if (soundQueueCleanup[i]) {
-					soundQueueCleanup[i] = false;
-					stopSoundAtIndex(i, false);
+		if (!isAudioEnabled || soundActiveStates == null)
+			return;
 
-					if (soundTypes[i] != 0)
-						closeSoundAtIndex(i);
+		for (int i = 0; i < numSounds; i++) {
+			if (soundQueueCleanup[i]) {
+				soundQueueCleanup[i] = false;
+				stopSoundAtIndex(i, false);
 
-					if (activeSound == i)
-						activeSound = -1;
+				if (soundTypes[i] != 0)
+					closeSoundAtIndex(i);
+
+				if (activeSound == i)
+					activeSound = -1;
+			}
+
+			if (soundActiveStates[i] && soundTypes[i] == 1) {
+				for (int j = 0; j < numSounds; j++) {
+					if (j != i) {
+						stopSoundAtIndex(j, false);
+						soundActiveStates[j] = false;
+					}
 				}
 
-				if (soundActiveStates[i] && soundTypes[i] == 1) {
+				for (boolean b = true; b; sleep(5L)) {
 					for (int j = 0; j < numSounds; j++) {
-						if (j != i) {
-							stopSoundAtIndex(j, false);
-							soundActiveStates[j] = false;
+						if (j != i && isSoundActive(j, -1)) {
+							b = true;
+							break;
 						}
-					}
 
-					for (boolean b = true; b; sleep(5L)) {
-						for (int j = 0; j < numSounds; j++) {
-							if (j != i && isSoundActive(j, -1)) {
-								b = true;
-								break;
-							}
-
-							b = false;
-						}
+						b = false;
 					}
 				}
+			}
 
-				if (!isSoundIndexUsed(i)) {
-					if (soundTypes[i] == 0 || !soundActiveStates[i])
-						continue;
+			if (!isSoundIndexUsed(i)) {
+				if (soundTypes[i] == 0 || !soundActiveStates[i])
+					continue;
 
-					boolean tmp = isLoadingBarShown;
-					isLoadingBarShown = false;
-					loadSoundToIndex(i, soundFilenames[i], soundTypes[i], 0);
-					isLoadingBarShown = tmp;
-				}
+				boolean tmp = isLoadingBarShown;
+				isLoadingBarShown = false;
+				loadSoundToIndex(i, soundFilenames[i], soundTypes[i], 0);
+				isLoadingBarShown = tmp;
+			}
 
-				Player pl;
-				if (soundPlayersMIDI[i] != null)
-					pl = soundPlayersMIDI[i];
-				else
-					pl = soundPlayers[i];
+			Player pl;
+			if (soundPlayersMidi[i] != null)
+				pl = soundPlayersMidi[i];
+			else
+				pl = soundPlayers[i];
 
-				if (soundUsedStates[i]) {
-					soundUsedStates[i] = false;
-					if (pl != null) {
-						try {
-							VolumeControl control;
-							if ((control = (VolumeControl)pl.getControl("VolumeControl")) != null)
-								control.setLevel(soundVolume[i] * 10);
-						} catch(IllegalStateException e) {
-						}
-					}
-				}
-
-				if (soundActiveStates[i]) {
-					soundActiveStates[i] = false;
-
+			if (soundUsedStates[i]) {
+				soundUsedStates[i] = false;
+				if (pl != null) {
 					try {
-						if (pl != null && pl.getState() != Player.STARTED) {
-							pl.setLoopCount(soundLoopCounts[i]);
-							pl.start();
-							activeSound = i;
-						}
-					} catch(MediaException e) {
+						VolumeControl control;
+						if ((control = (VolumeControl)pl.getControl("VolumeControl")) != null)
+							control.setLevel(soundVolume[i] * 10);
+					} catch (IllegalStateException e) {
 					}
+				}
+			}
+
+			if (soundActiveStates[i]) {
+				soundActiveStates[i] = false;
+
+				try {
+					if (pl != null && pl.getState() != Player.STARTED) {
+						pl.setLoopCount(soundLoopCounts[i]);
+						pl.start();
+						activeSound = i;
+					}
+				} catch (MediaException e) {
 				}
 			}
 		}
@@ -1472,7 +1477,7 @@ public final class Game extends GameCanvas implements Runnable {
 			bfcReservedData[index] = new byte[sCurrentSize];
 
 			int read = 0;
-			int total = 0;	
+			int total = 0;
 			for (int rem = sCurrentSize; rem > 0; total += read) {
 				read = sCurrentData.read(bfcReservedData[index], total, rem);
 				rem -= read;
@@ -1483,7 +1488,7 @@ public final class Game extends GameCanvas implements Runnable {
 					bfcReservedData[i] = bfcReservedData[index];
 
 			sCurrentOffset += sCurrentSize;
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 	}
 
@@ -1513,7 +1518,7 @@ public final class Game extends GameCanvas implements Runnable {
 				bfcHeadLocations[i] = (byte)sCurrentData.readUnsignedByte();
 				bfcHeadSizes[i] = sCurrentSize = sCurrentData.readUnsignedByte() << 16 | sCurrentData.readUnsignedByte() << 8 | sCurrentData.readUnsignedByte();
 			}
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 
 		bfcInitReservedData(bfcHeadNumEntries);
@@ -1616,7 +1621,7 @@ public final class Game extends GameCanvas implements Runnable {
 					sCurrentData = new DataInputStream(is);
 					return true;
 				}
-			} catch(Exception e) {
+			} catch (Exception e) {
 				return false;
 			}
 		}
@@ -1668,7 +1673,7 @@ public final class Game extends GameCanvas implements Runnable {
 					bfcReserve(index);
 
 				return true;
-			} catch(Exception e) {
+			} catch (Exception e) {
 				return false;
 			}
 		}
@@ -1683,7 +1688,7 @@ public final class Game extends GameCanvas implements Runnable {
 			try {
 				while (n > 0)
 					n = (int)((long)n - sCurrentData.skip((long)n));
-			} catch(Exception e) {
+			} catch (Exception e) {
 			}
 		}
 	}
@@ -1703,7 +1708,7 @@ public final class Game extends GameCanvas implements Runnable {
 				}
 
 				return b;
-			} catch(Exception e) {
+			} catch (Exception e) {
 				return null;
 			}
 		}
@@ -1720,7 +1725,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			try {
 				return sCurrentData.readUnsignedShort();
-			} catch(Exception e) {
+			} catch (Exception e) {
 				return -1;
 			}
 		}
@@ -1737,7 +1742,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			try {
 				return sCurrentData.readShort();
-			} catch(Exception e) {
+			} catch (Exception e) {
 				return -1;
 			}
 		}
@@ -1754,7 +1759,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			try {
 				return sCurrentData.readUnsignedByte();
-			} catch(Exception e) {
+			} catch (Exception e) {
 				return -1;
 			}
 		}
@@ -1771,7 +1776,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			try {
 				return sCurrentData.readByte();
-			} catch(Exception e) {
+			} catch (Exception e) {
 				return -1;
 			}
 		}
@@ -1788,7 +1793,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			try {
 				return sCurrentData.readInt();
-			} catch(Exception e) {
+			} catch (Exception e) {
 				return -1;
 			}
 		}
@@ -1799,7 +1804,7 @@ public final class Game extends GameCanvas implements Runnable {
 			sCurrentData.close();
 			sCurrentIndex = -1;
 			sCurrentLocation = -1;
-		} catch(Exception e) {
+		} catch (Exception e) {
 		}
 
 		sCurrentData = null;
@@ -2989,8 +2994,8 @@ public final class Game extends GameCanvas implements Runnable {
 		scenePreLevelSmallShipX = SCREEN_WIDTH;
 		scenePreLevelSmallShipY = SCREEN_HEIGHT - imgCurrentPlanet.getHeight() * 4 / 5;
 
-		if (scenePreLevelSmallShipY < 32)
-			scenePreLevelSmallShipY = 32;
+		if (scenePreLevelSmallShipY < SCREEN_HEIGHT >> 2)
+			scenePreLevelSmallShipY = SCREEN_HEIGHT >> 2;
 
 		scenePreLevelShipX = -61;
 		scenePreLevelShipY = 70;
@@ -3172,7 +3177,7 @@ public final class Game extends GameCanvas implements Runnable {
 				gDrawImage(imgPmRocket, splashRocketX, splashRocketY, 0);
 
 				splashRocketX += SCREEN_WIDTH / 30;
-				splashRocketY -= SCREEN_HEIGHT >> 5;
+				splashRocketY -= SCREEN_HEIGHT / 30;
 
 				if (splashTick > 45)
 					splashDuration = 0L;
@@ -3509,8 +3514,8 @@ public final class Game extends GameCanvas implements Runnable {
 				break;
 
 			case 1:
-				if (levelCameraZoom != 72) {
-					scriptCameraZoomApproach += (72000 - scriptCameraZoomApproach) / 10;
+				if (levelCameraZoom != LEVEL_CAMERA_ZOOM_DEFAULT) {
+					scriptCameraZoomApproach += ((LEVEL_CAMERA_ZOOM_DEFAULT * 1000) - scriptCameraZoomApproach) / 10;
 					levelCameraZoom = scriptCameraZoomApproach / 1000;
 				}
 
@@ -3866,7 +3871,7 @@ public final class Game extends GameCanvas implements Runnable {
 							swapLevelData(0);
 							levelSetPlayerPos(levelCircleX[6], levelCircleY[6], 6, 0x140000);
 							fade = 100;
-							levelCameraZoom = 72;
+							levelCameraZoom = LEVEL_CAMERA_ZOOM_DEFAULT;
 							break;
 
 						// Swap between Ship <-> Level locations.
@@ -3880,7 +3885,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 						// Space map.
 						case 3:
-							initSpaceMap(data[offset + 2] * 72 / 100, data[offset + 3] * 72 / 100, data[offset + 4]);
+							initSpaceMap(data[offset + 2] * LEVEL_CAMERA_ZOOM_DEFAULT / 100, data[offset + 3] * LEVEL_CAMERA_ZOOM_DEFAULT / 100, data[offset + 4]);
 							initSpace(1, 150, SCREEN_WIDTH << 1, SCREEN_HEIGHT << 1);
 							offset += 3;
 							break;
@@ -4702,7 +4707,7 @@ public final class Game extends GameCanvas implements Runnable {
 		int tmp1;
 		int[] tmp2;
 		boolean[] tmp3;
-		
+
 		tmp1 = levelNumHooks;
 		levelNumHooks = swappedLevelNumHooks;
 		swappedLevelNumHooks = tmp1;
@@ -6009,7 +6014,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelBombExplodeTicks = 0;
 		levelBombStartTicks = -10000;
 		levelPlayerHitTicks = 0;
-		levelCameraZoom = 72;
+		levelCameraZoom = LEVEL_CAMERA_ZOOM_DEFAULT;
 		levelMovableAccel = 62000;
 
 		// Point the camera to the player.
@@ -6396,7 +6401,7 @@ public final class Game extends GameCanvas implements Runnable {
 		while (levelCameraAngle < 0)
 			levelCameraAngle += 360;
 
-		levelCameraZoom = 72;
+		levelCameraZoom = LEVEL_CAMERA_ZOOM_DEFAULT;
 	}
 
 	public static final boolean levelCameraApproach(int x, int y, int reserved) {
@@ -6470,7 +6475,7 @@ public final class Game extends GameCanvas implements Runnable {
 			// Divide by 256.
 			playerXDiff >>= 8;
 
-			int targetZoom = 82 - playerXDiff * 72 * 45 / 0x32000;
+			int targetZoom = 82 - playerXDiff * LEVEL_CAMERA_ZOOM_DEFAULT * 45 / 0x32000;
 			if (targetZoom < 36)
 				targetZoom = 36;
 
@@ -6491,7 +6496,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 		} else {
 			// In the ship, lock to these values.
-			levelCameraZoom = 72;
+			levelCameraZoom = LEVEL_CAMERA_ZOOM_DEFAULT;
 			levelCameraAngle = 0;
 		}
 
@@ -7025,7 +7030,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelRenderCircleIds(levelIdsFoam, 0);
 		levelRenderCircleIds(levelIdsFoam, 0xffffff);
 
-		// Render destructibles.	
+		// Render destructibles.
 		levelRenderCircleIds(levelIdsDestructibles, 0);
 		levelRenderCircleIds(levelIdsDestructibles, levelColorDestructible);
 
@@ -7161,9 +7166,9 @@ public final class Game extends GameCanvas implements Runnable {
 					}
 				}
 
-				// Finish the level.
 				if (circleType == 8) {
 
+					// Finish the level.
 					isLevelComplete = true;
 
 				} else if (circleType >= 9 &&
@@ -7403,12 +7408,24 @@ public final class Game extends GameCanvas implements Runnable {
 		for (int i = 0; i < 12; i++) {
 			gSetColor(loadingBarColors[i], 0, 0);
 			loadingBarColors[i] = loadingBarColors[i] * 80 / 100;
-			gFillArc((SCREEN_WIDTH - 64) >> 1, (SCREEN_HEIGHT - 64) >> 1, 64, 64, i * 30, 20);
+
+			gFillArc(SCREEN_WIDTH >> 2,
+					(SCREEN_WIDTH >> 2) + ((SCREEN_HEIGHT - SCREEN_WIDTH) >> 1),
+					SCREEN_WIDTH >> 1,
+					SCREEN_WIDTH >> 1,
+					i * 30,
+					20);
+
 		}
 
 		gSetColor(0, 0, 0);
-		gFillArc((SCREEN_WIDTH - 42) >> 1, (SCREEN_HEIGHT - 42) >> 1, 42, 42, 0, 360);
-		
+		gFillArc((SCREEN_WIDTH - (SCREEN_WIDTH / 3)) >> 1,
+				(SCREEN_HEIGHT - (SCREEN_WIDTH / 3)) >> 1,
+				SCREEN_WIDTH / 3,
+				SCREEN_WIDTH / 3,
+				0,
+				360);
+
 		gfxFlush();
 	}
 
@@ -7772,8 +7789,8 @@ public final class Game extends GameCanvas implements Runnable {
 			gDrawImage(imgsInside[2], wallX, ((SCREEN_HEIGHT - 161) >> 1) + 1, 0);
 
 		// Render a lamp.
-		int lampX = shiftX + levelAlignXToMirror(193) * 72 / 100;
-		gDrawImage(imgInsideLamp, lampX - imgInsideLamp.getWidth() / 2, 2, 0);
+		int lampX = shiftX + levelAlignXToMirror(193) * LEVEL_CAMERA_ZOOM_DEFAULT / 100;
+		gDrawImage(imgInsideLamp, lampX - imgInsideLamp.getWidth() / 2, (SCREEN_HEIGHT >> 1) - 62, 0);
 
 		// Render window.
 		renderShipWindow(shiftX + 299, ((SCREEN_HEIGHT - 46) >> 1) - 11, 0);
@@ -7782,7 +7799,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// Render the lamp beacon animation.
 		if (shipAlarmRadius > 0) {
-			int lampY = 2 + imgInsideLamp.getHeight() / 2;
+			int lampY = (SCREEN_HEIGHT >> 1) - 62 + imgInsideLamp.getHeight() / 2;
 
 			gSetColor(0xff0000);
 			int rad = shipAlarmRadius;
@@ -7817,8 +7834,8 @@ public final class Game extends GameCanvas implements Runnable {
 					levelCircleHasPhysics[i] &&
 					levelCircleType[i] > 0) {
 
-				int podX = 72 * (levelCircleX[i] / 100) >> 16;
-				int podY = 72 * (levelCircleY[i] / 100) >> 16;
+				int podX = LEVEL_CAMERA_ZOOM_DEFAULT * (levelCircleX[i] / 100) >> 16;
+				int podY = LEVEL_CAMERA_ZOOM_DEFAULT * (levelCircleY[i] / 100) >> 16;
 
 				// Render pistons.
 				Image img;
@@ -8014,14 +8031,14 @@ public final class Game extends GameCanvas implements Runnable {
 
 		if (tick < 100) {
 			fade = tick;
-			levelCameraZoom = tick * 72 / 100;
+			levelCameraZoom = tick * LEVEL_CAMERA_ZOOM_DEFAULT / 100;
 
 			if (levelCameraZoom == 0)
 				levelCameraZoom = 1;
 
 			renderPlayable(6, 0xc80000, true);
 			fade = 100;
-			levelCameraZoom = 72;
+			levelCameraZoom = LEVEL_CAMERA_ZOOM_DEFAULT;
 		} else {
 			renderPlayable(6, 0xc80000, true);
 		}
@@ -8069,7 +8086,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if (victoryTicks > 0) {
 			if (victoryTicks < 50) {
 				// Animate the beam.
-				levelCameraZoom = victoryTicks * 72 * 2 / 100;
+				levelCameraZoom = victoryTicks * LEVEL_CAMERA_ZOOM_DEFAULT * 2 / 100;
 
 				for (int i = 0; i < 5; i++) {
 					int speed = (100 - victoryTicks * 2) *
@@ -8094,8 +8111,8 @@ public final class Game extends GameCanvas implements Runnable {
 			angle = (150 - victoryTicks) * 2;
 
 		// Render the "mission completed" text.
-		renderText((SCREEN_WIDTH - getStringWidth(textMission, 0)) / 2 - SCREEN_WIDTH * cos1000[angle] / 1000, 32, textMission, 0);
-		renderText((SCREEN_WIDTH - getStringWidth(textCompleted, 0)) / 2 + SCREEN_WIDTH * cos1000[angle] / 1000, 43, textCompleted, 0);
+		renderText((SCREEN_WIDTH - getStringWidth(textMission, 0)) / 2 - SCREEN_WIDTH * cos1000[angle] / 1000, SCREEN_HEIGHT >> 2, textMission, 0);
+		renderText((SCREEN_WIDTH - getStringWidth(textCompleted, 0)) / 2 + SCREEN_WIDTH * cos1000[angle] / 1000, (SCREEN_HEIGHT >> 2) + 11, textCompleted, 0);
 		refreshGame();
 
 		victoryTicks -= 2;
@@ -8459,8 +8476,8 @@ public final class Game extends GameCanvas implements Runnable {
 				selectionArrowsAnimTicks -= 180;
 
 			int arrowX = 1 + sin1000[selectionArrowsAnimTicks] * 6 / 1000;
-			gDrawImage(imgsSelectionMenuArrows[0], arrowX, (SCREEN_HEIGHT >> 1) + 21 - imgsSelectionMenuArrows[0].getHeight() / 2, 0);
-			gDrawImage(imgsSelectionMenuArrows[1], SCREEN_WIDTH - arrowX - imgsSelectionMenuArrows[1].getWidth(), (SCREEN_HEIGHT >> 1) + 21 - imgsSelectionMenuArrows[1].getHeight() / 2, 0);
+			gDrawImage(imgsSelectionMenuArrows[0], arrowX, (SCREEN_HEIGHT * 2 / 3) - imgsSelectionMenuArrows[0].getHeight() / 2, 0);
+			gDrawImage(imgsSelectionMenuArrows[1], SCREEN_WIDTH - arrowX - imgsSelectionMenuArrows[1].getWidth(), (SCREEN_HEIGHT * 2 / 3) - imgsSelectionMenuArrows[1].getHeight() / 2, 0);
 		}
 
 		refreshGame();
