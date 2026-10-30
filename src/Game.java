@@ -264,6 +264,12 @@ public final class Game extends GameCanvas implements Runnable {
 	private static final int SCRIPT_CMD_TRANSMISSION_SET_BACKGROUND_COLOR = 17;
 	private static final int SCRIPT_CMD_RESERVED = 18;
 	private static final int SCRIPT_CMD_PHOTO_FRAME_SET_LABEL_ID = 19;
+	private static final int SCRIPT_ENV_SHIP = 0;
+	private static final int SCRIPT_ENV_LEVEL = 1;
+	private static final int SCRIPT_ENV_RESERVED = 2;
+	private static final int SCRIPT_ENV_SPACE_MAP = 3;
+	private static final int SCRIPT_ENV_OUTSIDE = 4;
+	private static final int SCRIPT_ENV_TRANSMISSION = 5;
 	public static boolean scriptIsAwaitingLevelStart = false;
 	public static int beamAnimationTicks = 1;
 	public static boolean skipPrologue;
@@ -3588,7 +3594,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 			/* Wait for the chunk to complete execution. */
 			if (!isSpeakingAnimationPlaying && !scriptIsOkKeyEnabled && scriptWaitEndMs == 0L) {
-				if (scriptEnvironment == 3) {
+				if (scriptEnvironment == SCRIPT_ENV_SPACE_MAP) {
 
 					if (renderSpaceMapNextFrame())
 						scriptIsWaiting = false;
@@ -3612,9 +3618,9 @@ public final class Game extends GameCanvas implements Runnable {
 
 		}
 
-		// Process an environment in where the script will take place.
+		// Process an environment in the script.
 		switch (scriptEnvironment) {
-			case 0:
+			case SCRIPT_ENV_SHIP:
 				renderShipInside();
 
 				if (scriptIsWazActive && !isShipPaused)
@@ -3624,7 +3630,7 @@ public final class Game extends GameCanvas implements Runnable {
 				renderShipDecor(shipDecorForeground);
 				break;
 
-			case 1:
+			case SCRIPT_ENV_LEVEL:
 				if (levelCameraZoom != LEVEL_CAMERA_ZOOM_DEFAULT) {
 					scriptCameraZoomApproach += ((LEVEL_CAMERA_ZOOM_DEFAULT * 1000) - scriptCameraZoomApproach) / 10;
 					levelCameraZoom = scriptCameraZoomApproach / 1000;
@@ -3641,18 +3647,18 @@ public final class Game extends GameCanvas implements Runnable {
 				levelRender(true);
 				break;
 
-			case 2:
+			case SCRIPT_ENV_RESERVED:
 				break;
 
-			case 3:
+			case SCRIPT_ENV_SPACE_MAP:
 				renderSpaceMap();
 				break;
 
-			case 4:
+			case SCRIPT_ENV_OUTSIDE:
 				renderOutside();
 				break;
 
-			case 5:
+			case SCRIPT_ENV_TRANSMISSION:
 				renderTransmission();
 		}
 
@@ -3719,9 +3725,9 @@ public final class Game extends GameCanvas implements Runnable {
 			scriptLastSwapKey = activeSwapKey;
 			scriptIsWazActive = scriptLastSwapKey == 0;
 			if (scriptIsWazActive)
-				scriptEnvironment = 0;
+				scriptEnvironment = SCRIPT_ENV_SHIP;
 			else
-				scriptEnvironment = 1;
+				scriptEnvironment = SCRIPT_ENV_LEVEL;
 
 			resetScript();
 			loadEyes();
@@ -3817,7 +3823,7 @@ public final class Game extends GameCanvas implements Runnable {
 				// Set camera position.
 				case SCRIPT_CMD_SET_CAMERA:
 					// When in the space map.
-					if (scriptEnvironment == 3) {
+					if (scriptEnvironment == SCRIPT_ENV_SPACE_MAP) {
 						if (data[offset + 1] == 6)
 							spaceMapSetCameraToBeacon();
 
@@ -3873,7 +3879,7 @@ public final class Game extends GameCanvas implements Runnable {
 					scriptIsCameraMoving = true;
 
 					// When in the space map.
-					if (scriptEnvironment == 3) {
+					if (scriptEnvironment == SCRIPT_ENV_SPACE_MAP) {
 						if (data[offset + 1] == 6)
 							spaceMapSetTargetCameraToBeacon();
 
@@ -3945,7 +3951,7 @@ public final class Game extends GameCanvas implements Runnable {
 				/* Set entity position (can be either a player or entity in the
 				 * transmission). */
 				case SCRIPT_CMD_SET_ENTITY_POS:
-					if (scriptEnvironment == 5) {
+					if (scriptEnvironment == SCRIPT_ENV_TRANSMISSION) {
 						transmissionEntityX = SCREEN_WIDTH * data[offset + 2] / 1000;
 						transmissionEntityY = SCREEN_HEIGHT * data[offset + 3] / 1000;
 					} else if (activeSwapKey == 0) {
@@ -3977,7 +3983,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 					switch (scriptEnvironment) {
 						// Ship.
-						case 0:
+						case SCRIPT_ENV_SHIP:
 							initSpace(2, 12, 128, 46);
 							swapLevelData(0);
 							levelSetPlayerPos(levelCircleX[6], levelCircleY[6], 6, 0x140000);
@@ -3985,25 +3991,29 @@ public final class Game extends GameCanvas implements Runnable {
 							levelCameraZoom = LEVEL_CAMERA_ZOOM_DEFAULT;
 							break;
 
-						// Swap between Ship <-> Level locations.
-						case 1:
+						// Level.
+						case SCRIPT_ENV_LEVEL:
 							if (!scriptIsWazActive)
 								swapLevelData(1);
-						case 2:
-						case 5:
-						default:
+							break;
+
+						case SCRIPT_ENV_RESERVED:
 							break;
 
 						// Space map.
-						case 3:
+						case SCRIPT_ENV_SPACE_MAP:
 							initSpaceMap(data[offset + 2] * LEVEL_CAMERA_ZOOM_DEFAULT / 100, data[offset + 3] * LEVEL_CAMERA_ZOOM_DEFAULT / 100, data[offset + 4]);
 							initSpace(1, 150, SCREEN_WIDTH << 1, SCREEN_HEIGHT << 1);
 							offset += 3;
 							break;
 
 						// Space.
-						case 4:
+						case SCRIPT_ENV_OUTSIDE:
 							initSpace(1, 50, SCREEN_WIDTH, SCREEN_HEIGHT);
+							break;
+
+						case SCRIPT_ENV_TRANSMISSION:
+							break;
 					}
 
 					offset += 2;
@@ -4024,10 +4034,10 @@ public final class Game extends GameCanvas implements Runnable {
 
 				// Enable one of the alarm visual signals.
 				case SCRIPT_CMD_SET_ALARM:
-					if (scriptEnvironment == 3)
+					if (scriptEnvironment == SCRIPT_ENV_SPACE_MAP)
 						spaceMapPlanetBeaconRadius = data[offset + 1] == 1 ? 1 : 0;
 
-					if (scriptEnvironment == 0) {
+					if (scriptEnvironment == SCRIPT_ENV_SHIP) {
 						int rad = shipAlarmRadius = data[offset + 1] == 1 ? 1 : 0;
 						if (rad > 0 && !skipping)
 							playSfxDistress();
@@ -6810,7 +6820,7 @@ public final class Game extends GameCanvas implements Runnable {
 				/* Find the next space or period character in the script
 				 * string. */
 				if (currTime > dialogueStartMs) {
-					if (dialogueFace == 2 && dialogueIteration == 0 && scriptEnvironment == 5)
+					if (dialogueFace == 2 && dialogueIteration == 0 && scriptEnvironment == SCRIPT_ENV_TRANSMISSION)
 						playSfxXifu();
 
 					dialogueStartMs = currTime + 150L;
