@@ -2674,7 +2674,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			confettiY[i] += (1 + rand8() % 5) * SCREEN_WIDTH / 176;
-			confettiX[i] += cos1000[confettiAngles[i]] * 3 / 1000;
+			confettiX[i] += 3 * cos1000[confettiAngles[i]] / 1000;
 			confettiHeights[i] += 4 + rand8() % 5;
 			if (confettiHeights[i] >= 40) {
 				confettiHeights[i] = 0;
@@ -2766,7 +2766,7 @@ public final class Game extends GameCanvas implements Runnable {
 			gDrawLine(precipitationX[i] - 1, precipitationY[i], precipitationX[i] + 1, precipitationY[i]);
 			gDrawLine(precipitationX[i], precipitationY[i] - 1, precipitationX[i], precipitationY[i] + 1);
 
-			precipitationX[i] += cos1000[precipitationDirectionCos[i]] * 3 / 1000;
+			precipitationX[i] += 3 * cos1000[precipitationDirectionCos[i]] / 1000;
 			precipitationY[i] += 2;
 			precipitationDirectionCos[i] += 5;
 			if (precipitationDirectionCos[i] >= 360)
@@ -3174,8 +3174,8 @@ public final class Game extends GameCanvas implements Runnable {
 				for (int i = 0; i < 5; i++) {
 					gSetColor(elemColors[i]);
 
-					int scaleX = sin1000[splashTick * 2] * elemX[i] / 1000;
-					int scaleRadius = sin1000[splashTick * 2] * elemRadius[i] / 1000;
+					int scaleX = elemX[i] * sin1000[splashTick * 2] / 1000;
+					int scaleRadius = elemRadius[i] * sin1000[splashTick * 2] / 1000;
 
 					if (i != 2 && i != 3)
 						gFillArc((SCREEN_WIDTH >> 1) + scaleX - scaleRadius / 2 - 1,
@@ -8218,9 +8218,9 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// Render an entity.
 		if (isTransmissionShaky) {
-			renderPurple(transmissionEntityX + sin1000[(int)(millis() / 5L % 360L)] * (SCREEN_WIDTH / 10) / 1000,
-					transmissionEntityY + sin1000[(int)(millis() / 3L % 360L)] * (SCREEN_HEIGHT / 10) / 1000,
-					transmissionEntitySize + 40 + sin1000[(int)(millis() / 14L % 360L)] * 20 / 1000);
+			renderPurple(transmissionEntityX + (SCREEN_WIDTH / 10) * sin1000[(int)(millis() / 5L % 360L)] / 1000,
+					transmissionEntityY + (SCREEN_HEIGHT / 10) * sin1000[(int)(millis() / 3L % 360L)] / 1000,
+					transmissionEntitySize + 40 + 20 * sin1000[(int)(millis() / 14L % 360L)] / 1000);
 		} else {
 			renderPurple(transmissionEntityX,
 					transmissionEntityY,
@@ -8500,7 +8500,7 @@ public final class Game extends GameCanvas implements Runnable {
 			if (selectionArrowsAnimTicks > 179)
 				selectionArrowsAnimTicks -= 180;
 
-			int arrowX = 1 + sin1000[selectionArrowsAnimTicks] * 6 / 1000;
+			int arrowX = 1 + 6 * sin1000[selectionArrowsAnimTicks] / 1000;
 			gDrawImage(imgsSelectionMenuArrows[0], arrowX, (SCREEN_HEIGHT * 2 / 3) - imgsSelectionMenuArrows[0].getHeight() / 2, 0);
 			gDrawImage(imgsSelectionMenuArrows[1], SCREEN_WIDTH - arrowX - imgsSelectionMenuArrows[1].getWidth(), (SCREEN_HEIGHT * 2 / 3) - imgsSelectionMenuArrows[1].getHeight() / 2, 0);
 		}
