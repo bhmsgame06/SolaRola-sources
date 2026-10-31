@@ -309,10 +309,10 @@ public final class Game extends GameCanvas implements Runnable {
 	private static final int SELECTION_STATE_AUDIO = 1;
 	public static int sceneSelectionState = 0;
 
-	// Main menu scene.
+	// Title scene.
 	public static Image imgGameLogoTop;
 	public static Image imgGameLogoBottom;
-	public static boolean isPastSplash = false;
+	public static boolean isPastTitle = false;
 
 	// Transition scene.
 	private static final int TRANSITION_TYPE_WIPE = 0;
@@ -4160,7 +4160,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// OK softkey.
 		if (softkeyPressed(2, -1, true) == 2) {
-			isPastSplash = true;
+			isPastTitle = true;
 			setNewState(STATE_ID_TRANSITION, 2);
 		}
 
@@ -4168,8 +4168,8 @@ public final class Game extends GameCanvas implements Runnable {
 	}
 
 	public static final void sceneTitleInit(int arg) {
-		if (isPastSplash) {
-			isPastSplash = false;
+		if (isPastTitle) {
+			isPastTitle = false;
 			setNewState(STATE_ID_SHIP, 10);
 		} else {
 			if (titleText == null)
