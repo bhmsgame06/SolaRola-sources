@@ -3073,7 +3073,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		// Render a planet name.
 		if (scenePreLevelCurTick > 50)
-			renderText(-1000, SCREEN_HEIGHT - 107, currentPlanetText, 0);
+			renderText(-1000, SCREEN_HEIGHT * 2 / 3, currentPlanetText, 0);
 
 		// Render "press 5" string.
 		if (scenePreLevelCurTick > 120 && (millis() & 512L) > 0L)
