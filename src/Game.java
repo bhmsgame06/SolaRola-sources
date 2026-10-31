@@ -2127,7 +2127,7 @@ public final class Game extends GameCanvas implements Runnable {
 			}
 
 			if (rightSoftkey > -1) {
-				gDrawImage(imgsSoftkey[rightSoftkey], SCREEN_WIDTH - 2 - softkeyWidth[rightSoftkey], SCREEN_HEIGHT - 1 - softkeyHeight[rightSoftkey], 0);
+				gDrawImage(imgsSoftkey[rightSoftkey], SCREEN_WIDTH - 2 - softkeyWidth[rightSoftkey], SCREEN_HEIGHT - 2 - softkeyHeight[rightSoftkey], 0);
 				rightSoftkey = -1;
 			}
 		}
