@@ -2588,14 +2588,14 @@ public final class Game extends GameCanvas implements Runnable {
 			} else if (isNewState) {
 
 				isNewState = false;
-				execState(curState, 2);
+				execState(curState, STATE_EXEC_FREE);
 				oldState = curState;
 				curState = newStateIndex;
-				execState(curState, 0);
+				execState(curState, STATE_EXEC_INIT);
 
 			} else {
 
-				execState(curState, 1);
+				execState(curState, STATE_EXEC_RUN);
 
 			}
 		} while (curState != -1);
