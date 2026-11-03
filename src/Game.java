@@ -556,7 +556,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 	public static int currentLevelLoaded = 0;
 	public static int level = 0;
-	public static int levelColor = 0xffffff;
+	public static int levelColorPlatform = 0xffffff;
 	public static int levelColorMovable = 0xffffff;
 	public static int levelColorPortal = 0xffffff;
 	public static int levelColorDestructible = 0xffffff;
@@ -5458,7 +5458,7 @@ public final class Game extends GameCanvas implements Runnable {
 		for (int i = 0; i < levelNumRects; i++)
 			levelDrawRect(levelRectX[i], levelRectY[i], levelRectHWidth[i], levelRectHHeight[i]);
 
-		setFadeColor(levelColor);
+		setFadeColor(levelColorPlatform);
 		for (int i = 0; i < levelNumRects; i++)
 			levelDrawRect(levelRectX[i], levelRectY[i], levelRectHWidth[i], levelRectHHeight[i]);
 	}
@@ -5912,7 +5912,7 @@ public final class Game extends GameCanvas implements Runnable {
 		setWeatherAndBackgroundIds(sRead8(), sRead8());
 		sRead8();
 		sRead32();
-		levelColor = sRead32();
+		levelColorPlatform = sRead32();
 		levelColorMovable = sRead32();
 		sRead32();
 		levelColorPortal = sRead32();
@@ -7049,7 +7049,7 @@ public final class Game extends GameCanvas implements Runnable {
 
 		levelRenderCircleIds(levelIdsPlatforms, 0);
 		levelRenderRects();
-		levelRenderCircleIds(levelIdsPlatforms, levelColor);
+		levelRenderCircleIds(levelIdsPlatforms, levelColorPlatform);
 
 		// Render foams.
 		levelRenderCircleIds(levelIdsFoam, 0);
