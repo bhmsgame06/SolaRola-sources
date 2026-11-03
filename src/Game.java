@@ -4798,21 +4798,21 @@ public final class Game extends GameCanvas implements Runnable {
 		if (hookType != 4 || mag >= extent) {
 			if (hookType != 3 || mag <= extent) {
 				if (mag >= 70000) {
-					int density1 = levelCircleWeight[circleId1];
-					int density2 = levelCircleWeight[circleId2];
+					int weight1 = levelCircleWeight[circleId1];
+					int weight2 = levelCircleWeight[circleId2];
 
-					int overlapRatio = lp32Div(mag - extent, lp32Mul(mag, density1 + density2));
+					int overlapRatio = lp32Div(mag - extent, lp32Mul(mag, weight1 + weight2));
 					int pushX = lp32Mul(stretchConst, lp32Mul(triLeg1, overlapRatio));
 					int pushY = lp32Mul(stretchConst, lp32Mul(triLeg2, overlapRatio));
 
 					if (levelCircleHasPhysics[circleId1]) {
-						levelCircleX[circleId1] += lp32Mul(pushX, density1);
-						levelCircleY[circleId1] += lp32Mul(pushY, density1);
+						levelCircleX[circleId1] += lp32Mul(pushX, weight1);
+						levelCircleY[circleId1] += lp32Mul(pushY, weight1);
 					}
 
 					if (levelCircleHasPhysics[circleId2]) {
-						levelCircleX[circleId2] -= lp32Mul(pushX, density2);
-						levelCircleY[circleId2] -= lp32Mul(pushY, density2);
+						levelCircleX[circleId2] -= lp32Mul(pushX, weight2);
+						levelCircleY[circleId2] -= lp32Mul(pushY, weight2);
 					}
 
 					if (process)
@@ -5733,7 +5733,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelCircleHasPhysics = new boolean[num];
 	}
 
-	public static final void levelSetCircle(int id, int x, int y, int radius, int density, int flags, int type, boolean hasPhysics) {
+	public static final void levelSetCircle(int id, int x, int y, int radius, int weight, int flags, int type, boolean hasPhysics) {
 		if (type == 3 && currentLevelLoaded != -2)
 			flags &= -5;
 
@@ -5745,7 +5745,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelCircleFlags[id] = flags;
 		levelCircleHasPhysics[id] = hasPhysics;
 		levelCircleType[id] = (byte)type;
-		levelCircleWeight[id] = lp32Div(0x10000, density << 14);
+		levelCircleWeight[id] = lp32Div(0x10000, weight << 14);
 	}
 
 	public static final void updatePlayerMovement() {
