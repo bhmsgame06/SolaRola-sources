@@ -5329,7 +5329,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelRectIsAnimated = new boolean[num];
 	}
 
-	public static final void levelAddRect(int id, int x, int y, int hWidth, int hHeight) {
+	public static final void levelSetRect(int id, int x, int y, int hWidth, int hHeight) {
 		levelRectX[id] = x;
 		levelRectY[id] = y;
 		levelRectHWidth[id] = hWidth;
@@ -5337,7 +5337,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelRectIsAnimated[id] = false;
 	}
 
-	public static final void levelInitAnimatedRects(int num) {
+	public static final void levelInitAnimRects(int num) {
 		levelAnimRectIds = new int[num];
 		levelAnimRectMinHWidth = new int[num];
 		levelAnimRectMaxHWidth = new int[num];
@@ -5467,7 +5467,7 @@ public final class Game extends GameCanvas implements Runnable {
 		levelInitRects(sReadU16());
 
 		for (int i = 0; i < levelNumRects; i++)
-			levelAddRect(i, levelAlignXToMirror(sReadU16() << 16), sReadU16() << 16, sReadU16() << 16, sReadU16() << 16);
+			levelSetRect(i, levelAlignXToMirror(sReadU16() << 16), sReadU16() << 16, sReadU16() << 16, sReadU16() << 16);
 	}
 
 	public static final void swapLevelRectData() {
@@ -6019,7 +6019,7 @@ public final class Game extends GameCanvas implements Runnable {
 			levelSetExpander(i, baseCircleIndex + sReadU8(), sRead8() == 1, sReadU16(), sReadU16() << 16);
 
 		// Init animated (actively resizing) rectangles.
-		levelInitAnimatedRects(num = sRead8());
+		levelInitAnimRects(num = sRead8());
 
 		for (int i = 0; i < num; i++)
 			levelSetAnimRect(i, i, sReadU16() << 16, sReadU16() << 16, sReadU16() << 8, sReadU16(), sReadU16());
