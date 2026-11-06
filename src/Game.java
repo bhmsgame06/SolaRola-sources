@@ -7296,7 +7296,7 @@ public final class Game extends GameCanvas implements Runnable {
 		if (circleId1 == 2)
 			levelIsPlayerOnSurface = true;
 
-		// Destructible objects.
+		// Foam objects.
 		if ((levelCircleFlags[circleId2] & 0x2000) > 0) {
 			levelCircleRadius[circleId2] -= 0x10000;
 			if (levelCircleRadius[circleId2] < 0x40000) {
